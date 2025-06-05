@@ -20,3 +20,24 @@ This repo enables **offline, token-free litigation automation** for the FRED PRI
 
 ## 🗂 Structure
 
+
+## Organize Drive Script
+
+This repository includes `organize_drive.py`, a Python script that automatically sorts files on a target drive into categorized folders and removes empty directories afterwards. The script is designed for Windows drives (for example `F:/`) but can operate on any path.
+
+### Usage
+
+1. Ensure Python 3 is installed.
+2. Run the script from a command prompt:
+   ```bash
+   python organize_drive.py F:/
+   ```
+   Replace `F:/` with the path you want to organize. A log file named `organize_drive.log` will record all actions.
+3. After completion, all files are moved into an `Organized` folder within the specified drive, grouped by type. Empty folders found during processing are removed.
+
+### Safety
+
+- Files are moved, not copied. Ensure you have backups if necessary.
+- Name collisions are handled automatically by appending a numeric suffix to the destination file.
+- Review the log file if any issues arise.
+
