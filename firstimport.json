@@ -1,19 +1,15 @@
-import json
-from pathlib import Path
-
-# Build the full system definition as a JSON object
-litigation_system_definition = {
+{
     "system": "FRED PRIME Litigation Deployment Engine",
     "base_path": "F:/GitRepo/fredprime",
     "output_path": "F:/GitRepo/fredprime/output",
     "log_path": "F:/GitRepo/fredprime/logs",
     "config": {
-        "exhibit_labeling": True,
-        "motion_linking": True,
-        "signature_validation": True,
-        "judicial_audit": True,
-        "parenting_time_matrix": True,
-        "conspiracy_tracker": True
+        "exhibit_labeling": true,
+        "motion_linking": true,
+        "signature_validation": true,
+        "judicial_audit": true,
+        "parenting_time_matrix": true,
+        "conspiracy_tracker": true
     },
     "modules": {
         "exhibit_labeler": "Renames evidence files A–Z and builds Exhibit_Index.md",
@@ -24,14 +20,7 @@ litigation_system_definition = {
         "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S"
     },
     "execution_command": "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1",
-    "offline_capable": True,
+    "offline_capable": true,
     "token_usage": "Zero (local execution only)",
-    "dependencies": ["PowerShell 5+", "Git (if pushing back)", "Windows OS"]
+    "dependencies": ["PowerShell 5+", "Git", "Windows OS"]
 }
-
-# Save this system definition as a JSON file
-json_path = Path("/mnt/data/fredprime_litigation_system.json")
-json_path.write_text(json.dumps(litigation_system_definition, indent=4))
-
-# Return file name for download
-json_path.name

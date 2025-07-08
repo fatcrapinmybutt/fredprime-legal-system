@@ -1,22 +1,33 @@
-# Build a README with full instructions for using the JSON-defined system locally or through GitHub
+# MBP Litigation System
 
-readme_content = """
-# 🧠 FRED PRIME Litigation Deployment System
+This repository contains a small scaffold for the "MBP Litigation OS".  The
+`build_mbp_system.py` script generates a folder structure and example modules for
+a local litigation toolkit.  The modules demonstrate simple document generation,
+zip bundling and exhibit scanning utilities.
 
-This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
+## Usage
 
----
+1. Install Python 3 with `python-docx` available.
+2. Run the setup script:
 
-## ✅ What This System Does
+```bash
+python build_mbp_system.py
+```
 
-- 🔖 Auto-labels exhibits (Exhibit A–Z)
-- 🔗 Links motions to matching exhibits
-- 🧾 Validates MCR 1.109(D)(3) signature block compliance
-- 📅 Builds parenting time violation matrix from AppClose logs (Exhibit Y)
-- 🛑 Tracks false police reports and PPO misuse (Exhibit S)
-- ⚖️ Logs judicial irregularities (Exhibit U)
+This will create the `MBP_SYSTEM` directory with subfolders such as `ENGINE`,
+`GUI`, `UPGRADES` and `VFS`.  Example engine modules will be written to these
+folders.
 
----
+3. After the scaffold is generated you can test a module, e.g.:
 
-## 🗂 Structure
+```bash
+python MBP_SYSTEM/ENGINE/motion_generator.py
+```
 
+The script will generate a document inside `MBP_SYSTEM/VFS/GENERATED_ZIPS`.
+
+## Notes
+
+These files are simplified examples based on the requested system outline.  They
+do not provide a complete litigation solution but illustrate the general
+structure described in the project documentation.
