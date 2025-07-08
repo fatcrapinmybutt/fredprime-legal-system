@@ -1,22 +1,34 @@
-# Build a README with full instructions for using the JSON-defined system locally or through GitHub
+# FRED PRIME Litigation Deployment System
 
-readme_content = """
-# 🧠 FRED PRIME Litigation Deployment System
+This repository demonstrates how to automate litigation tasks offline using PrivateGPT. A helper PowerShell script is provided for Windows users to set up the environment and launch the app.
 
-This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
+## Features
+- Auto-label exhibits
+- Link motions to matching exhibits
+- Validate MCR 1.109(D)(3) signature block compliance
+- Build parenting time violation matrices
+- Track false reports and PPO misuse
+- Log judicial irregularities
 
----
+## Quick Start
+Run the setup script from a PowerShell terminal:
 
-## ✅ What This System Does
+```powershell
+./privategpt_setup.ps1
+```
 
-- 🔖 Auto-labels exhibits (Exhibit A–Z)
-- 🔗 Links motions to matching exhibits
-- 🧾 Validates MCR 1.109(D)(3) signature block compliance
-- 📅 Builds parenting time violation matrix from AppClose logs (Exhibit Y)
-- 🛑 Tracks false police reports and PPO misuse (Exhibit S)
-- ⚖️ Logs judicial irregularities (Exhibit U)
+By default this installs the application into `C:\privategpt` and launches it with the `settings-local.yaml` configuration. You can override the install path or model name:
 
----
+```powershell
+./privategpt_setup.ps1 -InstallPath "D:\custom_dir" -Model "phi3"
+```
 
-## 🗂 Structure
 
+## Generating the Litigation System JSON
+Use the helper script to create a JSON definition of the entire FRED PRIME litigation system:
+
+```bash
+python generate_litigation_system.py --output fredprime_litigation_system.json
+```
+
+This produces `fredprime_litigation_system.json` describing all modules and default paths used by the deployment engine.
