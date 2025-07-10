@@ -23,3 +23,47 @@ By default this installs the application into `C:\privategpt` and launches it wi
 ./privategpt_setup.ps1 -InstallPath "D:\custom_dir" -Model "phi3"
 ```
 
+
+## Form Database Example
+A basic script is provided to demonstrate how court forms can be stored and queried locally.
+
+Run the importer:
+
+```bash
+python src/form_db.py --db forms.db --manifest data/forms_manifest.json --forms-dir forms
+```
+
+To look up a form by ID:
+
+```bash
+python src/form_db.py --db forms.db --get MC-12
+```
+
+List all stored forms:
+
+```bash
+python src/form_db.py --db forms.db --list
+```
+
+This loads form metadata from `data/forms_manifest.json` and saves it into a SQLite database.
+
+## Storage Sync
+The `storage_sync.py` utility can scan a directory and optionally upload files to Google Drive.
+
+Install dependencies:
+
+```bash
+pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+```
+
+Scan a folder and output file hashes:
+
+```bash
+python src/storage_sync.py --scan F:\
+```
+
+Upload a single file to Google Drive (requires OAuth credentials in `credentials.json`):
+
+```bash
+python src/storage_sync.py --upload example.txt
+```

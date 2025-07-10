@@ -1,0 +1,16 @@
+[
+  {
+    "id": "MC-12",
+    "title": "Motion to Adjourn",
+    "filename": "MC-12_Motion_to_Adjourn.txt",
+    "rules": ["MCR 2.119", "MCR 2.501(C)"],
+    "benchbook": ["Civil Benchbook §2.10"]
+  },
+  {
+    "id": "MC-97",
+    "title": "Complaint for Injunctive Relief",
+    "filename": "MC-97_Complaint_for_Injunctive_Relief.txt",
+    "rules": ["MCR 3.301"],
+    "statutes": ["MCL 600.5701"]
+  }
+]
