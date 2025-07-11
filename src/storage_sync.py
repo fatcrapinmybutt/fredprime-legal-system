@@ -23,10 +23,16 @@ class LocalScanner:
 
 class GoogleDriveSync:
     def __init__(self, credentials_file: Path, token_file: Path):
-        from googleapiclient.discovery import build  # deferred import
-        from google_auth_oauthlib.flow import InstalledAppFlow
-        from google.auth.transport.requests import Request
-        from google.oauth2.credentials import Credentials
+        try:
+            from googleapiclient.discovery import build  # type: ignore
+            from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
+            from google.auth.transport.requests import Request  # type: ignore
+            from google.oauth2.credentials import Credentials  # type: ignore
+        except ImportError:
+            raise RuntimeError(
+                "google-api-python-client is not installed.\n"
+                "Run `pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib`"
+            )
 
         self.creds = None
         if token_file.exists():
@@ -71,8 +77,12 @@ def main() -> None:
         return
 
     if args.upload:
-        gdrive = GoogleDriveSync(Path(args.credentials), Path(args.token))
-        file_id = gdrive.upload_file(Path(args.upload))
+        try:
+            gdrive = GoogleDriveSync(Path(args.credentials), Path(args.token))
+            file_id = gdrive.upload_file(Path(args.upload))
+        except RuntimeError as exc:
+            print(f'Cannot upload: {exc}')
+            return
         print(f'Uploaded {args.upload} to Google Drive with id {file_id}')
 
 
