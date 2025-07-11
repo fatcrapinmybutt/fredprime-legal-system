@@ -23,3 +23,9 @@ By default this installs the application into `C:\privategpt` and launches it wi
 ./privategpt_setup.ps1 -InstallPath "D:\custom_dir" -Model "phi3"
 ```
 
+
+To generate the system configuration JSON, run the Python script:
+
+```bash
+python firstimport.py
+```
