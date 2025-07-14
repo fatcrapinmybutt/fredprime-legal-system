@@ -211,7 +211,13 @@ def main() -> None:
     parser.add_argument("--search", help="Find forms matching a keyword")
     parser.add_argument(
         "--find",
+        dest="find",
         help="Find forms referencing a rule or statute",
+    )
+    parser.add_argument(
+        "--find-rule",
+        dest="find",
+        help="Alias for --find",
     )
     parser.add_argument(
         "--export",

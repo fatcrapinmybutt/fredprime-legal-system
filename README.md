@@ -83,7 +83,7 @@ python src/form_db.py --db forms.db --search custody
 Find forms that cite a specific rule or statute:
 
 ```bash
-python src/form_db.py --db forms.db --find "MCR 3.207"
+python src/form_db.py --db forms.db --find-rule "MCR 3.207"
 ```
 
 Remove a form entry:
