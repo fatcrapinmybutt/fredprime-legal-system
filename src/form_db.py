@@ -84,6 +84,23 @@ class FormDatabase:
             forms.append(record)
         return forms
 
+    def search_forms(self, keyword: str) -> List[dict]:
+        cur = self.conn.cursor()
+        like = f"%{keyword.lower()}%"
+        cur.execute(
+            "SELECT * FROM forms WHERE LOWER(id) LIKE ? OR LOWER(title) LIKE ? ORDER BY id",
+            (like, like),
+        )
+        rows = cur.fetchall()
+        results = []
+        for row in rows:
+            keys = [column[0] for column in cur.description]
+            record = dict(zip(keys, row))
+            for k in ["rules", "statutes", "benchbook", "constitution", "federal"]:
+                record[k] = json.loads(record.get(k, "[]"))
+            results.append(record)
+        return results
+
 
 def load_manifest(manifest_path: Path, db: FormDatabase, forms_dir: Path) -> None:
     data = json.loads(manifest_path.read_text())
@@ -116,6 +133,7 @@ def main() -> None:
     )
     parser.add_argument("--get", help="Lookup a form by ID")
     parser.add_argument("--list", action="store_true", help="List all stored forms")
+    parser.add_argument("--search", help="Find forms matching a keyword")
     args = parser.parse_args()
 
     db_path = Path(args.db)
@@ -132,6 +150,11 @@ def main() -> None:
         return
     if args.list:
         for form in db.list_forms():
+            print(f"{form['id']}: {form['title']}")
+        return
+    if args.search:
+        results = db.search_forms(args.search)
+        for form in results:
             print(f"{form['id']}: {form['title']}")
         return
 
