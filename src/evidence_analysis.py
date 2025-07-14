@@ -34,6 +34,7 @@ def main() -> None:
     db = FormDatabase(Path(args.db))
     ks = KnowledgeStore(Path(args.knowledge))
     descriptions = [item["description"] for item in ks.get_links()]
+    descriptions.extend(item["description"] for item in ks.get_transcript_links())
     forms = suggest_forms(descriptions)
     for fid in forms:
         record = db.get_form(fid)

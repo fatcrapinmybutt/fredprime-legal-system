@@ -141,6 +141,8 @@ python src/storage_sync.py --upload example.txt
 
 `knowledge_store.py` maintains a local SQLite database linking evidence to forms. `evidence_analysis.py` scans this store and suggests motions using the cross‑references.
 
+You can also track hearing transcripts and link them to forms. Transcripts are stored in the same database and are included when generating suggestions.
+
 Add evidence and link it to a form. Use `--auto-link` to automatically
 associate evidence with common motions based on keywords:
 
@@ -151,6 +153,13 @@ python src/knowledge_store.py --link 1:FOC-65
 python src/knowledge_store.py --add-evidence another.txt --desc "Order" --link 2:MC-12
 ```
 
+Add a transcript and link it to a form:
+
+```bash
+python src/knowledge_store.py --add-transcript hearing.pdf --desc "Show cause hearing" --date 2025-06-01
+python src/knowledge_store.py --link-transcript 1:FOC-88
+```
+
 List links and generate suggestions:
 
 ```bash
@@ -158,4 +167,10 @@ python src/knowledge_store.py --list
 python src/knowledge_store.py --search custody
 python src/knowledge_store.py --remove 1
 python src/evidence_analysis.py --knowledge knowledge.db
+```
+
+List transcript links:
+
+```bash
+python src/knowledge_store.py --list-transcripts
 ```
