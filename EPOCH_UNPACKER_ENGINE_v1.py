@@ -8,11 +8,11 @@ from pathlib import Path
 from PyPDF2 import PdfReader
 from PIL import Image
 import pytesseract
-from io import BytesIO
 import hashlib
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import threading
+import argparse
 
 # === CONFIGURATION === #
 EXTRACT_DIR = "./unzipped_epoch"
@@ -170,6 +170,25 @@ def run_gui():
     tk.Button(window, text="Start Scan", command=start_processing).pack()
     window.mainloop()
 
+# === HEADLESS MODE === #
+def run_headless(zip_path):
+    if not os.path.exists(EXTRACT_DIR):
+        os.makedirs(EXTRACT_DIR)
+    unpack_zip(zip_path)
+    while True:
+        result = process_next_file()
+        if not result:
+            break
+    print("All files processed.")
+
 # === ENTRY POINT === #
 if __name__ == '__main__':
-    run_gui()
+    parser = argparse.ArgumentParser(description="EPOCH Unpacker")
+    parser.add_argument('--zip', help='Path to ZIP archive to process')
+    parser.add_argument('--gui', action='store_true', help='Launch graphical interface')
+    args = parser.parse_args()
+
+    if args.gui or not args.zip:
+        run_gui()
+    else:
+        run_headless(args.zip)
