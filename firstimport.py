@@ -1,0 +1,62 @@
+"""Example script that builds a JSON description of the system."""
+
+import json
+from pathlib import Path
+
+# Build the full system definition as a JSON object
+litigation_system_definition = {
+    "system": "FRED PRIME Litigation Deployment Engine",
+    "base_path": "F:/GitRepo/fredprime",
+    "output_path": "F:/GitRepo/fredprime/output",
+    "log_path": "F:/GitRepo/fredprime/logs",
+    "config": {
+        "exhibit_labeling": True,
+        "motion_linking": True,
+        "signature_validation": True,
+        "judicial_audit": True,
+        "parenting_time_matrix": True,
+        "conspiracy_tracker": True
+    },
+    "modules": {
+        "exhibit_labeler": (
+            "Renames evidence files A–Z and builds "
+            "Exhibit_Index.md"
+        ),
+        "motion_exhibit_linker": (
+            "Scans motions, finds exhibit references, "
+            "builds Motion_to_Exhibit_Map.md"
+        ),
+        "signature_validator": (
+            "Checks for MCR 1.109(D)(3) compliance"
+        ),
+        "judicial_conduct_tracker": (
+            "Builds Exhibit U with judge behavior patterns"
+        ),
+        "appclose_matrix": (
+            "Parses AppClose logs to generate Exhibit Y "
+            "(violations matrix)"
+        ),
+        "conspiracy_log": (
+            "Parses police reports and logs false allegations "
+            "into Exhibit S"
+        ),
+    },
+    "execution_command": (
+        "powershell -ExecutionPolicy Bypass -File "
+        "fred_deploy.ps1"
+    ),
+    "offline_capable": True,
+    "token_usage": "Zero (local execution only)",
+    "dependencies": [
+        "PowerShell 5+",
+        "Git (if pushing back)",
+        "Windows OS",
+    ],
+}
+
+# Save this system definition as a JSON file
+json_path = Path("/mnt/data/fredprime_litigation_system.json")
+json_path.write_text(json.dumps(litigation_system_definition, indent=4))
+
+# Return file name for download
+json_path.name
