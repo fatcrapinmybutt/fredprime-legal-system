@@ -63,6 +63,12 @@ Search for forms containing a keyword across titles, IDs, and rule references:
 python src/form_db.py --db forms.db --search custody
 ```
 
+Export all forms to a standalone JSON file:
+
+```bash
+python src/form_db.py --db forms.db --export all_forms.json
+```
+
 This loads form metadata from `data/forms_manifest.json` and saves it into a SQLite database.
 
 ## Storage Sync

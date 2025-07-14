@@ -173,6 +173,10 @@ def main() -> None:
         help="List all stored forms",
     )
     parser.add_argument("--search", help="Find forms matching a keyword")
+    parser.add_argument(
+        "--export",
+        help="Export all stored forms to JSON file",
+    )
     args = parser.parse_args()
 
     db_path = Path(args.db)
@@ -195,6 +199,12 @@ def main() -> None:
         results = db.search_forms(args.search)
         for form in results:
             print(f"{form['id']}: {form['title']}")
+        return
+
+    if args.export:
+        with open(args.export, "w") as fh:
+            json.dump(db.list_forms(), fh, indent=2)
+        print(f"Exported forms to {args.export}")
         return
 
     load_manifest(manifest_path, db, forms_dir)
