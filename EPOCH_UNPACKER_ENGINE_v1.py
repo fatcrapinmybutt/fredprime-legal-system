@@ -4,6 +4,7 @@
 import zipfile
 import os
 import json
+from pathlib import Path
 from PyPDF2 import PdfReader
 from PIL import Image
 import pytesseract
@@ -14,19 +15,24 @@ import threading
 import argparse
 
 # === CONFIGURATION === #
-EXTRACT_DIR = "./unzipped_epoch"
-QUEUE_FILE = "./epoch_queue.json"
-OCR_LOG = "./ocr_output.json"
-CANON_LOG = "./canon_flags.json"
-EXHIBIT_LOG = "./exhibit_log.json"
-PROGRESS_FILE = "./progress_status.json"
+# Allow overriding the base working directory so this tool can
+# integrate with other parts of the litigation OS. Defaults to the
+# `LITIGATION_DATA_DIR` environment variable if present or falls back
+# to the current directory.
+BASE_DIR = Path(os.environ.get("LITIGATION_DATA_DIR", "."))
+EXTRACT_DIR = BASE_DIR / "unzipped_epoch"
+QUEUE_FILE = BASE_DIR / "epoch_queue.json"
+OCR_LOG = BASE_DIR / "ocr_output.json"
+CANON_LOG = BASE_DIR / "canon_flags.json"
+EXHIBIT_LOG = BASE_DIR / "exhibit_log.json"
+PROGRESS_FILE = BASE_DIR / "progress_status.json"
 
 # === UTILITIES === #
 def sha256_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 def load_queue():
-    if os.path.exists(QUEUE_FILE):
+    if QUEUE_FILE.exists():
         with open(QUEUE_FILE, 'r') as f:
             return json.load(f)
     return {"index": []}
@@ -37,7 +43,7 @@ def save_queue(queue):
 
 def log_ocr(filename, content):
     logs = {}
-    if os.path.exists(OCR_LOG):
+    if OCR_LOG.exists():
         with open(OCR_LOG, 'r') as f:
             logs = json.load(f)
     logs[filename] = content
@@ -58,7 +64,7 @@ def run_canon_validator(text):
 
 def log_canon(filename, flags):
     logs = {}
-    if os.path.exists(CANON_LOG):
+    if CANON_LOG.exists():
         with open(CANON_LOG, 'r') as f:
             logs = json.load(f)
     logs[filename] = flags
@@ -83,7 +89,7 @@ def run_exhibit_classifier(text):
 
 def log_exhibit(filename, types):
     logs = {}
-    if os.path.exists(EXHIBIT_LOG):
+    if EXHIBIT_LOG.exists():
         with open(EXHIBIT_LOG, 'r') as f:
             logs = json.load(f)
     logs[filename] = types
@@ -107,14 +113,14 @@ def process_next_file():
     queue = load_queue()
     for item in queue["index"]:
         if item["status"] == "pending":
-            full_path = os.path.join(EXTRACT_DIR, item["filename"])
+            full_path = EXTRACT_DIR / item["filename"]
             try:
-                if full_path.lower().endswith(".pdf"):
+                if str(full_path).lower().endswith(".pdf"):
                     reader = PdfReader(full_path)
                     text = ""
                     for page in reader.pages:
                         text += page.extract_text() or ""
-                elif full_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+                elif str(full_path).lower().endswith(('.png', '.jpg', '.jpeg')):
                     image = Image.open(full_path)
                     text = pytesseract.image_to_string(image)
                 else:
@@ -150,8 +156,8 @@ def run_gui():
     def start_processing():
         def run():
             zip_path = zip_entry.get()
-            if not os.path.exists(EXTRACT_DIR):
-                os.makedirs(EXTRACT_DIR)
+            if not EXTRACT_DIR.exists():
+                EXTRACT_DIR.mkdir(parents=True)
             unpack_zip(zip_path)
             while True:
                 result = process_next_file()
@@ -171,8 +177,8 @@ def run_gui():
 
 # === HEADLESS MODE === #
 def run_headless(zip_path):
-    if not os.path.exists(EXTRACT_DIR):
-        os.makedirs(EXTRACT_DIR)
+    if not EXTRACT_DIR.exists():
+        EXTRACT_DIR.mkdir(parents=True)
     unpack_zip(zip_path)
     while True:
         result = process_next_file()
@@ -187,11 +193,11 @@ def parse_args():
     sub = parser.add_subparsers(dest="command")
 
     gui_p = sub.add_parser("gui", help="Launch graphical interface")
-    gui_p.add_argument('--dir', default=EXTRACT_DIR, help='Directory for extracted files')
+    gui_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Directory for extracted files')
 
     proc_p = sub.add_parser("process", help="Process ZIP without GUI")
     proc_p.add_argument('zip', help='Path to ZIP archive to process')
-    proc_p.add_argument('--dir', default=EXTRACT_DIR, help='Directory for extracted files')
+    proc_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Directory for extracted files')
 
     parser.add_argument('--reset', action='store_true', help='Clear cached logs and queue')
     return parser.parse_args()
@@ -199,8 +205,8 @@ def parse_args():
 
 def reset_logs():
     for path in [QUEUE_FILE, OCR_LOG, CANON_LOG, EXHIBIT_LOG, PROGRESS_FILE]:
-        if os.path.exists(path):
-            os.remove(path)
+        if path.exists():
+            path.unlink()
 
 
 if __name__ == '__main__':
@@ -210,9 +216,9 @@ if __name__ == '__main__':
         reset_logs()
 
     if args.command == 'process':
-        EXTRACT_DIR = args.dir
+        EXTRACT_DIR = Path(args.dir)
         run_headless(args.zip)
     else:
         if args.command == 'gui' and hasattr(args, 'dir'):
-            EXTRACT_DIR = args.dir
+            EXTRACT_DIR = Path(args.dir)
         run_gui()
