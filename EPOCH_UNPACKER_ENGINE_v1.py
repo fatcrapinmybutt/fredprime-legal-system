@@ -159,20 +159,26 @@ def run_gui():
             if not EXTRACT_DIR.exists():
                 EXTRACT_DIR.mkdir(parents=True)
             unpack_zip(zip_path)
+            processed = 0
             while True:
                 result = process_next_file()
                 if not result:
                     break
+                processed += 1
+                progress_var.set(f"Processed {processed} files...")
+            progress_var.set("All files processed.")
             messagebox.showinfo("Done", "All files processed.")
-        threading.Thread(target=run).start()
+        threading.Thread(target=run, daemon=True).start()
 
     window = tk.Tk()
     window.title("EPOCH UNPACKER | Litigation OS Panel")
+    progress_var = tk.StringVar(value="Idle")
     tk.Label(window, text="ZIP File Path:").pack()
     zip_entry = tk.Entry(window, width=60)
     zip_entry.pack()
     tk.Button(window, text="Browse", command=select_file).pack()
     tk.Button(window, text="Start Scan", command=start_processing).pack()
+    tk.Label(window, textvariable=progress_var).pack()
     window.mainloop()
 
 # === HEADLESS MODE === #
