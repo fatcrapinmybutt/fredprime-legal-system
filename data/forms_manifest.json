@@ -38,5 +38,15 @@
     "rules": ["MCR 3.215"],
     "benchbook": ["Family Benchbook §4.1"],
     "constitution": ["US Const. amend. XIV"]
+  },
+  {
+    "id": "DC-102c",
+    "title": "Complaint to Recover Possession of Property",
+    "filename": "DC-102c_Complaint_to_Recover_Possession.txt",
+    "rules": ["MCR 4.201"],
+    "statutes": ["MCL 600.5714"],
+    "benchbook": ["Landlord-Tenant Benchbook §5.3"],
+    "constitution": [],
+    "federal": []
   }
 ]
