@@ -138,11 +138,14 @@ Add evidence and link it to a form:
 ```bash
 python src/knowledge_store.py --add-evidence path/to/file.txt --desc "Custody dispute text"
 python src/knowledge_store.py --link 1:FOC-65
+python src/knowledge_store.py --add-evidence another.txt --desc "Order" --link 2:MC-12
 ```
 
 List links and generate suggestions:
 
 ```bash
 python src/knowledge_store.py --list
+python src/knowledge_store.py --search custody
+python src/knowledge_store.py --remove 1
 python src/evidence_analysis.py --knowledge knowledge.db
 ```

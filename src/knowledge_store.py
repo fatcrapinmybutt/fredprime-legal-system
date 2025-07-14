@@ -43,6 +43,24 @@ class KnowledgeStore:
         self.conn.commit()
         return cur.lastrowid
 
+    def remove_evidence(self, evid_id: int) -> None:
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM links WHERE evidence_id=?", (evid_id,))
+        cur.execute("DELETE FROM evidence WHERE id=?", (evid_id,))
+        self.conn.commit()
+
+    def search_evidence(self, keyword: str) -> List[dict]:
+        cur = self.conn.cursor()
+        like = f"%{keyword.lower()}%"
+        cur.execute(
+            "SELECT id, path, description FROM evidence WHERE LOWER(description) LIKE ?",
+            (like,),
+        )
+        rows = cur.fetchall()
+        return [
+            {"id": row[0], "path": row[1], "description": row[2]} for row in rows
+        ]
+
     def link_form(
         self, evidence_id: int, form_id: str, note: str = ""
     ) -> None:
@@ -94,6 +112,15 @@ if __name__ == "__main__":
         help="Link evidence ID to form ID (format: id:FORM)",
     )
     parser.add_argument(
+        "--remove",
+        type=int,
+        help="Remove evidence by ID",
+    )
+    parser.add_argument(
+        "--search",
+        help="Search evidence descriptions",
+    )
+    parser.add_argument(
         "--list",
         action="store_true",
         help="List evidence links",
@@ -109,6 +136,13 @@ if __name__ == "__main__":
         evid, form = args.link.split(":", 1)
         ks.link_form(int(evid), form)
         print("Link stored")
+    elif args.remove is not None:
+        ks.remove_evidence(args.remove)
+        print(f"Removed evidence {args.remove}")
+    elif args.search:
+        results = ks.search_evidence(args.search)
+        for item in results:
+            print(json.dumps(item, indent=2))
     elif args.list:
         for item in ks.get_links():
             print(json.dumps(item, indent=2))
