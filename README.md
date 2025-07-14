@@ -22,3 +22,13 @@ Use `--dir <directory>` to override the extraction directory and
 
 The base directory defaults to the current folder, but you can set the
 `LITIGATION_DATA_DIR` environment variable to store data and logs elsewhere.
+
+## Dependencies
+
+Install the required packages using pip:
+
+```bash
+pip install -r requirements.txt
+```
+
+`pytesseract` requires the Tesseract OCR engine to be installed separately.
