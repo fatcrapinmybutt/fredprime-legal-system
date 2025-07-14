@@ -91,6 +91,8 @@ Remove a form entry:
 ```bash
 python src/form_db.py --db forms.db --delete MC-97
 ```
+If you delete a form by mistake, simply re-run the import command with the
+manifest to recreate the default entries.
 
 Export all forms to a standalone JSON file:
 
