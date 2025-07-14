@@ -86,6 +86,12 @@ Find forms that cite a specific rule or statute:
 python src/form_db.py --db forms.db --find "MCR 3.207"
 ```
 
+Remove a form entry:
+
+```bash
+python src/form_db.py --db forms.db --delete MC-97
+```
+
 Export all forms to a standalone JSON file:
 
 ```bash

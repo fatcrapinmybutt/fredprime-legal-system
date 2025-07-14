@@ -60,6 +60,12 @@ class FormDatabase:
         )
         self.conn.commit()
 
+    def remove_form(self, form_id: str) -> None:
+        """Delete a form entry by its ID."""
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM forms WHERE id = ?", (form_id,))
+        self.conn.commit()
+
     def get_form(self, form_id: str) -> Optional[dict]:
         cur = self.conn.cursor()
         cur.execute("SELECT * FROM forms WHERE id = ?", (form_id,))
@@ -196,6 +202,7 @@ def main() -> None:
         help="Directory containing form files",
     )
     parser.add_argument("--get", help="Lookup a form by ID")
+    parser.add_argument("--delete", help="Remove a form by ID")
     parser.add_argument(
         "--list",
         action="store_true",
@@ -223,6 +230,10 @@ def main() -> None:
             print(json.dumps(form, indent=2))
         else:
             print(f"Form {args.get} not found")
+        return
+    if args.delete:
+        db.remove_form(args.delete)
+        print(f"Deleted form {args.delete}")
         return
     if args.list:
         for form in db.list_forms():
