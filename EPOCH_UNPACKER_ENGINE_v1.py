@@ -20,12 +20,19 @@ import argparse
 # `LITIGATION_DATA_DIR` environment variable if present or falls back
 # to the current directory.
 BASE_DIR = Path(os.environ.get("LITIGATION_DATA_DIR", "."))
-EXTRACT_DIR = BASE_DIR / "unzipped_epoch"
-QUEUE_FILE = BASE_DIR / "epoch_queue.json"
-OCR_LOG = BASE_DIR / "ocr_output.json"
-CANON_LOG = BASE_DIR / "canon_flags.json"
-EXHIBIT_LOG = BASE_DIR / "exhibit_log.json"
-PROGRESS_FILE = BASE_DIR / "progress_status.json"
+
+def set_base_dir(path: Path):
+    """Update all file paths to use a new base directory."""
+    global BASE_DIR, EXTRACT_DIR, QUEUE_FILE, OCR_LOG, CANON_LOG, EXHIBIT_LOG, PROGRESS_FILE
+    BASE_DIR = Path(path)
+    EXTRACT_DIR = BASE_DIR / "unzipped_epoch"
+    QUEUE_FILE = BASE_DIR / "epoch_queue.json"
+    OCR_LOG = BASE_DIR / "ocr_output.json"
+    CANON_LOG = BASE_DIR / "canon_flags.json"
+    EXHIBIT_LOG = BASE_DIR / "exhibit_log.json"
+    PROGRESS_FILE = BASE_DIR / "progress_status.json"
+
+set_base_dir(BASE_DIR)
 
 # === UTILITIES === #
 def sha256_hash(text):
@@ -199,11 +206,11 @@ def parse_args():
     sub = parser.add_subparsers(dest="command")
 
     gui_p = sub.add_parser("gui", help="Launch graphical interface")
-    gui_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Directory for extracted files')
+    gui_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Base directory for extracted files and logs')
 
     proc_p = sub.add_parser("process", help="Process ZIP without GUI")
     proc_p.add_argument('zip', help='Path to ZIP archive to process')
-    proc_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Directory for extracted files')
+    proc_p.add_argument('--dir', default=str(EXTRACT_DIR), help='Base directory for extracted files and logs')
 
     parser.add_argument('--reset', action='store_true', help='Clear cached logs and queue')
     return parser.parse_args()
@@ -222,9 +229,9 @@ if __name__ == '__main__':
         reset_logs()
 
     if args.command == 'process':
-        EXTRACT_DIR = Path(args.dir)
+        set_base_dir(Path(args.dir))
         run_headless(args.zip)
     else:
         if args.command == 'gui' and hasattr(args, 'dir'):
-            EXTRACT_DIR = Path(args.dir)
+            set_base_dir(Path(args.dir))
         run_gui()

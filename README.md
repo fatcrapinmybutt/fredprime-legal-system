@@ -17,8 +17,8 @@ python EPOCH_UNPACKER_ENGINE_v1.py process /path/to/archive.zip
 ```
 Processes the archive in headless mode and prints progress for each file.
 
-Use `--dir <directory>` to override the extraction directory and
-`--reset` to clear cached logs and the processing queue.
+Use `--dir <directory>` to override the base directory for extracted files and logs.
+`--reset` clears cached logs and the processing queue.
 
 The base directory defaults to the current folder, but you can set the
 `LITIGATION_DATA_DIR` environment variable to store data and logs elsewhere.
