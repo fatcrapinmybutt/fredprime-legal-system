@@ -128,6 +128,35 @@ class FormDatabase:
             results.append(record)
         return results
 
+    def find_by_reference(self, ref: str) -> List[dict]:
+        """Return forms that reference the given rule or statute."""
+        cur = self.conn.cursor()
+        like = f"%{ref.lower()}%"
+        query = (
+            "SELECT * FROM forms WHERE LOWER(rules) LIKE ? "
+            "OR LOWER(statutes) LIKE ? "
+            "OR LOWER(benchbook) LIKE ? "
+            "OR LOWER(constitution) LIKE ? "
+            "OR LOWER(federal) LIKE ? ORDER BY id"
+        )
+        params = (like, like, like, like, like)
+        cur.execute(query, params)
+        rows = cur.fetchall()
+        matches = []
+        for row in rows:
+            keys = [column[0] for column in cur.description]
+            record = dict(zip(keys, row))
+            for k in [
+                "rules",
+                "statutes",
+                "benchbook",
+                "constitution",
+                "federal",
+            ]:
+                record[k] = json.loads(record.get(k, "[]"))
+            matches.append(record)
+        return matches
+
 
 def load_manifest(
     manifest_path: Path, db: FormDatabase, forms_dir: Path
@@ -174,6 +203,10 @@ def main() -> None:
     )
     parser.add_argument("--search", help="Find forms matching a keyword")
     parser.add_argument(
+        "--find",
+        help="Find forms referencing a rule or statute",
+    )
+    parser.add_argument(
         "--export",
         help="Export all stored forms to JSON file",
     )
@@ -197,6 +230,12 @@ def main() -> None:
         return
     if args.search:
         results = db.search_forms(args.search)
+        for form in results:
+            print(f"{form['id']}: {form['title']}")
+        return
+
+    if args.find:
+        results = db.find_by_reference(args.find)
         for form in results:
             print(f"{form['id']}: {form['title']}")
         return

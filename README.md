@@ -80,6 +80,12 @@ Search for forms containing a keyword across titles, IDs, and rule references:
 python src/form_db.py --db forms.db --search custody
 ```
 
+Find forms that cite a specific rule or statute:
+
+```bash
+python src/form_db.py --db forms.db --find "MCR 3.207"
+```
+
 Export all forms to a standalone JSON file:
 
 ```bash
