@@ -4,7 +4,6 @@
 import zipfile
 import os
 import json
-from pathlib import Path
 from PyPDF2 import PdfReader
 from PIL import Image
 import pytesseract
@@ -179,6 +178,7 @@ def run_headless(zip_path):
         result = process_next_file()
         if not result:
             break
+        print(f"Processed {result}")
     print("All files processed.")
 
 # === ENTRY POINT === #
