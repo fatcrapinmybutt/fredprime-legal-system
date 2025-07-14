@@ -4,3 +4,4 @@ token.json
 credentials.json
 logs/
 knowledge.db
+data/scao_forms.json

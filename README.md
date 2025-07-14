@@ -69,6 +69,18 @@ Export all forms to a standalone JSON file:
 python src/form_db.py --db forms.db --export all_forms.json
 ```
 
+### Automatically scrape forms
+If internet access is available, run `scao_scraper.py` to download the latest SCAO
+form list and save it locally. Any network errors are caught so the command can
+be executed offline.
+
+```bash
+python src/scao_scraper.py --out data/scao_forms.json
+```
+
+The resulting JSON can be imported with `form_db.py` just like the provided
+manifest.
+
 This loads form metadata from `data/forms_manifest.json` and saves it into a SQLite database.
 
 ## Storage Sync
