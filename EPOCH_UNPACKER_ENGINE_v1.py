@@ -182,13 +182,37 @@ def run_headless(zip_path):
     print("All files processed.")
 
 # === ENTRY POINT === #
-if __name__ == '__main__':
+def parse_args():
     parser = argparse.ArgumentParser(description="EPOCH Unpacker")
-    parser.add_argument('--zip', help='Path to ZIP archive to process')
-    parser.add_argument('--gui', action='store_true', help='Launch graphical interface')
-    args = parser.parse_args()
+    sub = parser.add_subparsers(dest="command")
 
-    if args.gui or not args.zip:
-        run_gui()
-    else:
+    gui_p = sub.add_parser("gui", help="Launch graphical interface")
+    gui_p.add_argument('--dir', default=EXTRACT_DIR, help='Directory for extracted files')
+
+    proc_p = sub.add_parser("process", help="Process ZIP without GUI")
+    proc_p.add_argument('zip', help='Path to ZIP archive to process')
+    proc_p.add_argument('--dir', default=EXTRACT_DIR, help='Directory for extracted files')
+
+    parser.add_argument('--reset', action='store_true', help='Clear cached logs and queue')
+    return parser.parse_args()
+
+
+def reset_logs():
+    for path in [QUEUE_FILE, OCR_LOG, CANON_LOG, EXHIBIT_LOG, PROGRESS_FILE]:
+        if os.path.exists(path):
+            os.remove(path)
+
+
+if __name__ == '__main__':
+    args = parse_args()
+
+    if args.reset:
+        reset_logs()
+
+    if args.command == 'process':
+        EXTRACT_DIR = args.dir
         run_headless(args.zip)
+    else:
+        if args.command == 'gui' and hasattr(args, 'dir'):
+            EXTRACT_DIR = args.dir
+        run_gui()
