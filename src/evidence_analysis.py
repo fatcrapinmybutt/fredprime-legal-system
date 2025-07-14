@@ -6,14 +6,7 @@ from typing import List
 
 from form_db import FormDatabase
 from knowledge_store import KnowledgeStore
-
-
-KEYWORDS_TO_FORMS = {
-    "custody": "FOC-65",
-    "parenting": "FOC-87",
-    "adjourn": "MC-12",
-    "injunctive": "MC-97",
-}
+from constants import KEYWORDS_TO_FORMS
 
 
 def suggest_forms(descriptions: List[str]) -> List[str]:

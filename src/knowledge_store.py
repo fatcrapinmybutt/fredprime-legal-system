@@ -5,6 +5,8 @@ import sqlite3
 from pathlib import Path
 from typing import List
 
+from constants import KEYWORDS_TO_FORMS
+
 
 class KnowledgeStore:
     def __init__(self, db_path: Path):
@@ -34,14 +36,20 @@ class KnowledgeStore:
         )
         self.conn.commit()
 
-    def add_evidence(self, path: Path, description: str = "") -> int:
+    def add_evidence(self, path: Path, description: str = "", auto_link: bool = False) -> int:
         cur = self.conn.cursor()
         cur.execute(
             "INSERT INTO evidence (path, description) VALUES (?, ?)",
             (str(path), description),
         )
         self.conn.commit()
-        return cur.lastrowid
+        evid_id = cur.lastrowid
+        if auto_link and description:
+            lower = description.lower()
+            for word, form_id in KEYWORDS_TO_FORMS.items():
+                if word in lower:
+                    self.link_form(evid_id, form_id)
+        return evid_id
 
     def remove_evidence(self, evid_id: int) -> None:
         cur = self.conn.cursor()
@@ -108,6 +116,11 @@ if __name__ == "__main__":
         help="Optional description for evidence",
     )
     parser.add_argument(
+        "--auto-link",
+        action="store_true",
+        help="Automatically link evidence to forms based on keywords",
+    )
+    parser.add_argument(
         "--link",
         help="Link evidence ID to form ID (format: id:FORM)",
     )
@@ -130,7 +143,7 @@ if __name__ == "__main__":
     ks = KnowledgeStore(Path(args.db))
 
     if args.add_evidence:
-        eid = ks.add_evidence(Path(args.add_evidence), args.desc or "")
+        eid = ks.add_evidence(Path(args.add_evidence), args.desc or "", args.auto_link)
         print(f"Added evidence {eid}")
     elif args.link:
         evid, form = args.link.split(":", 1)

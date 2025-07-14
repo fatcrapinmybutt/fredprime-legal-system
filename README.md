@@ -141,10 +141,12 @@ python src/storage_sync.py --upload example.txt
 
 `knowledge_store.py` maintains a local SQLite database linking evidence to forms. `evidence_analysis.py` scans this store and suggests motions using the cross‑references.
 
-Add evidence and link it to a form:
+Add evidence and link it to a form. Use `--auto-link` to automatically
+associate evidence with common motions based on keywords:
 
 ```bash
-python src/knowledge_store.py --add-evidence path/to/file.txt --desc "Custody dispute text"
+# auto-link evidence descriptions to forms when keywords match
+python src/knowledge_store.py --add-evidence path/to/file.txt --desc "Custody dispute text" --auto-link
 python src/knowledge_store.py --link 1:FOC-65
 python src/knowledge_store.py --add-evidence another.txt --desc "Order" --link 2:MC-12
 ```
