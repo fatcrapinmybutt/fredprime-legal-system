@@ -98,15 +98,20 @@ class FormDatabase:
         return forms
 
     def search_forms(self, keyword: str) -> List[dict]:
+        """Return forms matching the keyword in any field."""
         cur = self.conn.cursor()
         like = f"%{keyword.lower()}%"
-        cur.execute(
-            (
-                "SELECT * FROM forms WHERE LOWER(id) LIKE ? "
-                "OR LOWER(title) LIKE ? ORDER BY id"
-            ),
-            (like, like),
+        query = (
+            "SELECT * FROM forms WHERE LOWER(id) LIKE ? "
+            "OR LOWER(title) LIKE ? "
+            "OR LOWER(rules) LIKE ? "
+            "OR LOWER(statutes) LIKE ? "
+            "OR LOWER(benchbook) LIKE ? "
+            "OR LOWER(constitution) LIKE ? "
+            "OR LOWER(federal) LIKE ? ORDER BY id"
         )
+        params = (like, like, like, like, like, like, like)
+        cur.execute(query, params)
         rows = cur.fetchall()
         results = []
         for row in rows:

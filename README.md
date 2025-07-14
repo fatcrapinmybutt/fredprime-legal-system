@@ -57,7 +57,7 @@ List all stored forms:
 python src/form_db.py --db forms.db --list
 ```
 
-Search for forms containing a keyword:
+Search for forms containing a keyword across titles, IDs, and rule references:
 
 ```bash
 python src/form_db.py --db forms.db --search custody
