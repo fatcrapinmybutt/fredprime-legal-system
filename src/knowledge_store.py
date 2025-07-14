@@ -3,7 +3,7 @@
 import json
 import sqlite3
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 
 class KnowledgeStore:
@@ -43,7 +43,9 @@ class KnowledgeStore:
         self.conn.commit()
         return cur.lastrowid
 
-    def link_form(self, evidence_id: int, form_id: str, note: str = "") -> None:
+    def link_form(
+        self, evidence_id: int, form_id: str, note: str = ""
+    ) -> None:
         cur = self.conn.cursor()
         cur.execute(
             "INSERT INTO links (evidence_id, form_id, note) VALUES (?, ?, ?)",
@@ -54,11 +56,11 @@ class KnowledgeStore:
     def get_links(self) -> List[dict]:
         cur = self.conn.cursor()
         cur.execute(
-            """
-            SELECT evidence.path, evidence.description, links.form_id, links.note
-            FROM links
-            JOIN evidence ON links.evidence_id = evidence.id
-            """
+            (
+                "SELECT evidence.path, evidence.description, "
+                "links.form_id, links.note FROM links "
+                "JOIN evidence ON links.evidence_id = evidence.id"
+            )
         )
         rows = cur.fetchall()
         return [
@@ -75,12 +77,27 @@ class KnowledgeStore:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Manage litigation knowledge store")
+    parser = argparse.ArgumentParser(
+        description="Manage litigation knowledge store"
+    )
     parser.add_argument("--db", default="knowledge.db")
-    parser.add_argument("--add-evidence", help="File path to add as evidence")
-    parser.add_argument("--desc", help="Optional description for evidence")
-    parser.add_argument("--link", help="Link evidence ID to form ID (format: id:FORM)")
-    parser.add_argument("--list", action="store_true", help="List evidence links")
+    parser.add_argument(
+        "--add-evidence",
+        help="File path to add as evidence",
+    )
+    parser.add_argument(
+        "--desc",
+        help="Optional description for evidence",
+    )
+    parser.add_argument(
+        "--link",
+        help="Link evidence ID to form ID (format: id:FORM)",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List evidence links",
+    )
     args = parser.parse_args()
 
     ks = KnowledgeStore(Path(args.db))

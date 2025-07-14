@@ -43,7 +43,8 @@ class FormDatabase:
         cur.execute(
             """
             INSERT OR REPLACE INTO forms (
-                id, title, filename, rules, statutes, benchbook, constitution, federal
+                id, title, filename, rules, statutes,
+                benchbook, constitution, federal
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
@@ -66,7 +67,13 @@ class FormDatabase:
         if row:
             keys = [column[0] for column in cur.description]
             record = dict(zip(keys, row))
-            for k in ["rules", "statutes", "benchbook", "constitution", "federal"]:
+            for k in [
+                "rules",
+                "statutes",
+                "benchbook",
+                "constitution",
+                "federal",
+            ]:
                 record[k] = json.loads(record.get(k, "[]"))
             return record
         return None
@@ -79,7 +86,13 @@ class FormDatabase:
         for row in rows:
             keys = [column[0] for column in cur.description]
             record = dict(zip(keys, row))
-            for k in ["rules", "statutes", "benchbook", "constitution", "federal"]:
+            for k in [
+                "rules",
+                "statutes",
+                "benchbook",
+                "constitution",
+                "federal",
+            ]:
                 record[k] = json.loads(record.get(k, "[]"))
             forms.append(record)
         return forms
@@ -88,7 +101,10 @@ class FormDatabase:
         cur = self.conn.cursor()
         like = f"%{keyword.lower()}%"
         cur.execute(
-            "SELECT * FROM forms WHERE LOWER(id) LIKE ? OR LOWER(title) LIKE ? ORDER BY id",
+            (
+                "SELECT * FROM forms WHERE LOWER(id) LIKE ? "
+                "OR LOWER(title) LIKE ? ORDER BY id"
+            ),
             (like, like),
         )
         rows = cur.fetchall()
@@ -96,13 +112,21 @@ class FormDatabase:
         for row in rows:
             keys = [column[0] for column in cur.description]
             record = dict(zip(keys, row))
-            for k in ["rules", "statutes", "benchbook", "constitution", "federal"]:
+            for k in [
+                "rules",
+                "statutes",
+                "benchbook",
+                "constitution",
+                "federal",
+            ]:
                 record[k] = json.loads(record.get(k, "[]"))
             results.append(record)
         return results
 
 
-def load_manifest(manifest_path: Path, db: FormDatabase, forms_dir: Path) -> None:
+def load_manifest(
+    manifest_path: Path, db: FormDatabase, forms_dir: Path
+) -> None:
     data = json.loads(manifest_path.read_text())
     for entry in data:
         file_path = forms_dir / entry.get("filename", "")
@@ -119,8 +143,14 @@ def load_manifest(manifest_path: Path, db: FormDatabase, forms_dir: Path) -> Non
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Import court forms into a database")
-    parser.add_argument("--db", default="forms.db", help="SQLite database path")
+    parser = argparse.ArgumentParser(
+        description="Import court forms into a database"
+    )
+    parser.add_argument(
+        "--db",
+        default="forms.db",
+        help="SQLite database path",
+    )
     parser.add_argument(
         "--manifest",
         default="data/forms_manifest.json",
@@ -132,7 +162,11 @@ def main() -> None:
         help="Directory containing form files",
     )
     parser.add_argument("--get", help="Lookup a form by ID")
-    parser.add_argument("--list", action="store_true", help="List all stored forms")
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List all stored forms",
+    )
     parser.add_argument("--search", help="Find forms matching a keyword")
     args = parser.parse_args()
 

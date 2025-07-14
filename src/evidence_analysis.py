@@ -27,9 +27,15 @@ def suggest_forms(descriptions: List[str]) -> List[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Suggest motions based on evidence")
+    parser = argparse.ArgumentParser(
+        description="Suggest motions from evidence"
+    )
     parser.add_argument("--db", default="forms.db", help="Form database path")
-    parser.add_argument("--knowledge", default="knowledge.db", help="Knowledge store db")
+    parser.add_argument(
+        "--knowledge",
+        default="knowledge.db",
+        help="Knowledge store database",
+    )
     args = parser.parse_args()
 
     db = FormDatabase(Path(args.db))
