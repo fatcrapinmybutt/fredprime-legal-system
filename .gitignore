@@ -4,3 +4,6 @@ codex.env
 codex.seal
 *.log
 FRED_STAGE2_FULL_DEPLOY.zip
+dist/
+FINAL_BUNDLE/
+usb_deploy_payload.zip
