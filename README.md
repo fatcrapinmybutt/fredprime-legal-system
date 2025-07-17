@@ -24,6 +24,8 @@ Install Python requirements if you plan to use the Google Drive sync tool:
 ```bash
 pip install -r requirements.txt
 ```
+Alternatively, run `python install_deps.py` to install any missing packages automatically.
+
 
 ## EPOCH Unpacker
 Use `EPOCH_UNPACKER_ENGINE_v1.py` to extract zipped case files, perform OCR, and log exhibit details.
