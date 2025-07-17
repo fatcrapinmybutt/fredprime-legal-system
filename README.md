@@ -6,6 +6,7 @@ This repository contains an early prototype of the **FRED PRIME Litigation Deplo
 
 - `firstimport.json` – A short Python script that creates `fredprime_litigation_system.json` describing the FRED PRIME configuration. The resulting JSON file is written to `/mnt/data` when the script is executed.
 - `FRED_Codex_Bootstrap.py` – Downloads the stage two deployment archive from `FRED_STAGE2_URL`, verifies its SHA256 checksum using `FRED_STAGE2_SHA256`, and extracts the archive.
+- `EPOCH_UNPACKER_ENGINE_v1.py` – Extracts ZIP archives, performs OCR, and tags exhibits. Can run with a GUI or in headless mode.
 
 ## Configuration
 
@@ -29,6 +30,11 @@ should be replaced with the intended source.
    python3 FRED_Codex_Bootstrap.py
    ```
    This fetches and extracts the stage two deployment archive referenced by `FRED_STAGE2_URL`.
+6. (Optional) Process evidence ZIPs:
+   ```bash
+   python3 EPOCH_UNPACKER_ENGINE_v1.py gui
+   ```
+   Use `process` instead of `gui` to run without the graphical interface.
 
 ## Build Instructions
 

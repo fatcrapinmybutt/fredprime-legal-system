@@ -8,6 +8,7 @@ import time
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from EPOCH_UNPACKER_ENGINE_v1 import run_gui as unpacker_gui
 
 SCAN_INTERVAL_SECONDS = 1800  # 30 minutes
 F_DRIVE_PATH = "F:/"
@@ -115,4 +116,5 @@ if __name__ == "__main__":
 
     thread = threading.Thread(target=background_loop, daemon=True)
     thread.start()
+    unpacker_gui()
     thread.join()
