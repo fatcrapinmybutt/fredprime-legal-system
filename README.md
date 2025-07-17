@@ -180,3 +180,17 @@ List transcript links:
 python src/knowledge_store.py --list-transcripts
 python src/knowledge_store.py --verify-transcript 1
 ```
+
+## Omega Litigation Launcher
+A lightweight helper script for packaging forms and scanning text files. It
+implements a few demonstration commands but does not perform any real legal
+automation.
+
+```
+python omega_launcher.py gui launcher.py
+python omega_launcher.py bundle claims.zip
+python omega_launcher.py scan ./forms
+python omega_launcher.py canon
+python omega_launcher.py declare statement.txt
+```
+
