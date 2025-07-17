@@ -1,12 +1,15 @@
 import json
+import os
 from pathlib import Path
 
 # Build the full system definition as a JSON object
+repo_path = os.getenv("FREDPRIME_REPO_PATH", "/path/to/repo")
+
 litigation_system_definition = {
     "system": "FRED PRIME Litigation Deployment Engine",
-    "base_path": "F:/GitRepo/fredprime",
-    "output_path": "F:/GitRepo/fredprime/output",
-    "log_path": "F:/GitRepo/fredprime/logs",
+    "base_path": repo_path,
+    "output_path": f"{repo_path}/output",
+    "log_path": f"{repo_path}/logs",
     "config": {
         "exhibit_labeling": True,
         "motion_linking": True,
