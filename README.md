@@ -29,6 +29,14 @@ This repository contains an early prototype of the **FRED PRIME Litigation Deplo
    ```
    Use `process` instead of `gui` to run without the graphical interface.
 
+## Configuration
+
+The helper scripts read a few optional environment variables. In particular,
+`FRED_STAGE2_URL` and `FRED_STAGE2_SHA256` are used by
+`FRED_Codex_Bootstrap.py` to download and verify the stage two archive. You can
+also set `LITIGATION_DATA_DIR` to control where the unpacker writes its logs and
+extracted files.
+
 ## Generating the system JSON
 Run the Python helper to build the litigation system definition. The `-v` flag
 enables informative logging and `-vv` enables debug output:
