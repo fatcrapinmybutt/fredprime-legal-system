@@ -38,6 +38,29 @@ python build_system.py -v
 ```
 Use `--output` to specify a different destination for the JSON file.
 
+## Full-Text Search CLI
+
+A lightweight CLI (`fts_cli.py`) is provided for managing a small SQLite database
+backed by an FTS5 table.
+
+Initialize the database:
+
+```bash
+python fts_cli.py init
+```
+
+Add a new record:
+
+```bash
+python fts_cli.py add "Some description text"
+```
+
+Run a full-text search:
+
+```bash
+python fts_cli.py search "search terms"
+```
+
 ## Build Instructions
 
 There is no build process for this repository. The Python script may be run directly. If you wish to package or modify the deployment engine, edit `build_system.py` and regenerate the JSON file.
