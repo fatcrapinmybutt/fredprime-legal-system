@@ -5,6 +5,7 @@ This repository contains an early prototype of the **FRED PRIME Litigation Deplo
 ## Repository Contents
 
 - `firstimport.json` – A short Python script that creates `fredprime_litigation_system.json` describing the FRED PRIME configuration. The resulting JSON file is written to `/mnt/data` when the script is executed.
+- `FRED_Codex_Bootstrap.py` – Downloads the stage two deployment archive from `FRED_STAGE2_URL`, verifies its SHA256 checksum using `FRED_STAGE2_SHA256`, and extracts the archive.
 
 ## Configuration
 
@@ -23,6 +24,11 @@ should be replaced with the intended source.
    ```
    The script writes `fredprime_litigation_system.json` to `/mnt/data`.
 4. Use the generated JSON with the accompanying PowerShell scripts (not included in this repository) to deploy the litigation engine.
+5. (Optional) Download additional components:
+   ```bash
+   python3 FRED_Codex_Bootstrap.py
+   ```
+   This fetches and extracts the stage two deployment archive referenced by `FRED_STAGE2_URL`.
 
 ## Build Instructions
 
