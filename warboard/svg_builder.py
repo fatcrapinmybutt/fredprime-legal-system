@@ -1,17 +1,27 @@
 import json
 import os
 
-SVG_EXPORT = os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.svg')
+DEFAULT_SVG_EXPORT = os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.svg')
 TIMELINE_FILE = os.path.join('data', 'timeline.json')
 
 
-def generate_svg_warboard():
-    if not os.path.exists(TIMELINE_FILE):
-        print('Timeline file not found; cannot build SVG warboard.')
-        return
+def generate_svg_warboard(events=None, svg_path=DEFAULT_SVG_EXPORT):
+    """Create an SVG timeline from events.
 
-    with open(TIMELINE_FILE, 'r') as f:
-        events = json.load(f)
+    Parameters
+    ----------
+    events : list[dict] | None
+        List of events with ``date`` and ``description`` keys. When ``None``,
+        events are loaded from ``TIMELINE_FILE``.
+    svg_path : str
+        Destination path for the SVG file.
+    """
+    if events is None:
+        if not os.path.exists(TIMELINE_FILE):
+            print('Timeline file not found; cannot build SVG warboard.')
+            return
+        with open(TIMELINE_FILE, 'r') as f:
+            events = json.load(f)
 
     width = 2000
     height = 600
@@ -34,10 +44,10 @@ def generate_svg_warboard():
 
     svg_lines.append('</svg>')
 
-    os.makedirs(os.path.dirname(SVG_EXPORT), exist_ok=True)
-    with open(SVG_EXPORT, 'w') as f:
+    os.makedirs(os.path.dirname(svg_path), exist_ok=True)
+    with open(svg_path, 'w') as f:
         f.write('\n'.join(svg_lines))
-    print(f'SVG warboard saved to {SVG_EXPORT}')
+    print(f'SVG warboard saved to {svg_path}')
 
 
 if __name__ == '__main__':
