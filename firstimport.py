@@ -36,16 +36,17 @@ MODULES = {
 DEPENDENCIES = ["PowerShell 5+", "Git (if pushing back)", "Windows OS"]
 EXEC_COMMAND = "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1"
 
-# === FUNCTIONS ===
-
 def safe_mkdir(path: Path):
+    """Create a directory if it doesn't exist."""
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
 def sha256_obj(obj):
+    """Hash a Python object for provenance."""
     return hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()
 
 def validate_paths(paths):
+    """Check if critical paths exist."""
     missing = []
     for p in paths:
         if not p.exists():
@@ -57,7 +58,6 @@ def build_systemdef():
     safe_mkdir(OUTPUT_PATH)
     safe_mkdir(LOG_PATH)
 
-    # Core object
     litigation_system_definition = {
         "system": SYSTEM_NAME,
         "version": VERSION,
@@ -75,7 +75,7 @@ def build_systemdef():
         "dependencies": DEPENDENCIES,
     }
 
-    # Validation
+    # Validation block
     critical_paths = [BASE_PATH, OUTPUT_PATH, LOG_PATH]
     missing_paths = validate_paths(critical_paths)
     validation = {
@@ -84,10 +84,10 @@ def build_systemdef():
     }
     litigation_system_definition["validation"] = validation
 
-    # Hash for evidence/provenance
+    # Add a hash for provenance
     litigation_system_definition["config_hash"] = sha256_obj(litigation_system_definition)
 
-    # Metadata/audit
+    # Audit metadata
     litigation_system_definition["audit"] = {
         "generator": "systemdef_builder.py",
         "timestamp": datetime.now().isoformat(),

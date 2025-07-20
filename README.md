@@ -39,6 +39,7 @@ PATCH_DIR = "patches/"
 PATCH_MANIFEST = "patch_manifest.json"
 PATCH_HISTORY = "patch_history.json"
 ERROR_LOG = "logs/codex_errors.log"
+
 os.makedirs("logs", exist_ok=True)
 logging.basicConfig(filename=ERROR_LOG, level=logging.ERROR)
 
@@ -49,7 +50,12 @@ HELP_TOPICS = {
 }
 
 RED_FLAGS = [
-    "no citation", "missing Benchbook", "incomplete motion", "unsigned", "date missing", "no legal_function"
+    "no citation",
+    "missing Benchbook",
+    "incomplete motion",
+    "unsigned",
+    "date missing",
+    "no legal_function",
 ]
 
 def classify_legal_function(filepath):
@@ -64,7 +70,7 @@ def classify_legal_function(filepath):
 
 def validate_file(filepath):
     try:
-        with open(filepath, 'r', errors='ignore') as f:
+        with open(filepath, "r", errors="ignore") as f:
             content = f.read()
             return any(x in content for x in ["MCR", "Benchbook", "MCL"])
     except Exception:
@@ -81,7 +87,7 @@ def get_metadata(filepath):
             "timestamp": time.ctime(stat.st_mtime),
             "source": "absorption_engine",
             "legal_function": legal_function,
-            "validated": validated
+            "validated": validated,
         }
     except Exception as e:
         logging.error(f"Metadata error for {filepath}: {e}")
@@ -129,16 +135,19 @@ def apply_patch(patch_path, target_file):
 
 def log_patch(patch, target, backup, status):
     entry = {
-        "patch": patch, "target": target, "backup": backup,
-        "status": status, "timestamp": datetime.datetime.now().isoformat()
+        "patch": patch,
+        "target": target,
+        "backup": backup,
+        "status": status,
+        "timestamp": datetime.datetime.now().isoformat(),
     }
     if os.path.exists(PATCH_HISTORY):
-        with open(PATCH_HISTORY, 'r') as f:
+        with open(PATCH_HISTORY, "r") as f:
             history = json.load(f)
     else:
         history = []
     history.append(entry)
-    with open(PATCH_HISTORY, 'w') as f:
+    with open(PATCH_HISTORY, "w") as f:
         json.dump(history, f, indent=2)
 
 def run_patch_manager():
@@ -168,7 +177,7 @@ def scan_manifest_for_red_flags():
     for path, meta in manifest.items():
         meta_str = json.dumps(meta).lower()
         for flag in RED_FLAGS:
-            if flag in meta_str or not meta.get('legal_function'):
+            if flag in meta_str or not meta.get("legal_function"):
                 flagged[path] = flag
     if flagged:
         with open("red_flag_report.json", "w") as out:
@@ -199,14 +208,14 @@ def generate_foia_request():
 
 def export_codex_data():
     files = {
-        'manifest': MANIFEST_FILE,
-        'timeline': 'timeline.json',
-        'config': 'codex_config.yaml'
+        "manifest": MANIFEST_FILE,
+        "timeline": "timeline.json",
+        "config": "codex_config.yaml",
     }
     export_path = filedialog.asksaveasfilename(defaultextension=".zip")
     if export_path:
         import zipfile
-        with zipfile.ZipFile(export_path, 'w') as z:
+        with zipfile.ZipFile(export_path, "w") as z:
             for label, f in files.items():
                 if os.path.exists(f):
                     z.write(f)
@@ -214,10 +223,10 @@ def export_codex_data():
 
 def import_codex_data():
     import zipfile
-    file_path = filedialog.askopenfilename(filetypes=[('ZIP Files', '*.zip')])
+    file_path = filedialog.askopenfilename(filetypes=[("ZIP Files", "*.zip")])
     if file_path:
-        with zipfile.ZipFile(file_path, 'r') as z:
-            z.extractall('.')
+        with zipfile.ZipFile(file_path, "r") as z:
+            z.extractall(".")
         show("Import Complete", f"Imported: {file_path}", error=False)
 
 def show_help(context):
@@ -241,7 +250,7 @@ def simulate_judicial_response():
 
 def get_status_log():
     try:
-        with open(ERROR_LOG, 'r') as f:
+        with open(ERROR_LOG, "r") as f:
             return f.read()[-5000:]
     except Exception:
         return "No system errors logged."
@@ -321,10 +330,18 @@ def generate_systemdef(manifest, out_path):
         "files_indexed": len(manifest),
         "manifest_ref": out_path,
         "components": [
-            "evidence_scan", "timeline_builder", "warboard", "motions", "federal_complaint",
-            "patch_manager", "gui", "foia_generator", "contradiction_matrix", "entity_trace"
+            "evidence_scan",
+            "timeline_builder",
+            "warboard",
+            "motions",
+            "federal_complaint",
+            "patch_manager",
+            "gui",
+            "foia_generator",
+            "contradiction_matrix",
+            "entity_trace",
         ],
-        "note": "This file is machine-generated. Always verify contents before court use."
+        "note": "This file is machine-generated. Always verify contents before court use.",
     }
     systemdef_path = os.path.join(os.path.dirname(out_path), "fredprime_litigation_system.json")
     with open(systemdef_path, "w") as sysf:
