@@ -1,19 +1,34 @@
 import json
+import hashlib
 from pathlib import Path
+from datetime import datetime
 
-# Build the full system definition as a JSON object
+# Core settings
+BASE_PATH = Path.cwd()
+OUTPUT_PATH = BASE_PATH / "output"
+LOG_PATH = BASE_PATH / "logs"
+JSON_PATH = Path("/mnt/data/fredprime_litigation_system.json")
+VERSION = "v2025.07.20"
+
+# Ensure core directories exist
+OUTPUT_PATH.mkdir(exist_ok=True)
+LOG_PATH.mkdir(exist_ok=True)
+
+# System definition
 litigation_system_definition = {
     "system": "FRED PRIME Litigation Deployment Engine",
-    "base_path": str(Path.cwd()),
-    "output_path": str(Path.cwd() / "output"),
-    "log_path": str(Path.cwd() / "logs"),
+    "version": VERSION,
+    "generated": datetime.now().isoformat(),
+    "base_path": str(BASE_PATH),
+    "output_path": str(OUTPUT_PATH),
+    "log_path": str(LOG_PATH),
     "config": {
         "exhibit_labeling": True,
         "motion_linking": True,
         "signature_validation": True,
         "judicial_audit": True,
         "parenting_time_matrix": True,
-        "conspiracy_tracker": True
+        "conspiracy_tracker": True,
     },
     "modules": {
         "exhibit_labeler": "Renames evidence files A–Z and builds Exhibit_Index.md",
@@ -21,17 +36,26 @@ litigation_system_definition = {
         "signature_validator": "Checks for MCR 1.109(D)(3) compliance",
         "judicial_conduct_tracker": "Builds Exhibit U with judge behavior patterns",
         "appclose_matrix": "Parses AppClose logs to generate Exhibit Y (violations matrix)",
-        "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S"
+        "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S",
     },
     "execution_command": "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1",
     "offline_capable": True,
     "token_usage": "Zero (local execution only)",
-    "dependencies": ["PowerShell 5+", "Git (if pushing back)", "Windows OS"]
+    "dependencies": ["PowerShell 5+", "Git (if pushing back)", "Windows OS"],
 }
 
-# Save this system definition as a JSON file
-json_path = Path("/mnt/data/fredprime_litigation_system.json")
-json_path.write_text(json.dumps(litigation_system_definition, indent=4))
+# Add a hash for audit/chain of custody
+litigation_system_definition["config_hash"] = hashlib.sha256(
+    json.dumps(litigation_system_definition, sort_keys=True).encode()
+).hexdigest()
 
-# Return file name for download
-json_path.name
+try:
+    # Save as JSON
+    JSON_PATH.write_text(json.dumps(litigation_system_definition, indent=4))
+    print(f"✅ Wrote system definition: {JSON_PATH}")
+    print(f"SHA-256: {litigation_system_definition['config_hash']}")
+except Exception as e:
+    print(f"❌ Error writing system definition: {e}")
+
+# Return file name for download (for compatibility with some systems)
+JSON_PATH.name
