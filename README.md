@@ -1,5 +1,6 @@
 # FRED Prime Litigation System
 
+Note: this project is a simplified prototype. It does not provide a full litigation operating system. Use it only as a starting point and verify all outputs manually.
 This repository contains scripts for building a local litigation toolkit. The latest additions include a **Warboard Visualizer** that assembles a timeline of events and contradictions into DOCX and SVG maps. The generator can upload results to Google Drive when a `token.json` credential file is present.
 
 ## Components
@@ -35,3 +36,17 @@ To bundle all warboard outputs into a single ZIP archive run:
 ```bash
 python -m warboard.warboard_matrix_export
 ```
+
+## Scanning local drives
+
+The repository now includes a simple scanner that can index `.docx`, `.txt`, and `.pdf` files from local drives (default `F:/` and `D:/`). The results are saved to `data/scan_index.json`. A timeline can then be built from this index:
+
+```bash
+python -m scanner.scan_engine
+python -m timeline.builder
+```
+
+Edit the drive letters in `scanner/scan_engine.py` if your environment uses different paths.
+
+The warboard engine reads `data/timeline.json`, so running the scanner and timeline builder before generating the warboard will populate the SVG and DOCX with real events.
+

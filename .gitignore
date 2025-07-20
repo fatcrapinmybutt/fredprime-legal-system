@@ -1,3 +1,4 @@
 token.json
 __pycache__/
 warboard/exports/
+data/scan_index.json
