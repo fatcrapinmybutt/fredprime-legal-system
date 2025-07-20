@@ -6,6 +6,9 @@ from datetime import datetime
 results to Google Drive. Can be executed as a module or script."""
 
 # Import using an absolute path so execution as a script works as well
+from scanner.scan_engine import run_scan
+from timeline.builder import build_timeline
+from contradictions.contradiction_matrix import detect_contradictions
 from warboard.svg_builder import generate_svg_warboard
 from warboard.svg_motion_binder import bind_motion_links
 from gdrive_sync import upload_to_drive
@@ -47,7 +50,10 @@ def build_warboard_docx():
 
 
 def deploy_supra_warboard():
-    """Run full warboard generation and optional upload."""
+    """Run full scan, timeline generation, warboard build, and optional upload."""
+    run_scan()
+    build_timeline()
+    detect_contradictions()
     build_warboard_docx()
     generate_svg_warboard(svg_path=SVG_EXPORT)
     bind_motion_links(svg_path=SVG_EXPORT)

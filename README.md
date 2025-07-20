@@ -11,6 +11,12 @@ This repository contains scripts for building a local litigation toolkit. The la
 - `warboard/svg_builder.py` – SVG helper used by all warboards
 - `gdrive_sync.py` – optional helper for uploading generated files to Google Drive (requires `token.json`)
 - `warboard/warboard_matrix_export.py` – bundle all warboard outputs into a ZIP archive
+- `foia/autopacker.py` – create basic FOIA request documents and ZIP them
+- `press/press_draft_engine.py` – generate a press-summary document
+- `motions/protective_order.py` – build a sample protective order motion
+- `gui/modules/entity_suppression_feed.py` – track filings that were rejected
+- `judge_sim_ladas_hoopes_v1.py` – example outcome predictor
+- `contradictions/contradiction_matrix.py` – create a simple contradiction log
 - `requirements.txt` – minimal Python dependencies
 - `entity_trace/ai_entity_review.py` – generate a sample entity overlap report
 - `violations/misconduct_letter.py` – create a judicial misconduct letter
@@ -81,5 +87,24 @@ Build a simple court calendar from the timeline:
 
 ```bash
 python -m scheduling.scheduler
+```
+
+Create FOIA request packet and press summary:
+
+```bash
+python -m foia.autopacker
+python -m press.press_draft_engine
+```
+
+Generate a protective order motion:
+
+```bash
+python -m motions.protective_order
+```
+
+Run the contradiction detector:
+
+```bash
+python -m contradictions.contradiction_matrix
 ```
 
