@@ -4,3 +4,17 @@
 [TrueFiling_User_Guide.pdf](https://github.com/user-attachments/files/21210318/TrueFiling_User_Guide.pdf)
 [fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip](https://github.com/user-attachments/files/21210319/fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip)
 [FRED_PRIME_LITIGATION_ENGINE.zip](https://github.com/user-attachments/files/21210321/FRED_PRIME_LITIGATION_ENGINE.zip)
+
+## Usage
+
+Generate a manifest of the current directory:
+
+```bash
+python cli/generate_manifest.py
+```
+
+Use `-o` to specify the output file path:
+
+```bash
+python cli/generate_manifest.py -o path/to/manifest.json
+```
