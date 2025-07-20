@@ -42,11 +42,11 @@ python -m warboard.warboard_matrix_export
 The repository now includes a simple scanner that can index `.docx`, `.txt`, and `.pdf` files from local drives (default `F:/` and `D:/`). The results are saved to `data/scan_index.json`. A timeline can then be built from this index:
 
 ```bash
-python -m scanner.scan_engine
+python -m scanner.scan_engine F:/ D:/
 python -m timeline.builder
 ```
 
-Edit the drive letters in `scanner/scan_engine.py` if your environment uses different paths.
+Pass one or more drive letters (or directories) to `scanner.scan_engine` to override the defaults.
 
 The warboard engine reads `data/timeline.json`, so running the scanner and timeline builder before generating the warboard will populate the SVG and DOCX with real events.
 

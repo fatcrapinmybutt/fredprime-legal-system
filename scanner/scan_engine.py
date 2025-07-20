@@ -18,12 +18,18 @@ def scan_directory(root_dir: str, index: dict) -> None:
 
 
 def run_scan(drives=None, output: str = DEFAULT_OUTPUT) -> None:
+    """Scan the provided drives and write an index of legal files."""
+
     if drives is None:
         drives = ['F:/', 'D:/']
+
     index = {}
     for drive in drives:
         if os.path.exists(drive):
             scan_directory(drive, index)
+        else:
+            print(f'Skip missing drive: {drive}')
+
     os.makedirs(os.path.dirname(output), exist_ok=True)
     with open(output, 'w') as f:
         json.dump(index, f, indent=2)
@@ -31,4 +37,6 @@ def run_scan(drives=None, output: str = DEFAULT_OUTPUT) -> None:
 
 
 if __name__ == '__main__':
-    run_scan()
+    import sys
+    drives = sys.argv[1:] or None
+    run_scan(drives)
