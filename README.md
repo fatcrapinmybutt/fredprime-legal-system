@@ -23,6 +23,8 @@ This repository contains scripts for building a local litigation toolkit. The la
 - `federal/complaint_generator.py` – draft a placeholder federal complaint
 - `motions/emergency_injunction.py` – build an emergency injunction motion
 - `scheduling/scheduler.py` – export a court calendar and ICS file
+- `firstimport.py` – generate `fredprime_litigation_system.json`
+- `codex_patch_manager.py` – apply hotfix patches listed in `patch_manifest.json`
 
 Run the GUI with:
 ```bash
