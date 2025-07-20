@@ -1,130 +1,251 @@
-# FRED Prime Litigation System
+# codex_supreme_os.py
 
-Note: this project is a simplified prototype. It does not provide a full litigation operating system. Use it only as a starting point and verify all outputs manually.
-This repository contains scripts for building a local litigation toolkit. The latest additions include a **Warboard Visualizer** that assembles a timeline of events and contradictions into DOCX and SVG maps. The generator can upload results to Google Drive when a `token.json` credential file is present.
+import os, json, hashlib, time, logging, tkinter as tk, datetime, importlib.util, shutil
+from tkinter import messagebox, filedialog
 
-## Components
-- `gui/frontend.py` – Tkinter GUI with tabs for multiple warboards
-- `warboard/warboard_engine.py` – builds `SHADY_OAKS_WARBOARD` exports
-- `warboard/ppo_warboard.py` – constructs the PPO timeline
-- `warboard/custody_interference_engine.py` – maps custody interference events
-- `warboard/svg_builder.py` – SVG helper used by all warboards
-- `gdrive_sync.py` – optional helper for uploading generated files to Google Drive (requires `token.json`)
-- `warboard/warboard_matrix_export.py` – bundle all warboard outputs into a ZIP archive
-- `foia/autopacker.py` – create basic FOIA request documents and ZIP them
-- `press/press_draft_engine.py` – generate a press-summary document
-- `motions/protective_order.py` – build a sample protective order motion
-- `gui/modules/entity_suppression_feed.py` – track filings that were rejected
-- `judge_sim_ladas_hoopes_v1.py` – example outcome predictor
-- `contradictions/contradiction_matrix.py` – create a simple contradiction log
-- `requirements.txt` – minimal Python dependencies
-- `entity_trace/ai_entity_review.py` – generate a sample entity overlap report
-- `violations/misconduct_letter.py` – create a judicial misconduct letter
-- `federal/complaint_generator.py` – draft a placeholder federal complaint
-- `motions/emergency_injunction.py` – build an emergency injunction motion
-- `scheduling/scheduler.py` – export a court calendar and ICS file
-- `firstimport.py` – generate `fredprime_litigation_system.json`
-- `codex_patch_manager.py` – apply hotfix patches listed in `patch_manifest.json`
+### CONFIG ###
+TARGET_DIRS = ["F:/", "D:/"]
+EXTENSIONS = [".py", ".json", ".txt", ".docx"]
+MANIFEST_FILE = "codex_manifest.json"
+PATCH_DIR = "patches/"
+PATCH_MANIFEST = "patch_manifest.json"
+PATCH_HISTORY = "patch_history.json"
+ERROR_LOG = "logs/codex_errors.log"
 
-Run the GUI with:
-```bash
-python gui/frontend.py
-```
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(filename=ERROR_LOG, level=logging.ERROR)
 
-To generate the warboard without the GUI run:
+### CLASSIFIERS & HELP ###
+HELP_TOPICS = {
+    "motion": "MCR 2.119 governs motions. Benchbook, Motions section details formal requirements. Ensure all mandatory elements (caption, relief, signature) are present.",
+    "affidavit": "MCR 2.119(B) details affidavits: must be signed, state facts, and have a notary if required.",
+    "canon": "Canon violations should be documented with factual detail and referenced to the Michigan Judicial Conduct Canon text.",
+}
 
-```bash
-python -m warboard.warboard_engine
-```
+def classify_legal_function(filepath):
+    lower = filepath.lower()
+    if "motion" in lower:
+        return "motion (MCR 2.119)"
+    if "affidavit" in lower:
+        return "affidavit (MCR 2.119(B))"
+    if "order" in lower:
+        return "court order"
+    return "uncategorized"
 
-Additional warboards can be built with:
+def validate_file(filepath):
+    try:
+        with open(filepath, 'r', errors='ignore') as f:
+            content = f.read()
+            return any(x in content for x in ["MCR", "Benchbook", "MCL"])
+    except Exception:
+        return False
 
-```bash
-python -m warboard.ppo_warboard
-python -m warboard.custody_interference_engine
-```
+def get_metadata(filepath):
+    try:
+        stat = os.stat(filepath)
+        sha256 = hashlib.sha256(open(filepath, "rb").read()).hexdigest()
+        legal_function = classify_legal_function(filepath)
+        validated = validate_file(filepath)
+        return {
+            "sha256": sha256,
+            "timestamp": time.ctime(stat.st_mtime),
+            "source": "absorption_engine",
+            "legal_function": legal_function,
+            "validated": validated
+        }
+    except Exception as e:
+        logging.error(f"Metadata error for {filepath}: {e}")
+        return {}
 
-To bundle all warboard outputs into a single ZIP archive run:
+### MANIFEST ABSORPTION ###
+def scan_drives():
+    manifest = {}
+    for root_dir in TARGET_DIRS:
+        for subdir, _, files in os.walk(root_dir):
+            for file in files:
+                if any(file.endswith(ext) for ext in EXTENSIONS):
+                    filepath = os.path.join(subdir, file)
+                    manifest[filepath] = get_metadata(filepath)
+    try:
+        with open(MANIFEST_FILE, "w") as out:
+            json.dump(manifest, out, indent=2)
+        messagebox.showinfo("Scan Complete", f"Absorption complete. {len(manifest)} files processed.")
+    except Exception as e:
+        logging.error(f"Failed to write manifest: {e}")
+        messagebox.showerror("Scan Failed", f"Failed to write manifest: {e}")
 
-```bash
-python -m warboard.warboard_matrix_export
-```
+### PATCH MANAGER ###
+def backup_file(filepath):
+    bak_name = f"{filepath}.{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.bak"
+    shutil.copy2(filepath, bak_name)
+    return bak_name
 
-## Scanning local drives
+def apply_patch(patch_path, target_file):
+    bak = backup_file(target_file)
+    try:
+        spec = importlib.util.spec_from_file_location("patch_module", patch_path)
+        patch_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(patch_module)
+        log_patch(patch_path, target_file, bak, "success")
+    except Exception as e:
+        logging.error(f"Patch failed for {patch_path} on {target_file}: {e}")
+        shutil.copy2(bak, target_file)
+        log_patch(patch_path, target_file, bak, "rollback")
+        print(f"Rolled back patch {patch_path}")
 
-The repository now includes a simple scanner that can index `.docx`, `.txt`, and `.pdf` files from local drives. By default it scans the Windows-style drives `F:/` and `D:/` if they exist. You can set the environment variable `SCAN_DRIVES` to a list of paths separated by your OS path separator to override the defaults. The results are saved to `data/scan_index.json`. A timeline can then be built from this index:
+def log_patch(patch, target, backup, status):
+    entry = {
+        "patch": patch, "target": target, "backup": backup,
+        "status": status, "timestamp": datetime.datetime.now().isoformat()
+    }
+    if os.path.exists(PATCH_HISTORY):
+        with open(PATCH_HISTORY, 'r') as f:
+            history = json.load(f)
+    else:
+        history = []
+    history.append(entry)
+    with open(PATCH_HISTORY, 'w') as f:
+        json.dump(history, f, indent=2)
 
-```bash
-# example overriding drives on Linux
-SCAN_DRIVES="/mnt/data1:/mnt/data2" python -m scanner.scan_engine
-python -m timeline.builder
-```
+def run_patch_manager():
+    if not os.path.exists(PATCH_DIR):
+        messagebox.showwarning("Patch Manager", "No patches found.")
+        return
+    if not os.path.exists(PATCH_MANIFEST):
+        messagebox.showwarning("Patch Manager", "Patch manifest not found.")
+        return
+    with open(PATCH_MANIFEST) as f:
+        manifest = json.load(f)
+    for patch_file in os.listdir(PATCH_DIR):
+        if patch_file.endswith(".py"):
+            patch_path = os.path.join(PATCH_DIR, patch_file)
+            target = manifest.get(patch_file, {}).get("target", None)
+            if target and os.path.exists(target):
+                apply_patch(patch_path, target)
+            else:
+                logging.error(f"No valid target for patch: {patch_file}")
 
-You can also pass one or more paths as arguments to `scanner.scan_engine`.
+### RED FLAG COMPLIANCE ###
+RED_FLAGS = [
+    "no citation", "missing Benchbook", "incomplete motion", "unsigned", "date missing", "no legal_function"
+]
+def scan_manifest_for_red_flags():
+    flagged = {}
+    if not os.path.exists(MANIFEST_FILE):
+        return flagged
+    with open(MANIFEST_FILE) as f:
+        manifest = json.load(f)
+    for path, meta in manifest.items():
+        meta_str = json.dumps(meta).lower()
+        for flag in RED_FLAGS:
+            if flag in meta_str or not meta.get('legal_function'):
+                flagged[path] = flag
+    if flagged:
+        with open("red_flag_report.json", "w") as out:
+            json.dump(flagged, out, indent=2)
+    return flagged
 
-The warboard engine reads `data/timeline.json`, so running the scanner and timeline builder before generating the warboard will populate the SVG and DOCX with real events.
+### FOIA/DISCOVERY GENERATOR ###
+def generate_foia_request():
+    if not os.path.exists(MANIFEST_FILE):
+        messagebox.showerror("FOIA Generator", "Manifest not found!")
+        return
+    with open(MANIFEST_FILE) as f:
+        manifest = json.load(f)
+    missing = [k for k, v in manifest.items() if not v.get("validated")]
+    body = (
+        f"Date: {datetime.date.today()}\n\n"
+        "To Whom It May Concern:\n\n"
+        "This is a formal FOIA/Discovery request for production of documents or evidence not yet produced "
+        "as required by law. The following files or evidence appear absent or unverified in your records:\n\n"
+    )
+    body += "\n".join(missing)
+    body += (
+        "\n\nPlease provide these documents or a statement of nonexistence under penalty of perjury within "
+        "the statutory response window. Thank you.\n\nSincerely,\n[Your Name]"
+    )
+    with open("FOIA_discovery_request.txt", "w") as f:
+        f.write(body)
+    messagebox.showinfo("FOIA Generator", "FOIA/discovery request generated.")
 
-## Other helpers
+### EXPORT/IMPORT ###
+def export_codex_data():
+    files = {
+        'manifest': MANIFEST_FILE,
+        'timeline': 'timeline.json',
+        'config': 'codex_config.yaml'
+    }
+    export_path = filedialog.asksaveasfilename(defaultextension=".zip")
+    if export_path:
+        import zipfile
+        with zipfile.ZipFile(export_path, 'w') as z:
+            for label, f in files.items():
+                if os.path.exists(f):
+                    z.write(f)
+        messagebox.showinfo("Export Complete", f"Exported: {export_path}")
 
-Generate the entity overlap report:
+def import_codex_data():
+    import zipfile
+    file_path = filedialog.askopenfilename(filetypes=[('ZIP Files', '*.zip')])
+    if file_path:
+        with zipfile.ZipFile(file_path, 'r') as z:
+            z.extractall('.')
+        messagebox.showinfo("Import Complete", f"Imported: {file_path}")
 
-```bash
-python -m entity_trace.ai_entity_review
-```
+### CONTEXTUAL HELP ###
+def show_help(context):
+    msg = HELP_TOPICS.get(context.lower(), "No help available for this context.")
+    messagebox.showinfo("Contextual Help", msg)
 
-Create the judicial misconduct letter:
+### JUDICIAL LOGIC SIM ###
+def simulate_judicial_response():
+    action = tk.simpledialog.askstring("Simulate Judicial Response", "Describe action/context:")
+    if not action:
+        return
+    context = action.lower()
+    if "ex parte" in context:
+        msg = "Warning: Ex parte relief often triggers heightened judicial scrutiny. If opposed, expect a prompt hearing."
+    elif "canon violation" in context:
+        msg = "A well-documented Canon violation may trigger recusal or misconduct review. Be sure to cite all supporting facts."
+    elif "motion to dismiss" in context:
+        msg = "Court may grant only if no genuine issue of material fact exists. Ensure record completeness."
+    else:
+        msg = "No simulation logic for this action/context."
+    messagebox.showinfo("Judicial Logic Simulation", msg)
 
-```bash
-python -m violations.misconduct_letter
-```
+### GUI ###
+def get_status_log():
+    try:
+        with open(ERROR_LOG, 'r') as f:
+            return f.read()[-5000:]
+    except Exception:
+        return "No system errors logged."
 
-Draft the federal complaint and emergency injunction motion:
+def launch_gui():
+    window = tk.Tk()
+    window.title("MBP Litigation OS - Codex Supreme (All-in-One)")
+    window.geometry("1000x750")
+    status_log = tk.Text(window, height=18, width=120)
+    status_log.pack(pady=8)
+    def update_status():
+        status_log.delete("1.0", tk.END)
+        status_log.insert(tk.END, get_status_log())
+        window.after(4000, update_status)
+    update_status()
+    tk.Label(window, text="MBP Litigation OS", font=("Helvetica", 18, "bold")).pack(pady=8)
+    tk.Button(window, text="Scan F:/ + D:/", command=scan_drives, width=35).pack(pady=3)
+    tk.Button(window, text="Run Patch Manager", command=run_patch_manager, width=35).pack(pady=3)
+    tk.Button(window, text="Run Compliance Scan", command=scan_manifest_for_red_flags, width=35).pack(pady=3)
+    tk.Button(window, text="Generate FOIA/Discovery Request", command=generate_foia_request, width=35).pack(pady=3)
+    tk.Button(window, text="Export Data", command=export_codex_data, width=25).pack(pady=2)
+    tk.Button(window, text="Import Data", command=import_codex_data, width=25).pack(pady=2)
+    tk.Button(window, text="Help: Motions", command=lambda: show_help("motion"), width=20).pack(pady=1)
+    tk.Button(window, text="Help: Affidavits", command=lambda: show_help("affidavit"), width=20).pack(pady=1)
+    tk.Button(window, text="Help: Canons", command=lambda: show_help("canon"), width=20).pack(pady=1)
+    tk.Button(window, text="Simulate Judicial Response", command=simulate_judicial_response, width=35).pack(pady=3)
+    tk.Label(window, text="Version: FINAL", font=("Helvetica", 10)).pack(side="bottom", pady=10)
+    window.mainloop()
 
-```bash
-python -m federal.complaint_generator
-python -m motions.emergency_injunction
-```
-
-Build a simple court calendar from the timeline:
-
-```bash
-python -m scheduling.scheduler
-```
-
-Create FOIA request packet and press summary:
-
-```bash
-python -m foia.autopacker
-python -m press.press_draft_engine
-```
-
-Generate a protective order motion:
-
-```bash
-python -m motions.protective_order
-```
-
-Run the contradiction detector:
-
-```bash
-python -m contradictions.contradiction_matrix
-```
-
-
-Additional helper scripts added in this release:
-
-- `timeline/fusion_engine.py` – merge manual post-writ events with the scan-based timeline and create a simple SVG overview.
-- `mifile/stack_dispatcher.py` – package key motions into a MiFile-ready ZIP bundle.
-- `foia/video_request_builder.py` – generate a FOIA request for sheriff bodycam footage.
-- `notices/notice_of_claim.py` – create a basic notice of claim under 42 USC §1983.
-- `binder/tab_forger.py` – build a Binder Tab C document listing post-writ exhibits.
-
-Example usage:
-
-```bash
-python -m timeline.fusion_engine
-python -m mifile.stack_dispatcher
-python -m foia.video_request_builder
-python -m notices.notice_of_claim
-python -m binder.tab_forger
-```
+### MAIN ###
+if __name__ == '__main__':
+    launch_gui()
