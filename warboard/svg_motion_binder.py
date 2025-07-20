@@ -3,7 +3,7 @@ import os
 
 DEFAULT_SVG_EXPORT = os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.svg')
 TIMELINE_FILE = os.path.join('data', 'timeline.json')
-MOTION_DIR = os.path.join('F:', os.sep, 'LegalResults', 'motions')
+MOTION_DIR = os.path.join('F:/LegalResults', 'motions')
 
 
 def bind_motion_links(svg_path=DEFAULT_SVG_EXPORT):
