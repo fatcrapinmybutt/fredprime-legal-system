@@ -1,2 +1,65 @@
+# === CODENAME: SUPREME LITIGATION OS IGNORE ===
+# Core Python ignores
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Token, credentials, and secret config
+token.json
+*.token
+*.secret
+.env
+.env.*
+
+# System and warboard caches
+*.db
+*.sqlite3
+warboard/exports/
+data/scan_index.json
+data/cache/
+logs/
+*.log
+
+# Manifest and ephemeral scan output
+codex_manifest.json
+patch_manifest.json
+patch_history.json
+red_flag_report.json
+timeline.json
+FOIA_discovery_request.txt
+
+# Test and temp
+*.bak
+*.tmp
+*.swp
+/tests/
+.DS_Store
+Thumbs.db
+
+# Output/Build directories (exclude for source, include in deploy ZIPs only)
+dist/
+build/
+output/
+*.zip
+*.tar
+*.tar.gz
+
+# IDE/editor/project config (if shared repo)
+.vscode/
+.idea/
+*.iml
+
+# Exclude field device/machine personalization
+*.local
+*.bak
+*.cfg
+.settings/
+user_settings.json
+
+# OS/desktop noise
+ehthumbs.db
+desktop.ini
+
+# === END LITIGATION OS IGNORE LIST ===
+
