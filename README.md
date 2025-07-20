@@ -9,6 +9,7 @@ This repository contains scripts for building a local litigation toolkit. The la
 - `warboard/custody_interference_engine.py` – maps custody interference events
 - `warboard/svg_builder.py` – SVG helper used by all warboards
 - `gdrive_sync.py` – optional helper for uploading generated files to Google Drive (requires `token.json`)
+- `warboard/warboard_matrix_export.py` – bundle all warboard outputs into a ZIP archive
 - `requirements.txt` – minimal Python dependencies
 
 Run the GUI with:
@@ -27,4 +28,10 @@ Additional warboards can be built with:
 ```bash
 python -m warboard.ppo_warboard
 python -m warboard.custody_interference_engine
+```
+
+To bundle all warboard outputs into a single ZIP archive run:
+
+```bash
+python -m warboard.warboard_matrix_export
 ```
