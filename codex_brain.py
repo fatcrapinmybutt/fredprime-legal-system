@@ -1,23 +1,27 @@
 """Core orchestrator for the FRED PRIME litigation system."""
 
 # ─── CODEX_SUPREME GUARDIAN LOCK ─────────────────────────────────────────────
-from codex_manifest import verify_all_modules, enforce_final_form_lock
+from typing import List
+
+from codex_manifest import verify_all_modules, enforce_final_form_lock  # type: ignore[import-not-found]
 
 verify_all_modules()
 enforce_final_form_lock()
 
-blocked = ["TODO", "WIP", "placeholder", "temp_var"]
-with open(__file__, 'r') as f:
+blocked: List[str] = ["TODO", "WIP", "placeholder", "temp_var"]
+with open(__file__, "r") as f:
     source = f.read()
     for b in blocked:
         if b in source:
-            raise RuntimeError(f"Blocked term '{b}' detected in source. Execution halted.")
+            raise RuntimeError(
+                f"Blocked term '{b}' detected in source. Execution halted."
+            )
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def main():
+def main() -> None:
     """Placeholder main function."""
-    pass
+    return None
 
 
 if __name__ == "__main__":
