@@ -3,7 +3,10 @@
 # ─── CODEX_SUPREME GUARDIAN LOCK ─────────────────────────────────────────────
 from typing import List
 
-from codex_manifest import verify_all_modules, enforce_final_form_lock  # type: ignore[import-not-found]
+from codex_manifest import (
+    verify_all_modules,
+    enforce_final_form_lock,
+)
 
 verify_all_modules()
 enforce_final_form_lock()
