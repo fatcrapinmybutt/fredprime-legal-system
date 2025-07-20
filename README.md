@@ -24,3 +24,9 @@ python cli/generate_manifest.py -o path/to/manifest.json
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
+
+## Contact
+
+For issues or feature requests, please visit the [issue tracker](https://github.com/your-org/your-repo/issues).
+
+Email questions to `contact@example.com` and the FRED PRIME team will respond.
