@@ -11,6 +11,8 @@ Generate a manifest of the current directory:
 
 ```bash
 python cli/generate_manifest.py
+# or use the console script after installation
+generate_manifest
 ```
 
 Use `-o` to specify the output file path:

@@ -15,7 +15,7 @@ def main() -> None:
         "-o", "--output", default="manifest.json", help="Path to manifest output file"
     )
     args = parser.parse_args()
-    generate_manifest(args.output)
+    print(generate_manifest(args.output))
 
 
 if __name__ == "__main__":
