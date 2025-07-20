@@ -1,7 +1,8 @@
 import os
 import zipfile
 
-EXPORT_DIR = os.path.join('F:/LegalResults', 'WARBOARD_MATRIX')
+BASE_RESULTS_DIR = os.getenv('LEGAL_RESULTS_DIR', os.path.join('F:/', 'LegalResults'))
+EXPORT_DIR = os.path.join(BASE_RESULTS_DIR, 'WARBOARD_MATRIX')
 FILES_TO_INCLUDE = [
     os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.docx'),
     os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.svg'),

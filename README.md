@@ -39,14 +39,15 @@ python -m warboard.warboard_matrix_export
 
 ## Scanning local drives
 
-The repository now includes a simple scanner that can index `.docx`, `.txt`, and `.pdf` files from local drives (default `F:/` and `D:/`). The results are saved to `data/scan_index.json`. A timeline can then be built from this index:
+The repository now includes a simple scanner that can index `.docx`, `.txt`, and `.pdf` files from local drives. By default it scans the Windows-style drives `F:/` and `D:/` if they exist. You can set the environment variable `SCAN_DRIVES` to a list of paths separated by your OS path separator to override the defaults. The results are saved to `data/scan_index.json`. A timeline can then be built from this index:
 
 ```bash
-python -m scanner.scan_engine F:/ D:/
+# example overriding drives on Linux
+SCAN_DRIVES="/mnt/data1:/mnt/data2" python -m scanner.scan_engine
 python -m timeline.builder
 ```
 
-Pass one or more drive letters (or directories) to `scanner.scan_engine` to override the defaults.
+You can also pass one or more paths as arguments to `scanner.scan_engine`.
 
 The warboard engine reads `data/timeline.json`, so running the scanner and timeline builder before generating the warboard will populate the SVG and DOCX with real events.
 

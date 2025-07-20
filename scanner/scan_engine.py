@@ -21,7 +21,11 @@ def run_scan(drives=None, output: str = DEFAULT_OUTPUT) -> None:
     """Scan the provided drives and write an index of legal files."""
 
     if drives is None:
-        drives = ['F:/', 'D:/']
+        env_drives = os.getenv('SCAN_DRIVES')
+        if env_drives:
+            drives = env_drives.split(os.pathsep)
+        else:
+            drives = ['F:/', 'D:/']
 
     index = {}
     for drive in drives:
