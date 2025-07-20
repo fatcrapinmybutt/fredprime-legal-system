@@ -20,3 +20,13 @@ Use `-o` to specify the output file path:
 ```bash
 python cli/generate_manifest.py -o path/to/manifest.json
 ```
+
+### Generate the system definition
+
+Run `firstimport.py` to create a JSON file describing the FRED PRIME system.
+
+```bash
+python firstimport.py
+```
+
+The script writes `fredprime_litigation_system.json` to `/mnt/data/`.
