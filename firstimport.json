@@ -4,9 +4,9 @@ from pathlib import Path
 # Build the full system definition as a JSON object
 litigation_system_definition = {
     "system": "FRED PRIME Litigation Deployment Engine",
-    "base_path": "F:/GitRepo/fredprime",
-    "output_path": "F:/GitRepo/fredprime/output",
-    "log_path": "F:/GitRepo/fredprime/logs",
+    "base_path": str(Path.cwd()),
+    "output_path": str(Path.cwd() / "output"),
+    "log_path": str(Path.cwd() / "logs"),
     "config": {
         "exhibit_labeling": True,
         "motion_linking": True,

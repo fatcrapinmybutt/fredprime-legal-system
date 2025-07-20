@@ -20,3 +20,10 @@ Use `-o` to specify the output file path:
 ```bash
 python cli/generate_manifest.py -o path/to/manifest.json
 ```
+
+### Prerequisites
+
+Running the deployment engine requires a PowerShell script named
+`fred_deploy.ps1`. This repository does not include the script. Ensure it is
+available on your system or obtain it from the project maintainer before
+executing the engine.

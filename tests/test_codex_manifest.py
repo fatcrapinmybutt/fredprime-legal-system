@@ -53,4 +53,6 @@ def test_generate_and_verify(tmp_path: Path) -> None:
     except ValueError as e:
         assert "legal_function" in str(e)
     else:
-        raise AssertionError("Missing legal_function not detected when key absent")
+        raise AssertionError(
+            "Missing legal_function not detected when key absent"
+        )  # noqa: E501
