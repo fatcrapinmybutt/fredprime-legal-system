@@ -2,7 +2,11 @@ import json
 import os
 from docx import Document
 from datetime import datetime
-from .svg_builder import generate_svg_warboard
+"""Utilities for building a Warboard DOCX and SVG and optionally uploading
+results to Google Drive. Can be executed as a module or script."""
+
+# Import using an absolute path so execution as a script works as well
+from warboard.svg_builder import generate_svg_warboard
 from gdrive_sync import upload_to_drive
 
 DOCX_EXPORT = os.path.join('warboard', 'exports', 'SHADY_OAKS_WARBOARD.docx')
@@ -36,6 +40,7 @@ def build_warboard_docx():
             contr = c.get('contradiction', '')
             doc.add_paragraph(f"{a} vs {b}: {contr}")
 
+    os.makedirs(os.path.dirname(DOCX_EXPORT), exist_ok=True)
     doc.save(DOCX_EXPORT)
     print(f"Warboard DOCX saved to {DOCX_EXPORT}")
 

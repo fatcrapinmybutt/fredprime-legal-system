@@ -1,6 +1,6 @@
 # FRED Prime Litigation System
 
-This repository contains scripts for building a local litigation toolkit. The latest addition is a **Warboard Visualizer** that assembles a timeline of events and contradictions into a DOCX and SVG map.
+This repository contains scripts for building a local litigation toolkit. The latest addition is a **Warboard Visualizer** that assembles a timeline of events and contradictions into a DOCX and SVG map. The warboard generator can also upload the results to Google Drive when a `token.json` credential file is present.
 
 ## Components
 - `gui/frontend.py` – launches a Tkinter GUI with a Warboard Visualizer tab
@@ -12,4 +12,10 @@ This repository contains scripts for building a local litigation toolkit. The la
 Run the GUI with:
 ```bash
 python gui/frontend.py
+```
+
+To generate the warboard without the GUI run:
+
+```bash
+python -m warboard.warboard_engine
 ```
