@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [ '**' ]
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          pip install black mypy flake8
+      - name: Lint
+        run: |
+          black --check .
+          flake8
+          mypy --strict --ignore-missing-imports
+      - name: Tests
+        run: |
+          python -m compileall -q .
