@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if git diff --cached | grep -q -E '\.py|\.js|\.ts|\.json'; then
+    echo "\xF0\x9F\x94\x8D Running lint + test stack..."
+    black .
+    mypy --strict .
+    flake8 .
+    python tests/codex_selftest.py || exit 1
+else
+    echo "\xE2\x9C\x85 No functional changes detected; skipping tests."
+fi
+
+git diff --cached | grep -q -E 'TODO|WIP|placeholder|temp_var' && {
+    echo "\xE2\x9D\x8C Commit blocked: Placeholder content detected."
+    exit 1
+}
+
+exit 0
