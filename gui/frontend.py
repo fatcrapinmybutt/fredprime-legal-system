@@ -1,9 +1,11 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 from tkinterweb import HtmlFrame
 from warboard.warboard_engine import deploy_supra_warboard
 from warboard.ppo_warboard import build_ppo_warboard
 from warboard.custody_interference_engine import build_custody_warboard
+from scheduling.scheduler import build_schedule
 
 
 def launch_dashboard():
@@ -17,10 +19,12 @@ def launch_dashboard():
     warboard_tab = ttk.Frame(notebook)
     ppo_tab = ttk.Frame(notebook)
     custody_tab = ttk.Frame(notebook)
+    schedule_tab = ttk.Frame(notebook)
 
     notebook.add(warboard_tab, text='🗺️ Shady Oaks Warboard')
     notebook.add(ppo_tab, text='🛡️ PPO Timeline')
     notebook.add(custody_tab, text='👨‍👩‍👧 Custody Map')
+    notebook.add(schedule_tab, text='📆 Timeline Tracker')
 
     frame = HtmlFrame(warboard_tab)
     frame.pack(fill='both', expand=True)
@@ -28,6 +32,8 @@ def launch_dashboard():
     ppo_frame.pack(fill='both', expand=True)
     cust_frame = HtmlFrame(custody_tab)
     cust_frame.pack(fill='both', expand=True)
+    schedule_text = tk.Text(schedule_tab)
+    schedule_text.pack(fill='both', expand=True)
 
     def refresh_warboard():
         deploy_supra_warboard()
@@ -44,9 +50,20 @@ def launch_dashboard():
         with open('warboard/exports/CUSTODY_INTERFERENCE_MAP.svg') as f:
             cust_frame.set_content(f.read())
 
+    def refresh_schedule():
+        build_schedule()
+        if os.path.exists('data/timeline.json'):
+            import json
+            with open('data/timeline.json') as f:
+                events = json.load(f)
+            schedule_text.delete('1.0', tk.END)
+            for e in events:
+                schedule_text.insert(tk.END, f"{e['date']} - {e['description']}\n")
+
     ttk.Button(warboard_tab, text='Build Warboard', command=refresh_warboard).pack(pady=5)
     ttk.Button(ppo_tab, text='Build PPO Warboard', command=refresh_ppo).pack(pady=5)
     ttk.Button(custody_tab, text='Build Custody Map', command=refresh_custody).pack(pady=5)
+    ttk.Button(schedule_tab, text='Sync From File', command=refresh_schedule).pack(pady=5)
 
     refresh_warboard()
 

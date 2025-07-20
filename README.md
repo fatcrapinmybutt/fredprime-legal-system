@@ -12,6 +12,11 @@ This repository contains scripts for building a local litigation toolkit. The la
 - `gdrive_sync.py` – optional helper for uploading generated files to Google Drive (requires `token.json`)
 - `warboard/warboard_matrix_export.py` – bundle all warboard outputs into a ZIP archive
 - `requirements.txt` – minimal Python dependencies
+- `entity_trace/ai_entity_review.py` – generate a sample entity overlap report
+- `violations/misconduct_letter.py` – create a judicial misconduct letter
+- `federal/complaint_generator.py` – draft a placeholder federal complaint
+- `motions/emergency_injunction.py` – build an emergency injunction motion
+- `scheduling/scheduler.py` – export a court calendar and ICS file
 
 Run the GUI with:
 ```bash
@@ -50,4 +55,31 @@ python -m timeline.builder
 You can also pass one or more paths as arguments to `scanner.scan_engine`.
 
 The warboard engine reads `data/timeline.json`, so running the scanner and timeline builder before generating the warboard will populate the SVG and DOCX with real events.
+
+## Other helpers
+
+Generate the entity overlap report:
+
+```bash
+python -m entity_trace.ai_entity_review
+```
+
+Create the judicial misconduct letter:
+
+```bash
+python -m violations.misconduct_letter
+```
+
+Draft the federal complaint and emergency injunction motion:
+
+```bash
+python -m federal.complaint_generator
+python -m motions.emergency_injunction
+```
+
+Build a simple court calendar from the timeline:
+
+```bash
+python -m scheduling.scheduler
+```
 
