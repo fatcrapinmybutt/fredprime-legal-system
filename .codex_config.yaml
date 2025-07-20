@@ -1,14 +1,18 @@
 version: 1
 
 rules:
+  # Only run tests if a logic-bearing file changes; skip for docs or comments
   - run_tests_on_logic_change_only: true
+
+  # Ignore nonfunctional edits to avoid unnecessary CI triggers
   - ignore_nonfunctional_edits:
-      - ".md"
-      - ".txt"
+      - "*.md"
+      - "*.txt"
       - "# comments"
       - "docstrings"
 
 naming:
+  # Enforce strong, searchable branch naming for traceability and automation
   branch_format: "codex/{feature-name}"
   trigger_keywords:
     - core
@@ -19,8 +23,12 @@ naming:
     - epoch
     - echelon
     - protocol
+    - compliance
+    - audit
+    - canonical
 
 linting:
+  # Use strict, court-grade Python linting/typing
   - black: true
   - mypy: strict
   - flake8: litigation_ruleset
@@ -30,14 +38,15 @@ tests:
     - unit_tests: true
     - integration_tests: true
     - selftest_script: codex_selftest.py
-    - output_scan: true
+    - output_scan: true     # Confirm all output is non-placeholder/court-ready
 
 placeholders:
+  # Block PRs/merges on unfinished code, forbidden patterns, or temp vars
   block_on_strings:
-    - TODO
-    - WIP
-    - placeholder
-    - temp_var
+    - "TODO"
+    - "WIP"
+    - "placeholder"
+    - "temp_var"
 
 hashing:
   enabled: true
@@ -59,7 +68,7 @@ folders:
 outputs:
   canonical_locking: true
   court_admissibility_required: true
-  enforce_form_structure: true
+  enforce_form_structure: true   # No "raw" output; all docs must match court/SCAO
 
 runtime_triggers:
   codex_brain.py: rebuild_map

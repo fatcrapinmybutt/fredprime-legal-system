@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - codex/**
+      - main
+      - master
 
 jobs:
   build:
@@ -36,3 +38,13 @@ jobs:
       - name: Validate Output
         run: |
           python scripts/codex_output_validator.py
+
+      - name: Output SHA-256 and Manifest
+        run: |
+          if [ -f codex_manifest.json ]; then
+            sha256sum codex_manifest.json
+          fi
+
+      - name: Check for Placeholders
+        run: |
+          grep -iE 'TODO|WIP|placeholder|temp_var' $(git ls-files '*.py' '*.md' '*.txt') && exit 1 || echo "No placeholders found."

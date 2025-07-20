@@ -1,3 +1,6 @@
 black
 flake8
 mypy
+python-docx
+PyDrive
+tkinterweb
