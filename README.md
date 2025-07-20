@@ -20,3 +20,7 @@ Use `-o` to specify the output file path:
 ```bash
 python cli/generate_manifest.py -o path/to/manifest.json
 ```
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
