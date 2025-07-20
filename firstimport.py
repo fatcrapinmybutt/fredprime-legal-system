@@ -13,7 +13,7 @@ litigation_system_definition = {
         "signature_validation": True,
         "judicial_audit": True,
         "parenting_time_matrix": True,
-        "conspiracy_tracker": True
+        "conspiracy_tracker": True,
     },
     "modules": {
         "exhibit_labeler": "Renames evidence files A–Z and builds Exhibit_Index.md",
@@ -21,12 +21,12 @@ litigation_system_definition = {
         "signature_validator": "Checks for MCR 1.109(D)(3) compliance",
         "judicial_conduct_tracker": "Builds Exhibit U with judge behavior patterns",
         "appclose_matrix": "Parses AppClose logs to generate Exhibit Y (violations matrix)",
-        "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S"
+        "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S",
     },
     "execution_command": "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1",
     "offline_capable": True,
     "token_usage": "Zero (local execution only)",
-    "dependencies": ["PowerShell 5+", "Git (if pushing back)", "Windows OS"]
+    "dependencies": ["PowerShell 5+", "Git (if pushing back)", "Windows OS"],
 }
 
 # Save this system definition as a JSON file
