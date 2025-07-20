@@ -108,3 +108,21 @@ Run the contradiction detector:
 python -m contradictions.contradiction_matrix
 ```
 
+
+Additional helper scripts added in this release:
+
+- `timeline/fusion_engine.py` – merge manual post-writ events with the scan-based timeline and create a simple SVG overview.
+- `mifile/stack_dispatcher.py` – package key motions into a MiFile-ready ZIP bundle.
+- `foia/video_request_builder.py` – generate a FOIA request for sheriff bodycam footage.
+- `notices/notice_of_claim.py` – create a basic notice of claim under 42 USC §1983.
+- `binder/tab_forger.py` – build a Binder Tab C document listing post-writ exhibits.
+
+Example usage:
+
+```bash
+python -m timeline.fusion_engine
+python -m mifile.stack_dispatcher
+python -m foia.video_request_builder
+python -m notices.notice_of_claim
+python -m binder.tab_forger
+```
