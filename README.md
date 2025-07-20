@@ -1,6 +1,15 @@
+# FRED Prime Litigation System
 
-[README_FRED_PRIME_OMNIA (1).md](https://github.com/user-attachments/files/21210312/README_FRED_PRIME_OMNIA.1.md)
-[ruleset.json](https://github.com/user-attachments/files/21210316/ruleset.json)
-[TrueFiling_User_Guide.pdf](https://github.com/user-attachments/files/21210318/TrueFiling_User_Guide.pdf)
-[fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip](https://github.com/user-attachments/files/21210319/fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip)
-[FRED_PRIME_LITIGATION_ENGINE.zip](https://github.com/user-attachments/files/21210321/FRED_PRIME_LITIGATION_ENGINE.zip)
+This repository contains scripts for building a local litigation toolkit. The latest addition is a **Warboard Visualizer** that assembles a timeline of events and contradictions into a DOCX and SVG map.
+
+## Components
+- `gui/frontend.py` – launches a Tkinter GUI with a Warboard Visualizer tab
+- `warboard/warboard_engine.py` – builds `SHADY_OAKS_WARBOARD.docx` and `SHADY_OAKS_WARBOARD.svg`
+- `warboard/svg_builder.py` – generates the SVG timeline from `data/timeline.json`
+- `gdrive_sync.py` – optional helper for uploading generated files to Google Drive (requires `token.json`)
+- `requirements.txt` – minimal Python dependencies
+
+Run the GUI with:
+```bash
+python gui/frontend.py
+```
