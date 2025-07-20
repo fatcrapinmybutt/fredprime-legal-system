@@ -1,4 +1,4 @@
-name: Build and Validate MBP Litigation OS
+name: Build, Validate, and Release MBP Litigation OS
 
 on:
   push:
@@ -6,18 +6,28 @@ on:
       - codex/**
       - main
       - master
+  pull_request:
+    branches:
+      - '*'
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.10, 3.11, 3.12]
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -48,3 +58,44 @@ jobs:
       - name: Check for Placeholders
         run: |
           grep -iE 'TODO|WIP|placeholder|temp_var' $(git ls-files '*.py' '*.md' '*.txt') && exit 1 || echo "No placeholders found."
+
+      - name: Build ZIP Artifact
+        run: |
+          zip -r litigation_bundle.zip output/ codex_manifest.json || echo "Nothing to zip."
+
+      - name: Compute ZIP SHA-256
+        run: |
+          if [ -f litigation_bundle.zip ]; then
+            sha256sum litigation_bundle.zip > litigation_bundle.zip.sha256
+            cat litigation_bundle.zip.sha256
+          fi
+
+      - name: Generate SLSA Provenance
+        if: ${{ always() && hashFiles('litigation_bundle.zip') != '' }}
+        uses: slsa-framework/slsa-github-generator@v2.0.0
+        with:
+          artifact_path: litigation_bundle.zip
+          upload-assets: true
+
+      - name: Create GitHub Release (if on main/master/codex)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/codex/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            litigation_bundle.zip
+            litigation_bundle.zip.sha256
+            litigation_bundle.zip.intoto.jsonl
+            codex_manifest.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Build Artifacts (Matrix)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mbp-litigation-os-${{ matrix.python-version }}
+          path: |
+            litigation_bundle.zip
+            litigation_bundle.zip.sha256
+            litigation_bundle.zip.intoto.jsonl
+            codex_manifest.json
+            output/**
