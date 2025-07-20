@@ -1,15 +1,17 @@
 {
-  "codex_manifest.py": "9ad60fef91fdcab717a19478ac10cad0a50fc1a0ec6b01432d3baa7d8af64fdd",
+  "codex_absorption_engine.py": "13642a00fd51852e808d40b8214184fe2cee6a868637eff9aed2a9132898d4b4",
   "codex_patch_manager.py": "48f78a5e249db4ec32914cda16b7310d34c71fc3e3061917fc9453b3eea241d3",
+  "forensic_compliance_validator.py": "9312d5306ee1c49022f24264d6be882faf4c4fc29a6edafad8f2e139a494ce1d",
   "codex_brain.py": "250c924962adedc5cbd3ec49a1bfb0ee4b4988859a2f8c76d85a7c73acc799c0",
-  "modules/system_maturity_rating.py": "de9c5cb85c604ec2c563d2d9f467ae67bff22e2520c024b2fc55d7ae14dfd046",
+  "codex_manifest.py": "9ad60fef91fdcab717a19478ac10cad0a50fc1a0ec6b01432d3baa7d8af64fdd",
   "modules/trigger_dependency_engine.py": "e6e401eed7fc9570b2b1ae795f66dcccf1d9865d9223732419545facf753cdb8",
-  "modules/gui_tab_mapper.py": "2e73383d4b17cd663b573ac2fd9f0a6983e5920ce492025daba1aaeb26d0eefa",
-  "modules/legal_index_mapper.py": "8cb2085b99b4611e6efa5c8fa5c80cee56d8d42956e337197e6d412b63c0afc6",
   "modules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "modules/gui_tab_mapper.py": "2e73383d4b17cd663b573ac2fd9f0a6983e5920ce492025daba1aaeb26d0eefa",
   "modules/legacy_chat_token_scanner.py": "88fde3751a810f642757b183aec7cb2c91517046ad53720889f133ea5120f4aa",
-  "modules/module_collider.py": "2e8141a25b1017ec90d67710c675db3ec8203c8ada40d2fbb403cd6fcea5fa2b",
+  "modules/legal_index_mapper.py": "8cb2085b99b4611e6efa5c8fa5c80cee56d8d42956e337197e6d412b63c0afc6",
+  "modules/system_maturity_rating.py": "de9c5cb85c604ec2c563d2d9f467ae67bff22e2520c024b2fc55d7ae14dfd046",
   "modules/upload_impact_analyzer.py": "dbf615ccbec356ea472ed7a58af121159fd2623fd9c487d19577d819642145bc",
-  "scripts/codex_output_validator.py": "9f6a1a0a8fae6543461c1d9b9e24109f3692d39a34a0fab1ec044596d1c3fdc3",
-  "scripts/generate_manifest.py": "0cc4a4f8dc3173b37d48c3574194f7a76b27bd866b6a2923f063781f5e2751ee"
+  "modules/module_collider.py": "2e8141a25b1017ec90d67710c675db3ec8203c8ada40d2fbb403cd6fcea5fa2b",
+  "scripts/generate_manifest.py": "0a63e0acc1d114d10617f940006641ccf64b5a4c6cb0142b822952576d45dd13",
+  "scripts/codex_output_validator.py": "9f6a1a0a8fae6543461c1d9b9e24109f3692d39a34a0fab1ec044596d1c3fdc3"
 }
