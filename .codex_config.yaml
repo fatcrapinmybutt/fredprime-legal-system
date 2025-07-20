@@ -1,5 +1,83 @@
+version: 1
+
 rules:
-  code_change_triggers_tests: true
-  doc_changes_skip_tests: true
-  commit_message_format: "[type] message"
-  enforce_manifest: true
+  # Only run tests if a logic-bearing file changes; skip for docs or comments
+  - run_tests_on_logic_change_only: true
+
+  # Ignore nonfunctional edits to avoid unnecessary CI triggers
+  - ignore_nonfunctional_edits:
+      - "*.md"
+      - "*.txt"
+      - "# comments"
+      - "docstrings"
+
+naming:
+  # Enforce strong, searchable branch naming for traceability and automation
+  branch_format: "codex/{feature-name}"
+  trigger_keywords:
+    - core
+    - engine
+    - matrix
+    - patch
+    - hotfix
+    - epoch
+    - echelon
+    - protocol
+    - compliance
+    - audit
+    - canonical
+
+linting:
+  # Use strict, court-grade Python linting/typing
+  - black: true
+  - mypy: strict
+  - flake8: litigation_ruleset
+
+tests:
+  required:
+    - unit_tests: true
+    - integration_tests: true
+    - selftest_script: codex_selftest.py
+    - output_scan: true     # Confirm all output is non-placeholder/court-ready
+
+placeholders:
+  # Block PRs/merges on unfinished code, forbidden patterns, or temp vars
+  block_on_strings:
+    - "TODO"
+    - "WIP"
+    - "placeholder"
+    - "temp_var"
+
+hashing:
+  enabled: true
+  method: sha256
+  register_manifest: codex_manifest.json
+
+folders:
+  required:
+    - /core
+    - /modules
+    - /output/docx
+    - /output/ZIP
+    - /gui
+    - /cli
+    - /tests
+    - /docs
+    - /config
+
+outputs:
+  canonical_locking: true
+  court_admissibility_required: true
+  enforce_form_structure: true   # No "raw" output; all docs must match court/SCAO
+
+runtime_triggers:
+  codex_brain.py: rebuild_map
+  codex_build_engine.py: full_pipeline_rerun
+  gui_code: layout_snapshot_diff
+  patch_commit: inject_and_rebuild
+
+final_lock:
+  resolve_all_variables: true
+  resolve_all_citations: true
+  enforce_hash_and_manifest: true
+  admissibility_gatekeeper: true
