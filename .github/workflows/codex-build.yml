@@ -1,0 +1,70 @@
+name: Codex Build
+
+on:
+  push:
+    branches: ["main", "codex/**"]
+  pull_request:
+    branches: ["main", "codex/**"]
+
+jobs:
+  codex-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine need for tests
+        id: changes
+        run: |
+          git fetch --depth=2
+          diff=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "$diff" > changed_files.txt
+          run_tests=false
+          for f in $diff; do
+            case "$f" in
+              *.py|*.js|*.ts|*.json)
+                run_tests=true
+                ;;
+            esac
+          done
+          branch="${GITHUB_REF##*/}"
+          for key in core engine matrix echelon patch hotfix; do
+            if [[ "$branch" == *"$key"* ]]; then
+              run_tests=true
+            fi
+          done
+          echo "run_tests=$run_tests" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          pip install -r requirements.txt
+          pip install black mypy flake8 pytest
+
+      - name: Lint
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          black --check .
+          mypy --strict
+          flake8
+
+      - name: Update manifest
+        if: steps.changes.outputs.run_tests == 'true'
+        run: python codex_brain.py
+
+      - name: Run codex selftests
+        if: steps.changes.outputs.run_tests == 'true' && (hashFiles('codex_selftest.py') != '')
+        run: python codex_selftest.py
+
+      - name: Run integration tests
+        if: steps.changes.outputs.run_tests == 'true' && (hashFiles('integration_tests/**') != '')
+        run: pytest integration_tests
+
+      - name: Run tests
+        if: steps.changes.outputs.run_tests == 'true'
+        run: pytest
