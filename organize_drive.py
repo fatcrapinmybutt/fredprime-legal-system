@@ -4,6 +4,7 @@ import argparse
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from tqdm import tqdm
 
 # Mapping of file extensions to categories
 CATEGORIES = {
@@ -65,8 +66,8 @@ def remove_empty_dirs(base_path: Path) -> None:
                 logging.error("Failed to remove %s: %s", p, e)
 
 
-def organize_drive(target_path: Path) -> None:
-    base_output = target_path / ORGANIZED_FOLDER
+def organize_drive(target_path: Path, output_path: Path | None = None) -> None:
+    base_output = output_path.resolve() if output_path else target_path / ORGANIZED_FOLDER
     base_output.mkdir(exist_ok=True)
 
     files_to_move = []
@@ -78,7 +79,7 @@ def organize_drive(target_path: Path) -> None:
             files_to_move.append(Path(root) / file)
 
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
-        for f in files_to_move:
+        for f in tqdm(files_to_move, desc="Organizing", unit="file"):
             executor.submit(move_file, base_output, f)
 
     remove_empty_dirs(target_path)
@@ -88,6 +89,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Organize files on a drive")
     parser.add_argument('path', nargs='?', default='F:/', help='Path to organize (default F:/)')
     parser.add_argument('--log', default='organize_drive.log', help='Log file path')
+    parser.add_argument('--output', default=None, help='Optional output directory')
     return parser.parse_args()
 
 
@@ -99,7 +101,8 @@ def main():
     if not target_path.exists():
         print(f"Path {target_path} does not exist.")
         return
-    organize_drive(target_path)
+    output_path = Path(args.output).resolve() if args.output else None
+    organize_drive(target_path, output_path)
     print("Organization complete.")
 
 

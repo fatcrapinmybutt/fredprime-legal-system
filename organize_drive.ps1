@@ -6,6 +6,7 @@ Organizes files in a drive into categorized folders and removes empty directorie
 param(
     [string]$Path = 'F:\',
     [string]$Log = 'organize_drive.log',
+    [string]$Output = '',  # Optional custom output directory
     [int]$MaxJobs = [Environment]::ProcessorCount
 )
 
@@ -80,14 +81,23 @@ function Move-FileJob {
 }
 
 $target = Resolve-Path $Path
-$baseOutput = Join-Path $target $OrganizedFolder
+if ($Output) {
+    $baseOutput = Resolve-Path $Output
+} else {
+    $baseOutput = Join-Path $target $OrganizedFolder
+}
 if (!(Test-Path $baseOutput)) { New-Item -ItemType Directory -Path $baseOutput | Out-Null }
 
 $files = Get-ChildItem -Path $target -File -Recurse | Where-Object { $_.FullName -notmatch "\\$OrganizedFolder(\\|$)" }
+$total = $files.Count
+$index = 0
 
 Import-Module ThreadJob -ErrorAction SilentlyContinue
 $jobs = @()
 foreach ($f in $files) {
+    $index++
+    $percent = [int](($index / $total) * 100)
+    Write-Progress -Activity "Organizing files" -Status "$index of $total" -PercentComplete $percent
     $jobs += Start-ThreadJob -ScriptBlock ${function:Move-FileJob} -ArgumentList $f, $baseOutput
     if ($jobs.Count -ge $MaxJobs) {
         Wait-Job -Job $jobs -Any | Receive-Job
@@ -96,6 +106,7 @@ foreach ($f in $files) {
 }
 
 if ($jobs) { Wait-Job $jobs | Receive-Job }
+Write-Progress -Activity "Organizing files" -Completed
 
 Remove-EmptyDirs -BasePath $target
 

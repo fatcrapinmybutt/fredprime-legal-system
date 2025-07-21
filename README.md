@@ -1,6 +1,3 @@
-# Build a README with full instructions for using the JSON-defined system locally or through GitHub
-
-readme_content = """
 # 🧠 FRED PRIME Litigation Deployment System
 
 This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
@@ -23,7 +20,7 @@ This repo enables **offline, token-free litigation automation** for the FRED PRI
 
 ## Organize Drive Script
 
-This repository includes both Python and PowerShell scripts for organizing a drive. Each script sorts files into categorized folders inside an `Organized` directory and removes empty folders when finished.
+This repository includes both Python and PowerShell scripts for organizing a drive. Each script sorts files into categorized folders inside an `Organized` directory (or a custom location), shows progress, and removes empty folders when finished.
 
 ### Python Usage
 
@@ -41,7 +38,7 @@ This repository includes both Python and PowerShell scripts for organizing a dri
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\organize_drive.ps1 -Path F:\
    ```
-   The `-Path` parameter specifies the drive or folder to organize and `-Log` controls the log file path.
+   Use `-Path` for the drive or folder, `-Output` to override the output directory, and `-Log` for the log file.
 
 ### Safety
 
