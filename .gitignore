@@ -1,4 +1,5 @@
 # === CODENAME: SUPREME LITIGATION OS IGNORE ===
+
 # Core Python ignores
 __pycache__/
 *.pyc
@@ -37,7 +38,7 @@ FOIA_discovery_request.txt
 .DS_Store
 Thumbs.db
 
-# Output/Build directories (exclude for source, include in deploy ZIPs only)
+# Output/Build directories (exclude from source, include only in ZIP exports)
 dist/
 build/
 output/
@@ -45,14 +46,13 @@ output/
 *.tar
 *.tar.gz
 
-# IDE/editor/project config (if shared repo)
+# IDE/editor/project config
 .vscode/
 .idea/
 *.iml
 
-# Exclude field device/machine personalization
+# Device/person-specific files
 *.local
-*.bak
 *.cfg
 .settings/
 user_settings.json
@@ -62,4 +62,3 @@ ehthumbs.db
 desktop.ini
 
 # === END LITIGATION OS IGNORE LIST ===
-
