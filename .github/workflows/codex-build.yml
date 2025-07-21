@@ -21,9 +21,12 @@ jobs:
       - name: Determine need for tests
         id: changes
         run: |
+          set -e
           git fetch --depth=2
           diff=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "$diff" > changed_files.txt
+          echo "Changed files:"
+          cat changed_files.txt
           run_tests=false
           for f in $diff; do
             case "$f" in
@@ -41,56 +44,62 @@ jobs:
           echo "run_tests=$run_tests" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: |
           pip install -r requirements.txt
           pip install black mypy flake8 pytest pyinstaller
 
       - name: Lint and Typecheck
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: |
           black --check .
           mypy --strict
           flake8
 
       - name: Update manifest and ledger
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: python codex_brain.py
 
       - name: Run codex selftests
-        if: steps.changes.outputs.run_tests == 'true' && (hashFiles('codex_selftest.py') != '')
+        if: ${{ steps.changes.outputs.run_tests == 'true' && hashFiles('codex_selftest.py') != '' }}
         run: python codex_selftest.py
 
       - name: Run integration tests
-        if: steps.changes.outputs.run_tests == 'true' && (hashFiles('integration_tests/**') != '')
-        run: pytest integration_tests
+        if: ${{ steps.changes.outputs.run_tests == 'true' && hashFiles('integration_tests/**') != '' }}
+        run: |
+          if [ -d integration_tests ]; then
+            pytest integration_tests
+          else
+            echo "No integration_tests/ directory, skipping."
+          fi
 
       - name: Run unit tests
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: pytest
 
       - name: Build .exe with GUI and all systems
-        if: steps.changes.outputs.run_tests == 'true'
-        run: pyinstaller --onefile --noconfirm --name "litigation_launcher" gui/main_gui.py
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
+        run: |
+          pyinstaller --onefile --noconfirm --name "litigation_launcher" gui/main_gui.py
 
       - name: Compile all code and outputs into universal .zip
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: |
-          zip -r output/SUPREME_LITIGATION_OS_FULL_BUILD.zip . -x '*.git*' 'output/*'
+          mkdir -p output
+          zip -r output/SUPREME_LITIGATION_OS_FULL_BUILD.zip . -x '*.git*' 'output/SUPREME_LITIGATION_OS_FULL_BUILD.zip'
 
       - name: Build installers (.iss, .msi, .wixproj)
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: |
-          # Simulated: Add your actual Inno Setup, WiX Toolset, MSI build steps here
           echo "Building installer scripts... (integration required for Windows runners)"
 
       - name: Import all ChatGPT code history into CODE_KEEPER
-        if: steps.changes.outputs.run_tests == 'true'
+        if: ${{ steps.changes.outputs.run_tests == 'true' }}
         run: |
           python gui/code_keeper_lookup.py --import-history
 
       - name: Push to GitHub Releases with all build artifacts
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
