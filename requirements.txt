@@ -1,9 +1,9 @@
 # --- Core Document/Exhibit Processing ---
 PyPDF2>=3.0.1                # Reliable PDF extraction, annotations, bookmarks
 python-docx>=1.1.0           # Court/affidavit DOCX gen, form overlays
-pillow>=10.2.0                # Imaging, evidence prep, screen capture, redaction
-pytesseract>=0.3.10           # OCR for scanned docs/exhibits
-python-barcode>=0.15.1        # Barcode exhibit labels, file chain of custody
+pillow>=10.2.0               # Imaging, evidence prep, screen capture, redaction
+pytesseract>=0.3.10          # OCR for scanned docs/exhibits
+python-barcode>=0.15.1       # Barcode exhibit labels, file chain of custody
 
 # --- File Management / Cloud Sync ---
 PyDrive2>=1.16.0             # Modern Google Drive API (PyDrive deprecated)
