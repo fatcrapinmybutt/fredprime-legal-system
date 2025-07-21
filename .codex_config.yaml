@@ -11,10 +11,15 @@ rules:
     - echelon
     - hotfix
     - merge
-  commit_message_format: "[type] message"
+  commit_message_format: "^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+"
   enforce_manifest: true
   prohibit_eval_exec: true
   no_placeholders: true
+  banned_keywords:
+    - TODO
+    - WIP
+    - temp_var
+    - placeholder
   required_folders:
     - core
     - modules
