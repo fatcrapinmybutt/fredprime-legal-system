@@ -2,7 +2,10 @@ import hashlib
 import json
 from pathlib import Path
 
-MANIFEST = 'codex_manifest.json'
+from modules.codex_guardian import run_guardian
+from modules.codex_supreme import self_diagnostic
+
+MANIFEST = "codex_manifest.json"
 
 
 def hash_file(path: Path) -> str:
@@ -12,13 +15,19 @@ def hash_file(path: Path) -> str:
 
 def update_manifest():
     manifest = []
-    for p in Path('.').rglob('*.py'):
-        if p.parts[0].startswith('.'):  # skip hidden dirs
+    for p in Path(".").rglob("*.py"):
+        if p.parts[0].startswith("."):  # skip hidden dirs
             continue
-        manifest.append({'module': p.stem, 'path': str(p), 'hash': hash_file(p)})
+        manifest.append({"module": p.stem, "path": str(p), "hash": hash_file(p)})
     Path(MANIFEST).write_text(json.dumps(manifest, indent=2))
 
 
-if __name__ == '__main__':
+def main() -> None:
+    run_guardian()
     update_manifest()
-    print('codex manifest updated')
+    self_diagnostic()
+    print("codex manifest updated")
+
+
+if __name__ == "__main__":
+    main()

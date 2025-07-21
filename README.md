@@ -212,6 +212,11 @@ A: Yes—designed for full MCR, MCL, FOIA, and federal compliance.
 | :------------------------------------------------------------: | :-----------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
 
 ---
+## 🔄 **Continuous Integration**
+
+The `Codex Build` workflow automatically runs on pushes or pull requests to `main` or any `codex/*` branch. It installs dependencies, lints with `black`, `mypy`, and `flake8`, and runs `pytest` whenever relevant source files change or the branch name includes keywords like `core`, `engine`, `matrix`, `echelon`, `patch`, or `hotfix`.
+
+---
 
 ## 📜 **License**
 
