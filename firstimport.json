@@ -31,6 +31,7 @@ litigation_system_definition = {
 
 # Save this system definition as a JSON file
 json_path = Path("/mnt/data/fredprime_litigation_system.json")
+json_path.parent.mkdir(parents=True, exist_ok=True)
 json_path.write_text(json.dumps(litigation_system_definition, indent=4))
 
 # Return file name for download
