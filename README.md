@@ -5,6 +5,19 @@
 [fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip](https://github.com/user-attachments/files/21210319/fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip)
 [FRED_PRIME_LITIGATION_ENGINE.zip](https://github.com/user-attachments/files/21210321/FRED_PRIME_LITIGATION_ENGINE.zip)
 
+## Installation
+
+Use a virtual environment and install the package in editable mode:
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install -e .
+```
+
+The console script `generate_manifest` will then be available on your path.
+
 ## Usage
 
 Generate a manifest of the current directory:
