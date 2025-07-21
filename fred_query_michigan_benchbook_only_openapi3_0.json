@@ -1,0 +1,88 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FRED-PRIME Legal Query Engine",
+    "version": "1.0.0",
+    "description": "This action restricts GPT to respond strictly and solely based on user-uploaded files consisting of Michigan Benchbooks, Michigan Court Rules (MCR), Michigan Compiled Laws (MCL), SCAO forms, and relevant court procedure manuals. GPT must not answer any question using general knowledge or assumptions. If the answer is not explicitly found in the uploaded material, GPT must respond with a 403 error stating: 'This information is not available within the project files provided.'"
+  },
+  "servers": [
+    {
+      "url": "https://example.com/api",
+      "description": "Placeholder server (not used)"
+    }
+  ],
+  "paths": {
+    "/query": {
+      "post": {
+        "operationId": "fred_query_michigan_benchbook_only",
+        "summary": "Strictly query Michigan legal doctrine files",
+        "description": "Allows GPT to return legal answers only if the response is directly sourced from uploaded Michigan Benchbooks, MCR, MCL, or official court documents. External reasoning or speculation is prohibited.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "description": "Legal query regarding Michigan practice, rules, statutes, or court procedure"
+                  },
+                  "validate_input": {
+                    "type": "boolean",
+                    "description": "If true, the system must verify file support before proceeding"
+                  }
+                },
+                "required": ["question"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Valid response sourced from uploaded Michigan legal documents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string",
+                      "description": "Answer to the legal query, quoted or paraphrased from uploaded files"
+                    },
+                    "source_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "matched_file": {"type": "string"},
+                        "matched_section": {"type": "string"},
+                        "paragraph_id": {"type": "string"}
+                      },
+                      "description": "Provenance and citation for where the answer was found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No match found in project files",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "This information is not available within the project files provided."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}

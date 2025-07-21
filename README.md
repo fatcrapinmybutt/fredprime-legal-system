@@ -1,9 +1,12 @@
+# FRED PRIME Legal System
 
-[README_FRED_PRIME_OMNIA (1).md](https://github.com/user-attachments/files/21210312/README_FRED_PRIME_OMNIA.1.md)
-[ruleset.json](https://github.com/user-attachments/files/21210316/ruleset.json)
-[TrueFiling_User_Guide.pdf](https://github.com/user-attachments/files/21210318/TrueFiling_User_Guide.pdf)
-[fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip](https://github.com/user-attachments/files/21210319/fredprime-legal-system-codex-develop-an-infinite-memory-litigation-ecosystem.zip)
-[FRED_PRIME_LITIGATION_ENGINE.zip](https://github.com/user-attachments/files/21210321/FRED_PRIME_LITIGATION_ENGINE.zip)
+This repository contains an early prototype of the **FRED PRIME Litigation Deployment Engine**. The engine is intended to assist with automating various tasks involved in the litigation process (exhibit labeling, motion linking, signature validation, etc.).
+
+## Repository Contents
+
+- `build_system.py` – Python helper that generates `fredprime_litigation_system.json` describing the FRED PRIME configuration. The resulting JSON file is written to `/mnt/data` by default.
+- `FRED_Codex_Bootstrap.py` – Downloads the stage two deployment archive from `FRED_STAGE2_URL`, verifies its SHA256 checksum using `FRED_STAGE2_SHA256`, and extracts the archive.
+- `EPOCH_UNPACKER_ENGINE_v1.py` – Extracts ZIP archives, performs OCR, and tags exhibits. Can run with a GUI or in headless mode.
 
 ## Installation
 
@@ -20,16 +23,8 @@ The console script `generate_manifest` will then be available on your path.
 
 ## Usage
 
-Generate a manifest of the current directory:
-
-```bash
-python cli/generate_manifest.py
-# or use the console script after installation
-generate_manifest
-```
-
-Use `-o` to specify the output file path:
-
-```bash
-python cli/generate_manifest.py -o path/to/manifest.json
-```
+1. Ensure you have Python 3 installed.
+2. Clone this repository and change into the project directory.
+3. Run the script:
+   ```bash
+   python3 build_system.py

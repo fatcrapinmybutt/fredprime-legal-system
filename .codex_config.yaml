@@ -1,0 +1,5 @@
+rules:
+  code_change_triggers_tests: true
+  doc_changes_skip_tests: true
+  commit_message_format: "[type] message"
+  enforce_manifest: true
