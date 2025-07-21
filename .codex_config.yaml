@@ -1,5 +1,28 @@
 rules:
   code_change_triggers_tests: true
   doc_changes_skip_tests: true
+  branch_pattern: "codex/{feature-name}"
+  full_build_triggers:
+    - core
+    - engine
+    - matrix
+    - protocol
+    - epoch
+    - echelon
+    - hotfix
+    - merge
   commit_message_format: "[type] message"
   enforce_manifest: true
+  prohibit_eval_exec: true
+  no_placeholders: true
+  required_folders:
+    - core
+    - modules
+    - gui
+    - cli
+    - config
+    - docs
+    - tests
+  output_paths:
+    zip: "output/ZIP/"
+    docx: "output/docx/"
