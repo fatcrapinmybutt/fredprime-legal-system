@@ -23,7 +23,6 @@ logs/
 *.log
 
 # Manifest and ephemeral scan output
-codex_manifest.json
 patch_manifest.json
 patch_history.json
 red_flag_report.json
