@@ -1,5 +1,29 @@
-rules:
-  code_change_triggers_tests: true
-  doc_changes_skip_tests: true
-  commit_message_format: "[type] message"
-  enforce_manifest: true
+# MBP Codex Supreme Configuration
+branch_prefix: 'codex/'
+run_tests_on_changes:
+  - '**/*.py'
+  - '**/*.js'
+  - '**/*.ts'
+  - '**/*.json'
+trigger_branches:
+  - core
+  - engine
+  - matrix
+  - echelon
+  - patch
+  - hotfix
+commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+'
+banned_keywords:
+  - TODO
+  - WIP
+  - temp_var
+  - placeholder
+manifest: 'codex_manifest.json'
+required_folders:
+  - core
+  - modules
+  - gui
+  - cli
+  - config
+  - docs
+  - tests
