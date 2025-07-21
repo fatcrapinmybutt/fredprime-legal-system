@@ -1,28 +1,56 @@
-rules:
-  code_change_triggers_tests: true
-  doc_changes_skip_tests: true
-  branch_pattern: "codex/{feature-name}"
-  full_build_triggers:
-    - core
-    - engine
-    - matrix
-    - protocol
-    - epoch
-    - echelon
-    - hotfix
-    - merge
-  commit_message_format: "[type] message"
-  enforce_manifest: true
-  prohibit_eval_exec: true
-  no_placeholders: true
-  required_folders:
-    - core
-    - modules
-    - gui
-    - cli
-    - config
-    - docs
-    - tests
-  output_paths:
-    zip: "output/ZIP/"
-    docx: "output/docx/"
+# MBP Codex Supreme Configuration
+
+# --- Branch, Commit, and Manifest Enforcement ---
+branch_prefix: 'codex/'
+branch_pattern: 'codex/{feature-name}'
+
+run_tests_on_changes:
+  - '**/*.py'
+  - '**/*.js'
+  - '**/*.ts'
+  - '**/*.json'
+
+trigger_branches:
+  - core
+  - engine
+  - matrix
+  - protocol
+  - epoch
+  - echelon
+  - patch
+  - hotfix
+  - merge
+
+commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon|protocol|epoch)[\\])? .+'
+
+# --- Testing and Build Logic ---
+code_change_triggers_tests: true
+doc_changes_skip_tests: true
+
+# --- Manifest and Security ---
+manifest: 'codex_manifest.json'
+enforce_manifest: true
+prohibit_eval_exec: true
+
+# --- Placeholders/Banned Keywords ---
+no_placeholders: true
+banned_keywords:
+  - TODO
+  - WIP
+  - temp_var
+  - placeholder
+
+# --- Directory Structure Enforcement ---
+required_folders:
+  - core
+  - modules
+  - gui
+  - cli
+  - config
+  - docs
+  - tests
+
+# --- Output Path Mapping ---
+output_paths:
+  zip: "output/ZIP/"
+  docx: "output/docx/"
