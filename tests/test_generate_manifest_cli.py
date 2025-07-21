@@ -17,6 +17,6 @@ def test_cli_generates_manifest(tmp_path):
         text=True,
     )
     assert output.exists()
-    assert result.stdout.strip().endswith(str(output))
+    assert result.stdout.strip() == str(output)
     data = json.loads(output.read_text())
     assert "files" in data
