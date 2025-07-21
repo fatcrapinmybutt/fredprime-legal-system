@@ -1,6 +1,6 @@
 # FRED PRIME Legal System
 
-This repository contains an early prototype of the **FRED PRIME Litigation Deployment Engine**. The engine is intended to assist with automating various tasks involved in the litigation process (exhibit labeling, motion linking, signature validation, etc.). The current repository includes a single Python script that generates the engine configuration in JSON format.
+This repository contains an early prototype of the **FRED PRIME Litigation Deployment Engine**. The engine is intended to assist with automating various tasks involved in the litigation process (exhibit labeling, motion linking, signature validation, etc.).
 
 ## Repository Contents
 
@@ -15,64 +15,3 @@ This repository contains an early prototype of the **FRED PRIME Litigation Deplo
 3. Run the script:
    ```bash
    python3 build_system.py
-   ```
-   The script writes `fredprime_litigation_system.json` to `/mnt/data`.
-4. Use the generated JSON with the accompanying PowerShell scripts (not included in this repository) to deploy the litigation engine.
-5. (Optional) Download additional components:
-   ```bash
-   python3 FRED_Codex_Bootstrap.py
-   ```
-   This fetches and extracts the stage two deployment archive referenced by `FRED_STAGE2_URL`.
-6. (Optional) Process evidence ZIPs:
-   ```bash
-   python3 EPOCH_UNPACKER_ENGINE_v1.py gui
-   ```
-   Use `process` instead of `gui` to run without the graphical interface.
-
-## Configuration
-
-The helper scripts read a few optional environment variables. In particular,
-`FRED_STAGE2_URL` and `FRED_STAGE2_SHA256` are used by
-`FRED_Codex_Bootstrap.py` to download and verify the stage two archive. You can
-also set `LITIGATION_DATA_DIR` to control where the unpacker writes its logs and
-extracted files.
-
-## Generating the system JSON
-Run the Python helper to build the litigation system definition. The `-v` flag
-enables informative logging and `-vv` enables debug output:
-
-```bash
-python build_system.py -v
-```
-Use `--output` to specify a different destination for the JSON file.
-
-## Full-Text Search CLI
-
-A lightweight CLI (`fts_cli.py`) is provided for managing a small SQLite database
-backed by an FTS5 table.
-
-Initialize the database:
-
-```bash
-python fts_cli.py init
-```
-
-Add a new record:
-
-```bash
-python fts_cli.py add "Some description text"
-```
-
-Run a full-text search:
-
-```bash
-python fts_cli.py search "search terms"
-```
-
-## Build Instructions
-
-There is no build process for this repository. The Python script may be run directly. If you wish to package or modify the deployment engine, edit `build_system.py` and regenerate the JSON file.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

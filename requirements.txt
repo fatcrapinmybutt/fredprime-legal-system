@@ -1,3 +1,38 @@
-PyPDF2
-pillow
-pytesseract
+# --- Core Document/Exhibit Processing ---
+PyPDF2>=3.0.1                # Reliable PDF extraction, annotations, bookmarks
+python-docx>=1.1.0           # Court/affidavit DOCX gen, form overlays
+pillow>=10.2.0                # Imaging, evidence prep, screen capture, redaction
+pytesseract>=0.3.10           # OCR for scanned docs/exhibits
+python-barcode>=0.15.1        # Barcode exhibit labels, file chain of custody
+
+# --- File Management / Cloud Sync ---
+PyDrive2>=1.16.0             # Modern Google Drive API (PyDrive deprecated)
+python-dotenv>=1.0.1         # Load secrets/env vars securely (token, API keys)
+
+# --- GUI and Interactive Tools ---
+tkinterweb>=4.0.0            # In-app legal web search/browser for Tkinter GUI
+PySimpleGUI>=4.60.5          # Optional: advanced cross-platform GUI (modern look)
+rich>=13.7.1                 # CLI logging, progress bars, pretty errors
+
+# --- AI/NLP Integration (Optional for AI/LLM support) ---
+openai>=1.13.3               # If integrating LLM queries or semantic search
+sentence-transformers>=2.7.0 # Exhibit similarity search, AI timelines
+
+# --- Database/Search ---
+whoosh>=2.7.4                # Embedded legal full-text search engine (SQLite alternative)
+sqlite-utils>=3.36           # Fast, easy SQLite DB/FTS setup
+
+# --- PDF/Scan Enhancements ---
+pdfminer.six>=20231228       # Fallback for tricky PDF text extraction
+pdf2image>=1.17.0            # Convert PDF pages to images for OCR
+
+# --- Testing/Dev ---
+pytest>=8.2.0                # Unit tests for CLI, microservices, evidence intake
+requests>=2.31.0             # FastAPI/CLI API and network access
+
+# --- [Platform Specific] Windows Imaging ---
+pywin32; platform_system == "Windows"  # Native file dialogs, evidence screenshot
+
+# --- [System/Automation] ---
+watchdog>=4.0.0              # Real-time file/folder monitoring (exhibit drop)
+
