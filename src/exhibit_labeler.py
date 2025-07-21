@@ -1,12 +1,14 @@
-import os
+"""Utility to rename exhibit files sequentially and record an index."""
+
 from pathlib import Path
 from typing import List
 
 
 def label_exhibits(exhibit_dir: str, output_index: str = "Exhibit_Index.md") -> List[str]:
-    """Rename files in exhibit_dir to Exhibit_A, Exhibit_B, ... and produce an index.
+    """Rename files in *exhibit_dir* and create a markdown index.
 
-    Returns a list of new filenames.
+    Files are renamed in alphabetical order as ``Exhibit_A`` etc. The index file
+    lists each renamed exhibit.
     """
     path = Path(exhibit_dir)
     if not path.is_dir():
@@ -22,5 +24,5 @@ def label_exhibits(exhibit_dir: str, output_index: str = "Exhibit_Index.md") -> 
         labeled.append(target.name)
 
     index_lines = [f"- {name}" for name in labeled]
-    Path(output_index).write_text("\n".join(index_lines))
+    Path(output_index).write_text("\n".join(index_lines) + "\n")
     return labeled

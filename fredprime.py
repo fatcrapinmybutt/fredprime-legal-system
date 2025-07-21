@@ -8,7 +8,7 @@ if __name__ == "__main__":
     from src.signature_validator import validate_signature
 
     parser = argparse.ArgumentParser(description="FRED PRIME Litigation Utility Suite")
-    subparsers = parser.add_subparsers(dest="command")
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
     p1 = subparsers.add_parser("label-exhibits")
     p1.add_argument("path")

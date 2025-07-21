@@ -7,6 +7,7 @@ This repository provides simple Python scripts for managing litigation documents
 - **Validate signature blocks** according to Michigan Court Rule 1.109(D)(3)
 
 These scripts are intentionally lightweight and run entirely offline. They only operate on files you provide and produce markdown summaries for easy review.
+Because labeling will rename your files, consider working on copies or using version control to undo changes.
 
 ## Setup
 

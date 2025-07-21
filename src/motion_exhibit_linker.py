@@ -1,10 +1,12 @@
+"""Extract exhibit references from motion documents."""
+
 from pathlib import Path
 import re
 from typing import Dict, List
 
 
 def link_motions(motion_dir: str, output_map: str = "Motion_to_Exhibit_Map.md") -> Dict[str, List[str]]:
-    """Scan motion files for exhibit references and produce a map."""
+    """Scan ``motion_dir`` for references like ``Exhibit A`` and record a mapping."""
     motion_path = Path(motion_dir)
     if not motion_path.is_dir():
         raise ValueError(f"{motion_dir} is not a directory")
@@ -22,5 +24,5 @@ def link_motions(motion_dir: str, output_map: str = "Motion_to_Exhibit_Map.md") 
         line = f"- {motion}: {', '.join(exhibits) if exhibits else 'None'}"
         lines.append(line)
 
-    Path(output_map).write_text("\n".join(lines))
+    Path(output_map).write_text("\n".join(lines) + "\n")
     return mapping
