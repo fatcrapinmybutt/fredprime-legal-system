@@ -45,6 +45,7 @@ graph TD
 | `FRED_Codex_Bootstrap.py`          | Secure bootstrap, verify, unpack               | MCR 2.401, Evidentiary Rules |
 | `fredprime_litigation_system.json` | Main system manifest/configuration             | MCR 2.401                    |
 | `audit_chain.log`                  | Immutable audit log/chain-of-custody           | MCR 2.401, MCL 600.2140      |
+| `modules/benchbook_loader.py`      | Extract text from Michigan benchbook PDFs      | MCR 2.401                    |
 
 ---
 
