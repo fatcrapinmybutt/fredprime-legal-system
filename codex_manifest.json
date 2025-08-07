@@ -1,0 +1,9 @@
+[
+  {
+    "module": "benchbook_loader",
+    "path": "modules/benchbook_loader.py",
+    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+    "legal_function": "extract text from Michigan benchbook PDFs",
+    "dependencies": ["PyPDF2"]
+  }
+]
