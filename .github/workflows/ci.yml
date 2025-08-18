@@ -42,11 +42,11 @@ jobs:
     - name: 🔎 Lint ALL-IN-ONE system
       run: |
         pip install flake8
-        flake8 mbp_lit_os_supreme_allinone.py --max-line-length=120 --statistics --show-source || true
+        flake8 MBP_Omnia_Engine.py --max-line-length=120 --statistics --show-source || true
 
     - name: 🏛️ Run Supreme ALL-IN-ONE Mainframe (with dashboard)
       run: |
-        python mbp_lit_os_supreme_allinone.py
+        python MBP_Omnia_Engine.py
       timeout-minutes: 20
 
     - name: 🧪 Run pytest (if any test exists)
