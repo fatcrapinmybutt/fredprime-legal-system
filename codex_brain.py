@@ -1,46 +1,55 @@
+import ast
+import datetime
 import hashlib
 import json
 from pathlib import Path
-from typing import List
+from typing import Any, cast
+
+import yaml
 
 from modules.codex_guardian import run_guardian
 from modules.codex_supreme import self_diagnostic
 
 MANIFEST = "codex_manifest.json"
 
-FORBIDDEN_TOKENS = ("TODO", "WIP", "temp_var", "placeholder")
-FORBIDDEN_CALLS = ("eval(", "exec(", "subprocess.Popen", "subprocess.call")
+CONFIG_FILE = ".codex_config.yaml"
 
 
 def hash_file(path: Path) -> str:
-    data = path.read_bytes()
-    return hashlib.sha256(data).hexdigest()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def enforce_source_hygiene(path: Path) -> None:
+def enforce_source_hygiene(
+    path: Path, tokens: tuple[str, ...], calls: tuple[str, ...]
+) -> None:
     text = path.read_text()
-    for token in FORBIDDEN_TOKENS:
+    for token in tokens:
         if token in text:
             raise ValueError(f"{path} contains forbidden token '{token}'")
-    for call in FORBIDDEN_CALLS:
+    for call in calls:
         if call in text:
             raise ValueError(f"{path} contains forbidden call '{call}'")
 
 
-def collect_dependencies(path: Path) -> List[str]:
-    return [
-        line.split("import", 1)[1].strip()
-        for line in path.read_text().splitlines()
-        if line.startswith("import ") or line.startswith("from ")
-    ]
+def collect_dependencies(path: Path) -> list[str]:
+    tree = ast.parse(path.read_text())
+    deps: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                deps.append(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            if node.module:
+                deps.append(node.module)
+    return deps
 
 
-def update_manifest() -> None:
-    manifest = []
+def update_manifest(tokens: tuple[str, ...], calls: tuple[str, ...]) -> None:
+    manifest: list[dict[str, Any]] = []
     for p in Path(".").rglob("*.py"):
         if p.parts[0].startswith("."):
             continue
-        enforce_source_hygiene(p)
+        enforce_source_hygiene(p, tokens, calls)
         manifest.append(
             {
                 "module": p.stem,
@@ -48,14 +57,28 @@ def update_manifest() -> None:
                 "hash": hash_file(p),
                 "legal_function": p.stem.replace("_", " ").title(),
                 "dependencies": collect_dependencies(p),
+                "timestamp": datetime.datetime.fromtimestamp(
+                    p.stat().st_mtime
+                ).isoformat(),
+                "validated": False,
             }
         )
     Path(MANIFEST).write_text(json.dumps(manifest, indent=2))
 
 
+def load_config() -> dict[str, Any]:
+    if not Path(CONFIG_FILE).exists():
+        raise FileNotFoundError(CONFIG_FILE)
+    data = yaml.safe_load(Path(CONFIG_FILE).read_text())
+    return cast(dict[str, Any], data)
+
+
 def main() -> None:
     run_guardian()
-    update_manifest()
+    config = load_config()
+    tokens = tuple(config.get("forbidden_tokens", []))
+    calls = tuple(config.get("forbidden_calls", []))
+    update_manifest(tokens, calls)
     self_diagnostic()
     print("codex manifest updated")
 

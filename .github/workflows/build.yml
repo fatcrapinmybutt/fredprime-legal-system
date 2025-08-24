@@ -46,7 +46,7 @@ jobs:
           done <<< "$diff"
 
           branch_name="${GITHUB_REF##*/}"
-          for key in core engine matrix patch hotfix echelon; do
+          for key in core engine matrix protocol epoch echelon patch hotfix merge; do
             if [[ "$branch_name" == *"$key"* ]]; then
               run_tests=true
               break

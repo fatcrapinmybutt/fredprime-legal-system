@@ -1,9 +1,9 @@
 import hashlib
 import json
-import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Any, cast
 
 MANIFEST_FILE = "codex_manifest.json"
 BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
@@ -25,9 +25,10 @@ def hash_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_manifest() -> list[dict]:
+def load_manifest() -> list[dict[str, Any]]:
     if Path(MANIFEST_FILE).exists():
-        return json.loads(Path(MANIFEST_FILE).read_text())
+        data = json.loads(Path(MANIFEST_FILE).read_text())
+        return cast(list[dict[str, Any]], data)
     return []
 
 

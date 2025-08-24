@@ -9,16 +9,30 @@ trigger_branches:
   - core
   - engine
   - matrix
+  - protocol
+  - epoch
   - echelon
   - patch
   - hotfix
-commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+'
-banned_keywords:
+  - merge
+commit_message_format: '^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] '
+forbidden_tokens:
   - TODO
   - WIP
   - temp_var
   - placeholder
+forbidden_calls:
+  - "eval("
+  - "exec("
+  - subprocess.Popen
+  - subprocess.call
 manifest: 'codex_manifest.json'
+manifest_fields:
+  - module
+  - path
+  - hash
+  - legal_function
+  - dependencies
 required_folders:
   - core
   - modules
