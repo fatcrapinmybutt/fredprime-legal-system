@@ -1,36 +1,23 @@
 [
-    {
-        "module": "benchbook_loader",
-        "path": "modules/benchbook_loader.py",
-        "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-        "legal_function": "extract text from Michigan benchbook PDFs",
-        "dependencies": [
-            "PyPDF2"
-        ]
-    },
-    {
-        "module": "golden_litigator_os",
-        "path": "golden_litigator_os.py",
-        "hash": "d3d38cbd6d89b0c4558aebf7e1d1dd55f78fa79c02a8bcf032288630de8957d3",
-        "legal_function": "autonomous evidence ingestion and motion generation",
-        "dependencies": [
-            "pymupdf",
-            "python-docx",
-            "pytesseract",
-            "faster-whisper",
-            "openai",
-            "anthropic",
-            "ffmpeg"
-        ]
-    },
-    {
-        "module": "litigator_upgrade_suite",
-        "path": "litigator_upgrade_suite.py",
-        "hash": "1be01a9c149d186960fdacdb1e4ee5aefa63cdc2fc5361a5a8dbc3a68c9f0025",
-        "legal_function": "binder index, MiFile bundler, judge profile seed, and SCAO overlays",
-        "dependencies": [
-            "pypdf",
-            "python-docx"
-        ]
-    }
+  {
+    "module": "benchbook_loader",
+    "path": "modules/benchbook_loader.py",
+    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+    "legal_function": "extract text from Michigan benchbook PDFs",
+    "dependencies": ["PyPDF2"]
+  },
+  {
+    "module": "golden_litigator_os",
+    "path": "golden_litigator_os.py",
+    "hash": "d3d38cbd6d89b0c4558aebf7e1d1dd55f78fa79c02a8bcf032288630de8957d3",
+    "legal_function": "autonomous evidence ingestion and motion generation",
+    "dependencies": ["anthropic", "faster-whisper", "ffmpeg", "openai", "pymupdf", "pytesseract", "python-docx"]
+  },
+  {
+    "module": "litigator_upgrade_suite",
+    "path": "litigator_upgrade_suite.py",
+    "hash": "1be01a9c149d186960fdacdb1e4ee5aefa63cdc2fc5361a5a8dbc3a68c9f0025",
+    "legal_function": "binder index, MiFile bundler, judge profile seed, and SCAO overlays",
+    "dependencies": ["pypdf", "python-docx"]
+  }
 ]
