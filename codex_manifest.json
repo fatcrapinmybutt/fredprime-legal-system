@@ -4,6 +4,23 @@
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "dependencies": [
+      "PyPDF2"
+    ]
+  },
+  {
+    "module": "golden_litigator_os",
+    "path": "golden_litigator_os.py",
+    "hash": "d3d38cbd6d89b0c4558aebf7e1d1dd55f78fa79c02a8bcf032288630de8957d3",
+    "legal_function": "autonomous evidence ingestion and motion generation",
+    "dependencies": [
+      "pymupdf",
+      "python-docx",
+      "pytesseract",
+      "faster-whisper",
+      "openai",
+      "anthropic",
+      "ffmpeg"
+    ]
   }
 ]
