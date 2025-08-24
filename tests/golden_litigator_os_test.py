@@ -1,7 +1,17 @@
 from pathlib import Path
 import sqlite3
+import pytest
 
-from golden_litigator_os import heuristic_analysis, init_db, index_to_db, rename_done
+from golden_litigator_os import (
+    Document,
+    build_filing_package,
+    generate_certificate_of_service,
+    heuristic_analysis,
+    init_db,
+    index_to_db,
+    rename_done,
+    zip_filing_package,
+)
 
 
 def test_heuristic_analysis_extracts_parties_and_quotes() -> None:
@@ -37,3 +47,16 @@ def test_index_and_rename(tmp_path: Path) -> None:
     row = cur.fetchone()
     conn.close()
     assert row[0] == "note.txt"
+
+
+@pytest.mark.skipif(Document is None, reason="python-docx not installed")
+def test_certificate_and_zip(tmp_path: Path) -> None:
+    out_dir = tmp_path / "package"
+    generate_certificate_of_service(["John Doe"], str(out_dir))
+    assert (out_dir / "Certificate_of_Service.docx").exists()
+    zip_path = zip_filing_package(str(out_dir))
+    assert zip_path.exists()
+    db_path = str(tmp_path / "ledger.db")
+    init_db(db_path)
+    built = build_filing_package(["John Doe"], str(out_dir / "full"), db_path)
+    assert built.exists()

@@ -22,7 +22,9 @@ import re
 import importlib
 import sqlite3
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, Iterable, List
+from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence
+import zipfile
+from datetime import date
 
 
 def _optional_import(name: str) -> Any:
@@ -235,11 +237,13 @@ def generate_narrative(db_path: str = DATABASE_PATH) -> str:
     return narrative
 
 
-def generate_filings(db_path: str = DATABASE_PATH) -> None:
+def generate_filings(
+    db_path: str = DATABASE_PATH, output_dir: str = "."
+) -> Optional[Path]:
     """Generate a minimal complaint document using stored evidence."""
     if Document is None:  # pragma: no cover
         print("python-docx not available, cannot generate filings")
-        return
+        return None
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute("SELECT parties, claims, quotes FROM evidence")
@@ -271,8 +275,53 @@ def generate_filings(db_path: str = DATABASE_PATH) -> None:
     doc.add_paragraph(
         "This complaint is automatically generated from the evidence ledger."
     )
-    out_path = Path("Complaint_Auto.docx")
+    out_path = Path(output_dir) / "Complaint_Auto.docx"
     doc.save(str(out_path))
+    return out_path
+
+
+def generate_certificate_of_service(defendants: Sequence[str], output_dir: str) -> Path:
+    """Create a simple certificate of service document."""
+    if Document is None:  # pragma: no cover
+        raise RuntimeError("python-docx not available")
+    os.makedirs(output_dir, exist_ok=True)
+    doc = Document()
+    doc.add_heading("CERTIFICATE OF SERVICE", level=1)
+    doc.add_paragraph(
+        "I hereby certify that on this date, I served a copy of the Complaint, "
+        "Summons, and Civil Cover Sheet on the following Defendants by U.S. Mail "
+        "and/or personal service, pursuant to the Federal Rules of Civil Procedure:"
+    )
+    for name in defendants:
+        doc.add_paragraph(f"- {name}")
+    doc.add_paragraph(
+        f"\nExecuted on {date.today()} by:\n[Your Name], Pro Se Plaintiff"
+    )
+    path = Path(output_dir) / "Certificate_of_Service.docx"
+    doc.save(str(path))
+    return path
+
+
+def zip_filing_package(output_dir: str) -> Path:
+    """Zip all files in the output directory."""
+    zip_path = Path(output_dir).with_suffix(".zip")
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, _dirs, files in os.walk(output_dir):
+            for file in files:
+                full_path = os.path.join(root, file)
+                arcname = os.path.relpath(full_path, output_dir)
+                zf.write(full_path, arcname)
+    return zip_path
+
+
+def build_filing_package(
+    defendants: Sequence[str], output_dir: str, db_path: str = DATABASE_PATH
+) -> Path:
+    """Generate key filing documents and zip them for submission."""
+    os.makedirs(output_dir, exist_ok=True)
+    generate_filings(db_path, output_dir)
+    generate_certificate_of_service(defendants, output_dir)
+    return zip_filing_package(output_dir)
 
 
 # entry point ---------------------------------------------------------------
