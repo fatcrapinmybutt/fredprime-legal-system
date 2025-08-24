@@ -1,9 +1,23 @@
 [
-  {
-    "module": "benchbook_loader",
-    "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
-  }
+    {
+        "module": "benchbook_loader",
+        "path": "modules/benchbook_loader.py",
+        "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+        "legal_function": "extract text from Michigan benchbook PDFs",
+        "dependencies": ["PyPDF2"]
+    },
+    {
+        "module": "codex_guardian",
+        "path": "modules/codex_guardian.py",
+        "hash": "896ddfe7d7196d394879299b8df5a0ecea7fa97985795b5dd4f475819c10a98d",
+        "legal_function": "enforce commit and branch policies and verify manifest hashes",
+        "dependencies": []
+    },
+    {
+        "module": "codex_supreme",
+        "path": "modules/codex_supreme.py",
+        "hash": "efc26e08c86bf1a61a2d2fc9cb7c6ea3786ae5a0e34e686834fe793e9c52b3be",
+        "legal_function": "run diagnostics and forensic integrity checks",
+        "dependencies": []
+    }
 ]
