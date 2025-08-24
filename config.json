@@ -1,0 +1,24 @@
+{
+    "drives": ["C:/", "E:/", "F:/", "Z:/", "G:/MyDrive/"],
+    "exclude_dirs": [
+        "C:/Windows",
+        "C:/Program Files",
+        "C:/Program Files (x86)",
+        "C:/$Recycle.Bin",
+        "C:/ProgramData",
+        "C:/Users/Public",
+        "C:/Recovery",
+        "C:/PerfLogs",
+    ],
+    "results_dir": "LegalResults",
+    "processed_tag": "__DONE__",
+    "db_path": "golden_litigator.db",
+    "tesseract_cmd": "C:/Program Files/Tesseract-OCR/tesseract.exe",
+    "whisper_backend": "faster-whisper",
+    "whisper_model": "medium",
+    "llm": {
+        "provider_order": ["openai", "anthropic"],
+        "openai_model": "gpt-4o-mini",
+        "anthropic_model": "claude-3-5-sonnet-20240620",
+    },
+}
