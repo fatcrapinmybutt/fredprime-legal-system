@@ -19,5 +19,66 @@
     "hash": "1be01a9c149d186960fdacdb1e4ee5aefa63cdc2fc5361a5a8dbc3a68c9f0025",
     "legal_function": "binder index, MiFile bundler, judge profile seed, and SCAO overlays",
     "dependencies": ["pypdf", "python-docx"]
+  },
+  {
+    "module": "app_modular",
+    "path": "app_modular.py",
+    "hash": "9500abcdae3ac0a4f473724a231cb0cd5a138bf019afbed14acad55ee97535df",
+    "legal_function": "modular evidence ingestion and filing orchestrator",
+    "dependencies": [
+      "anthropic",
+      "faster-whisper",
+      "ffmpeg",
+      "openai",
+      "opencv-python",
+      "pillow",
+      "pydub",
+      "pymupdf",
+      "pytesseract",
+      "python-docx"
+    ]
+  },
+  {
+    "module": "agents",
+    "path": "agents.py",
+    "hash": "a5cd58f2410d382380ac9e444c64bf61bb789e2008423b5cb17dddd845622306",
+    "legal_function": "LLM-based extraction and drafting helpers",
+    "dependencies": ["anthropic", "openai"]
+  },
+  {
+    "module": "file_processors",
+    "path": "file_processors.py",
+    "hash": "07c83f2ffc4cefcbf5802f965b3653b182c5817f17d6c3cde3ec9f924ca8eae7",
+    "legal_function": "OCR, transcription, and text extraction for diverse evidence",
+    "dependencies": [
+      "faster-whisper",
+      "ffmpeg",
+      "pillow",
+      "pymupdf",
+      "pytesseract",
+      "python-docx",
+      "whisper"
+    ]
+  },
+  {
+    "module": "utils",
+    "path": "utils.py",
+    "hash": "e41d193ad181d8b69d5c06dea1e47116108df163b194c1873003d3cfd9767e26",
+    "legal_function": "shared utilities for hashing, persistence, and path management",
+    "dependencies": []
+  },
+  {
+    "module": "court_engine",
+    "path": "court_engine.py",
+    "hash": "3e87c1c3b68997aec87e9d4279a0442062f0fcd9dbc950758391f6b15f853a4a",
+    "legal_function": "checklist gatekeeper for motion generation",
+    "dependencies": []
+  },
+  {
+    "module": "filings",
+    "path": "filings.py",
+    "hash": "dae2721cbe6a9b5debe046fc4f99c7cdf2aa52b408d7f83cb9222b0c9a966a15",
+    "legal_function": "Michigan-formatted motion document builder",
+    "dependencies": ["python-docx"]
   }
 ]
