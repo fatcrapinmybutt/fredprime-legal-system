@@ -29,6 +29,13 @@ from utils import (
     is_excluded_dir,
 )
 
+try:
+    from vector_memory import get_vm
+
+    VM = get_vm()
+except Exception:  # pragma: no cover
+    VM = None
+
 CODE_TYPES = {".py", ".ps1", ".psm1", ".json", ".txt"}
 
 
@@ -122,6 +129,34 @@ def crawl(cfg: Dict[str, Any]) -> None:
                         ),
                     },
                 )
+                if VM is not None:
+                    VM.upsert_doc(
+                        doc_id=sha,
+                        text=(text or "")[:8000],
+                        meta={
+                            "filename": path.name,
+                            "filepath": str(path),
+                            "ext": ext,
+                            "claims": ",".join(
+                                [
+                                    c if isinstance(c, str) else c.get("name", "")
+                                    for c in claims
+                                ]
+                            ),
+                            "statutes": ",".join(
+                                [
+                                    s if isinstance(s, str) else s.get("cite", "")
+                                    for s in statutes
+                                ]
+                            ),
+                            "rules": ",".join(
+                                [
+                                    r if isinstance(r, str) else r.get("rule", "")
+                                    for r in rules
+                                ]
+                            ),
+                        },
+                    )
 
                 for ev in timeline:
                     insert_timeline(db_path, sha, ev)

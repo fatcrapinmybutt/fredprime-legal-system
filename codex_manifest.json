@@ -23,10 +23,11 @@
   {
     "module": "app_modular",
     "path": "app_modular.py",
-    "hash": "9500abcdae3ac0a4f473724a231cb0cd5a138bf019afbed14acad55ee97535df",
+    "hash": "b9a6b61f0a64b0056ba2fcdcae45975e76d8e8f71761fb0856b34aaee1b18460",
     "legal_function": "modular evidence ingestion and filing orchestrator",
     "dependencies": [
       "anthropic",
+      "chromadb",
       "faster-whisper",
       "ffmpeg",
       "openai",
@@ -35,7 +36,8 @@
       "pydub",
       "pymupdf",
       "pytesseract",
-      "python-docx"
+      "python-docx",
+      "sentence-transformers"
     ]
   },
   {
@@ -79,6 +81,27 @@
     "path": "filings.py",
     "hash": "dae2721cbe6a9b5debe046fc4f99c7cdf2aa52b408d7f83cb9222b0c9a966a15",
     "legal_function": "Michigan-formatted motion document builder",
+    "dependencies": ["python-docx"]
+  },
+  {
+    "module": "vector_memory",
+    "path": "vector_memory.py",
+    "hash": "9c716a06e83b987adfc0372cb93fef5efb6effdd6e65d3dc20ad10250a4cf6e4",
+    "legal_function": "semantic vector memory for evidence search",
+    "dependencies": ["chromadb", "sentence-transformers"]
+  },
+  {
+    "module": "case_meta_seed",
+    "path": "case_meta_seed.py",
+    "hash": "86392bdc48298d7762954af9316c3ad2d92ea95ecf785ddab0d661707b09eb8b",
+    "legal_function": "seed case metadata for state or federal matters",
+    "dependencies": []
+  },
+  {
+    "module": "forms_overlay",
+    "path": "forms_overlay.py",
+    "hash": "88292a6a989340f9f9ec3aeff4a63c248edadf5da8de2813624e7e0e03f40983",
+    "legal_function": "generate draft overlays for fee waiver and proof of service",
     "dependencies": ["python-docx"]
   }
 ]
