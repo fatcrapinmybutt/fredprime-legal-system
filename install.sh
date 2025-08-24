@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Installer for Litigation OS Appliance (Air-gapped)
-set -euo pipefail
+# set -euo pipefail
 
 # Variables
 IMG_TARBALL="litigation-images.tar.gz"
@@ -27,3 +27,4 @@ echo "Injector: post-install tasks"
 kubectl apply -f /app/configs/post-install/
 
 echo "Installation complete. Set license with 'litigation-cli license set <KEY>'"
+
