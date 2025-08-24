@@ -29,6 +29,10 @@ pdf2image>=1.17.0            # Convert PDF pages to images for OCR
 # --- Testing/Dev ---
 pytest>=8.2.0                # Unit tests for CLI, microservices, evidence intake
 requests>=2.31.0             # FastAPI/CLI API and network access
+flake8>=7.3.0                # Linting for litigation codebase
+black>=24.0.0                # Code formatter for consistent style
+mypy>=1.10.0                 # Static type checker
+types-PyYAML>=6.0.12         # Type stubs for PyYAML
 
 # --- [Platform Specific] Windows Imaging ---
 pywin32; platform_system == "Windows"  # Native file dialogs, evidence screenshot
