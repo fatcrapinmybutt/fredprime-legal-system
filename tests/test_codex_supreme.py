@@ -1,4 +1,7 @@
+import json
 from pathlib import Path
+from typing import Any
+
 from modules import codex_supreme
 
 
@@ -9,8 +12,11 @@ def test_save_and_load_state(tmp_path: Path) -> None:
     assert state == {"x": 1}
 
 
-def test_sha256_file(tmp_path: Path) -> None:
+def test_forensic_integrity_check(tmp_path: Path, monkeypatch: Any) -> None:
     p = tmp_path / "file.txt"
     p.write_text("data")
-    h = codex_supreme.sha256_file(str(p))
-    assert len(h) == 64
+    manifest = [{"path": str(p), "hash": "0" * 64}]
+    (tmp_path / codex_supreme.MANIFEST_FILE).write_text(json.dumps(manifest))
+    monkeypatch.chdir(tmp_path)
+    issues = codex_supreme.forensic_integrity_check()
+    assert issues and "Tampered" in issues[0]

@@ -5,18 +5,13 @@ import os
 from pathlib import Path
 from typing import Any, cast
 
+from .hash_utils import hash_file
+
 PERSISTENT_STATE_FILE = "codex_state.json"
 AUDIT_LOG = "audit_chain.log"
 MANIFEST_FILE = "codex_manifest.json"
 ERROR_LOG = "logs/codex_errors.log"
 PATCH_HISTORY = "patch_history.json"
-
-
-def sha256_file(fpath: str | Path) -> str:
-    try:
-        return hashlib.sha256(Path(fpath).read_bytes()).hexdigest()
-    except Exception:
-        return ""
 
 
 def log_event(event: str, log_file: str = AUDIT_LOG) -> None:
@@ -50,7 +45,7 @@ def self_diagnostic() -> list[str]:
         manifest = json.loads(Path(MANIFEST_FILE).read_text())
         for entry in manifest:
             p = Path(entry["path"])
-            if p.exists() and sha256_file(p) != entry.get("hash"):
+            if p.exists() and hash_file(p) != entry.get("hash"):
                 diagnostics.append(f"File hash mismatch: {p}")
     save_state({"last_diagnostic": diagnostics})
     return diagnostics
@@ -63,7 +58,7 @@ def forensic_integrity_check() -> list[str]:
     manifest: list[dict[str, Any]] = json.loads(Path(MANIFEST_FILE).read_text())
     for entry in manifest:
         path = Path(entry["path"])
-        if path.exists() and sha256_file(path) != entry.get("hash"):
+        if path.exists() and hash_file(path) != entry.get("hash"):
             issues.append(f"Tampered: {path}")
     save_state({"last_integrity_check": issues})
     return issues

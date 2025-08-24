@@ -1,9 +1,10 @@
-import hashlib
 import json
 import re
 import subprocess
 from pathlib import Path
 from typing import Any, cast
+
+from .hash_utils import hash_file
 
 MANIFEST_FILE = "codex_manifest.json"
 BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
@@ -19,10 +20,6 @@ def get_current_branch() -> str:
 
 def get_last_commit_message() -> str:
     return subprocess.check_output(["git", "log", "-1", "--pretty=%B"]).decode().strip()
-
-
-def hash_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def load_manifest() -> list[dict[str, Any]]:

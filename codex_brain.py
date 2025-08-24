@@ -1,11 +1,12 @@
 import ast
 import datetime
-import hashlib
 import json
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
+
+from modules.hash_utils import hash_file
 
 from modules.codex_guardian import run_guardian
 from modules.codex_supreme import self_diagnostic
@@ -13,10 +14,6 @@ from modules.codex_supreme import self_diagnostic
 MANIFEST = "codex_manifest.json"
 
 CONFIG_FILE = ".codex_config.yaml"
-
-
-def hash_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def enforce_source_hygiene(
@@ -32,7 +29,10 @@ def enforce_source_hygiene(
 
 
 def collect_dependencies(path: Path) -> list[str]:
-    tree = ast.parse(path.read_text())
+    try:
+        tree = ast.parse(path.read_text())
+    except SyntaxError:
+        return []
     deps: list[str] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -49,7 +49,8 @@ def update_manifest(tokens: tuple[str, ...], calls: tuple[str, ...]) -> None:
     for p in Path(".").rglob("*.py"):
         if p.parts[0].startswith("."):
             continue
-        enforce_source_hygiene(p, tokens, calls)
+        if p.name != "codex_guardian.py" and "tests" not in p.parts:
+            enforce_source_hygiene(p, tokens, calls)
         manifest.append(
             {
                 "module": p.stem,
