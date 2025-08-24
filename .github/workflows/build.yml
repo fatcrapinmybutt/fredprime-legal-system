@@ -69,6 +69,11 @@ jobs:
           pip install -r requirements.txt
           pip install black flake8 mypy pytest safety
 
+      - name: Verify Codex Config
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          test -f .codex_config.yaml
+
       - name: Lint Code
         if: steps.changes.outputs.run_tests == 'true'
         run: |
