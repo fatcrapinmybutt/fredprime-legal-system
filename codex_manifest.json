@@ -4,6 +4,23 @@
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "dependencies": [
+      "PyPDF2"
+    ]
+  },
+  {
+    "module": "build_vibeverse_machine",
+    "path": "build_vibeverse_machine.sh",
+    "hash": "2f68808169e90f78e397fa2809971e60ed876baefe6c73f0705643c1a5949be1",
+    "legal_function": "scaffold and deploy Vibeverse monorepo",
+    "dependencies": [
+      "bash",
+      "git",
+      "gh",
+      "vercel",
+      "railway",
+      "python3",
+      "npm"
+    ]
   }
 ]
