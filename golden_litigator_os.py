@@ -19,31 +19,28 @@ from __future__ import annotations
 
 import os
 import re
+import importlib
 import sqlite3
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Any, DefaultDict, Dict, Iterable, List
 
-try:
-    import fitz  # type: ignore
-except Exception:  # pragma: no cover - optional dependency
-    fitz = None
 
-try:
-    import docx  # type: ignore
-except Exception:  # pragma: no cover - optional dependency
-    docx = None
+def _optional_import(name: str) -> Any:
+    try:  # pragma: no cover - best effort
+        return importlib.import_module(name)
+    except Exception:  # pragma: no cover - optional dependency
+        return None
 
-try:
-    from PIL import Image  # type: ignore
-    import pytesseract  # type: ignore
-except Exception:  # pragma: no cover - optional dependency
-    Image = None
-    pytesseract = None
 
-try:
-    import openai  # type: ignore
+fitz = _optional_import("fitz")
+docx = _optional_import("docx")
+Document = getattr(docx, "Document", None) if docx else None
+Image = _optional_import("PIL.Image")
+pytesseract = _optional_import("pytesseract")
+try:  # pragma: no cover - optional dependency
+    OpenAIClient = importlib.import_module("openai").OpenAI
 except Exception:  # pragma: no cover - optional dependency
-    openai = None
+    OpenAIClient = None
 
 # configuration -------------------------------------------------------------
 TARGET_DRIVES: List[str] = ["F:/", "Z:/", "E:/", "C:/"]
@@ -51,10 +48,11 @@ MOUNTED_GDRIVE: str = "G:/MyDrive/"
 DATABASE_PATH = "golden_litigator_ledger.db"
 PROCESSED_TAG = "__DONE__"
 
+
 # database ------------------------------------------------------------------
-def init_db() -> None:
+def init_db(db_path: str = DATABASE_PATH) -> None:
     """Create the evidence ledger if it does not already exist."""
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute(
         """
@@ -77,6 +75,7 @@ def init_db() -> None:
     conn.commit()
     conn.close()
 
+
 # parsers -------------------------------------------------------------------
 def parse_pdf(path: str) -> str:
     if not fitz:  # pragma: no cover
@@ -84,21 +83,25 @@ def parse_pdf(path: str) -> str:
     doc = fitz.open(path)
     return "\n".join(page.get_text() for page in doc)
 
+
 def parse_docx(path: str) -> str:
     if not docx:  # pragma: no cover
         raise RuntimeError("python-docx not available")
     doc = docx.Document(path)
     return "\n".join(p.text for p in doc.paragraphs)
 
+
 def parse_txt(path: str) -> str:
     with open(path, "r", encoding="utf-8", errors="ignore") as fh:
         return fh.read()
+
 
 def parse_image(path: str) -> str:
     if not (Image and pytesseract):  # pragma: no cover
         raise RuntimeError("pytesseract not available")
     img = Image.open(path)
-    return pytesseract.image_to_string(img)
+    return str(pytesseract.image_to_string(img))
+
 
 PARSERS = {
     ".pdf": parse_pdf,
@@ -111,6 +114,7 @@ PARSERS = {
 
 # analysis ------------------------------------------------------------------
 TOKEN_RE = re.compile(r"[A-Z][a-z]+ [A-Z][a-z]+")
+
 
 def heuristic_analysis(text: str) -> Dict[str, str]:
     parties = ", ".join(sorted(set(TOKEN_RE.findall(text))))
@@ -125,18 +129,18 @@ def heuristic_analysis(text: str) -> Dict[str, str]:
         "exhibit_id": "",
     }
 
+
 def analyze_content(text: str) -> Dict[str, str]:
-    if openai and os.getenv("OPENAI_API_KEY"):
+    if OpenAIClient is not None and os.getenv("OPENAI_API_KEY"):
         try:  # pragma: no cover - network call
+            client = OpenAIClient()
             prompt = (
                 "Extract parties, claims, statutes and notable quotes from "
                 "the following text. Return a JSON object with keys: parties, "
                 "claims, statutes, quotes, tags, court_relevance, exhibit_id.\n" + text
             )
-            resp = openai.ChatCompletion.create(
-                model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}]
-            )
-            content = resp.choices[0].message["content"]
+            resp = client.responses.create(model="gpt-4o-mini", input=prompt)
+            content = resp.output_text
             import json
 
             data = json.loads(content)
@@ -145,9 +149,16 @@ def analyze_content(text: str) -> Dict[str, str]:
             pass
     return heuristic_analysis(text)
 
+
 # ledger --------------------------------------------------------------------
-def index_to_db(path: str, file: str, content: str, analysis: Dict[str, str]) -> None:
-    conn = sqlite3.connect(DATABASE_PATH)
+def index_to_db(
+    path: str,
+    file: str,
+    content: str,
+    analysis: Dict[str, str],
+    db_path: str = DATABASE_PATH,
+) -> None:
+    conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute(
         """
@@ -172,11 +183,13 @@ def index_to_db(path: str, file: str, content: str, analysis: Dict[str, str]) ->
     conn.commit()
     conn.close()
 
+
 # helper utilities ----------------------------------------------------------
 def rename_done(path: str) -> None:
     p = Path(path)
     new_path = p.with_name(p.stem + PROCESSED_TAG + p.suffix)
     os.rename(path, new_path)
+
 
 # main crawl ----------------------------------------------------------------
 def crawl(paths: Iterable[str]) -> None:
@@ -200,13 +213,10 @@ def crawl(paths: Iterable[str]) -> None:
                 except Exception as exc:  # pragma: no cover
                     print(f"Error processing {file}: {exc}")
 
+
 # narrative and filings -----------------------------------------------------
 from collections import defaultdict
 
-try:
-    from docx import Document  # type: ignore
-except Exception:  # pragma: no cover
-    Document = None
 
 def generate_narrative(db_path: str = DATABASE_PATH) -> str:
     """Create a simple chronological narrative from the ledger."""
@@ -218,11 +228,12 @@ def generate_narrative(db_path: str = DATABASE_PATH) -> str:
     narrative_lines = []
     for fname, quote in rows:
         if quote:
-            narrative_lines.append(f"{fname}: \"{quote}\"")
+            narrative_lines.append(f'{fname}: "{quote}"')
     narrative = "\n".join(narrative_lines)
     with open("narrative.txt", "w", encoding="utf-8") as fh:
         fh.write(narrative)
     return narrative
+
 
 def generate_filings(db_path: str = DATABASE_PATH) -> None:
     """Generate a minimal complaint document using stored evidence."""
@@ -235,9 +246,9 @@ def generate_filings(db_path: str = DATABASE_PATH) -> None:
     parties_data = cur.fetchall()
     conn.close()
 
-    parties = defaultdict(int)
-    claims = defaultdict(int)
-    for party, claim, quote in parties_data:
+    parties: DefaultDict[str, int] = defaultdict(int)
+    claims: DefaultDict[str, int] = defaultdict(int)
+    for party, claim, _quote in parties_data:
         for p in party.split(","):
             p = p.strip()
             if p:
@@ -251,17 +262,18 @@ def generate_filings(db_path: str = DATABASE_PATH) -> None:
     doc.add_heading("Complaint", 0)
     if parties:
         doc.add_paragraph("Parties involved:")
-        for p in sorted(parties, key=parties.get, reverse=True):
+        for p in sorted(parties, key=lambda k: parties[k], reverse=True):
             doc.add_paragraph(p, style="List Bullet")
     if claims:
         doc.add_paragraph("Claims:")
-        for c in sorted(claims, key=claims.get, reverse=True):
+        for c in sorted(claims, key=lambda k: claims[k], reverse=True):
             doc.add_paragraph(c, style="List Bullet")
     doc.add_paragraph(
         "This complaint is automatically generated from the evidence ledger."
     )
     out_path = Path("Complaint_Auto.docx")
-    doc.save(out_path)
+    doc.save(str(out_path))
+
 
 # entry point ---------------------------------------------------------------
 if __name__ == "__main__":
