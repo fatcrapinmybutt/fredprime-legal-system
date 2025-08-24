@@ -1,9 +1,962 @@
 [
   {
+    "module": "fts_cli",
+    "path": "fts_cli.py",
+    "hash": "4593b03cd06a62206a94525596ddbdd7efad85a4602ef7ecd39b12af7f096c47",
+    "legal_function": "Fts Cli",
+    "dependencies": [
+      "argparse",
+      "sqlite3",
+      "pathlib"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "tarball",
+    "path": "tarball.py",
+    "hash": "50c2c8b75a53f4042c9c71e79eb4dd69e8a8b8d85148aec6c2107509f429493d",
+    "legal_function": "Tarball",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "ZIP_VALIDATOR",
+    "path": "ZIP_VALIDATOR.py",
+    "hash": "9a62a2c672416e2fafc3a5325bfb7a84458757abf72b9e24d4b17fc68e8224c5",
+    "legal_function": "Zip Validator",
+    "dependencies": [
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "openAIkey",
+    "path": "openAIkey.py",
+    "hash": "49da163bedd0e1317a3e750deb3c2e27e0062da03d55866c1aa5f51b67a1d588",
+    "legal_function": "Openaikey",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "codex_brain",
+    "path": "codex_brain.py",
+    "hash": "40f17d7c01cc8a3eb36d6bf0dac32d867a6220e10067f4e430906dfe4f3758bc",
+    "legal_function": "Codex Brain",
+    "dependencies": [
+      "ast",
+      "datetime",
+      "json",
+      "pathlib",
+      "typing",
+      "yaml",
+      "modules.hash_utils",
+      "modules.codex_guardian",
+      "modules.codex_supreme"
+    ],
+    "timestamp": "2025-08-24T09:47:13.019999",
+    "validated": false
+  },
+  {
+    "module": "Build_And_Upload_Master_Litigation_Pack_Z",
+    "path": "Build_And_Upload_Master_Litigation_Pack_Z.py",
+    "hash": "705101039d9dcff2071c1a933dc413ec36f4890cc600477906de42c54648285b",
+    "legal_function": "Build And Upload Master Litigation Pack Z",
+    "dependencies": [
+      "pydrive.auth",
+      "pydrive.drive",
+      "os",
+      "zipfile",
+      "shutil"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "build_system",
+    "path": "build_system.py",
+    "hash": "d3cb7ba1fe69ee9ae6cef93a92cb29420c8f5f131f940f28a731ac3a0dadd5eb",
+    "legal_function": "Build System",
+    "dependencies": [
+      "argparse",
+      "json",
+      "logging",
+      "pathlib"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "gdrive_sync",
+    "path": "gdrive_sync.py",
+    "hash": "fe56fa36b405327688dbb6ac3c0776009d3f5ba8e15dd9e5e606b10dd490ad50",
+    "legal_function": "Gdrive Sync",
+    "dependencies": [
+      "pydrive.auth",
+      "pydrive.drive",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "LITIGATION_CORE_ENGINE_v9999",
+    "path": "LITIGATION_CORE_ENGINE_v9999.py",
+    "hash": "8b212e7cb2e7a93c6d3ca6e5cdda5600d52ea48baebbf0d1f393bde4f5f4994e",
+    "legal_function": "Litigation Core Engine V9999",
+    "dependencies": [
+      "os",
+      "sys",
+      "json",
+      "argparse",
+      "logging",
+      "hashlib",
+      "smtplib",
+      "threading",
+      "email.message",
+      "fastapi",
+      "concurrent.futures",
+      "fastapi.middleware.cors",
+      "opentelemetry.instrumentation.fastapi",
+      "opentelemetry.instrumentation.requests",
+      "pythonjsonlogger",
+      "prefect",
+      "prefect.task_runners",
+      "gui_wrapper",
+      "config_manager",
+      "ocr_engine",
+      "memory_crawler",
+      "gpt_tools",
+      "db_repo",
+      "metrics",
+      "behavior_manager",
+      "alerts"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "FRED_Codex_Bootstrap",
+    "path": "FRED_Codex_Bootstrap.py",
+    "hash": "67d2eeb0b86d338c011d0e9fd1be42e8c4b587ff49403d3b2441308a3ab5abdf",
+    "legal_function": "Fred Codex Bootstrap",
+    "dependencies": [
+      "hashlib",
+      "os",
+      "requests",
+      "zipfile",
+      "pathlib"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "DOCUMENT_NEEDS_ENGINE_v9999",
+    "path": "DOCUMENT_NEEDS_ENGINE_v9999.py",
+    "hash": "db0c6d5f0af6677cde41db695c95c013b940366db0e274673526ebc4c6173c54",
+    "legal_function": "Document Needs Engine V9999",
+    "dependencies": [
+      "datetime",
+      "typing"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "EPOCH_UNPACKER_ENGINE_v1",
+    "path": "EPOCH_UNPACKER_ENGINE_v1.py",
+    "hash": "5d1ed8f26f4500a9cc1ef588b623fc552036e97856c9146908b59d7ed83c4075",
+    "legal_function": "Epoch Unpacker Engine V1",
+    "dependencies": [
+      "zipfile",
+      "os",
+      "json",
+      "pathlib",
+      "PyPDF2",
+      "PIL",
+      "pytesseract",
+      "hashlib",
+      "tkinter",
+      "tkinter",
+      "threading",
+      "argparse"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "organize_drive",
+    "path": "organize_drive.py",
+    "hash": "82c64c17c6773d77f5e9c07a18b0e38367b62bd2dc48d7466d818800e8933254",
+    "legal_function": "Organize Drive",
+    "dependencies": [
+      "os",
+      "shutil",
+      "argparse",
+      "logging",
+      "concurrent.futures",
+      "pathlib",
+      "tqdm"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "LITIGATION_CORE_ENGINE_v9999 (1)",
+    "path": "LITIGATION_CORE_ENGINE_v9999 (1).py",
+    "hash": "1f94871df920434d262e8d055c34f00dfe790abdcf6f31228f9c159e701fb795",
+    "legal_function": "Litigation Core Engine V9999 (1)",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "codex_patch_manager",
+    "path": "codex_patch_manager.py",
+    "hash": "a1e1bd5ed84e349d2c81874522c99cd79308f7d7f1934a866cdb9164ed61372f",
+    "legal_function": "Codex Patch Manager",
+    "dependencies": [
+      "os",
+      "importlib.util",
+      "json",
+      "shutil",
+      "logging",
+      "datetime"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "LITIGATION_CORE_ENGINE_v9999 (2)",
+    "path": "LITIGATION_CORE_ENGINE_v9999 (2).py",
+    "hash": "8c37f48cc658d033fd3d90150e6e931dce89e2e5989429f5c80db75e511938fc",
+    "legal_function": "Litigation Core Engine V9999 (2)",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "firstimport",
+    "path": "firstimport.py",
+    "hash": "ed5818ff9aaf3f43eb1c84235a20f52df5e00ee4a65eddd45e4d89b280e98f2d",
+    "legal_function": "Firstimport",
+    "dependencies": [
+      "json",
+      "os",
+      "pathlib",
+      "datetime",
+      "hashlib",
+      "platform",
+      "getpass",
+      "logging"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "judge_sim_ladas_hoopes_v1",
+    "path": "judge_sim_ladas_hoopes_v1.py",
+    "hash": "c981e83378e265230a70d839009134fad40aacc38c79588d4ce5fed181d00d0e",
+    "legal_function": "Judge Sim Ladas Hoopes V1",
+    "dependencies": [
+      "json",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "BINDER_BUILDER",
+    "path": "BINDER_BUILDER.py",
+    "hash": "dd33a0484431edcff051e7fbb7a9ab35a4aa8ad24a21ba2dfa93da43d7431668",
+    "legal_function": "Binder Builder",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "ppo_warboard",
+    "path": "warboard/ppo_warboard.py",
+    "hash": "a417c56a599e4c34166e8a1b1ebab0bd1a145da529976f0ca8050839ad21dc7f",
+    "legal_function": "Ppo Warboard",
+    "dependencies": [
+      "os",
+      "docx",
+      "svg_builder",
+      "svg_motion_binder"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "warboard_engine",
+    "path": "warboard/warboard_engine.py",
+    "hash": "5e59e27131f83b6fbb4d25264c7ad699b256d3f50d0f4c57859def516aa9bf7b",
+    "legal_function": "Warboard Engine",
+    "dependencies": [
+      "json",
+      "os",
+      "docx",
+      "datetime",
+      "scanner.scan_engine",
+      "timeline.builder",
+      "contradictions.contradiction_matrix",
+      "warboard.svg_builder",
+      "warboard.svg_motion_binder",
+      "gdrive_sync"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "svg_motion_binder",
+    "path": "warboard/svg_motion_binder.py",
+    "hash": "36d624555c82a1ab8803d7eac15e96a98a7034b8c065709d9769836c1f1eb407",
+    "legal_function": "Svg Motion Binder",
+    "dependencies": [
+      "json",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "warboard/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "svg_builder",
+    "path": "warboard/svg_builder.py",
+    "hash": "ce7f08a3aecd87e88f67b71b5cd42e74c14a86ad8d965e502e6ce4dd6bb2b753",
+    "legal_function": "Svg Builder",
+    "dependencies": [
+      "json",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "warboard_matrix_export",
+    "path": "warboard/warboard_matrix_export.py",
+    "hash": "525f34af3a438fb8f2156ce4a8bfb01ff93dd2d6fbc90def44e97cfa9bc0782e",
+    "legal_function": "Warboard Matrix Export",
+    "dependencies": [
+      "os",
+      "zipfile"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "custody_interference_engine",
+    "path": "warboard/custody_interference_engine.py",
+    "hash": "2891b9d18f77ad9d5801cbbb0239a1726debc6c5cfbfd71b3802109b6cca084b",
+    "legal_function": "Custody Interference Engine",
+    "dependencies": [
+      "os",
+      "json",
+      "docx",
+      "svg_builder",
+      "svg_motion_binder"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "timeline/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "builder",
+    "path": "timeline/builder.py",
+    "hash": "637ac28af82f26ba6abdf05dbc00fec6422f77e11eff34a6710451801ef0f32f",
+    "legal_function": "Builder",
+    "dependencies": [
+      "json",
+      "os",
+      "datetime"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "fusion_engine",
+    "path": "timeline/fusion_engine.py",
+    "hash": "336343e8c8ed090ea17f44b90ff6d5d919ff652ae6d4f63eb6f57fd650672d0a",
+    "legal_function": "Fusion Engine",
+    "dependencies": [
+      "json",
+      "os",
+      "datetime"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "notice_of_claim",
+    "path": "notices/notice_of_claim.py",
+    "hash": "c569cd7a9830579126ccc8df27ece54be68e80c9cc16ec2e22e467a69a73fb02",
+    "legal_function": "Notice Of Claim",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "notices/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "video_request_builder",
+    "path": "foia/video_request_builder.py",
+    "hash": "94a3114105be2f951bea4485b202e90d44e4e0c3b2e7eb0c7d9772282d64d9bc",
+    "legal_function": "Video Request Builder",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "autopacker",
+    "path": "foia/autopacker.py",
+    "hash": "e5fa09771522a86256bf9e88e621bd6d028e3b4e2eaa1cb0cd492b3fb20eb439",
+    "legal_function": "Autopacker",
+    "dependencies": [
+      "os",
+      "json",
+      "zipfile",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "foia/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "modules/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "hash_utils",
+    "path": "modules/hash_utils.py",
+    "hash": "e3709c407fc0de0bd36531022e4b6e4306ebecd3baa8205602d0cba8833fb614",
+    "legal_function": "Hash Utils",
+    "dependencies": [
+      "__future__",
+      "hashlib",
+      "pathlib",
+      "typing"
+    ],
+    "timestamp": "2025-08-24T09:46:06.580900",
+    "validated": false
+  },
+  {
     "module": "benchbook_loader",
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "legal_function": "Benchbook Loader",
+    "dependencies": [
+      "__future__",
+      "pathlib",
+      "typing",
+      "PyPDF2"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "codex_supreme",
+    "path": "modules/codex_supreme.py",
+    "hash": "fbe1519cf3becf92c52ed330fef1f065cfb56b6e6b9ce0b0e3bb1fc3f4ea77b5",
+    "legal_function": "Codex Supreme",
+    "dependencies": [
+      "datetime",
+      "json",
+      "os",
+      "pathlib",
+      "typing",
+      "hash_utils"
+    ],
+    "timestamp": "2025-08-24T09:46:23.372709",
+    "validated": false
+  },
+  {
+    "module": "codex_guardian",
+    "path": "modules/codex_guardian.py",
+    "hash": "5bdd0330ebc848c7408bd9d4af46dff4c5354f25b9b8f6b2261b56aadc7f281b",
+    "legal_function": "Codex Guardian",
+    "dependencies": [
+      "json",
+      "re",
+      "subprocess",
+      "pathlib",
+      "typing",
+      "hash_utils"
+    ],
+    "timestamp": "2025-08-24T09:46:15.656799",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "press/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "press_draft_engine",
+    "path": "press/press_draft_engine.py",
+    "hash": "c587e47445999065b332eb61fa958f2b92d87663175197a24b1bbf51ce91f3e9",
+    "legal_function": "Press Draft Engine",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "frontend",
+    "path": "gui/frontend.py",
+    "hash": "427cc6b99d2fc9752c705c53cc5bb6190326690c896918cd086d6179e4e6d523",
+    "legal_function": "Frontend",
+    "dependencies": [
+      "os",
+      "tkinter",
+      "tkinter",
+      "tkinterweb",
+      "warboard.warboard_engine",
+      "warboard.ppo_warboard",
+      "warboard.custody_interference_engine",
+      "scheduling.scheduler",
+      "gui.modules.entity_suppression_feed",
+      "json"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "gui/modules/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "entity_suppression_feed",
+    "path": "gui/modules/entity_suppression_feed.py",
+    "hash": "8e17d21c13bcc9abb6c54a2515ef0048e593fd0f45c67105791e82ca3cab9142",
+    "legal_function": "Entity Suppression Feed",
+    "dependencies": [
+      "json",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "violations/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "misconduct_letter",
+    "path": "violations/misconduct_letter.py",
+    "hash": "fe4dd89ab74e55e58a4b7db1a4fcb33be8e2ff54f5b5d78268cc06bc3b4b943f",
+    "legal_function": "Misconduct Letter",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "federal/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "complaint_generator",
+    "path": "federal/complaint_generator.py",
+    "hash": "fd9022fccd6ebeffdf37cee7f5fc7c778018a05c46b746f3b96f103ab6baed01",
+    "legal_function": "Complaint Generator",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "src/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "env",
+    "path": "src/env.py",
+    "hash": "3d8efadff7fa0d904b9de47168778216e3cb09b2e424ff4006c5c9e5a863a808",
+    "legal_function": "Env",
+    "dependencies": [
+      "logging.config",
+      "sqlalchemy",
+      "src.forms.models",
+      "src.knowledge.models",
+      "alembic"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "b978fb447583_initial",
+    "path": "src/versions/b978fb447583_initial.py",
+    "hash": "b93ea7f00881228c7dd691cd068b1233515ceb8fdf8e95228c6eedb2069b3949",
+    "legal_function": "B978Fb447583 Initial",
+    "dependencies": [
+      "typing",
+      "alembic",
+      "sqlalchemy"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "src/forms/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "models",
+    "path": "src/forms/models.py",
+    "hash": "c7313f85987cb0a45df3767208e65a6f3c659c473d3c8e4b5bb76619869c4692",
+    "legal_function": "Models",
+    "dependencies": [
+      "sqlalchemy.orm",
+      "sqlalchemy"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "src/knowledge/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "models",
+    "path": "src/knowledge/models.py",
+    "hash": "dc9a99019d7e7c0afd3512d902d9fc2c535b116097e2f206feae17fa37c94e72",
+    "legal_function": "Models",
+    "dependencies": [
+      "sqlalchemy.orm",
+      "sqlalchemy"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "tests/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "test_hash_utils",
+    "path": "tests/test_hash_utils.py",
+    "hash": "68fb2078bff302840588a0510e420491f85a96d39bcb22d08fc039ad3f1a7a90",
+    "legal_function": "Test Hash Utils",
+    "dependencies": [
+      "pathlib",
+      "modules.hash_utils"
+    ],
+    "timestamp": "2025-08-24T09:46:34.428573",
+    "validated": false
+  },
+  {
+    "module": "test_benchbook_loader",
+    "path": "tests/test_benchbook_loader.py",
+    "hash": "205a4e4ddcef6817daabf0a518fadc848fc917e0a51cf7c070fa36e10d08aa7b",
+    "legal_function": "Test Benchbook Loader",
+    "dependencies": [
+      "pathlib",
+      "PyPDF2",
+      "modules.benchbook_loader"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "test_codex_brain",
+    "path": "tests/test_codex_brain.py",
+    "hash": "40095f304e8ba8ce14e4f0724f8e0fc374f49a68be60e8fe1724c9071f058063",
+    "legal_function": "Test Codex Brain",
+    "dependencies": [
+      "json",
+      "pathlib",
+      "codex_brain"
+    ],
+    "timestamp": "2025-08-24T09:46:26.764669",
+    "validated": false
+  },
+  {
+    "module": "test_codex_supreme",
+    "path": "tests/test_codex_supreme.py",
+    "hash": "0afb1521bb5a2235bacb4f866abbd7d1a110df4fa47968a90b85d57e7e2aab77",
+    "legal_function": "Test Codex Supreme",
+    "dependencies": [
+      "json",
+      "pathlib",
+      "modules"
+    ],
+    "timestamp": "2025-08-24T09:46:32.832593",
+    "validated": false
+  },
+  {
+    "module": "test_codex_guardian",
+    "path": "tests/test_codex_guardian.py",
+    "hash": "3e98cdc408ebde71c1e9661cbbd7038f4530d96c751e358c7e3367cf6e077a46",
+    "legal_function": "Test Codex Guardian",
+    "dependencies": [
+      "modules",
+      "pytest"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "scheduling/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "scheduler",
+    "path": "scheduling/scheduler.py",
+    "hash": "9b2f103840169e4dec59f03cf085f12c25bf655f9bd2b744dc064b0de711b80b",
+    "legal_function": "Scheduler",
+    "dependencies": [
+      "os",
+      "json",
+      "datetime",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "entity_trace/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "ai_entity_review",
+    "path": "entity_trace/ai_entity_review.py",
+    "hash": "94a20f45c4f24b75c5c04c7261ac3687742e8254ba5f847b8d9531d591a36b4e",
+    "legal_function": "Ai Entity Review",
+    "dependencies": [
+      "os",
+      "json",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "scripts/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "stack_dispatcher",
+    "path": "mifile/stack_dispatcher.py",
+    "hash": "7d6fa619c32775d9cba94fb1d88c211f9797513f19b7eb854cbddf7018ff6e10",
+    "legal_function": "Stack Dispatcher",
+    "dependencies": [
+      "os",
+      "zipfile"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "mifile/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "tab_forger",
+    "path": "binder/tab_forger.py",
+    "hash": "9bb122a26c870ca4d69eaaaa880321baef7ee72582ba2d4901e495c1223de0f6",
+    "legal_function": "Tab Forger",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "binder/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "emergency_injunction",
+    "path": "motions/emergency_injunction.py",
+    "hash": "32dfaf5c818d7a5b7af8e45c82dff8bf1cbedbea2222d646ec9fbb9ebee4d239",
+    "legal_function": "Emergency Injunction",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "motions/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "protective_order",
+    "path": "motions/protective_order.py",
+    "hash": "756a774aee65c5425c1de46a73a15259e40ad5cfd07f06ce14f85391b6ff59d3",
+    "legal_function": "Protective Order",
+    "dependencies": [
+      "os",
+      "docx"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "contradictions/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "contradiction_matrix",
+    "path": "contradictions/contradiction_matrix.py",
+    "hash": "67bc35c4d9a3ea0e62c146f84ed670160d810ea6cbf8f3f27eee58b4cf7f5ef3",
+    "legal_function": "Contradiction Matrix",
+    "dependencies": [
+      "json",
+      "os"
+    ],
+    "timestamp": "2025-08-24T09:03:52.423832",
+    "validated": false
+  },
+  {
+    "module": "__init__",
+    "path": "scanner/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "  Init  ",
+    "dependencies": [],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
+  },
+  {
+    "module": "scan_engine",
+    "path": "scanner/scan_engine.py",
+    "hash": "0710c902353f22b727ceba4e524e85ddeb4434cc4618ccbdf7796849cd756d92",
+    "legal_function": "Scan Engine",
+    "dependencies": [
+      "os",
+      "json",
+      "datetime",
+      "sys"
+    ],
+    "timestamp": "2025-08-24T09:03:52.427832",
+    "validated": false
   }
 ]
