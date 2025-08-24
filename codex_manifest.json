@@ -4,6 +4,26 @@
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "dependencies": [
+      "PyPDF2"
+    ]
+  },
+  {
+    "module": "build_vibeverse_machine",
+    "path": "build_vibeverse_machine.sh",
+    "hash": "6da908fd898b05ea96fec2b709e81ec615f85d03a4358c508a9bcde4922efc51",
+    "legal_function": "builds vibeverse machine and writes DNA component",
+    "dependencies": [
+      "bash"
+    ]
+  },
+  {
+    "module": "dna_page",
+    "path": "frontend/pages/dna.tsx",
+    "hash": "da7d0a9c2449fb8cfc646dede81e27b9f6032235cc73c6ca4847eea8e7da04e0",
+    "legal_function": "collects user email input",
+    "dependencies": [
+      "React"
+    ]
   }
 ]
