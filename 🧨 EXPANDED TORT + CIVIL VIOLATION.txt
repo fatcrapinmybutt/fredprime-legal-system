@@ -1,0 +1,31 @@
+🧨 EXPANDED TORT + CIVIL VIOLATION MATRIX
+Track: HOUSING / SHADY OAKS / EVICTION
+
+Tort / Action	Legal Basis	Key Element	Evidence You Have	Strategic Benefit
+1. Constructive Eviction	MCL 600.2918(1); Case law	Landlord conduct made home uninhabitable or forced tenant to leave	Non-acceptance of MDHHS/TrueNorth funds, ledger sabotage, eviction while ledger was current	Core damages theory; triggers lease-breaking damages
+2. Fraud / Misrepresentation	Common law fraud; M Civ JI 128.01	False statements or concealment causing harm	Misleading ledger entries; altered balance post-judgment; concealment of MDHHS funds	Opens punitive damages; foundational to §1983 and conspiracy
+3. Intentional Infliction of Emotional Distress (IIED)	Common law	Extreme and outrageous conduct	Threats, lockouts, sabotage pre-custody trial, forced homelessness	Emotional damages multiplier
+4. Civil Conspiracy	See Admiral Ins Co v Columbia Cas Ins Co, 194 Mich App 300 (1992)	Two or more actors combined to commit unlawful act	Evidence of coordination between Kim Davis, Partridge, Cricklewood, Shady Oaks, HOA, Alden	Links all entities into single scheme
+5. Tortious Interference with Expectancy / Relationship	Expectancy of quiet enjoyment, or of public assistance funds	Third-party intentionally disrupted expectancy (e.g., MDHHS, TrueNorth payments)	Proof they dodged MDHHS/TrueNorth, knew it was pre-arranged	Additional angle for damages
+6. Breach of Covenant of Quiet Enjoyment	MCL 554.139; contract law	Interference with peaceful use of property	Ledger games, repeated threats, office changes, denial of access	Leverages lease even if unsigned or coercively executed
+7. Abuse of Process	See Friedman v Dozorc, 412 Mich 1 (1981)	Legal process used for improper purpose	Writ issued while ledger showed balance; known attempt to seize home	Adds malice and intent
+8. Negligent Hiring / Retention	Common law	Entity hired agent (e.g., Kim Davis, Nicole Crowley) who caused harm	If HOA or Alden retained employees with knowledge of misconduct	Hooks upper-tier LLCs directly
+9. Conversion (Theft of Real Property)	MCL 600.2919a	Wrongful dominion over property	If mobile home or belongings were taken	High-value claim if they seized or disposed of personal property
+10. Retaliatory Eviction	MCL 600.5720; MCL 125.2652	Eviction in response to asserting legal rights	Timeline proves eviction after invoking MDHHS or asserting rights	Can void eviction; add damages
+11. Violation of Mobile Home Commission Act	MCL 125.2301 et seq.	Unlawful lot rent practices, lease fraud, retaliation	Lease coercion, rent hikes without title transfer, sewer issues	Opens MSHDA and AG enforcement, statutory damages
+12. §1983 Civil Rights Violations	42 U.S.C. § 1983	State actor or collusion with state used to deprive rights	Court officer involved, sheriff deputization, failure to follow MCL 600.2918 notice	Enables federal escalation
+13. Procedural Due Process Denial	14th Amendment; U.S. Const.	Deprivation of home without full hearing or lawful service	Evidence of rushed writ, backdated ledger, denied opportunity to contest	Federal claim; links to IIED and abuse of process
+14. Pattern of Racketeering (RICO-lite)	Predicate conspiracy under MCL or common law	Coordinated false records, mislabeling of LLCs, fraud by mail	Multiple misnamed LLCs, forged ledgers, deliberate scheme to eject and seize home	Severe damages and corporate veil piercing grounds#	Tort/Action	Rationale	Notes
+1	Fraudulent Misrepresentation	Billing manipulation, fake ledgers, payment tampering	Confirmed across multiple ledgers (e.g., Jamie Sima account, Partridge check)
+2	Conversion	Taking your property, wrongful possession of trailer/lot	Applies post-writ ejection of your belongings
+3	Trespass to Chattels	Tampering with or disposing of property without legal cause	Augments conversion claim
+4	Abuse of Process	Weaponized litigation to secure trailer eviction	Via fabricated arrears and judicial manipulation
+5	Negligent Infliction of Emotional Distress (NIED)	Targeted coercion and institutional manipulation	Especially during Title suppression and eviction
+6	Violation of MCL 600.2918	Illegal self-help eviction methods	Strong in both state and §1983 pleadings
+7	Civil Racketeering (MCL 750.159g)	Multiple coordinated shell LLCs for unjust enrichment	Supports veil-piercing and federal expansion
+8	Constructive Fraud	Failure to disclose true entity on lease, suppression of MDHHS funds	Strong where intent can be inferred
+9	Tortious Interference with Expectancy	Custody interference via housing sabotage	Embeds well with PPO/custody firewall maintained
+10	Deprivation of Property Rights (42 USC §1982)	Federal claim of racial/economic targeting	Escalates into federal §1983 chain
+11	Housing Discrimination	Potential MHCRA, FHA, or 42 USC §3617 claims	Optional pending demographic + motive pattern
+12	False Light / Defamation	Any allegations (PPO or court filings) that harmed reputation or property	Deployable if proven false in record
+

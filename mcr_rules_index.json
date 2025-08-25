@@ -1,0 +1,1306 @@
+{
+  "1.101": {
+    "title": "Title; Citation ....................................................................................................................... 1",
+    "starts_on_page": 0
+  },
+  "1.102": {
+    "title": "Effective Date ...................................................................................................................... 1",
+    "starts_on_page": 0
+  },
+  "1.103": {
+    "title": "Applicability ........................................................................................................................ 1",
+    "starts_on_page": 0
+  },
+  "1.104": {
+    "title": "Statutory Practice Provisions ............................................................................................... 1",
+    "starts_on_page": 0
+  },
+  "1.105": {
+    "title": "Construction ......................................................................................................................... 1",
+    "starts_on_page": 0
+  },
+  "1.106": {
+    "title": "Catch Lines ....",
+    "starts_on_page": 0
+  },
+  "2.107": {
+    "title": "Service and Filing of Pleadings and Other Documents ..................................................... 40",
+    "starts_on_page": 1
+  },
+  "2.108": {
+    "title": "Time ................................................................................................................................... 44",
+    "starts_on_page": 1
+  },
+  "2.109": {
+    "title": "Security for Costs .............................................................................................................. 46",
+    "starts_on_page": 1
+  },
+  "2.110": {
+    "title": "Pleadings ............................................................................................................................ 47",
+    "starts_on_page": 1
+  },
+  "2.111": {
+    "title": "General Rules of Pleading ................................................................................................. 47",
+    "starts_on_page": 1
+  },
+  "2.112": {
+    "title": "Pleading Special Matters ................................................................................................... 49",
+    "starts_on_page": 1
+  },
+  "2.113": {
+    "title": "Form, Captioning, Signing, and Verifying of Documents ................................................ 53",
+    "starts_on_page": 1
+  },
+  "2.115": {
+    "title": "Motion to Correct or to Strike Pleadings",
+    "starts_on_page": 1
+  },
+  "2.311": {
+    "title": "Physical and Mental Examination of Persons ................................................................. 101",
+    "starts_on_page": 2
+  },
+  "2.312": {
+    "title": "Request for Admission .................................................................................................... 103",
+    "starts_on_page": 2
+  },
+  "2.313": {
+    "title": "Failure to Serve Disclosure or to Provide or to Permit Discovery; Sanctions ................ 104",
+    "starts_on_page": 2
+  },
+  "2.314": {
+    "title": "Discovery of Medical Information Concerning Party ..................................................... 107",
+    "starts_on_page": 2
+  },
+  "2.315": {
+    "title": "Video Depositions ........................................................................................................... 109",
+    "starts_on_page": 2
+  },
+  "2.316": {
+    "title": "Removal of Disclosure and Discovery Materials From File ........................................... 111",
+    "starts_on_page": 2
+  },
+  "2.401": {
+    "title": "Pre",
+    "starts_on_page": 2
+  },
+  "2.601": {
+    "title": "Judgments ........................................................................................................................ 168",
+    "starts_on_page": 3
+  },
+  "2.602": {
+    "title": "Entry of Judgments and Orders ....................................................................................... 168",
+    "starts_on_page": 3
+  },
+  "2.603": {
+    "title": "Default and Default Judgment ......................................................................................... 170",
+    "starts_on_page": 3
+  },
+  "2.604": {
+    "title": "Judgment in Actions Involving Multiple Claims or Multiple Parties ............................. 173",
+    "starts_on_page": 3
+  },
+  "2.605": {
+    "title": "Declaratory Judgments .................................................................................................... 173",
+    "starts_on_page": 3
+  },
+  "2.610": {
+    "title": "Motion for Judgment Notwithstanding the Verdict ......................................................... 174",
+    "starts_on_page": 3
+  },
+  "2.611": {
+    "title": "New Trials; Amendment of Judgments ........................................................................... 175",
+    "starts_on_page": 3
+  },
+  "2.612": {
+    "title": "Relief From Judgment or Order .......................................................................................",
+    "starts_on_page": 3
+  },
+  "3.208": {
+    "title": "Friend of the Court .......................................................................................................... 230",
+    "starts_on_page": 4
+  },
+  "3.209": {
+    "title": "Suspension of Enforcement and Dismissal ..................................................................... 232",
+    "starts_on_page": 4
+  },
+  "3.210": {
+    "title": "Hearings and Trials .......................................................................................................... 232",
+    "starts_on_page": 4
+  },
+  "3.211": {
+    "title": "Judgments and Orders ..................................................................................................... 236",
+    "starts_on_page": 4
+  },
+  "3.212": {
+    "title": "Postjudgment Transfer of Domestic Relations Cases ...................................................... 238",
+    "starts_on_page": 4
+  },
+  "3.213": {
+    "title": "Postjudgment Motions and Enforcement ........................................................................ 240",
+    "starts_on_page": 4
+  },
+  "3.214": {
+    "title": "Actions Under Uniform Acts ........................................................................................... 240",
+    "starts_on_page": 4
+  },
+  "3.215": {
+    "title": "Domestic Relations Referees ......................................................",
+    "starts_on_page": 4
+  },
+  "3.602": {
+    "title": "Arbitration ....................................................................................................................... 306",
+    "starts_on_page": 5
+  },
+  "3.603": {
+    "title": "Interpleader ...................................................................................................................... 309",
+    "starts_on_page": 5
+  },
+  "3.604": {
+    "title": "Bonds ............................................................................................................................... 310",
+    "starts_on_page": 5
+  },
+  "3.605": {
+    "title": "Collection of Penalties, Fines, Forfeitures, and Forfeited Recognizances ...................... 312",
+    "starts_on_page": 5
+  },
+  "3.606": {
+    "title": "Contempts Outside Immediate Presence of Court ........................................................... 313",
+    "starts_on_page": 5
+  },
+  "3.607": {
+    "title": "Proceedings to Restore Lost Records or Documents in Courts of Record ...................... 314",
+    "starts_on_page": 5
+  },
+  "3.611": {
+    "title": "Voluntary Dissolution of Corporations ........................................................................... 314",
+    "starts_on_page": 5
+  },
+  "3.612": {
+    "title": "Winding Up of Corporation Whose Term or Charter Has Expired ...................",
+    "starts_on_page": 5
+  },
+  "3.807": {
+    "title": "Indian Child ..................................................................................................................... 359",
+    "starts_on_page": 6
+  },
+  "3.808": {
+    "title": "Finalizing Adoption; Findings of Court .......................................................................... 360",
+    "starts_on_page": 6
+  },
+  "3.809": {
+    "title": "Notice Following Involuntary Termination of Parental Rights ....................................... 360",
+    "starts_on_page": 6
+  },
+  "3.810": {
+    "title": "Transcripts for Purposes of Appeal ................................................................................. 360",
+    "starts_on_page": 6
+  },
+  "3.811": {
+    "title": "Use of Videoconferencing Technology ........................................................................... 360",
+    "starts_on_page": 6
+  },
+  "3.901": {
+    "title": "Applicability of Rules ...................................................................................................... 360",
+    "starts_on_page": 6
+  },
+  "3.902": {
+    "title": "Construction ...............................................................",
+    "starts_on_page": 6
+  },
+  "3.943": {
+    "title": "Dispositional Hearing ...................................................................................................... 409",
+    "starts_on_page": 7
+  },
+  "3.944": {
+    "title": "Probation Violation .......................................................................................................... 410",
+    "starts_on_page": 7
+  },
+  "3.945": {
+    "title": "Dispositional Review ....................................................................................................... 414",
+    "starts_on_page": 7
+  },
+  "3.946": {
+    "title": "Post-Dispositional Secure Detention Pending Return to Placement ............................... 416",
+    "starts_on_page": 7
+  },
+  "3.947": {
+    "title": "Other Placement Review Proceedings ............................................................................. 416",
+    "starts_on_page": 7
+  },
+  "3.950": {
+    "title": "Waiver of Jurisdiction ..................................................................................................... 417",
+    "starts_on_page": 7
+  },
+  "3.951": {
+    "title": "Initiating Designated Proceedings ................................................................................... 420",
+    "starts_on_page": 7
+  },
+  "3.952": {
+    "title": "Designation Hearing ..........................",
+    "starts_on_page": 7
+  },
+  "4.001": {
+    "title": "Applicability .................................................................................................................... 483",
+    "starts_on_page": 8
+  },
+  "4.002": {
+    "title": "Transfer of Actions From District Court to Circuit Court ............................................... 483",
+    "starts_on_page": 8
+  },
+  "4.003": {
+    "title": "Removal of Actions From Circuit Court to District Court. ............................................. 484",
+    "starts_on_page": 8
+  },
+  "4.101": {
+    "title": "Civil Infraction Actions ................................................................................................... 485",
+    "starts_on_page": 8
+  },
+  "4.201": {
+    "title": "Summary Proceedings to Recover Possession of Premises ............................................. 489",
+    "starts_on_page": 8
+  },
+  "4.202": {
+    "title": "Summary Proceedin",
+    "starts_on_page": 8
+  },
+  "5.113": {
+    "title": "Form, Captioning, Signing, and Verifying of Documents .............................................. 516",
+    "starts_on_page": 9
+  },
+  "5.117": {
+    "title": "Appearance by Attorneys ................................................................................................ 517",
+    "starts_on_page": 9
+  },
+  "5.118": {
+    "title": "Amending or Supplementing Papers ............................................................................... 519",
+    "starts_on_page": 9
+  },
+  "5.119": {
+    "title": "Additional Petitions; Objections; Hearing Practices ....................................................... 519",
+    "starts_on_page": 9
+  },
+  "5.120": {
+    "title": "Action by Fiduciary in Contested Matter; Notice to Interested Persons; Failure to",
+    "starts_on_page": 9
+  },
+  "5.121": {
+    "title": "Guardian Ad Litem; Visitor ............................................................................................. 520",
+    "starts_on_page": 9
+  },
+  "5.125": {
+    "title": "Interested Persons Defined .............................................................................................. 5",
+    "starts_on_page": 9
+  },
+  "5.312": {
+    "title": "Reopening Decedent Estate ............................................................................................. 548",
+    "starts_on_page": 10
+  },
+  "5.313": {
+    "title": "Compensation of Attorneys ............................................................................................. 548",
+    "starts_on_page": 10
+  },
+  "5.401": {
+    "title": "General Provisions ........................................................................................................... 550",
+    "starts_on_page": 10
+  },
+  "5.402": {
+    "title": "Common Provisions ........................................................................................................ 550",
+    "starts_on_page": 10
+  },
+  "5.403": {
+    "title": "Proceedings on Temporary Guardianship ....................................................................... 552",
+    "starts_on_page": 10
+  },
+  "5.404": {
+    "title": "Guardianship of Minor .................................................................................................... 553",
+    "starts_on_page": 10
+  },
+  "5.405": {
+    "title": "Proceedings on Guardianship of Incapacitated Individual ....................",
+    "starts_on_page": 10
+  },
+  "5.784": {
+    "title": "Proceedings on a Durable Power of Attorney for Health Care or Mental Health",
+    "starts_on_page": 11
+  },
+  "5.801": {
+    "title": "Appeals to Court of Appeals ........................................................................................... 573",
+    "starts_on_page": 11
+  },
+  "5.802": {
+    "title": "Appellate Procedure; Stays Pending Appeal ................................................................... 575",
+    "starts_on_page": 11
+  },
+  "5.900": {
+    "title": "Note: ................................................................................................................................ 576",
+    "starts_on_page": 11
+  },
+  "6.125": {
+    "title": "Mental Competency Hearing ........................................................................................... 603",
+    "starts_on_page": 12
+  },
+  "6.126": {
+    "title": "Decision on Admissibility of Evidence ........................................................................... 604",
+    "starts_on_page": 12
+  },
+  "6.201": {
+    "title": "Discovery ......................................................................................................................... 605",
+    "starts_on_page": 12
+  },
+  "6.301": {
+    "title": "Available Pleas .....................................................................................",
+    "starts_on_page": 12
+  },
+  "6.502": {
+    "title": "Motion for Relief From Judgment ................................................................................... 633",
+    "starts_on_page": 13
+  },
+  "6.503": {
+    "title": "Filing and Service of Motion ........................................................................................... 636",
+    "starts_on_page": 13
+  },
+  "6.504": {
+    "title": "Assignment; Preliminary Consideration by Judge; Summary Denial ............................. 636",
+    "starts_on_page": 13
+  },
+  "6.505": {
+    "title": "Right to Legal Assistance ................................................................................................ 637",
+    "starts_on_page": 13
+  },
+  "6.506": {
+    "title": "Response by Prosecutor ................................................................................................... 637",
+    "starts_on_page": 13
+  },
+  "6.507": {
+    "title": "Expansion of Record ....................................................................................................... 637",
+    "starts_on_page": 13
+  },
+  "6.508": {
+    "title": "Procedure; Evidentiary Hearing; Determination ............................................................. 637",
+    "starts_on_page": 13
+  },
+  "6.509": {
+    "title": "Appeal ........................................................................",
+    "starts_on_page": 13
+  },
+  "7.110": {
+    "title": "Motions in Circuit Court Appeals ................................................................................... 674",
+    "starts_on_page": 14
+  },
+  "7.111": {
+    "title": "Briefs ............................................................................................................................... 674",
+    "starts_on_page": 14
+  },
+  "7.112": {
+    "title": "Miscellaneous Relief ....................................................................................................... 675",
+    "starts_on_page": 14
+  },
+  "7.113": {
+    "title": "Dismissal ......................................................................................................................... 675",
+    "starts_on_page": 14
+  },
+  "7.114": {
+    "title": "Oral Argument; Decision and Effect of Judgment, Reconsideration .............................. 676",
+    "starts_on_page": 14
+  },
+  "7.115": {
+    "title": "Taxation of Costs; Fees. .................................................................................................. 676",
+    "starts_on_page": 14
+  },
+  "7.116": {
+    "title": "Appeals Under the Michigan Employment Security Act ................................................ 677",
+    "starts_on_page": 14
+  },
+  "7.117": {
+    "title": "Appeals from the Michigan Civil Service Commission ........",
+    "starts_on_page": 14
+  },
+  "7.310": {
+    "title": "Record on Appeals ........................................................................................................... 751",
+    "starts_on_page": 15
+  },
+  "7.311": {
+    "title": "Motions in Supreme Court .............................................................................................. 752",
+    "starts_on_page": 15
+  },
+  "7.312": {
+    "title": "Briefs, Responses to Adverse Amicus Briefs, and Appendixes in Calendar Cases and Cases",
+    "starts_on_page": 15
+  },
+  "7.313": {
+    "title": "Supreme Court Calendar ................................................................................................. 758",
+    "starts_on_page": 15
+  },
+  "7.314": {
+    "title": "Call and Argument of Cases ............................................................................................ 759",
+    "starts_on_page": 15
+  },
+  "7.315": {
+    "title": "Opinions, Orders, and Judgments .................................................................................... 759",
+    "starts_on_page": 15
+  },
+  "7.316": {
+    "title": "Miscellaneous Relief ...............................................................",
+    "starts_on_page": 15
+  },
+  "8.201": {
+    "title": "Allocation of Costs in Third-Class Districts .................................................................... 800",
+    "starts_on_page": 16
+  },
+  "8.202": {
+    "title": "Payment of Assigned Attorneys and Transcript Costs .................................................... 801",
+    "starts_on_page": 16
+  },
+  "8.203": {
+    "title": "Records and Entries Kept by Clerk ................................................................................. 802",
+    "starts_on_page": 16
+  },
+  "8.204": {
+    "title": "Bonds for Clerks, Deputies, Magistrates, and Official Process Servers .......................... 802",
+    "starts_on_page": 16
+  },
+  "8.205": {
+    "title": "Magistrates ....................................................................................................................... 802",
+    "starts_on_page": 16
+  },
+  "8.301": {
+    "title": "Powers of Register of Probate, Deputy Registers, and Clerks ........................................ 802",
+    "starts_on_page": 16
+  },
+  "8.302": {
+    "title": "Records and Entries Kept by Clerk ................................................................................. 803",
+    "starts_on_page": 16
+  },
+  "9.128": {
+    "title": "Costs ................................................................................................................................ 839",
+    "starts_on_page": 17
+  },
+  "9.129": {
+    "title": "Expenses; Reimbursement ............................................................................................... 840",
+    "starts_on_page": 17
+  },
+  "9.130": {
+    "title": "MCR 8.122 Cases; Arbitration; Discipline; Filing Complaint by Administrator ............ 840",
+    "starts_on_page": 17
+  },
+  "9.131": {
+    "title": "Investigation of Member or Employee of Board or Commission, or Relative of Member or",
+    "starts_on_page": 17
+  },
+  "9.200": {
+    "title": "Construction ..................................",
+    "starts_on_page": 17
+  },
+  "9.301": {
+    "title": "Definitions ....................................................................................................................... 863",
+    "starts_on_page": 18
+  },
+  "9.303": {
+    "title": "Affected Attorney with a Firm ........................................................................................ 864",
+    "starts_on_page": 18
+  },
+  "9.305": {
+    "title": "Appointment of Interim Administrator ............................................................................ 864",
+    "starts_on_page": 18
+  },
+  "9.307": {
+    "title": "Duties and Powers of the Interim Administrator ............................................................. 866",
+    "starts_on_page": 18
+  },
+  "9.309": {
+    "title": "Protection of Client Information and Privilege ............................................................... 867",
+    "starts_on_page": 18
+  },
+  "9.311": {
+    "title": "Protection of Client Files and Property ........................................................................... 867",
+    "starts_on_page": 18
+  },
+  "9.313": {
+    "title": "Compensation and Reimbursable Expenses of Interim Administrator ................",
+    "starts_on_page": 18
+  },
+  "1.108": {
+    "title": "C OMPUTATION  OF TIME",
+    "starts_on_page": 21
+  },
+  "1.110": {
+    "title": "C OLLECTION  OF FINES AND COSTS",
+    "starts_on_page": 37
+  },
+  "1.201": {
+    "title": "A MENDMENT  PROCEDURE",
+    "starts_on_page": 42
+  },
+  "2.001": {
+    "title": "A PPLICABILITY",
+    "starts_on_page": 43
+  },
+  "2.002": {
+    "title": "W AIVER  OF FEES FOR INDIGENT  PERSONS",
+    "starts_on_page": 43
+  },
+  "2.101": {
+    "title": "F ORM AND COMMENCEMENT  OF ACTION",
+    "starts_on_page": 51
+  },
+  "2.102": {
+    "title": "S UMMONS ; EXPIRATION  OF SUMMONS ; DISMISSAL  OF ACTION  FOR FAILURE  TO",
+    "starts_on_page": 51
+  },
+  "2.105": {
+    "title": "P ROCESS ; MANNER  OF SERVICE",
+    "starts_on_page": 54
+  },
+  "2.118": {
+    "title": "A MENDED  AND SUPPLEMENTAL  PLEADINGS",
+    "starts_on_page": 80
+  },
+  "2.119": {
+    "title": "M OTION  PRACTICE",
+    "starts_on_page": 81
+  },
+  "2.201": {
+    "title": "P ARTIES  PLAINTIFF  AND DEFENDANT ; CAPACITY",
+    "starts_on_page": 85
+  },
+  "2.206": {
+    "title": "P",
+    "starts_on_page": 91
+  },
+  "2.207": {
+    "title": "M ISJOINDER  AND NONJOINDER  OF PARTIES",
+    "starts_on_page": 92
+  },
+  "2.209": {
+    "title": "I NTERVENTION",
+    "starts_on_page": 92
+  },
+  "2.222": {
+    "title": "C HANGE  OF VENUE ; VENUE  PROPER",
+    "starts_on_page": 93
+  },
+  "2.223": {
+    "title": "C HANGE  OF VENUE ; VENUE  IMPROPER",
+    "starts_on_page": 94
+  },
+  "2.224": {
+    "title": "C HANGE  OF VENUE  IN TORT ACTIONS",
+    "starts_on_page": 95
+  },
+  "2.225": {
+    "title": "J OINDER  OF PARTY  TO CONTROL  VENUE",
+    "starts_on_page": 95
+  },
+  "2.227": {
+    "title": "T RANSFER  OF ACTIONS  ON FINDI",
+    "starts_on_page": 96
+  },
+  "2.301": {
+    "title": "A VAILABILITY  AND TIMING  OF DISCOVERY",
+    "starts_on_page": 98
+  },
+  "2.302": {
+    "title": "D UTY TO DISCLOSE ; GENERAL  RULES  GOVERNING  DISCOVERY",
+    "starts_on_page": 99
+  },
+  "2.303": {
+    "title": "D EPOSITIONS  BEFORE  ACTION  OR PENDING  APPEAL",
+    "starts_on_page": 107
+  },
+  "2.310": {
+    "title": "R EQUESTS  FOR PRODUCTION  OF DOCUMENTS  AND OTHER  THINGS ; ENTRY  ON LAND",
+    "starts_on_page": 119
+  },
+  "2.406": {
+    "title": "U SE OF FACSIMILE  COMMUNICATION  EQUIPMENT",
+    "starts_on_page": 149
+  },
+  "2.410": {
+    "title": "A LTERNATIVE  DISPUTE  RESOLUTION",
+    "starts_on_page": 153
+  },
+  "2.421": {
+    "title": "N OTICE  OF BANKRUPTCY  PROCEEDINGS",
+    "starts_on_page": 163
+  },
+  "2.501": {
+    "title": "S CHEDULING  TRIALS ; COURT  CALENDARS",
+    "starts_on_page": 164
+  },
+  "2.502": {
+    "title": "D ISMISSAL  FOR LACK OF PROGRESS",
+    "starts_on_page": 165
+  },
+  "2.504": {
+    "title": "D ISMISSAL  OF ACTIONS",
+    "starts_on_page": 167
+  },
+  "2.509": {
+    "title": "T RIAL BY JURY OR BY COURT",
+    "starts_on_page": 175
+  },
+  "2.511": {
+    "title": "I MPANELING  THE JURY",
+    "starts_on_page": 177
+  },
+  "2.516": {
+    "title": "M OTION  FOR DIRECTED  VERDICT",
+    "starts_on_page": 186
+  },
+  "2.517": {
+    "title": "F INDINGS  BY COURT",
+    "starts_on_page": 186
+  },
+  "2.614": {
+    "title": "S TAY OF PROCEEDINGS  TO ENFORCE  JUDGMENT",
+    "starts_on_page": 197
+  },
+  "2.626": {
+    "title": "A TTORNEY  FEES",
+    "starts_on_page": 210
+  },
+  "3.001": {
+    "title": "A PPLICABILITY  AND SCOPE",
+    "starts_on_page": 211
+  },
+  "3.002": {
+    "title": "I NDIAN  CHILDREN",
+    "starts_on_page": 211
+  },
+  "3.105": {
+    "title": "C LAIM  AND DELIVERY",
+    "starts_on_page": 232
+  },
+  "3.206": {
+    "title": "I NITIATING  A CASE",
+    "starts_on_page": 245
+  },
+  "3.221": {
+    "title": "H EARINGS  ON SUPPORT  AND PARENTING  TIME ENFORCEMENT  ACT BENCH",
+    "starts_on_page": 274
+  },
+  "3.223": {
+    "title": "S UMMARY  PROCEEDING  FOR ENTRY  OF CONSENT  JUDGMENT  OR ORDER",
+    "starts_on_page": 281
+  },
+  "3.224": {
+    "title": "F RIEND  OF THE COURT  ALTERNATIVE  DISPUTE  RESOLUTION",
+    "starts_on_page": 283
+  },
+  "3.229": {
+    "title": "F ILING  CONFIDENTIAL  MATERIALS",
+    "starts_on_page": 290
+  },
+  "3.306": {
+    "title": "Q UO WARRANTO",
+    "starts_on_page": 303
+  },
+  "3.403": {
+    "title": "S ALE OF PREMISES  AND DIVISION  OF PROCEEDS  AS SUBSTITUTE  FOR PARTITION",
+    "starts_on_page": 310
+  },
+  "3.411": {
+    "title": "C IVIL ACTION  TO DETERMINE  INTERESTS  IN L",
+    "starts_on_page": 314
+  },
+  "3.501": {
+    "title": "C LASS  ACTIONS",
+    "starts_on_page": 317
+  },
+  "3.601": {
+    "title": "P UBLIC  NUISANCES",
+    "starts_on_page": 324
+  },
+  "3.616": {
+    "title": "P ROCEEDING  TO DETERMINE  CONTINUATION  OF VOLUNTARY  FOSTER  CARE",
+    "starts_on_page": 344
+  },
+  "3.617": {
+    "title": "D ELAYED  REGISTRATION  OF BIRTH",
+    "starts_on_page": 345
+  },
+  "3.703": {
+    "title": "C OMMENCING  A PERSONAL  PROTECTION  ACTION",
+    "starts_on_page": 348
+  },
+  "3.704": {
+    "title": "D ISMISSAL",
+    "starts_on_page": 350
+  },
+  "3.705": {
+    "title": "I SSUANCE  OF PERSONAL  PROTECTION  ORDERS",
+    "starts_on_page": 350
+  },
+  "3.715": {
+    "title": "D EFINITIONS",
+    "starts_on_page": 358
+  },
+  "3.720": {
+    "title": "M ODIFICATION , TERMINATION , OR EXTENSION  OF ORDER",
+    "starts_on_page": 368
+  },
+  "3.722": {
+    "title": "A PPEALS",
+    "starts_on_page": 372
+  },
+  "3.801": {
+    "title": "D OCUMENTS , EXECUTION",
+    "starts_on_page": 373
+  },
+  "3.803": {
+    "title": "F INANCIAL  REPORTS , SUBSEQUENT  ORDERS",
+    "starts_on_page": 375
+  },
+  "3.805": {
+    "title": "T EMPORARY  PLACEMENTS , TIME FOR SERVICE  OF NOTICE  OF HEARING  TO",
+    "starts_on_page": 377
+  },
+  "3.911": {
+    "title": "J URY",
+    "starts_on_page": 392
+  },
+  "3.912": {
+    "title": "J UDGE",
+    "starts_on_page": 393
+  },
+  "3.920": {
+    "title": "S ERVICE  OF PROCESS",
+    "starts_on_page": 398
+  },
+  "3.922": {
+    "title": "P RETRIAL  PROCEDURES  IN DELINQUENCY  AND CHILD  PROTECTION  PROCEEDINGS",
+    "starts_on_page": 405
+  },
+  "3.923": {
+    "title": "M ISCELLANEOUS  PROCEDURES",
+    "starts_on_page": 409
+  },
+  "3.924": {
+    "title": "I NFORMATION  FURNISHED  ON REQUEST  BY COURT",
+    "starts_on_page": 410
+  },
+  "3.925": {
+    "title": "O PEN PROCEEDINGS ; JUDGMENTS  AND ORDERS ; RECORDS  CONFIDENTIALITY ;",
+    "starts_on_page": 410
+  },
+  "3.927": {
+    "title": "P RIOR  COURT",
+    "starts_on_page": 413
+  },
+  "3.930": {
+    "title": "R ECEIPT  AND RETURN  OR DISPOSAL  OF EXHIBITS  IN JUVENILE  PROCEEDINGS",
+    "starts_on_page": 414
+  },
+  "3.933": {
+    "title": "A CQUIRING  PHYSICAL  CONTROL  OF JUVENILE",
+    "starts_on_page": 418
+  },
+  "3.934": {
+    "title": "A RRANGING  COURT  APPEARANCE ; DETAINED  JUVENILE",
+    "starts_on_page": 419
+  },
+  "3.937": {
+    "title": "A DVICE  OF APPELLATE  RIGHTS",
+    "starts_on_page": 425
+  },
+  "3.941": {
+    "title": "P LEAS  OF ADMISSION  OR NO CONTEST",
+    "starts_on_page": 426
+  },
+  "3.942": {
+    "title": "T RIAL",
+    "starts_on_page": 427
+  },
+  "3.954": {
+    "title": "T RIAL OF DESIGNATED  CASES",
+    "starts_on_page": 445
+  },
+  "3.955": {
+    "title": "S ENTENCING  OR DISPOSITION  IN DESIGNATED  CASES",
+    "starts_on_page": 445
+  },
+  "3.961": {
+    "title": "I NITIATING  CHILD  PROTECTIVE  PROCEEDINGS",
+    "starts_on_page": 449
+  },
+  "3.971": {
+    "title": "P LEAS  OF ADMISSION  OR NO CONTEST",
+    "starts_on_page": 464
+  },
+  "3.973": {
+    "title": "D ISPOSITIONAL  HEARING",
+    "starts_on_page": 467
+  },
+  "3.974": {
+    "title": "P ROCEDURES  FOR CHILD  AT HOME; PETITION  AUTHORIZED",
+    "starts_on_page": 470
+  },
+  "3.976": {
+    "title": "P ERMANENCY  PLANNING  HEARINGS",
+    "starts_on_page": 475
+  },
+  "3.977": {
+    "title": "T ERMINATION  OF PARENTAL  RIGHTS",
+    "starts_on_page": 479
+  },
+  "3.978": {
+    "title": "P OST-TERMINATION  REVIEW  HEARINGS",
+    "starts_on_page": 483
+  },
+  "3.982": {
+    "title": "E NFORCEMENT  OF MINOR  PERSONAL  PROTECTION  ORDERS",
+    "starts_on_page": 489
+  },
+  "3.984": {
+    "title": "A PPREHENSION  OF ALLEGED  VIOLATOR",
+    "starts_on_page": 490
+  },
+  "3.985": {
+    "title": "P RELIMINARY  HEARING",
+    "starts_on_page": 491
+  },
+  "3.992": {
+    "title": "R EHEARINGS ; NEW TRIAL",
+    "starts_on_page": 498
+  },
+  "4.301": {
+    "title": "A PPLICABILITY  OF RULES",
+    "starts_on_page": 523
+  },
+  "4.303": {
+    "title": "N OTICE",
+    "starts_on_page": 524
+  },
+  "4.305": {
+    "title": "J UDGMENTS",
+    "starts_on_page": 525
+  },
+  "5.001": {
+    "title": "A PPLICABILITY",
+    "starts_on_page": 528
+  },
+  "5.101": {
+    "title": "F ORM AND COMMENCEMENT  OF ACTION ; CONFIDENTIAL  RECORDS",
+    "starts_on_page": 528
+  },
+  "5.104": {
+    "title": "P ROOF  OF SERVICE ; WAIVER  AND CONSENT ; UNOPPOSED  PETITION",
+    "starts_on_page": 529
+  },
+  "5.107": {
+    "title": "O THER  DOCUMENTS  REQUIRED  TO BE SERVED",
+    "starts_on_page": 534
+  },
+  "5.109": {
+    "title": "N OTICE  OF GUARDIANSHIP  PROCEEDINGS  CONCERNING  INDIAN  CHILD",
+    "starts_on_page": 535
+  },
+  "5.140": {
+    "title": "U SE OF VIDEOCONFERENCING  TECHNOLOGY",
+    "starts_on_page": 552
+  },
+  "5.144": {
+    "title": "A DMINISTRATIVELY  CLOSED  FILE",
+    "starts_on_page": 553
+  },
+  "5.162": {
+    "title": "F ORM AND SIGNING  OF JUDGMENTS  AND ORDERS",
+    "starts_on_page": 554
+  },
+  "5.201": {
+    "title": "A PPLICABILITY",
+    "starts_on_page": 554
+  },
+  "5.202": {
+    "title": "L ETTERS  OF AUTHORITY",
+    "starts_on_page": 554
+  },
+  "5.206": {
+    "title": "D UTY TO COMPLETE  ADMINISTRATION",
+    "starts_on_page": 556
+  },
+  "5.207": {
+    "title": "S ALE OF REAL ESTATE",
+    "starts_on_page": 556
+  },
+  "5.301": {
+    "title": "A PPLICABILITY",
+    "starts_on_page": 558
+  },
+  "5.302": {
+    "title": "C OMMENCEMENT  OF DECEDENT  ESTATES",
+    "starts_on_page": 558
+  },
+  "5.304": {
+    "title": "N OTICE  OF APPOINTMENT",
+    "starts_on_page": 559
+  },
+  "5.311": {
+    "title": "C LOSING  ESTATE",
+    "starts_on_page": 566
+  },
+  "5.733": {
+    "title": "A PPOINTMENT  OF INDEPENDENT  EXAMINER ; DETERMINATION  OF FEES AND",
+    "starts_on_page": 583
+  },
+  "5.735": {
+    "title": "A DJOURNMENT",
+    "starts_on_page": 584
+  },
+  "5.737": {
+    "title": "W AIVER  OF RIGHTS",
+    "starts_on_page": 584
+  },
+  "5.738": {
+    "title": "C ONDITIONS  AT HEARINGS",
+    "starts_on_page": 584
+  },
+  "5.741": {
+    "title": "I NQUIRY  INTO ADEQUACY  OF TREATMENT",
+    "starts_on_page": 585
+  },
+  "5.743": {
+    "title": "B APPEAL  BY JUDICIALLY  ADMITTED  INDIVIDUAL  RETURNED  TO CENTER  AFTER",
+    "starts_on_page": 587
+  },
+  "5.744": {
+    "title": "P ROCEEDINGS  REGARDING  HOSPITALIZATION  WITHOUT  A HEARING",
+    "starts_on_page": 588
+  },
+  "5.748": {
+    "title": "T RANSITIONAL  PROVISION  ON TERMINATION  OF INDEFINITE  ORDERS  OF",
+    "starts_on_page": 591
+  },
+  "6.001": {
+    "title": "S COPE ; APPLICABILITY  OF CIVIL RULES ; SUPERSEDED  RULES  AND STATUTES",
+    "starts_on_page": 596
+  },
+  "6.005": {
+    "title": "R IGHT  TO ASSISTANCE  OF LAWYER ; ADVICE ; APPOINTMENT  FOR INDIGENTS ;",
+    "starts_on_page": 599
+  },
+  "6.006": {
+    "title": "V IDEO  AND AUDIO  PROCEEDINGS",
+    "starts_on_page": 602
+  },
+  "6.101": {
+    "title": "C OMPLAINT",
+    "starts_on_page": 605
+  },
+  "6.103": {
+    "title": "F AILURE  TO APPEAR",
+    "starts_on_page": 607
+  },
+  "6.106": {
+    "title": "P RETRIAL  RELEASE",
+    "starts_on_page": 610
+  },
+  "6.111": {
+    "title": "C IRCUIT  COURT  ARRAIGNMENT  IN DISTRICT  COURT",
+    "starts_on_page": 619
+  },
+  "6.120": {
+    "title": "J OINDER  AND SEVERANCE ; SINGLE  DEFENDANT",
+    "starts_on_page": 621
+  },
+  "6.303": {
+    "title": "P LEA OF GUILTY  BUT MENTALLY  ILL",
+    "starts_on_page": 631
+  },
+  "6.310": {
+    "title": "W ITHDRAWAL  OR VACATION  OF PLEA",
+    "starts_on_page": 632
+  },
+  "6.410": {
+    "title": "J URY TRIAL; NUMBER  OF JURORS ; UNANIMOUS  VERDICT",
+    "starts_on_page": 634
+  },
+  "6.417": {
+    "title": "M ISTRIAL",
+    "starts_on_page": 636
+  },
+  "6.419": {
+    "title": "M OTION  FOR DIRECTED  VERDICT  OF ACQUITTAL",
+    "starts_on_page": 636
+  },
+  "6.420": {
+    "title": "V ERDICT",
+    "starts_on_page": 637
+  },
+  "6.428": {
+    "title": "R ESTORATION  OF APPELLATE  RIGHTS .",
+    "starts_on_page": 643
+  },
+  "6.431": {
+    "title": "N EW TRIAL",
+    "starts_on_page": 645
+  },
+  "6.440": {
+    "title": "D ISABILITY  OF JUDGE",
+    "starts_on_page": 647
+  },
+  "6.445": {
+    "title": "P ROBATION  VIOLATION  AND REVOCATION",
+    "starts_on_page": 649
+  },
+  "6.450": {
+    "title": "T ECHNICAL  PROBATION  VIOLATION  ACKNOWLEDGMENT",
+    "starts_on_page": 651
+  },
+  "6.501": {
+    "title": "S COPE  OF SUBCHAPTER",
+    "starts_on_page": 652
+  },
+  "6.610": {
+    "title": "C RIMINAL  PROCEDURE  GENERALLY",
+    "starts_on_page": 659
+  },
+  "6.615": {
+    "title": "M ISDEMEANOR  CASES",
+    "starts_on_page": 664
+  },
+  "6.620": {
+    "title": "I MPANELING  THE JURY",
+    "starts_on_page": 665
+  },
+  "6.905": {
+    "title": "A SSISTANCE  OF ATTORNEY",
+    "starts_on_page": 669
+  },
+  "6.931": {
+    "title": "J UVENILE  SENTENCING  HEARING",
+    "starts_on_page": 672
+  },
+  "6.937": {
+    "title": "C OMMITMENT  REVIEW  HEARING",
+    "starts_on_page": 678
+  },
+  "7.101": {
+    "title": "S COPE  OF RULES",
+    "starts_on_page": 681
+  },
+  "7.102": {
+    "title": "D EFINITIONS",
+    "starts_on_page": 681
+  },
+  "7.106": {
+    "title": "C ROSS  APPEALS",
+    "starts_on_page": 687
+  },
+  "7.107": {
+    "title": "A UTHORITY  OF TRIAL COURT  OR AGENCY",
+    "starts_on_page": 688
+  },
+  "7.108": {
+    "title": "S TAY OF PROCEEDINGS ; BOND; REVIEW",
+    "starts_on_page": 688
+  },
+  "7.119": {
+    "title": "A PPEALS  FROM  AGENCIES  GOVERNED  BY THE ADMINISTRATIVE  PROCEDURES  ACT",
+    "starts_on_page": 700
+  },
+  "7.121": {
+    "title": "C ONCEALED  PISTOL  LICENSE  APPEALS",
+    "starts_on_page": 706
+  },
+  "7.122": {
+    "title": "A PPEALS  FROM ZONING  ORDINANCE  DETERMINATIONS",
+    "starts_on_page": 707
+  },
+  "7.201": {
+    "title": "O RGANIZATION  AND OPERATION  OF COURT  OF APPEALS",
+    "starts_on_page": 712
+  },
+  "7.205": {
+    "title": "A PPLICATION  FOR LEAVE  TO APPEAL",
+    "starts_on_page": 719
+  },
+  "7.207": {
+    "title": "C ROSS -APPEALS",
+    "starts_on_page": 725
+  },
+  "7.208": {
+    "title": "A UTHORITY  OF COURT  OR TRIBUNAL  APPEALED  FROM",
+    "starts_on_page": 726
+  },
+  "7.209": {
+    "title": "B OND; STAY OF PROCEEDINGS",
+    "starts_on_page": 728
+  },
+  "7.211": {
+    "title": "M OTIONS  IN COURT  OF APPEALS",
+    "starts_on_page": 736
+  },
+  "7.212": {
+    "title": "B RIEFS",
+    "starts_on_page": 741
+  },
+  "7.217": {
+    "title": "I NVOLUNTARY  DISMISSAL  OF CASES",
+    "starts_on_page": 757
+  },
+  "7.301": {
+    "title": "O RGANIZATION  AND OPERATION  OF SUPREME  COURT",
+    "starts_on_page": 759
+  },
+  "7.305": {
+    "title": "A PPLICATION  FOR LEAVE  TO APPEAL",
+    "starts_on_page": 761
+  },
+  "7.317": {
+    "title": "I NVOLUNTARY  DISMISSAL ; NO PROGRESS",
+    "starts_on_page": 781
+  },
+  "8.101": {
+    "title": "A PPLICABILITY  OF ADMINISTRATIVE  RULES",
+    "starts_on_page": 783
+  },
+  "8.103": {
+    "title": "S TATE  COURT  ADMINISTRATOR",
+    "starts_on_page": 783
+  },
+  "8.104": {
+    "title": "J UDICIAL  MEETINGS",
+    "starts_on_page": 784
+  },
+  "8.106": {
+    "title": "M ONEY  PAID INTO COURT",
+    "starts_on_page": 785
+  },
+  "8.108": {
+    "title": "C OURT  REPORTERS  AND RECORDERS",
+    "starts_on_page": 786
+  },
+  "8.110": {
+    "title": "C HIEF JUDGE  RULE",
+    "starts_on_page": 791
+  },
+  "8.111": {
+    "title": "A SSIGNMENT  OF CASES",
+    "starts_on_page": 796
+  },
+  "8.115": {
+    "title": "C OURTROOM  DECORUM ; POLICY  REGARDING  USE OF CELL PHONES  OR OTHER",
+    "starts_on_page": 798
+  },
+  "8.117": {
+    "title": "C ASE CLASSIFICATION  CODES",
+    "starts_on_page": 801
+  },
+  "8.119": {
+    "title": "C OURT  RECORDS  AND REPORTS ; DUTIES  OF CLERKS",
+    "starts_on_page": 801
+  },
+  "9.101": {
+    "title": "D EFINITIONS",
+    "starts_on_page": 823
+  },
+  "9.102": {
+    "title": "C ONSTRUCTION ; SEVERABILITY",
+    "starts_on_page": 824
+  },
+  "9.103": {
+    "title": "S TANDARDS  OF CONDUCT  FOR ATTORNEYS",
+    "starts_on_page": 824
+  },
+  "9.105": {
+    "title": "P URPOSE  AND FUNDING  OF DISCIPLINARY  PROCEEDINGS",
+    "starts_on_page": 825
+  },
+  "9.107": {
+    "title": "R ULES  EXCLUSIVE  ON DISCIPLINE",
+    "starts_on_page": 826
+  },
+  "9.108": {
+    "title": "A TTORNEY  GRIEVANCE  COMMISSION",
+    "starts_on_page": 826
+  },
+  "9.109": {
+    "title": "G RIEVANCE  ADMINISTRATOR",
+    "starts_on_page": 827
+  },
+  "9.110": {
+    "title": "A TTORNEY  DISCIPLINE  BOARD",
+    "starts_on_page": 828
+  },
+  "9.114": {
+    "title": "A CTION  BY ADMINISTRATOR  OR COMMISSION  AFTER  ANSWER",
+    "starts_on_page": 833
+  },
+  "9.115": {
+    "title": "H EARING  PANEL  PROCEDURE",
+    "starts_on_page": 835
+  },
+  "9.116": {
+    "title": "J UDGES ; FORMER  JUDGES",
+    "starts_on_page": 841
+  },
+  "9.118": {
+    "title": "R EVIEW  OF ORDER  OF HEARING  PANEL",
+    "starts_on_page": 842
+  },
+  "9.120": {
+    "title": "C ONVICTION  OF CRIMINAL  OFFENSE ; RECIPROCAL  DISCIPLINE",
+    "starts_on_page": 845
+  },
+  "9.123": {
+    "title": "E LIGIBILITY  FOR REINSTATEMENT",
+    "starts_on_page": 851
+  },
+  "9.124": {
+    "title": "P ROCEDURE  FOR REINSTATEMENT",
+    "starts_on_page": 853
+  },
+  "9.126": {
+    "title": "O PEN HEARINGS ; PRIVILEGED , CONFIDENTIAL  FILES AND RECORDS",
+    "starts_on_page": 856
+  },
+  "9.201": {
+    "title": "D EFINITIONS",
+    "starts_on_page": 862
+  },
+  "9.202": {
+    "title": "S TANDARDS  OF JUDICIAL  CONDUCT",
+    "starts_on_page": 863
+  },
+  "9.220": {
+    "title": "P RELIMINARY  INVESTIGATION",
+    "starts_on_page": 867
+  },
+  "9.223": {
+    "title": "C ONCLUSION  OF INVESTIGATION ; NOTICE",
+    "starts_on_page": 869
+  },
+  "9.225": {
+    "title": "I NTERIM  SUSPENSION",
+    "starts_on_page": 870
+  },
+  "9.232": {
+    "title": "D ISCOVERY",
+    "starts_on_page": 872
+  },
+  "9.234": {
+    "title": "S UBPOENAS",
+    "starts_on_page": 873
+  },
+  "9.240": {
+    "title": "O BJECTIONS  TO REPORT  OF MASTER",
+    "starts_on_page": 874
+  },
+  "9.241": {
+    "title": "A PPEARANCE  BEFORE  COMMISSION",
+    "starts_on_page": 874
+  },
+  "9.245": {
+    "title": "C ONSENT  AGREEMENTS",
+    "starts_on_page": 875
+  },
+  "9.252": {
+    "title": "D ECISION  BY SUPREME  COURT",
+    "starts_on_page": 878
+  },
+  "9.253": {
+    "title": "M OTION  FOR REHEARING",
+    "starts_on_page": 878
+  }
+}

@@ -1,0 +1,985 @@
+{
+  "meta": {
+    "title": "HOA_SHADY_OAKS_SUPREME_CONTEXT",
+    "created": "2025-07-21T11:57:35.242777",
+    "description": "Unified litigation pillar for Shady Oaks / Homes of America case. Includes master timeline, damages, judicial assignments, and evidence matrix."
+  },
+  "judicial_clarification": {
+    "60th_District": {
+      "judge": "Maria Ladas Hoopes",
+      "role": "Eviction proceeding",
+      "actions": [
+        "Granted possession judgment",
+        "Writ enforced against home contents",
+        "MCSO executed lockout July 14, 2025"
+      ]
+    },
+    "14th_Circuit": {
+      "judge": "Kenneth Hoopes",
+      "role": "Civil damages and injunctive relief",
+      "actions": [
+        "Denied emergency motions",
+        "Scheduled Preliminary Injunction for Aug 12, 2025"
+      ]
+    }
+  },
+  "timeline_events": [
+    {
+      "date": "2023-11",
+      "event": "Lease began at Shady Oaks",
+      "note": "Base rent $395/mo"
+    },
+    {
+      "date": "2024-02",
+      "event": "Sewage leak began",
+      "note": "Reported to EGLE, unresolved"
+    },
+    {
+      "date": "2024-03-28",
+      "event": "Lease expired",
+      "note": "New lease forced at Cricklewood under duress"
+    },
+    {
+      "date": "2024-04 to 2024-12",
+      "event": "Rent paid",
+      "note": "Despite unresolved violations"
+    },
+    {
+      "date": "2025-05-20",
+      "event": "Water shutoff during parenting time",
+      "note": "EGLE violation + child inside"
+    },
+    {
+      "date": "2025-07-14",
+      "event": "Eviction executed",
+      "note": "Locks drilled, property destroyed"
+    },
+    {
+      "date": "2025-08-12",
+      "event": "Preliminary Injunction Hearing",
+      "note": "14th Circuit Court"
+    }
+  ],
+  "evidence_matrix": {
+    "A": "Eviction photos (FREE sign, property dumped)",
+    "B1": "Prior entry attempt photos",
+    "B2": "Alarm affidavit (user drove from Charlevoix)",
+    "C": "Title doc + lease bundle",
+    "D": "Parental harm affidavit",
+    "E": "EGLE complaint record",
+    "F": "Email logs with multiple LLCs",
+    "G": "MHAction + LARA records",
+    "H": "Billing statements",
+    "I": "FOIA request placeholder",
+    "J": "Judicial pattern tracker",
+    "K": "Officer Schmidt misconduct log",
+    "L": "Timeline warboard schematic"
+  },
+  "legal_theories": [
+    "MCL 600.2918 wrongful eviction",
+    "MCL 600.2919a conversion",
+    "Trespass to chattels",
+    "Negligent infliction of emotional distress",
+    "Breach of warranty of habitability",
+    "Civil conspiracy",
+    "Piercing the corporate veil"
+  ],
+  "federal_escalation_ready": [
+    "42 U.S.C. \u00a71983 (color of law)",
+    "Fair Housing Act - family/child-based disruption",
+    "Procedural due process violation",
+    "Patterned abuse (potential RICO)"
+  ],
+  "parental_harm_events": [
+    "May 20, 2025 \u2013 water shutoff with child inside",
+    "July 14, 2025 \u2013 child witnessed home being destroyed",
+    "Loss of USPS employment due to court\u2019s communication block"
+  ],
+  "entities": {
+    "Shady Oaks MHP LLC": "Dissolved",
+    "Shady Oaks Park MHP LLC": "Current landlord plaintiff",
+    "Cricklewood MHP LLC": "Fraudulent lease site",
+    "Homes of America": "Operational manager",
+    "Alden Global Capital": "Private equity owner"
+  },
+  "status": {
+    "PI_motion": "Ready for Aug 12",
+    "Affidavit": "Updated with Charlevoix + photos",
+    "Proposed Order": "To be generated",
+    "Amended Complaint": "Conversion phase, post-PI"
+  },
+  "chained_cycles": [
+    {
+      "cycle": 1,
+      "updates": {
+        "canonical_findings": [
+          "Improper issuance of writ against titled property",
+          "Color-of-law violation by MCSO during enforcement",
+          "Violation of MCL 600.2918(2)(c): No writ may authorize entry into privately owned property without separate lawful order"
+        ],
+        "documented_management_emails": [
+          "Emails from Jessica @ Homes of America",
+          "Emails from Kim Davis @ Cricklewood MHP",
+          "Emails from various @shadyoaksmhp.com addresses"
+        ],
+        "court_pattern_evidence": [
+          "60th District pushed writ despite unresolved payment record",
+          "14th Circuit denied multiple emergency filings without explanation",
+          "Opposing party appears to have filed under dissolved LLC"
+        ]
+      }
+    },
+    {
+      "cycle": 2,
+      "updates": {
+        "additional_entities": [
+          "C T Corporation System (Registered Agent)",
+          "MHAction (advocacy partner)",
+          "EGLE Regional Enforcement Division"
+        ],
+        "surveillance_log": {
+          "prior_break-in attempts": {
+            "captured_by": "Ring camera",
+            "prevented_by": "alarm + immediate return from Charlevoix"
+          },
+          "identification": "Face-to-face photos of two men from July 14 match prior attempt"
+        },
+        "email_evidence": [
+          "Property manager statements contradicting ledger",
+          "Emails denying water shutoff despite user proof",
+          "Internal management admissions of lease inconsistencies"
+        ]
+      }
+    },
+    {
+      "cycle": 3,
+      "updates": {
+        "exhibit_additions": {
+          "M": "Video recordings of July 14 event",
+          "N": "Ring logs + timestamps",
+          "O": "Photos of repeat trespassers",
+          "P": "Sergeant & Officer Schmidt police report + verbal log",
+          "Q": "Evidence that no actual money owed post-December 2024"
+        },
+        "custody_overlap_effect": [
+          "Eviction timed during parenting week",
+          "Child forced to witness destruction of home",
+          "Water shutoff created CPS-adjacent risk"
+        ],
+        "procedural_flaws": [
+          "Writ lacked inventory scope for titled mobile home",
+          "MCSO refused to recognize clear title",
+          "No legal distinction between lot rent and home possession made by enforcing party"
+        ]
+      }
+    },
+    {
+      "cycle": 4,
+      "updates": {
+        "direct_evidence_only": {
+          "title_proof": "Full title document showing user ownership of mobile home",
+          "ledger_conflict": "Rent paid through Dec 2024; Jan\u2013Feb billing includes unauthorized admin/water/sewer charges",
+          "photo_exhibits": [
+            "FREE sign in window",
+            "items destroyed in yard",
+            "utility statement mismatches"
+          ]
+        },
+        "procedural_defects_documented": [
+          "No inventory conducted during eviction",
+          "Writ executed on home structure with no order for seizure",
+          "Photos show non-tenant belongings thrown outside, violating MCL 600.2918"
+        ]
+      }
+    },
+    {
+      "cycle": 5,
+      "updates": {
+        "regulatory_violations": [
+          "Ongoing EGLE-confirmed sewage leak (Feb\u2013July 2025)",
+          "EGLE investigation open as of July 2025",
+          "Water shutoff without 7-day notice or proper utility process"
+        ],
+        "entity_misrepresentation": [
+          "Shady Oaks Park MHP LLC claimed ownership despite dissolution records of Shady Oaks MHP LLC",
+          "Homes of America used Cricklewood MHP to force re-lease signing at unrelated location"
+        ]
+      }
+    },
+    {
+      "cycle": 6,
+      "updates": {
+        "emergency_motion_log_14th_circuit": [
+          {
+            "date": "2025-05-08",
+            "action": "Motion to stay eviction + file counterclaim",
+            "result": "Hearing granted June 9"
+          },
+          {
+            "date": "2025-06-09",
+            "action": "Filed appearance + argued motion",
+            "result": "Judicial suppression\u2014counterclaim blocked"
+          },
+          {
+            "date": "2025-07-01",
+            "action": "Multiple motions denied without opinion",
+            "result": "Preliminary injunction scheduled for Aug 12"
+          }
+        ],
+        "surveillance_time_sync": {
+          "motion_sensor": "activated ~11:55 AM July 14",
+          "Ring app": "notified user while in Charlevoix",
+          "return_time": "~3:30 PM July 14, arrived as eviction was concluding"
+        },
+        "child_presence_log": {
+          "confirmed_by": "Ring recording + user affidavit",
+          "child_witnessed": true,
+          "risk": "Exposure to trauma, temperature, displacement"
+        }
+      }
+    },
+    {
+      "cycle": 7,
+      "updates": {
+        "billing_abuse_proof": [
+          "Water/sewer charges during known EGLE sewage failure",
+          "Trash fee increased from $17 to $18.24 post-lease",
+          "Rent raised from $395 to $695, then to $720, without valid lease"
+        ],
+        "forced_leasing_event": {
+          "date": "2024-03",
+          "location": "Cricklewood MHP LLC, Ravenna, MI",
+          "conducted_by": "Kim Davis",
+          "action": "User was forced to sign new lease or vacate"
+        }
+      }
+    },
+    {
+      "cycle": 8,
+      "updates": {
+        "MHAction_discovery": [
+          "Pattern of manufactured home park exploitation by Homes of America",
+          "Alden Global linked through real estate fund ownership",
+          "Documented use of rent gouging, forced leases, retaliatory maintenance"
+        ],
+        "user_income_loss": [
+          "USPS employment lost due to PPO enforcement barriers",
+          "Blocked communication led to job loss, no support modification granted",
+          "Court imposed $250 filing barrier to change parenting time"
+        ]
+      }
+    },
+    {
+      "cycle": 9,
+      "updates": {
+        "police_conduct_log": {
+          "officer": "Schmidt",
+          "event": "July 14, 2025 eviction enforcement",
+          "actions": [
+            "Yelled at user during peaceful questioning",
+            "Threatened arrest if user stepped on Lot 17",
+            "Refused to acknowledge titled ownership"
+          ],
+          "sergeant": {
+            "response": "De-escalated situation but allowed eviction to continue"
+          }
+        },
+        "law_enforcement_error": [
+          "Improper trespass warning issued to homeowner",
+          "No civil standby offered",
+          "Lawful ownership not verified before executing writ"
+        ]
+      }
+    },
+    {
+      "cycle": 10,
+      "updates": {
+        "writ_execution_flaws": [
+          "No officer provided an inventory of property removed",
+          "Locks drilled without confirming separate writ for structure",
+          "Tenant was current through Dec 2024\u2014writ based on invalid charges"
+        ],
+        "property_status_log": {
+          "lot_number": "17",
+          "location": "1977 Whitehall Rd, Muskegon, MI 49445",
+          "title_status": "Home owned free and clear",
+          "violations_during_eviction": [
+            "Free sign visible",
+            "Locks destroyed",
+            "Personal effects dumped"
+          ]
+        }
+      }
+    },
+    {
+      "cycle": 11,
+      "updates": {
+        "title_ownership_evidence": [
+          "User possesses full title to the home at Lot 17, no liens",
+          "Title document previously submitted to 60th District",
+          "Court failed to acknowledge separate property status of home vs. lot"
+        ],
+        "property_entry_attempts": [
+          "Prior attempts to unlawfully enter the home documented with alarm footage and timestamps",
+          "Same men later photographed during eviction throwing property out",
+          "Photos exist of face-to-face confrontation, used for ID"
+        ]
+      }
+    },
+    {
+      "cycle": 12,
+      "updates": {
+        "14th_circuit_inaction_log": [
+          {
+            "date": "2025-05-20",
+            "action": "Emergency motion filed due to water shutoff",
+            "result": "Ignored/no ruling",
+            "impact": "User and child left without water during EGLE-confirmed sewage exposure"
+          },
+          {
+            "date": "2025-06-09",
+            "action": "Motion to stay eviction + counterclaim filing",
+            "result": "Denied or delayed",
+            "impact": "Eviction proceeded despite pending motion"
+          }
+        ]
+      }
+    },
+    {
+      "cycle": 13,
+      "updates": {
+        "management_emails_log": [
+          "Multiple emails from Shady Oaks, Homes of America, and Cricklewood managers",
+          "Names include: Kim Davis (Cricklewood), unidentified male staff (Shady Oaks)",
+          "Emails contain contradictory statements re: billing, lease terms, and eviction triggers",
+          "Evidence of intentional misinformation or misrepresentation"
+        ],
+        "rent_ledger_inconsistencies": [
+          "Ledger padded with illegal water/sewer charges during confirmed leak",
+          "Rent raised despite being prepaid through December 2024",
+          "No documented lease authorizing $720/month or new terms"
+        ]
+      }
+    },
+    {
+      "cycle": 14,
+      "updates": {
+        "law_enforcement_coordination_gap": [
+          "No legal separation of lot possession from home ownership during writ execution",
+          "Sheriff\u2019s Department refused to halt enforcement despite knowledge of ownership",
+          "No judge reviewed ownership proof before force used"
+        ],
+        "user_response_log": [
+          {
+            "date": "2025-07-14",
+            "event": "User called police, presented ownership proof, requested sergeant",
+            "response": "Sergeant calm, but allowed Schmidt to proceed with suppression of entry"
+          }
+        ]
+      }
+    },
+    {
+      "cycle": 15,
+      "updates": {
+        "timeline_sync_validation": [
+          "Security camera timestamped alarm before eviction began",
+          "User\u2019s trip from Charlevoix was documented via vehicle records and Ring log",
+          "Eviction occurred despite user arriving before completion"
+        ],
+        "admissibility_of_photos_and_footage": [
+          "Video of men entering home matches prior attempted entry photos",
+          "Photos document individual faces, identifiable by timestamp and vehicle",
+          "Photos are court-admissible per MRE 401, 403, 901, and 1001\u20131003"
+        ]
+      }
+    },
+    {
+      "cycle": 16,
+      "updates": {
+        "14th_circuit_injunction_hearing": {
+          "scheduled": "2025-08-12",
+          "type": "Preliminary Injunction",
+          "purpose": "Convert to damages + permanent injunction",
+          "status": "Active docket, motion to amend possible"
+        },
+        "possible_conversion_strategy": [
+          "Motion to convert under MCR 2.118(C)(1) for amendment before hearing",
+          "Plead monetary damages for wrongful eviction and \u00a71983 deprivation",
+          "Continue hearing with expanded cause without full refiling"
+        ]
+      }
+    },
+    {
+      "cycle": 17,
+      "updates": {
+        "photo_evidence_bundle": [
+          "Photo set 1: possessions strewn across yard",
+          "Photo set 2: men entering or attempting to enter home",
+          "Photo set 3: locks drilled, signage visible",
+          "All are timestamped, location-tagged, and corroborated by witness"
+        ]
+      }
+    },
+    {
+      "cycle": 18,
+      "updates": {
+        "pattern_of_abuse_log": [
+          "Repeated health violations without repair (sewage leak)",
+          "Retaliatory billing post-settlement",
+          "Water shutoff while child present",
+          "Destruction of personal items despite ownership status",
+          "Eviction enforced using false accounting"
+        ]
+      }
+    },
+    {
+      "cycle": 19,
+      "updates": {
+        "MCL_violation_log": [
+          "MCL 600.2918(1)(a): Illegal removal from property without court process",
+          "MCL 600.2918(2): Destruction of personal property",
+          "MCL 750.552: Criminal trespass with property damage",
+          "MCL 750.540c: Illegal entry into dwelling",
+          "MCL 750.362: False pretense with intent to defraud"
+        ]
+      }
+    },
+    {
+      "cycle": 20,
+      "updates": {
+        "conversion_targets": [
+          "Add conversion of personal property claim",
+          "Add IIED for child trauma and home destruction",
+          "Add \u00a71983 for deprivation under color of law",
+          "Add civil conspiracy to conceal unlawful practices"
+        ],
+        "judicial_misconduct_alerts": [
+          "Failure to evaluate emergency conditions",
+          "Denial of hearings on active, documented harms",
+          "Systematic refusal to hear homeowner rights evidence"
+        ]
+      }
+    }
+  ],
+  "entity_networks": {
+    "checks_and_financials": {
+      "karen_check": {
+        "payer": "Karen [LastName Unknown]",
+        "purpose": "Likely rental or utility payment",
+        "status": "Deposited by Shady Oaks/Homes of America",
+        "notes": "Check used to create false 'rent current' ledger entry"
+      },
+      "true_north_check": {
+        "payer": "True North",
+        "purpose": "Direct payment on behalf of resident",
+        "status": "Processed through Shady Oaks rent system",
+        "notes": "Used to misrepresent outstanding rent balance"
+      }
+    },
+    "known_managers": {
+      "kim_davis": {
+        "location": "Cricklewood MHP",
+        "role": "Executed forced lease March 28, 2024",
+        "method": "Lease coercion, 35-minute drive to site"
+      },
+      "nicole_browley": {
+        "location": "Shady Oaks Park MHP",
+        "role": "Former site manager",
+        "activity": "Correspondence with user, involved in prior billing"
+      },
+      "shelley": {
+        "location": "Shady Oaks or affiliated MHP",
+        "role": "Billing communications",
+        "notes": "Sent email regarding water bill, conflicting statements"
+      },
+      "cassandra": {
+        "location": "Unclear (possibly Cricklewood)",
+        "role": "Support staff or intermediary",
+        "notes": "Contacted regarding property logistics and billing"
+      }
+    },
+    "corporate_shell_game": {
+      "homes_of_america": {
+        "status": "Property operator, not title holder",
+        "connection": [
+          "Shady Oaks Park MHP LLC",
+          "Cricklewood MHP LLC"
+        ],
+        "legal strategy": "Operates through leased management and complex LLC chains"
+      },
+      "ct_corporation": {
+        "role": "Registered agent for multiple entities",
+        "notes": "Acts as deflector for legal service"
+      },
+      "alden_global_capital": {
+        "role": "Ultimate controlling interest",
+        "strategy": "Private equity ownership of mobile home parks, extractive rent practices"
+      },
+      "smith_holdings": {
+        "role": "Intermediary or partial interest",
+        "notes": "May act as shadow partner in MHP LLC filings"
+      },
+      "partridge_securities": {
+        "role": "Linked to title-level ownership or capital movement",
+        "notes": "Needs cross-triangulation with title and FOIA requests"
+      }
+    }
+  },
+  "court_actions": {
+    "60th_district_court": [
+      {
+        "date": "2025-01-21",
+        "event": "LT Case Filed",
+        "case_number": "2025-25061626-LT",
+        "judge": "Maria Ladas Hoopes",
+        "description": "Homes of America / Shady Oaks files eviction action"
+      },
+      {
+        "date": "2025-04-16",
+        "event": "Bench Trial Held",
+        "result": "Conditional settlement; user to maintain lot under lease"
+      },
+      {
+        "date": "2025-05-08",
+        "event": "Motion Filed",
+        "title": "Motion for Leave to File Counterclaim and to Stay Eviction",
+        "status": "Hearing set for June 9"
+      },
+      {
+        "date": "2025-06-09",
+        "event": "Hearing",
+        "result": "Motion denied or suppressed; eviction permitted to proceed"
+      }
+    ],
+    "14th_circuit_court": [
+      {
+        "date": "2025-05-20",
+        "event": "Emergency Motion Filed",
+        "title": "Water Shutoff and Sewage Exposure Relief",
+        "result": "No ruling issued; judicial inaction"
+      },
+      {
+        "date": "2025-07-14",
+        "event": "Eviction Enforcement Executed",
+        "title": "Writ Executed on Lot 17",
+        "result": "Property removed; police prevented re-entry despite title ownership"
+      },
+      {
+        "date": "2025-08-12",
+        "event": "Preliminary Injunction Hearing Scheduled",
+        "title": "Motion for Preliminary Injunction",
+        "judge": "Kenneth Hoopes",
+        "status": "Pending; user seeks to convert to permanent relief + damages"
+      }
+    ]
+  },
+  "lease_analysis": [
+    {
+      "page": 1,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "title": "Manufactured Home Lot Lease Agreement",
+        "lot": "Lot 17, Shady Oaks MHP, Muskegon, MI",
+        "tenant": "Andrew Pigors",
+        "landlord": "Shady Oaks Park MHP LLC",
+        "key_clauses": [
+          {
+            "text": "Tenant shall lease only the lot and not the home",
+            "legal_implication": "Affirms title retention; supports unlawful entry/conversion/trespass claims"
+          },
+          {
+            "text": "No possession over the manufactured home",
+            "legal_implication": "Use in defenses and damages under MCL 600.2918 and \u00a71983 due process challenge"
+          }
+        ],
+        "flags": [
+          "No witness signature or notarization",
+          "Entity signature possibly mismatched to operative agent (Kim Davis, Cricklewood)"
+        ]
+      }
+    },
+    {
+      "page": 3,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Rent increase language",
+          "Administrative fees and surcharges",
+          "Utility pass-through charges without transparency"
+        ],
+        "legal_weapons": [
+          "MCL 600.2918: Unlawful dispossession if based on false rent ledgers",
+          "MCL 554.139: Lease cannot void duty to maintain premises or provide notice for fee changes",
+          "Michigan AG\u2019s Mobile Home Tenants Rights Guide: Fee transparency and rent stability required"
+        ],
+        "strategic_vulnerability": [
+          "Lease provides landlord wide authority to charge fluctuating \u2018admin\u2019 and \u2018utility\u2019 fees without tenant consent or explanation.",
+          "If eviction was based on such charges (e.g., post-settlement billing to $720), that conduct is misleading and likely unlawful."
+        ]
+      }
+    },
+    {
+      "page": 4,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Tenant maintenance and liability shift",
+          "Mandatory arbitration or waiver of legal process",
+          "Default acceleration or forfeiture without judicial process"
+        ],
+        "legal_weapons": [
+          "MCL 600.2918: No self-help or forfeiture without court process",
+          "MCL 554.139: Statutory duty to maintain premises cannot be shifted to tenant through contract",
+          "Michigan Constitution Art I \u00a720: Right to trial cannot be waived in lease for residential tenancy"
+        ],
+        "strategic_vulnerability": [
+          "Landlord may argue tenant breached by not maintaining premises; clause must be shown unenforceable under public policy.",
+          "Any provision bypassing judicial process to accelerate eviction or rent collection is facially unconstitutional and void.",
+          "Mandatory arbitration or \u2018waiver of rights\u2019 language undermines due process and opens federal question (42 U.S.C. \u00a71983)."
+        ]
+      }
+    },
+    {
+      "page": 5,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Hold harmless clause for landlord negligence",
+          "Tenant indemnification for third-party actions",
+          "Attempted waiver of landlord tort liability"
+        ],
+        "legal_weapons": [
+          "MCL 554.139: Lease cannot shift statutory duty to maintain safe premises",
+          "Kitchen v. Kitchen, 465 Mich 654 (2002): Landlord may not contract away liability for own misconduct",
+          "Restatement (Second) of Contracts \u00a7195: Exculpatory clauses void for public interest contracts"
+        ],
+        "strategic_vulnerability": [
+          "If landlord destroyed tenant property or wrongfully entered, clause attempting to \u2018hold harmless\u2019 fails\u2014intentional torts are not shielded.",
+          "Tenant indemnifying landlord for third-party injury (e.g., during illegal eviction) is unconscionable.",
+          "This clause shows premeditated legal shield intent\u2014opens punitive damages door under \u00a71983 or MCL 600.2918(2)."
+        ]
+      }
+    },
+    {
+      "page": 6,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Unilateral modification of lease terms by management",
+          "Notice waiver provisions (tenant deemed served regardless of delivery)",
+          "Excessive late fees and penalties"
+        ],
+        "legal_weapons": [
+          "MCL 554.633(2): Landlord cannot modify lease without tenant's signed agreement",
+          "MCL 554.634: Requires proper service for all legal notices",
+          "Michigan AG Mobile Home Guide: Late fees must be reasonable, defined, and disclosed"
+        ],
+        "strategic_vulnerability": [
+          "They used \u2018updated rules\u2019 as justification to spike rent or evict\u2014this clause violates statutory lease integrity requirements.",
+          "Clause that tenant \u2018is deemed notified\u2019 by delivery to any door or common area is unlawful\u2014it opens due process and service arguments.",
+          "Penalty stacking (e.g., multiple admin/late/utility fees) must be challenged as both procedurally defective and retaliatory."
+        ]
+      }
+    },
+    {
+      "page": 7,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Broad waiver of jury trial",
+          "Forced venue selection favoring landlord",
+          "Tenant consent to landlord legal fees regardless of outcome"
+        ],
+        "legal_weapons": [
+          "Michigan Constitution Art I \u00a714: Right to jury cannot be waived in adhesive contract",
+          "MCL 600.8312 & MCR 2.221: Forum selection must be proper and not unilaterally imposed",
+          "Tuggles v. Kriska, 356 Mich 382 (1959): Fee-shifting clauses not enforceable absent statutory basis or actual prevailing party"
+        ],
+        "strategic_vulnerability": [
+          "Jury trial waivers in consumer housing leases are **presumptively unconscionable**, particularly for non-negotiable mobile home park agreements.",
+          "Landlord chose Muskegon County\u2014any forced venue should be challenged as venue shopping if it disadvantages you or contradicts property location.",
+          "Tenant being forced to pay landlord\u2019s attorney regardless of outcome is coercive and should be voided for public policy and due process violations."
+        ]
+      }
+    },
+    {
+      "page": 8,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Unilateral inspection rights without notice",
+          "Language authorizing forced entry \u2018to protect property\u2019",
+          "Waiver of privacy expectations and confrontation rights"
+        ],
+        "legal_weapons": [
+          "MCL 600.2918(2)(c): No entry without due legal process",
+          "People v. Oliver, 417 Mich 366 (1983): Michigan Constitution protects private home from warrantless entry",
+          "HUD Manufactured Home Tenant Rights Guide: 24-hour written notice required unless emergency"
+        ],
+        "strategic_vulnerability": [
+          "Clause gives landlord authority to enter at will, in direct contradiction to Michigan law prohibiting \u2018self-help\u2019.",
+          "Language authorizing entry for property \u2018protection\u2019 is vague and easily abused\u2014evidenced by past intrusion incidents you documented.",
+          "This clause is the foundation for justifying the lock drilling and removal\u2014must be declared void and inadmissible as a defense."
+        ]
+      }
+    },
+    {
+      "page": 9,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Tenant consents to surveillance and recording",
+          "Release of liability for landlord negligence",
+          "Automatic loss of rights upon any breach\u2014no cure period"
+        ],
+        "legal_weapons": [
+          "MCL 750.539d: Prohibits non-consensual recording in private places",
+          "Fultz v. Union-Commerce Assoc., 470 Mich 460 (2004): Landlords owe duty of reasonable care, cannot disclaim negligence",
+          "MCL 554.634: Default notices must allow reasonable time to cure"
+        ],
+        "strategic_vulnerability": [
+          "Consent to surveillance was likely not voluntary or fully disclosed\u2014any use of that language to justify recorded monitoring is suspect under criminal and civil law.",
+          "Waiver of liability for negligence contradicts Michigan Supreme Court holdings and is void as against public policy.",
+          "Clause removing all tenant rights immediately on any \u2018breach\u2019 enables retaliatory eviction with no process\u2014this fuels the damages claim and warrants injunctive relief."
+        ]
+      }
+    },
+    {
+      "page": 10,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Mandatory indemnification of landlord for third-party claims",
+          "Tenant assumes all liability for injury \u2018on or near premises\u2019",
+          "No landlord liability for acts of other tenants or guests"
+        ],
+        "legal_weapons": [
+          "Williams v. Cunningham Drug Stores, Inc., 429 Mich 495 (1988): Landlord may not fully offload premises liability",
+          "MCL 554.139(1): Landlord must maintain premises fit and safe for intended use",
+          "Michigan Public Policy Doctrine: Exculpatory clauses are void if they shield landlords from core statutory duties"
+        ],
+        "strategic_vulnerability": [
+          "Indemnity clause is overly broad and violates equity\u2014tenant is required to pay for landlord\u2019s negligence and unknown third-party risks.",
+          "Language attempting to assign total injury liability to tenant contradicts Michigan premises liability law.",
+          "These clauses may be used to justify denial of your damage claims or insurance\u2014must be neutralized at injunction hearing and flagged as unconscionable."
+        ]
+      }
+    },
+    {
+      "page": 11,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Binding arbitration requirement for all disputes",
+          "Waiver of right to jury trial",
+          "Limitation of damages to cost of rent or deposit"
+        ],
+        "legal_weapons": [
+          "Rembert v. Ryan's Family Steak Houses, 235 Mich App 118 (1999): Arbitration agreements must be knowingly and voluntarily agreed to, not adhesive",
+          "Const 1963, art 1, \u00a7 14: Right to jury trial in civil cases is fundamental",
+          "MCL 554.613: Lease agreements may not waive or limit remedies otherwise available under law"
+        ],
+        "strategic_vulnerability": [
+          "Binding arbitration and jury trial waivers are classic tactics in predatory housing leases\u2014must be challenged for procedural unconscionability.",
+          "Damages cap violates Michigan statutory protections; undermines your full value loss claims.",
+          "This page is key to rebutting any future argument that you were limited to lease terms\u2014especially in light of egregious conduct and actual damages sustained."
+        ]
+      }
+    },
+    {
+      "page": 12,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "No landlord responsibility for property damage during repairs",
+          "Tenant must reimburse landlord for legal fees in any dispute",
+          "Mandatory 30-day move-out for any lease breach"
+        ],
+        "legal_weapons": [
+          "MCL 600.2918(2): Self-help eviction, including forced move-outs without court order, is illegal",
+          "MCL 554.139 and Mich Residential LL-Tenant Law: Landlords must exercise reasonable care during repairs; cannot disclaim liability for negligence",
+          "Michigan jurisprudence disfavors one-sided fee-shifting clauses unless mutually applied"
+        ],
+        "strategic_vulnerability": [
+          "Landlord disclaims damage caused by their own repair crews \u2014 directly contradicts Michigan habitability obligations.",
+          "Fee-shifting is asymmetric and unconscionable \u2014 reinforces \u2018predatory\u2019 theme.",
+          "Automatic 30-day move-out for breach opens door to illegal lockouts or bypassing summary proceeding mandates \u2014 feeds into MCL 600.2918(2) unlawful eviction framework."
+        ]
+      }
+    },
+    {
+      "page": 13,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Tenant required to waive any claim for emotional distress",
+          "No landlord responsibility for pest infestation or water intrusion unless tenant proves negligence",
+          "Release of landlord from liability for \u2018acts of God\u2019 including utility failures and storm damage"
+        ],
+        "legal_weapons": [
+          "IIED (Intentional Infliction of Emotional Distress) cannot be contractually waived under Michigan law when based on willful conduct",
+          "Landlord obligations under *MCL 554.139* include maintaining premises fit for intended use regardless of tenant burden",
+          "\u2018Acts of God\u2019 clauses are valid only when the event is truly unforeseeable and the landlord did not contribute to the cause"
+        ],
+        "strategic_vulnerability": [
+          "Emotional distress waiver is directly contradicted by your real-world trauma and loss of child stability\u2014use to refute lease enforceability.",
+          "Water intrusion and pest clauses attempt to evade standard habitability laws and invert burden of proof onto tenant\u2014use photos and EGLE data.",
+          "\u2018Acts of God\u2019 defenses cannot shield them from sewer leaks, utility shutoffs, or foreseeable neglect\u2014this clause fails under evidentiary scrutiny."
+        ]
+      }
+    },
+    {
+      "page": 14,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Tenant may not sue landlord or management for personal injury unless gross negligence is proven",
+          "All disputes must be submitted to out-of-state corporate legal counsel first",
+          "Lease remains binding even if portions are unenforceable"
+        ],
+        "legal_weapons": [
+          "Michigan law enforces ordinary negligence liability for landlords\u2014gross negligence thresholds are typically impermissible in lease disclaimers",
+          "Out-of-state dispute resolution requirements violate public policy when they chill access to local courts (*MCL 600.601*, *MCR 2.105*)",
+          "Severability clause doesn\u2019t rescue a lease riddled with unconscionable terms; totality governs enforceability (*Clark v. DaimlerChrysler Corp, 268 Mich App 138*)"
+        ],
+        "strategic_vulnerability": [
+          "Attempt to shield from all non-gross personal injury claims is invalid under Michigan law\u2014directly usable in your physical damages claim.",
+          "Forced pre-litigation contact with distant legal offices is a chilling tactic that may void forum rights\u2014especially harmful to pro se litigants.",
+          "Their reliance on a severability clause confirms they know multiple provisions are vulnerable\u2014this opens door for full invalidation."
+        ]
+      }
+    },
+    {
+      "page": 15,
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "findings": {
+        "clauses_flagged": [
+          "Tenant agrees to vacate immediately if any part of the lease is violated",
+          "Landlord reserves the right to update rules and enforce them retroactively",
+          "Tenant agrees to waive any jury trial in any dispute"
+        ],
+        "legal_weapons": [
+          "Immediate forfeiture for minor breaches violates MCL 600.5714 and is unenforceable without summary proceedings",
+          "Retroactive enforcement of updated rules is void for vagueness and violates due process (see *People v. Loper*, 299 Mich App 451)",
+          "Waiver of jury trial is unenforceable unless affirmatively made in court or under MCR 2.508 with procedural safeguards"
+        ],
+        "strategic_vulnerability": [
+          "This clause directly supports your unlawful eviction claim under MCL 600.2918(2)\u2014they acted without lawful process.",
+          "Retroactive rule enforcement + moving goalposts = judicially disfavored ambiguity and entrapment tactics.",
+          "Jury trial waiver shows premeditated effort to dodge accountability and suppress full adjudication\u2014use in Canon attack narrative."
+        ]
+      }
+    }
+  ],
+  "converted_complaint": {
+    "status": "Initiated",
+    "source_motion": "Preliminary Injunction (14th Circuit, scheduled August 12, 2025)",
+    "conversion_basis": [
+      "Eviction has already occurred, injunctive relief no longer sufficient",
+      "Seeks damages, declaratory relief, and lease invalidation"
+    ],
+    "requested_remedies": [
+      "Statutory and treble damages under MCL 600.2918 and 600.2919a",
+      "Declaratory judgment invalidating lease as unconscionable",
+      "Permanent injunction against re-entry or continued billing",
+      "Judgment for conversion, IIED, and deceptive billing practices",
+      "Costs, fees, and all further relief deemed just"
+    ]
+  },
+  "damages_matrix_phase_ii": {
+    "status": "Launched",
+    "phase": "II",
+    "type": "Multi-category",
+    "categories": [
+      "Property conversion (furniture, electronics, household goods)",
+      "Emotional distress (child trauma, forced displacement)",
+      "Loss of value (trailer value decrease due to lockout and damage)",
+      "Out-of-pocket expenses (storage, replacement, travel)",
+      "Loss of housing stability and legal access (due process deprivation)"
+    ]
+  },
+  "exhibit_attachments": {
+    "lease_attachment": {
+      "document": "Andrew Pigors Lease_20250107182535.pdf",
+      "purpose": "Support Motion to Strike + Declaratory Judgment",
+      "exhibit_label": "Exhibit A"
+    }
+  },
+  "binder_build": {
+    "status": "In Progress",
+    "deadline": "2025-08-12",
+    "components": [
+      "Converted complaint with verified exhibits",
+      "Full lease with annotations",
+      "Photo and video evidence of property destruction",
+      "Receipts, emails, and communications",
+      "Timeline of all court actions in 60th and 14th",
+      "Affidavit of Title + Ownership"
+    ]
+  },
+  "summary_update": {
+    "60th_district_cases": [
+      {
+        "case_number": "2025-25061626LT-LT",
+        "status": "Closed",
+        "disposition": "Judgment Entered for Possession",
+        "judgment_date": "2025-06-09",
+        "notes": [
+          "Writ issued same day as damages hearing",
+          "Motion to reopen denied same day as judgment"
+        ]
+      },
+      {
+        "case_number": "2025-25186592GC-GC",
+        "status": "Closed",
+        "disposition": "Dismissed with Prejudice",
+        "dismissal_date": "2025-04-15",
+        "notes": [
+          "Filed against dissolved entity SHADY OAKS MHP LLC",
+          "Defense responded as SHADY OAKS PARK MHP LLC"
+        ]
+      },
+      {
+        "case_number": "2024-24058913LT-LT",
+        "status": "Closed",
+        "disposition": "Conditional Dismissal",
+        "dismissal_date": "2024-06-27",
+        "notes": [
+          "Repeat LT filings under alias without lease"
+        ]
+      }
+    ],
+    "strategic_advantage": {
+      "core": "Opposing counsel represented both dissolved and active entities, creating conflict of interest and misrepresentation",
+      "violations_triggered": [
+        "Canon 4.3 conflict of interest",
+        "Fraud upon the court",
+        "MCL 600.2907 malicious prosecution",
+        "42 U.S.C. \u00a71983 and \u00a71985 civil rights violations"
+      ]
+    },
+    "litigation_actions": {
+      "motion_convert_hearing": "14th Circuit motion converting preliminary injunction hearing to damages trial",
+      "1983_federal_complaint": "Western District complaint including deprivation of property, due process, entity fraud",
+      "lease_analysis": {
+        "exhibits_attached": [
+          "Lease Exhibit A-F"
+        ],
+        "defenses": [
+          "Paragraphs 33\u201335 waivers are void as against public policy",
+          "Executed under duress and not freely negotiated",
+          "Superseded by statutory protections under MCL 600.2918 and MCL 440.2302"
+        ]
+      },
+      "damages_matrix_phase_2": {
+        "categories": [
+          "Personal Property",
+          "Real Property",
+          "Emotional Harm",
+          "Civil Rights Damages",
+          "Attorney/Court Costs"
+        ]
+      }
+    }
+  }
+}

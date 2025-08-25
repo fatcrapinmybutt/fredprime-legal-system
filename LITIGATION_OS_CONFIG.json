@@ -1,0 +1,108 @@
+{
+    "paths": {
+        "ROOT_DRIVE": "F:/",
+        "LITIGATION_CORE": "F:/LITIGATION_OS/",
+        "EVIDENCE_ROOT": "F:/EVIDENCE/",
+        "FORMS_DIR": "F:/FORMS/SCAO/",
+        "MCR_DB": "F:/LITIGATION_OS/DB/mcr_rules.db",
+        "FORM_DB": "F:/LITIGATION_OS/DB/scao_forms.db",
+        "OUTPUT_DIR": "F:/LegalResults/RECOMMENDED_ACTIONS/",
+        "BACKUPS": "Z:/BACKUPS/"
+    },
+    "engines": {
+        "MCR_RULE_ENGINE": true,
+        "SCAO_FORM_MAPPER": true,
+        "MEEK1_HOUSING_MATRIX": true,
+        "MEEK2_CUSTODY_MATRIX": true,
+        "CANON_VIOLATION_SCANNER": true,
+        "AFFIDAVIT_GENERATOR": true,
+        "ZIP_COMPLIANCE_VALIDATOR": true,
+        "MOTION_WIZARD": true,
+        "TIMELINE_WARBOARD": true,
+        "EVIDENCE_PROCESSOR": true,
+        "REMINDER_DAEMON": true
+    },
+    "triggers": {
+        "rule_violation_detected": [
+            "MOTION_GENERATOR",
+            "FORM_SUGGESTOR",
+            "CANON_SCANNER"
+        ],
+        "deadline_near": [
+            "REMINDER_GENERATOR",
+            "AUTO_AFFIDAVIT_BUILDER"
+        ],
+        "new_file_ingested": [
+            "EVIDENCE_CLASSIFIER",
+            "MEEK_ROUTER",
+            "OCR_ENGINE",
+            "MCR_FORM_MATCHER"
+        ]
+    },
+    "mifile_output_format": "DOCX+ZIP",
+    "exhibit_format": "PDF-A",
+    "embed_proposed_orders": true,
+    "embed_certificates_of_service": true,
+    "auto_bundle_motion": true,
+    "verify_against_benchbook": true,
+    "forensic_hash_checking": true,
+    "databases": {
+        "MCR": {
+            "path": "F:/LITIGATION_OS/DB/mcr_rules.db",
+            "tables": [
+                "rules",
+                "pages",
+                "rule_pages"
+            ]
+        },
+        "FORMS": {
+            "path": "F:/LITIGATION_OS/DB/scao_forms.db",
+            "tables": [
+                "forms",
+                "form_text",
+                "form_rule_links"
+            ]
+        }
+    },
+    "security": {
+        "enable_sha256_hashing": true,
+        "enable_chain_of_custody": true,
+        "lock_on_ingest": true,
+        "forensic_snapshots_enabled": true
+    },
+    "cores": {
+        "MEEK1": "Housing",
+        "MEEK2": "Custody",
+        "STRIKEBACK": "Corporate/Fraud",
+        "ENFORCE": "Post-Judgment",
+        "FUTURE": "Upcoming hearings"
+    },
+    "online": {
+        "enable_form_update_checker": true,
+        "court_lookup_api_enabled": false,
+        "statute_monitoring": true
+    },
+    "agents": {
+        "SCANNER_AGENT": [
+            "OCR_ENGINE",
+            "RULE_DETECTOR",
+            "FORM_INDEXER"
+        ],
+        "FILING_AGENT": [
+            "MOTION_BUILDER",
+            "ORDER_GENERATOR",
+            "ZIP_WRAPPER"
+        ],
+        "DEFENSE_AGENT": [
+            "AFFIDAVIT_WRITER",
+            "CANON_DETECTOR",
+            "EVIDENCE_BONDER"
+        ]
+    },
+    "memory": {
+        "enable_recursive_knowledge": true,
+        "mainframe_memory_lock": true,
+        "cross_module_persistence": true,
+        "no_data_loss_protocol": true
+    }
+}

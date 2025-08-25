@@ -1,132 +1,64 @@
-# LITIGATION_CORE_ENGINE_v9999.py (FULL SYSTEM – LEVEL 9999, *GUI-WRAPPED EXECUTABLE + CONFIG-DRIVEN THREAD POOL + PREFECT + GPT + RETRIES + LOGGING + DAG + ALERTS + AUDIT + METRICS + SMS/EMAIL + SHA256 + GUI.EXE*)
+# LITIGATION_CORE_ENGINE_v9999.py
 
 import os
-import sys
-import json
-import argparse
-import logging
-import hashlib
-import smtplib
-import threading
-from email.message import EmailMessage
-from fastapi import FastAPI
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from fastapi.middleware.cors import CORSMiddleware
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from pythonjsonlogger import jsonlogger
-from prefect import flow, task
-from prefect.task_runners import ConcurrentTaskRunner
-from gui_wrapper import launch_gui
-from config_manager import ConfigManager, ConfigSchema
-from ocr_engine import OCRFallback
-from memory_crawler import MemoryCrawler
-from gpt_tools import extract_text, classify_step, determine_filings
-from db_repo import PostgresDBRepo, DBRepository
-from metrics import doc_build_counter
-from behavior_manager import BehaviorManager
-from alerts import send_sms, send_email
+from litigation_os.modules import (
+    MemoryCrawler,
+    CoreClassifier,
+    RuleSetEnforcer,
+    ExhibitMatrixBuilder,
+    DocxGenerator,
+    ZIPOutputPackager,
+    CourtFormatEnforcer,
+)
 
-# === Logging Configuration ===
-logger = logging.getLogger('LitigationEngine')
-logger.setLevel(logging.INFO)
-json_handler = logging.FileHandler('litigation_engine.log')
-json_handler.setFormatter(jsonlogger.JsonFormatter())
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(jsonlogger.JsonFormatter())
-logger.addHandler(json_handler)
-logger.addHandler(console_handler)
+SOURCE_PATHS = [
+    "F:/", "Z:/", "D:/", "gui.exe", 
+    "/mnt/data/google_drive", 
+    "/mnt/data/gmail_cache", 
+    "/mnt/data/chatgpt_logs"
+]
 
-# === Structured GPT Logging ===
-gpt_log_handler = logging.FileHandler('gpt_traces.jsonl')
-gpt_log_handler.setFormatter(jsonlogger.JsonFormatter())
-logger.addHandler(gpt_log_handler)
+def run_core_engine():
+    print("🧬 INITIATING LITIGATION CORE ENGINE...")
 
-# === FastAPI Prefect Integration ===
-app = FastAPI()
-FastAPIInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
+    # Step 1: Crawl Full Memory / Past Chats / Files
+    full_dataset = MemoryCrawler.recursive_scan(SOURCE_PATHS)
+    print(f"📦 Memory Crawl Complete — Items Found: {len(full_dataset)}")
 
-# === Prefect Flow ===
-@task(name="Run Litigation Pipeline", retries=3, retry_delay_seconds=10)
-def litigation_task(case_num: str, cfg_dict: dict):
-    cfg = ConfigSchema(**cfg_dict)
-    db = PostgresDBRepo(cfg.db_config)
-    run_evidence_pipeline(case_num, cfg, db)
+    # Step 2: Classify Into MEEK1 vs MEEK2
+    meek1_data, meek2_data = CoreClassifier.split_by_legal_core(full_dataset)
+    print(f"🏠 Housing Core (MEEK1): {len(meek1_data)}")
+    print(f"👪 Custody Core (MEEK2): {len(meek2_data)}")
 
-@flow(name="Litigation Engine Flow", task_runner=ConcurrentTaskRunner())
-def litigation_flow(case_num: str, cfg_dict: dict):
-    litigation_task.submit(case_num, cfg_dict)
+    # Step 3: Enforce Rule Sets
+    RuleSetEnforcer.lock("MEEK1", meek1_data, rule_set="MCR + MCL + Housing Benchbook")
+    RuleSetEnforcer.lock("MEEK2", meek2_data, rule_set="MCR + MCL + Custody/PPO Benchbook")
+    print("⚖️ Rule Lock Complete for Both Cores")
 
-# === GPT Draft Wrapper with Retry + Logging ===
-class GPTClient:
-    @staticmethod
-    @BehaviorManager.retry(times=4, backoff=3)
-    def draft(cfg: ConfigSchema, content: str, case_num: str, file_path: str):
-        response = openai.ChatCompletion.create(
-            model=cfg.gpt_model,
-            messages=[{"role": "system", "content": "Extract facts for litigation."},
-                      {"role": "user", "content": content}],
-            timeout=cfg.gpt_timeout
-        )
-        logger.info("GPT draft success", extra={"file": file_path, "case": case_num, "response": response})
-        return response
+    # Step 4: Build Exhibit Matrix
+    ExhibitMatrixBuilder.generate("MEEK1", meek1_data, out_path="F:/LegalResults/MEEK1/Exhibit_Index.pdf")
+    ExhibitMatrixBuilder.generate("MEEK2", meek2_data, out_path="F:/LegalResults/MEEK2/Exhibit_Index.pdf")
+    print("📘 Dual Exhibit Matrices Generated")
 
-# === SHA256 Hasher ===
-def compute_sha256(path):
-    with open(path, 'rb') as f:
-        return hashlib.sha256(f.read()).hexdigest()
+    # Step 5: Generate Court-Ready .docx Files
+    docx_m1 = DocxGenerator.build("MEEK1", meek1_data, out_folder="F:/LegalResults/MEEK1/docx")
+    docx_m2 = DocxGenerator.build("MEEK2", meek2_data, out_folder="F:/LegalResults/MEEK2/docx")
+    print("📄 .docx Test Filings Created")
 
-# === Evidence Pipeline with GPTClient, Prefect, and Logging ===
-def run_evidence_pipeline(case_num: str, cfg: ConfigSchema, db: DBRepository):
-    items = MemoryCrawler().scan(cfg.source_paths, case_num)
-    db.save_files(items)
+    # Step 6: Package MiFILE ZIPs
+    ZIPOutputPackager.bundle(
+        input_folder="F:/LegalResults/MEEK1/",
+        core="MEEK1",
+        out_path="F:/LegalResults/ZIP/MEEK1_LITIGATION_BUNDLE.zip"
+    )
+    ZIPOutputPackager.bundle(
+        input_folder="F:/LegalResults/MEEK2/",
+        core="MEEK2",
+        out_path="F:/LegalResults/ZIP/MEEK2_LITIGATION_BUNDLE.zip"
+    )
+    print("📦 MiFILE ZIP Bundles Completed")
 
-    ocr_results = []
-    with ThreadPoolExecutor(max_workers=cfg.ocr_threads) as executor:
-        future_map = {executor.submit(OCRFallback().parse, itm['path'], case_num): itm for itm in items}
-        for future in as_completed(future_map, timeout=cfg.ocr_timeout):
-            itm = future_map[future]
-            try:
-                success = future.result(timeout=cfg.ocr_timeout)
-                ocr_results.append((itm, success))
-            except Exception as e:
-                logger.error("OCR error for file", extra={'file': itm['path'], 'error': str(e), 'case': case_num})
-                send_sms(f"OCR failed: {itm['path']} - {str(e)}")
+    print("✅ LITIGATION CORE ENGINE COMPLETE — LEVEL 9999 MODE ACTIVE")
 
-    classification = classify_step(ocr_results, cfg, case_num)
-    filings = determine_filings(classification)
-
-    for doc, success in ocr_results:
-        if not success:
-            continue
-        try:
-            content = extract_text(doc['path'])[:cfg.snippet_chars]
-            GPTClient.draft(cfg, content, case_num, doc['path'])
-        except Exception as e:
-            logger.error("GPT error", extra={"file": doc['path'], "error": str(e), "case": case_num})
-            send_email(f"GPT Error on {doc['path']}", str(e))
-
-    for filing in filings:
-        filename = f"{case_num}_{filing.replace(' ', '_')}.docx"
-        file_path = os.path.join(cfg.output_dir, filename)
-        db.save_document(case_num, file_path)
-        sha = compute_sha256(file_path)
-        logger.info("Document created", extra={"filename": filename, "sha256": sha, "case": case_num})
-        doc_build_counter.labels(case=case_num, document=filename).inc()
-
-# === CLI / GUI Entrypoint ===
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--case', help='Case number')
-    parser.add_argument('--config', default='config.json')
-    parser.add_argument('--gui', action='store_true', help='Launch GUI instead')
-    args = parser.parse_args()
-
-    if args.gui:
-        launch_gui()
-    elif args.case:
-        cfg_obj = ConfigManager.load(args.config)
-        litigation_flow(args.case, cfg_obj.dict())
-    else:
-        print("Either --case or --gui must be provided")
+if __name__ == "__main__":
+    run_core_engine()

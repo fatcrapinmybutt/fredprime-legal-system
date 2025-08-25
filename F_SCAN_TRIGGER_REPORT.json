@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-08-25T00:29:47.411451",
+  "scan_path": "F:/",
+  "detected_triggers": [
+    {
+      "type": "Rent Overbilling",
+      "path": "F:/Litigation/Housing/ShadyOaks/RentLedger_Dec2024.pdf"
+    },
+    {
+      "type": "Housing Harm",
+      "path": "F:/Litigation/Housing/ShadyOaks/SewageViolation_Photos.zip"
+    },
+    {
+      "type": "Housing Harm",
+      "path": "F:/Litigation/Housing/ShadyOaks/Zego_Bill_May2025.pdf"
+    },
+    {
+      "type": "Parenting Time Denial",
+      "path": "F:/Litigation/Custody/AppClose_Log_April2025.docx"
+    },
+    {
+      "type": "Custody Suppression",
+      "path": "F:/Litigation/Custody/ShowCause_Transcript_Oct2024.pdf"
+    },
+    {
+      "type": "Custody Suppression",
+      "path": "F:/Litigation/Custody/EmilyWatson_PPO_Original.pdf"
+    },
+    {
+      "type": "Third-Party Coercion",
+      "path": "F:/Litigation/Custody/LoriWatson_Texts_Evidence.txt"
+    }
+  ]
+}

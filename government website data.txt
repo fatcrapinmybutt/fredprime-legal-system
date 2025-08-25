@@ -1,0 +1,133 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<rss version="2.0">
+<channel>
+<title>Michigan Legislature MCL Updates</title>
+<link>http://www.legislature.mi.gov</link>
+<description>Changes to Michigan Compiled Laws. Updated every 10 minutes.</description>
+<language>en-us</language>
+<lastBuildDate>Thu, 03 Jul 2025 23:46:24 GMT</lastBuildDate>
+<pubDate>Thu, 03 Jul 2025 23:46:24 GMT</pubDate>
+<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+<generator>Michigan Legislative Web Site</generator>
+<managingEditor>LITDEV@legislature.mi.gov (Jennifer Quinn)</managingEditor>
+<webMaster>LITDEV@levislature.mi.gov (Jennifer Quinn)</webMaster>
+<item>
+<title>Section 168.493b.added has been deleted</title>
+<guid isPermaLink="false">mcl-168-493b-added</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:53:20 GMT</pubDate>
+</item>
+<item>
+<title>Section 28.291 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-28-291</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-28-291</guid>
+<description> Official state personal identification card; application; requirements; automatic voter registration opt-out; identification card issued by department of corrections as documentation; electronic access to prisoner information; person holding operator's or chauffeur's license; applicant not citizen of United States; disclosure or display of Social Security number; exception; agreements with federal government; termination of official state personal identification card issued by another state; duties of secretary of state; communication impediment designation. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:59:47 GMT</pubDate>
+</item>
+<item>
+<title>Section 24.266 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-24-266</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-24-266</guid>
+<description> Repealed. 2024, Act 9, Eff. July 1, 2025 Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:53:50 GMT</pubDate>
+</item>
+<item>
+<title>Section 28.305.amended has been deleted</title>
+<guid isPermaLink="false">mcl-28-305-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 07:01:47 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.500a - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-500a</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-500a</guid>
+<description> Registration or change in registration of person applying for renewal of operator's or chauffeur's license; application. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:49:21 GMT</pubDate>
+</item>
+<item>
+<title>Section 257.307 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-257-307</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-257-307</guid>
+<description> Application for operator's or chauffeur's license to operate noncommercial motor vehicle; documents to be supplied to verify citizenship or identity and legal presence; manner; contents; image and signature; voter registration opt-out; equipment; signature and certification; application fee; duties of secretary of state; donor registry; driving record from another jurisdiction; operation of commercial motor vehicle; application for original, renewal, or upgrade of vehicle group designation or indorsement; verification of identity and citizenship or residency; issuing renewal license by mail or other methods; information manual; Social Security number; electronic access to donor registry; agreements with federal government; termination of license issued by another state; duties of secretary of state; access to prisoner information. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:55:42 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.509ii - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-509ii</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-509ii</guid>
+<description> Electronic voter registration interface; requirements; application; qualifications. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:49:46 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.493a - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-493a</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-493a</guid>
+<description> Automatic voter registration; qualifications; qualified voter file; option to opt-out; notice; information added to qualified voter file; United States citizenship requirement; preregistration; erroneous registration not a violation; monthly data reports. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:49:09 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.493b - added</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-493b</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-493b</guid>
+<description> Automatic voter registration agencies; transmission of voter registration information; procedure and schedule; Medicaid application; submission requests by tribal nations; memorandum of understanding; release from incarceration; procedures for processing electronic records. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:49:10 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.493a.amended has been deleted</title>
+<guid isPermaLink="false">mcl-168-493a-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:53:20 GMT</pubDate>
+</item>
+<item>
+<title>Section 24.265 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-24-265</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-24-265</guid>
+<description> Repealed. 2024, Act 9, Eff. July 1, 2025. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:53:49 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.501 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-501</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-168-501</guid>
+<description> Master registration cards; master file. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:49:28 GMT</pubDate>
+</item>
+<item>
+<title>Section 257.307.amended has been deleted</title>
+<guid isPermaLink="false">mcl-257-307-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:58:42 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.501.amended has been deleted</title>
+<guid isPermaLink="false">mcl-168-501-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:53:20 GMT</pubDate>
+</item>
+<item>
+<title>Section 28.305 - updated</title>
+<link>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-28-305</link>
+<guid>http://www.legislature.mi.gov/mileg.aspx?page=getObject&objectName=mcl-28-305</guid>
+<description> Items to be provided to secretary of state; facial image or signature; display of Social Security number or communication impediment designation prohibited; examination and verification of application and other documentation; rejection of application; retention of copies or digital images of documents or facial image; disclosure of digital images of documents; compilation or maintenance of database limited; communication impediment designation; revocation. Please see compilers notes or history at the bottom of the section for details.</description>
+<pubDate>Wed, 02 Jul 2025 06:59:52 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.509ii.amended has been deleted</title>
+<guid isPermaLink="false">mcl-168-509ii-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:53:20 GMT</pubDate>
+</item>
+<item>
+<title>Section 28.291.amended has been deleted</title>
+<guid isPermaLink="false">mcl-28-291-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 07:01:47 GMT</pubDate>
+</item>
+<item>
+<title>Section 168.500a.amended has been deleted</title>
+<guid isPermaLink="false">mcl-168-500a-amended</guid>
+<description> </description>
+<pubDate>Wed, 02 Jul 2025 06:53:20 GMT</pubDate>
+</item>
+</channel>
+</rss>

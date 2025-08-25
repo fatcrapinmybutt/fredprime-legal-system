@@ -1,0 +1,20 @@
+{
+  "version": "2025-08-01_local_sample",
+  "mcr": {
+    "1.108": "Time computation; weekends/holidays handling.",
+    "2.107": "Service and filing of pleadings and other papers.",
+    "2.302": "Discovery—general provisions.",
+    "2.119": "Form of motions and affidavits."
+  },
+  "mcl": {
+    "600.611": "Jurisdiction of circuit courts (general)"
+  },
+  "benchbook": {},
+  "deadlines": {
+    "motion_response_days": 14,
+    "brief_support_days": 21
+  },
+  "service": {
+    "allowed_methods": ["MiFILE","email","mail"]
+  }
+}

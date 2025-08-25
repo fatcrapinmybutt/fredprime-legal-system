@@ -1,0 +1,464 @@
+MiCOURT Case Search
+Supreme Court Pillars
+Viewing cases for court 60th District Court
+Case Details
+Case ID
+2025-25061626LT-LT
+Court Location
+60th District Court - Muskegon
+Case Entitlement
+SHADY OAKS PARK MHP LLC V PIGORS
+Judge of Record
+HOOPES,MARIA LADAS,
+Date Filed
+01/21/2025
+Case Status
+CLOSED
+Balance
+Parties (2)
+Party Name
+SHADY OAKS PARK MHP LLC//
+Party Type/Number
+PLAINTIFF - 1
+Attorney Name
+AARON DANIEL COX
+Alternate Name(s)
+Answer Date
+Service Date
+Disposition
+Disposition Date
+Party Name
+PIGORS/ANDREW/
+Party Type/Number
+DEFENDANT - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+02/20/2025
+Service Date
+02/13/2025
+Disposition
+JUDGMENT ENTERED POSSESSION
+Disposition Date
+06/09/2025
+Bonds (0)
+Hearings (0)
+Events (29)
+
+
+Date	Description	Comment	Party/Count	Amount	Receipt No./Date/Judge	Clerk
+06/09/2025	MOTION HELD		ALL			MMF
+MOTION DENIED		D1			MMF
+JUDGMENT ENTERED POSSESSION		D1			MMF
+WRIT ISSUED FOR EVICTION		D1		HIGGS	MMF
+05/30/2025	AFFIDAVIT FILED		P1		W/PROOF	MMF
+ORDER FILED		P1			MMF
+ORDER FILED		P1			MMF
+ACTION FILED TO RE-OPEN CASE		D1			MMF
+MOTION FILED		P1		W/PROOF	MMF
+BRIEFS FILED		P1			MMF
+05/13/2025	MOTION SCHEDULED		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 06/09/2025 11:00 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+05/08/2025	MOTION FILED		D1			MMF
+FEE SUSPENDED/WAIVED		D1			MMF
+04/16/2025	SETTLEM CONFERENCE ENTERED CONDITIONAL DISMISSAL		D1			MMF
+04/15/2025	SETTLEM CONFERENCE FILED CONDITIONAL DISMISSAL		P1			MMF
+04/14/2025	BENCH TRIAL HELD FOR NON PAYMENT OF RENT		ALL			MMF
+03/26/2025	NOTICE ISSUED TO APPEAR		ALL			MMF
+03/24/2025	BENCH TRIAL HELD FOR NON PAYMENT OF RENT		ALL			MMF
+BENCH TRIAL ADJOURNED FOR NON PAYMENT OF RENT		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/24/2025 10:00 AM - BENCH TRIAL
+Hearing Officer - HOOPES,MARIA LADAS,
+BENCH TRIAL SCHEDULED FOR NON PAYMENT OF RENT		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 04/14/2025 10:00 AM - BENCH TRIAL
+Hearing Officer - HOOPES,MARIA LADAS,
+02/25/2025	NOTICE ISSUED TO APPEAR		ALL			MMF
+02/24/2025	HEARING HELD FOR NON PAYMENT OF RENT		ALL			MMF
+BENCH TRIAL SCHEDULED FOR NON PAYMENT OF RENT		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/24/2025 10:00 AM - BENCH TRIAL
+Hearing Officer - HOOPES,MARIA LADAS,
+02/20/2025	ANSWER FILED		D1			KJD
+MOTION FILED TO DISMISS		D1			KJD
+02/13/2025	SUMM & COMP SERVED PERSONALLY		D1	$35.87	HIGGS	KJD
+02/06/2025	SUMM & COMP ISSUED FOR NON PAYMENT OF RENT		D1		HIGGS	MMF
+HEARING SCHEDULED FOR NON PAYMENT OF RENT		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 02/24/2025 2:00 PM - HEARING
+Hearing Officer - HOOPES,MARIA LADAS,
+01/21/2025	SUMM & COMP FILED FOR NON PAYMENT OF RENT		P1			MMF
+Attorney - COX,AARON DANIEL,
+Garnishments (0)
+----------------------------
+MiCOURT Case Search
+Supreme Court Pillars
+Viewing cases for court 60th District Court
+Case Details
+Case ID
+2025-25186592GC-GC
+Court Location
+60th District Court - Muskegon
+Case Entitlement
+PIGORS V SHADY OAKS MHP LLC
+Judge of Record
+HOOPES,MARIA LADAS,
+Date Filed
+01/16/2025
+Case Status
+CLOSED
+Balance
+Parties (4)
+Party Name
+PIGORS/ANDREW/J
+Party Type/Number
+PLAINTIFF - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+Service Date
+Disposition
+Disposition Date
+Party Name
+SHADY OAKS MHP LLC//
+Party Type/Number
+DEFENDANT - 1
+Attorney Name
+AARON DANIEL COX
+Alternate Name(s)
+Answer Date
+01/21/2025
+Service Date
+01/06/2025
+Disposition
+DISMISSAL ENTERED WITH PREJUDICE
+Disposition Date
+04/15/2025
+Party Name
+SHADY OAKS PARK MHP LLC//
+Party Type/Number
+COUNTER PARTY PLAINTIFF - 1
+Attorney Name
+AARON DANIEL COX
+Alternate Name(s)
+Answer Date
+02/21/2025
+Service Date
+Disposition
+Disposition Date
+Party Name
+PIGORS/ANDREW/J
+Party Type/Number
+COUNTER PARTY DEFENDANT - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+01/30/2025
+Service Date
+Disposition
+DISMISSAL ENTERED WITH PREJUDICE
+Disposition Date
+04/15/2025
+Bonds (0)
+Hearings (0)
+Events (44)
+
+
+Date	Description	Comment	Party/Count	Amount	Receipt No./Date/Judge	Clerk
+04/15/2025	DISMISSAL ENTERED WITH PREJUDICE		D1			MMF
+ORDER ENTERED TO DISMISS		D1			MMF
+ORDER ENTERED TO DISMISS		F1			MMF
+DISMISSAL ENTERED WITH PREJUDICE		D1			MMF
+DISMISSAL ENTERED WITH PREJUDICE		F1			MMF
+04/14/2025	MOTION HELD		ALL			MMF
+04/09/2025	MOTION FILED		D1		W/PROOF	MMF
+BRIEFS FILED		D1			MMF
+03/26/2025	NOTICE ISSUED TO APPEAR		ALL			MMF
+03/24/2025	MOTION HELD		ALL			MMF
+MOTION ADJOURNED		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/24/2025 10:00 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+MOTION SCHEDULED		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 04/14/2025 10:30 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+03/20/2025	MOTION FILED		P1			MMF
+ORDER FILED		P1			MMF
+FEE SUSPENDED/WAIVED		P1			MMF
+03/06/2025	MOTION ADJOURNED FOR SUMMARY DISPOSITION		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/17/2025 11:00 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+MOTION SCHEDULED		ALL			MMF
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/24/2025 10:00 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+NOTICE ISSUED TO APPEAR		ALL			MMF
+02/24/2025	DEFAULT FILED		R1			KJD
+02/21/2025	PRE-TRIAL HELD		ALL			KJD
+ANSWER FILED		R1		W/PROOF	KJD
+AFF DEFENSES FILED		R1			KJD
+02/04/2025	MOTION SCHEDULED FOR SUMMARY DISPOSITION		ALL			KJD
+Attorney - HOOPES,MARIA LADAS,
+Next Hearing - 03/17/2025 11:00 AM - MOTION
+Hearing Officer - HOOPES,MARIA LADAS,
+NOTICE ISSUED TO APPEAR		ALL			KJD
+01/30/2025	COMPLAINT AMENDED		P1	$25,000.00	W/PROOF	KJD
+ANSWER FILED		F1			KJD
+MOTION FILED TO DISMISS		F1		W/PROOF	KJD
+MOTION FILED FOR SUMMARY DISPOSITION		P1		W/PROOF	KJD
+MOTION FILED		P1			KJD
+01/21/2025	ANSWER FILED		D1		W/PROOF	MMF
+APPEARANCE FILED		D1			MMF
+Attorney - COX,AARON DANIEL,
+AFF DEFENSES FILED		D1			MMF
+APPEARANCE FILED		P1			MMF
+Attorney - OSINSKI,DONALD ,
+APPEARANCE FILED		F1			MMF
+Attorney - OSINSKI,DONALD ,
+PRE-TRIAL SCHEDULED		ALL			MMF
+Attorney - CIVIL,PRETRIAL,
+Next Hearing - 02/21/2025 2:30 PM - PRE-TRIAL
+Hearing Officer - CIVIL,PRETRIAL,
+NOTICE ISSUED TO APPEAR		ALL			MMF
+01/17/2025	JUDGMENT ISSUED SMALL CLAIMS		D1			JLJ
+CONTR COMPLT FILED		D1	$3,805.44		MMF
+01/16/2025	ORDER ENTERED FOR REMOVAL TO GEN CIVIL		ALL			MMF
+01/13/2025	DEMAND FILED FOR REMOVAL TO GEN CIVIL		D1			MMF
+01/06/2025	AFFDV & CLM SERVED PERSONALLY		D1	$36.00	GREENER	MMF
+12/20/2024	HEARING SCHEDULED SMALL CLAIMS		ALL			MMF
+Attorney - BERRY,CAVAN J.,
+Next Hearing - 01/21/2025 2:00 PM - HEARING
+Hearing Officer - BERRY,CAVAN J.,
+12/19/2024	AFFDV & CLM FILED SMALL CLAIMS		P1	$7,000.00		MMF
+AFFDV & CLM ISSUED SMALL CLAIMS		D1		SMITH	MMF
+Garnishments (0)
+----------------------------
+MiCOURT Case Search
+Supreme Court Pillars
+Viewing cases for court 60th District Court
+Case Details
+Case ID
+2024-24023902SC-SC
+Court Location
+60th District Court - Muskegon
+Case Entitlement
+PIGORS V SHADY OAKS MHP LLC
+Judge of Record
+HOOPES,MARIA LADAS,
+Date Filed
+12/19/2024
+Case Status
+CLOSED
+Balance
+Parties (2)
+Party Name
+PIGORS/ANDREW/J
+Party Type/Number
+PLAINTIFF - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+Service Date
+Disposition
+ORDER ENTERED FOR REMOVAL TO GEN CIVIL
+Disposition Date
+01/16/2025
+Party Name
+SHADY OAKS MHP LLC//
+Party Type/Number
+DEFENDANT - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+Service Date
+01/06/2025
+Disposition
+ORDER ENTERED FOR REMOVAL TO GEN CIVIL
+Disposition Date
+01/16/2025
+Bonds (0)
+Hearings (0)
+Events (7)
+
+
+Event Date
+01/17/2025
+Description
+JUDGMENT ISSUED SMALL CLAIMS
+Party/Count
+D1
+Clerk
+JLJ
+Event Date
+01/16/2025
+Description
+ORDER ENTERED FOR REMOVAL TO GEN CIVIL
+Party/Count
+ALL
+Clerk
+MMF
+Event Date
+01/13/2025
+Description
+DEMAND FILED FOR REMOVAL TO GEN CIVIL
+Party/Count
+D1
+Clerk
+MMF
+Event Date
+01/06/2025
+Description
+AFFDV & CLM SERVED PERSONALLY
+Party/Count
+D1
+Amount
+$36.00
+Receipt No./Date/Judge
+GREENER
+Clerk
+MMF
+Event Date
+12/20/2024
+Description
+HEARING SCHEDULED SMALL CLAIMS
+Party/Count
+ALL
+Clerk
+MMF
+Attorney
+BERRY,CAVAN J.,
+Event Date
+12/19/2024
+Description
+AFFDV & CLM FILED SMALL CLAIMS
+Party/Count
+P1
+Amount
+$7,000.00
+Clerk
+MMF
+Description
+AFFDV & CLM ISSUED SMALL CLAIMS
+Party/Count
+D1
+Receipt No./Date/Judge
+SMITH
+Clerk
+MMF
+Garnishments (0)
+-----------------------------
+MiCOURT Case Search
+Supreme Court Pillars
+Viewing cases for court 60th District Court
+Case Details
+Case ID
+2024-24058913LT-LT
+Court Location
+60th District Court - Muskegon
+Case Entitlement
+SHADY OAKS PARK MHP LLC V PIGORS
+Judge of Record
+HOOPES,MARIA LADAS,
+Date Filed
+05/20/2024
+Case Status
+CLOSED
+Balance
+Parties (2)
+Party Name
+SHADY OAKS PARK MHP LLC//
+Party Type/Number
+PLAINTIFF - 1
+Attorney Name
+AARON DANIEL COX
+Alternate Name(s)
+Answer Date
+Service Date
+Disposition
+Disposition Date
+Party Name
+PIGORS/ANDREW/
+Party Type/Number
+DEFENDANT - 1
+Attorney Name
+Alternate Name(s)
+Answer Date
+Service Date
+06/06/2024
+Disposition
+SETTLEM CONFERENCE ENTERED CONDITIONAL DISMISSAL
+Disposition Date
+06/27/2024
+Bonds (0)
+Hearings (0)
+Events (7)
+
+
+Event Date
+06/27/2024
+Description
+SETTLEM CONFERENCE ENTERED CONDITIONAL DISMISSAL
+Party/Count
+D1
+Clerk
+MMF
+Event Date
+06/26/2024
+Description
+HEARING HELD FOR NON PAYMENT OF RENT
+Party/Count
+ALL
+Clerk
+MMF
+Description
+SETTLEM CONFERENCE FILED CONDITIONAL DISMISSAL
+Party/Count
+P1
+Clerk
+MMF
+Event Date
+06/06/2024
+Description
+SUMM & COMP SERVED PERSONALLY
+Party/Count
+D1
+Amount
+$35.40
+Receipt No./Date/Judge
+HIGGS
+Clerk
+MMF
+Event Date
+05/31/2024
+Description
+SUMM & COMP ISSUED FOR NON PAYMENT OF RENT
+Party/Count
+D1
+Receipt No./Date/Judge
+HIGGS
+Clerk
+MMF
+Description
+HEARING SCHEDULED FOR NON PAYMENT OF RENT
+Party/Count
+ALL
+Clerk
+MMF
+Attorney
+HOOPES,MARIA LADAS,
+Event Date
+05/20/2024
+Description
+SUMM & COMP FILED FOR NON PAYMENT OF RENT
+Party/Count
+P1
+Clerk
+JLJ
+Attorney
+COX,AARON DANIEL,
+Garnishments (0)
