@@ -1,9 +1,37 @@
 [
-  {
-    "module": "benchbook_loader",
-    "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
-  }
+    {
+        "module": "benchbook_loader",
+        "path": "modules/benchbook_loader.py",
+        "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+        "legal_function": "extract text from Michigan benchbook PDFs",
+        "dependencies": ["PyPDF2"],
+    },
+    {
+        "module": "litigator_cli",
+        "path": "litigator_cli.py",
+        "hash": "3f3dd0a60bc0c37e36006f31e402894f468488f64e5850d4868dcd0a73245a45",
+        "legal_function": "Unified command-line interface for ingesting, building, and validating litigation data",
+        "dependencies": ["argparse", "cli.ingest", "cli.build", "cli.validate"],
+    },
+    {
+        "module": "ingest",
+        "path": "cli/ingest.py",
+        "hash": "740e7ac03b295cb97a59286d968f768451ce631f07403d6b0cacabb7a3e454cc",
+        "legal_function": "Process evidentiary ZIP archives",
+        "dependencies": ["EPOCH_UNPACKER_ENGINE_v1"],
+    },
+    {
+        "module": "build",
+        "path": "cli/build.py",
+        "hash": "053bc45cec4818d3ad7d1b0b4803e30a5e4e56cb721316c10b07ec7d140d5374",
+        "legal_function": "Generate litigation system definition JSON",
+        "dependencies": ["build_system"],
+    },
+    {
+        "module": "validate",
+        "path": "cli/validate.py",
+        "hash": "2e43d9de0c50edbe07775d2f4ce487936f10b6c509b21dc9d2343588dba6e217",
+        "legal_function": "Ensure required files exist before packaging",
+        "dependencies": ["ZIP_VALIDATOR"],
+    },
 ]
