@@ -1,9 +1,23 @@
 [
-  {
-    "module": "benchbook_loader",
-    "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
-  }
+    {
+        "module": "benchbook_loader",
+        "path": "modules/benchbook_loader.py",
+        "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+        "legal_function": "extract text from Michigan benchbook PDFs",
+        "dependencies": ["PyPDF2"],
+    },
+    {
+        "module": "golden_god_mode_bootstrap",
+        "path": "golden_god_mode_bootstrap.py",
+        "hash": "33eb5a241d1ac3c57b18e3c0bee8e9a4f6a3c519622340086a1effedb558d8c3",
+        "legal_function": "bootstrap local offline litigation workspace with FastAPI backend, UI, and tooling",
+        "dependencies": [
+            "fastapi",
+            "uvicorn",
+            "pydantic",
+            "PyMuPDF",
+            "pdfminer.six",
+            "scikit-learn",
+        ],
+    },
 ]
