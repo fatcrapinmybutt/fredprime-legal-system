@@ -1,9 +1,11 @@
 import hashlib
 import json
-import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Dict, List, cast
+
+from core.local_llm import analyze_content
 
 MANIFEST_FILE = "codex_manifest.json"
 BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
@@ -25,14 +27,17 @@ def hash_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_manifest() -> list[dict]:
+def load_manifest() -> List[Dict[str, object]]:
     if Path(MANIFEST_FILE).exists():
-        return json.loads(Path(MANIFEST_FILE).read_text())
+        data = json.loads(Path(MANIFEST_FILE).read_text())
+        return cast(List[Dict[str, object]], data)
     return []
 
 
 def verify_commit_message(msg: str) -> None:
-    if any(k in msg for k in BANNED_KEYWORDS):
+    analysis = analyze_content(msg)
+    tokens = cast(List[str], analysis["tokens"])
+    if any(k.lower() in tokens for k in BANNED_KEYWORDS):
         raise ValueError("Commit message contains banned keyword")
     if not re.match(r"^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ", msg):
         raise ValueError("Commit message format invalid")
@@ -57,7 +62,7 @@ def verify_branch_name(branch: str) -> bool:
 def verify_manifest_hashes() -> None:
     manifest = load_manifest()
     for entry in manifest:
-        path = Path(entry["path"])
+        path = Path(cast(str, entry["path"]))
         if not path.exists():
             raise FileNotFoundError(f"Missing file: {path}")
         if hash_file(path) != entry["hash"]:
