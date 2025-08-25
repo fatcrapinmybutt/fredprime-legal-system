@@ -5,5 +5,12 @@
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
     "dependencies": ["PyPDF2"]
+  },
+  {
+    "module": "scan_engine",
+    "path": "scanner/scan_engine.py",
+    "hash": "fabbdb2bc979bcf3faa1f7419c6c3bfc1b3740bce6e7e9341e52885e0df8d836",
+    "legal_function": "scan drives for legal files",
+    "dependencies": []
   }
 ]
