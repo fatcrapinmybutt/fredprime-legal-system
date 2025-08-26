@@ -5,5 +5,12 @@
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
     "dependencies": ["PyPDF2"]
+  },
+  {
+    "module": "meek_pipeline_launcher",
+    "path": "scripts/meek_pipeline_launcher.py",
+    "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
+    "legal_function": "launch ingestion and search pipeline",
+    "dependencies": ["meek_ingest_cli", "fts_cli"]
   }
 ]
