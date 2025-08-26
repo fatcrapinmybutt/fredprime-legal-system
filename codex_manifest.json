@@ -4,6 +4,17 @@
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "dependencies": [
+      "PyPDF2"
+    ]
+  },
+  {
+    "module": "meek_mirror_bootstrap",
+    "path": "meek_mirror_bootstrap.py",
+    "hash": "d0594afc18d869fa49e0df65a50d71679d8a6ab5da779064001fcafee6a3768c",
+    "legal_function": "mirror local MEEK directories to Google Drive using rclone",
+    "dependencies": [
+      "rclone"
+    ]
   }
 ]
