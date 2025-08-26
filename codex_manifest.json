@@ -53,4 +53,20 @@
             "ocrmypdf",
         ],
     },
+    {
+        "module": "golden_litigator_os",
+        "path": "golden_litigator_os.py",
+        "hash": "9450d3bc5331057c80053ae4d8149c065b78a1c1107b916d812d2e42be130dac",
+        "legal_function": "self-evolving litigation intelligence with OCR, transcription, timeline, and narrative builder",
+        "dependencies": [
+            "python-docx",
+            "pymupdf",
+            "pytesseract",
+            "Pillow",
+            "faster-whisper",
+            "whisper",
+            "openai",
+            "anthropic",
+        ],
+    },
 ]
