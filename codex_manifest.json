@@ -29,7 +29,7 @@
     {
         "module": "lawforge_master_upgrade_v1",
         "path": "LAWFORGE_MASTER_UPGRADE_v1.py",
-        "hash": "b3088357e5e632942659081b6fde342c8ebab02f3208597d24df90a6805629db",
+        "hash": "1a15cd35b60ee2983c2859d7cf5183c5694767ebc9ade742fb6abe1cfce1a295",
         "legal_function": "scan, OCR, index, embed, search, and provide RAG Q&A for litigation documents",
         "dependencies": [
             "chromadb",
@@ -47,6 +47,10 @@
             "uvicorn",
             "fastapi",
             "watchdog",
+            "pillow-heif",
+            "faster-whisper",
+            "openai-whisper",
+            "ocrmypdf",
         ],
     },
 ]

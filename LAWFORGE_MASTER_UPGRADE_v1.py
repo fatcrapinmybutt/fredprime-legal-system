@@ -1,68 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-LAWFORGE_MASTER_UPGRADE_v1.py
-Single-file, production-ready scanner + OCR + embed + search + Q&A pipeline.
-Zero-guessing. Deterministic logs. Windows-friendly.
+LAWFORGE_MASTER_UPGRADE_v1.py — hardened
+Scanner + OCR + embed + search + RAG API with chain-of-custody.
+- Fixed pdfminer import
+- Added HEIC support (pillow-heif if present)
+- Added audio transcription (faster-whisper or openai-whisper if present)
+- Optional PDF text-layer repair (ocrmypdf if present) before extraction
+- Deterministic JSONL corpus + index manifest (hash, size, times)
+- ChromaDB safe upsert (delete-if-exists, then add)
+- JSON event log (index/embed/serve)
+- /manifest API route
 
-Features
-- Recursive scan of drives/folders
-- Robust text extraction: PDF, images, Office, txt
-- OCR fallback with Tesseract or EasyOCR (if installed)
-- Hash-based deduping, incremental updates
-- JSONL corpus + ChromaDB vector store
-- Fast keyword + vector search
-- Optional LLM Q&A via: OpenAI, Anthropic, llama.cpp (local), or HF Inference
-- CLI and module API
-- Court-safe logs and chain-of-custody hashes
-- No destructive edits to originals
-
-Dependencies (install first):
-  pip install chromadb sentence-transformers pdfminer.six pypdf
-  pip install pdfplumber pillow pytesseract rapidfuzz unstructured[all-docs]
-  pip install pydantic python-magic-bin tiktoken uvicorn fastapi watchdog
-Optional:
-  pip install easyocr
-  pip install openai anthropic llama-cpp-python huggingface_hub
-
-External:
-  - Tesseract OCR (if using pytesseract): https://github.com/tesseract-ocr/tesseract
-  - Set TESSERACT_CMD path if not auto-detected
-
-Env vars for LLM (only if you enable Q&A):
-  OPENAI_API_KEY, ANTHROPIC_API_KEY, HF_TOKEN, LLAMA_CPP_MODEL (path to gguf), LLAMA_CTX=4096
-
-Usage
-  # Build index from a folder
-  python LAWFORGE_MASTER_UPGRADE_v1.py index --root "F:\\" \
-      --out "F:\\LegalResults\\index" --ocr yes
-
-  # Keyword search
-  python LAWFORGE_MASTER_UPGRADE_v1.py search --index "F:\\LegalResults\\index" \
-      --q "lease sewer EGLE"
-
-  # Vector search
-  python LAWFORGE_MASTER_UPGRADE_v1.py vsearch --index "F:\\LegalResults\\index" \
-      --q "unlawful rent increase and sewage violations"
-
-  # Ask LLM using retrieved context
-  python LAWFORGE_MASTER_UPGRADE_v1.py ask --index "F:\\LegalResults\\index" \
-      --q "Summarize the EGLE violations and rent overcharges" --provider openai
-
-  # Run API server
-  python LAWFORGE_MASTER_UPGRADE_v1.py serve --index "F:\\LegalResults\\index" \
-      --host 127.0.0.1 --port 8000
+Install extras as available:
+  pip install chromadb sentence-transformers pdfminer.six pypdf pdfplumber pillow pytesseract rapidfuzz unstructured[all-docs]
+  pip install watchdog tiktoken uvicorn fastapi python-magic-bin
+  # Optional add-ons:
+  pip install pillow-heif faster-whisper openai-whisper ocrmypdf
 """
-import os
-import re
-import time
-import json
-import hashlib
-import pathlib
-import mimetypes
+import os, re, time, json, hashlib, pathlib, mimetypes, shutil, tempfile, subprocess
 from typing import List, Dict, Optional, Tuple
 
-# ==== Globals ====
 DEFAULT_PATTERN = r".*\.(pdf|txt|rtf|docx?|xlsx?|pptx?|csv|png|jpg|jpeg|tiff|bmp|gif|heic|mp3|wav|m4a|ogg)$"
 IGNORE_DIRS = {
     ".git",
@@ -79,7 +37,7 @@ CHUNK_OVERLAP = 80
 MAX_FILE_MB = 200
 
 
-# ==== Lazy imports (optional deps) ====
+# -------- Lazy imports --------
 def _lazy_imports() -> Dict[str, object]:
     L: Dict[str, object] = {}
     try:
@@ -89,16 +47,24 @@ def _lazy_imports() -> Dict[str, object]:
     except Exception:
         L["pdfplumber"] = None
     try:
-        from pdfminer_high_level import extract_text as pdfminer_extract_text  # noqa
+        from pdfminer.high_level import extract_text as pdfminer_extract_text  # FIXED
+
+        L["pdfminer_extract_text"] = pdfminer_extract_text
     except Exception:
-        pdfminer_extract_text = None
-    L["pdfminer_extract_text"] = pdfminer_extract_text
+        L["pdfminer_extract_text"] = None
     try:
         from PIL import Image
 
         L["PIL_Image"] = Image
     except Exception:
         L["PIL_Image"] = None
+    try:
+        import pillow_heif  # HEIC support
+
+        pillow_heif.register_heif_opener()
+        L["pillow_heif"] = pillow_heif
+    except Exception:
+        L["pillow_heif"] = None
     try:
         import pytesseract
 
@@ -159,13 +125,48 @@ def _lazy_imports() -> Dict[str, object]:
         L["tiktoken"] = tiktoken
     except Exception:
         L["tiktoken"] = None
+    # Audio transcription
+    try:
+        from faster_whisper import WhisperModel
+
+        L["faster_whisper"] = WhisperModel
+    except Exception:
+        L["faster_whisper"] = None
+    try:
+        import whisper as openai_whisper
+
+        L["openai_whisper"] = openai_whisper
+    except Exception:
+        L["openai_whisper"] = None
+    # PDF text-layer repair
+    try:
+        import ocrmypdf  # noqa: F401
+
+        L["ocrmypdf"] = True
+    except Exception:
+        L["ocrmypdf"] = False
     return L
 
 
 L = _lazy_imports()
 
 
-# ==== Utils ====
+# -------- Logging --------
+def _log_path(outdir: str) -> str:
+    os.makedirs(outdir, exist_ok=True)
+    return os.path.join(outdir, "events.log.jsonl")
+
+
+def jlog(outdir: str, event: str, **kw) -> None:
+    rec = {"ts": int(time.time()), "event": event, **kw}
+    try:
+        with open(_log_path(outdir), "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
+# -------- Utils --------
 def sha256_file(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -187,9 +188,7 @@ def is_binary_by_mime(path: str) -> bool:
     mime, _ = mimetypes.guess_type(path)
     if not mime:
         return False
-    return any(
-        mime.startswith(p) for p in ["audio/", "video/", "application/x-executable"]
-    )
+    return mime.startswith(("audio/", "video/", "application/x-executable"))
 
 
 def file_mb(path: str) -> float:
@@ -213,32 +212,79 @@ def chunk_text(
     stride = max(1, tokens - overlap)
     chunks, i = [], 0
     while i < len(words):
-        seg = " ".join(words[i : i + tokens]).strip()  # noqa: E203
+        seg = " ".join(words[i : i + tokens]).strip()
         if seg:
             chunks.append(seg)
         i += stride
     return chunks
 
 
-# ==== Extractors ====
+# -------- Audio transcription --------
+def transcribe_audio(path: str) -> str:
+    if L["faster_whisper"]:
+        try:
+            model = L["faster_whisper"]("base", device="cpu", compute_type="int8")
+            segments, _ = model.transcribe(path, beam_size=1)
+            return "\n".join(seg.text.strip() for seg in segments if seg.text.strip())
+        except Exception:
+            pass
+    if L["openai_whisper"]:
+        try:
+            model = L["openai_whisper"].load_model("base")
+            result = model.transcribe(path)
+            return result.get("text", "").strip()
+        except Exception:
+            pass
+    return ""
+
+
+# -------- PDF repair (optional) --------
+def _repair_pdf_to_temp(path: str) -> Optional[str]:
+    if not L["ocrmypdf"]:
+        return None
+    try:
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp.close()
+        subprocess.check_call(["ocrmypdf", "--skip-text", "--quiet", path, tmp.name])
+        return tmp.name
+    except Exception:
+        return None
+
+
+# -------- Extractors --------
 def extract_text_pdf(path: str) -> str:
+    text = ""
     if L["pdfplumber"]:
         try:
             out = []
             with L["pdfplumber"].open(path) as pdf:
                 for page in pdf.pages:
                     out.append(page.extract_text() or "")
-            s = "\n".join(out).strip()
-            if s:
-                return s
+            text = ("\n".join(out)).strip()
+            if text:
+                return text
         except Exception:
             pass
     if L["pdfminer_extract_text"]:
         try:
-            s = L["pdfminer_extract_text"](path) or ""
-            return s.strip()
+            text = L["pdfminer_extract_text"](path) or ""
+            if text.strip():
+                return text.strip()
         except Exception:
             pass
+    repaired = _repair_pdf_to_temp(path)
+    if repaired:
+        try:
+            if L["pdfminer_extract_text"]:
+                text = L["pdfminer_extract_text"](repaired) or ""
+                os.unlink(repaired)
+                if text.strip():
+                    return text.strip()
+        except Exception:
+            try:
+                os.unlink(repaired)
+            except Exception:
+                pass
     return ""
 
 
@@ -278,10 +324,18 @@ def extract_text_generic(path: str) -> str:
         return extract_text_pdf(path)
     if p.endswith((".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".heic")):
         return extract_text_image(path)
+    if p.endswith((".mp3", ".wav", ".m4a", ".ogg")):
+        return transcribe_audio(path)
     return extract_text_unstructured(path)
 
 
-# ==== Indexer ====
+# -------- Indexer --------
+def _write_manifest(outdir: str, manifest: Dict) -> None:
+    mpath = os.path.join(outdir, "index_manifest.json")
+    with open(mpath, "w", encoding="utf-8") as f:
+        f.write(json.dumps(manifest, ensure_ascii=False, indent=2))
+
+
 def index_folder(
     root: str, outdir: str, pattern: str = DEFAULT_PATTERN, ocr: bool = True
 ) -> None:
@@ -293,12 +347,15 @@ def index_folder(
             for line in f:
                 try:
                     j = json.loads(line)
-                    seen_hashes.add(j.get("sha256", ""))
+                    h = j.get("sha256", "")
+                    if h:
+                        seen_hashes.add(h)
                 except Exception:
                     pass
     rx = re.compile(pattern, re.I)
     added = skipped = 0
-    start = time.time()
+    start = int(time.time())
+    jlog(outdir, "index_start", root=root, pattern=pattern, ocr=ocr)
     with open(corpus_path, "a", encoding="utf-8") as out:
         for dirpath, dirnames, filenames in os.walk(root):
             dirnames[:] = [d for d in dirnames if d not in IGNORE_DIRS]
@@ -310,14 +367,22 @@ def index_folder(
                     if file_mb(full) > MAX_FILE_MB:
                         skipped += 1
                         continue
-                    if is_binary_by_mime(full):
+                    if is_binary_by_mime(full) and not full.lower().endswith(
+                        (".mp3", ".wav", ".m4a", ".ogg")
+                    ):
                         skipped += 1
                         continue
                     h = sha256_file(full)
                     if h in seen_hashes:
                         continue
                     txt = extract_text_generic(full)
-                    if not txt and ocr:
+                    if (
+                        not txt
+                        and ocr
+                        and full.lower().endswith(
+                            (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".heic")
+                        )
+                    ):
                         txt = extract_text_image(full)
                     record = {
                         "sha256": h,
@@ -332,11 +397,26 @@ def index_folder(
                     added += 1
                 except Exception:
                     skipped += 1
-    dur = time.time() - start
-    print(f"[index] added={added} skipped={skipped} secs={dur:.1f} out={corpus_path}")
+    end = int(time.time())
+    manifest = {
+        "root": os.path.abspath(root),
+        "outdir": os.path.abspath(outdir),
+        "pattern": pattern,
+        "added": added,
+        "skipped": skipped,
+        "started": start,
+        "ended": end,
+        "duration_sec": end - start,
+        "schema_version": "1.0",
+    }
+    _write_manifest(outdir, manifest)
+    jlog(outdir, "index_complete", **manifest)
+    print(
+        f"[index] added={added} skipped={skipped} secs={manifest['duration_sec']} out={corpus_path}"
+    )
 
 
-# ==== Embeddings + Vector store ====
+# -------- Embeddings + Vector store --------
 def ensure_vector_store(
     index_dir: str, model_name: str = "all-MiniLM-L6-v2"
 ) -> Tuple[object, object]:
@@ -351,6 +431,20 @@ def ensure_vector_store(
     return coll, model
 
 
+def _chroma_upsert(coll, ids, texts, metas, embs) -> None:
+    try:
+        if hasattr(coll, "upsert"):
+            coll.upsert(ids=ids, embeddings=embs, metadatas=metas, documents=texts)  # type: ignore
+            return
+    except Exception:
+        pass
+    try:
+        coll.delete(ids=ids)
+    except Exception:
+        pass
+    coll.add(ids=ids, embeddings=embs, metadatas=metas, documents=texts)
+
+
 def embed_corpus(
     index_dir: str, model_name: str = "all-MiniLM-L6-v2", batch: int = 64
 ) -> None:
@@ -359,6 +453,9 @@ def embed_corpus(
         raise FileNotFoundError(corpus_path)
     coll, model = ensure_vector_store(index_dir, model_name=model_name)
     ids, texts, metas = [], [], []
+    start = int(time.time())
+    added = 0
+    jlog(index_dir, "embed_start", model=model_name)
     with open(corpus_path, "r", encoding="utf-8") as f:
         for line in f:
             j = json.loads(line)
@@ -380,17 +477,21 @@ def embed_corpus(
                     embs = model.encode(
                         texts, show_progress_bar=False, convert_to_numpy=True
                     ).tolist()
-                    coll.add(ids=ids, embeddings=embs, metadatas=metas, documents=texts)
+                    _chroma_upsert(coll, ids, texts, metas, embs)
+                    added += len(ids)
                     ids, texts, metas = [], [], []
     if ids:
         embs = model.encode(
             texts, show_progress_bar=False, convert_to_numpy=True
         ).tolist()
-        coll.add(ids=ids, embeddings=embs, metadatas=metas, documents=texts)
+        _chroma_upsert(coll, ids, texts, metas, embs)
+        added += len(ids)
+    end = int(time.time())
+    jlog(index_dir, "embed_complete", added=added, duration_sec=end - start)
     print("[embed] complete")
 
 
-# ==== Search ====
+# -------- Search --------
 def search_keyword(index_dir: str, q: str, k: int = 20) -> List[Dict]:
     corpus_path = os.path.join(index_dir, "corpus.jsonl")
     results = []
@@ -405,17 +506,24 @@ def search_keyword(index_dir: str, q: str, k: int = 20) -> List[Dict]:
                 continue
             score = text.lower().count(ql)
             if L["fuzz"]:
-                score = max(score, int(L["fuzz"].partial_ratio(ql, text.lower())))
+                try:
+                    score = max(score, int(L["fuzz"].partial_ratio(ql, text.lower())))
+                except Exception:
+                    pass
             if score > 0:
                 results.append({"score": score, **j})
     results.sort(key=lambda r: r["score"], reverse=True)
     return results[:k]
 
 
+def ensure_vs(index_dir: str, model_name="all-MiniLM-L6-v2"):
+    return ensure_vector_store(index_dir, model_name)
+
+
 def search_vector(
     index_dir: str, q: str, k: int = 10, model_name="all-MiniLM-L6-v2"
 ) -> List[Dict]:
-    coll, model = ensure_vector_store(index_dir, model_name=model_name)
+    coll, model = ensure_vs(index_dir, model_name=model_name)
     emb = model.encode([q], convert_to_numpy=True).tolist()[0]
     out = coll.query(query_embeddings=[emb], n_results=k)
     docs = out.get("documents", [[]])[0]
@@ -437,7 +545,7 @@ def search_vector(
     return res
 
 
-# ==== Q&A ====
+# -------- Q&A --------
 def answer_with_llm(
     context: str, question: str, provider: str = "openai", max_tokens: int = 512
 ) -> str:
@@ -551,59 +659,83 @@ def retrieve_then_answer(
     }
 
 
-# ==== API ====
+# -------- API --------
 def run_api(index_dir: str, host: str = "127.0.0.1", port: int = 8000):
     if L["FastAPI"] is None:
         raise RuntimeError("fastapi and pydantic required to serve API")
     app = L["FastAPI"]()
 
-    class Q(L["PydanticBase"]):
+    class Q(L["PydanticBase"]):  # type: ignore
         q: str
         provider: Optional[str] = "openai"
         top_k: Optional[int] = 6
 
     @app.get("/health")
-    def health() -> Dict[str, bool]:
-        return {"ok": True}
+    def health() -> Dict[str, object]:
+        mf = os.path.join(index_dir, "index_manifest.json")
+        meta = {}
+        if os.path.exists(mf):
+            try:
+                meta = json.loads(open(mf, "r", encoding="utf-8").read())
+            except Exception:
+                meta = {}
+        return {"ok": True, "indexed": meta.get("added", 0), "manifest": bool(meta)}
 
     @app.post("/search")
     def _search(q: Q) -> Dict[str, List[Dict]]:
-        r_kw = search_keyword(index_dir, q.q, k=q.top_k)
-        r_vs = search_vector(index_dir, q.q, k=q.top_k)
+        r_kw = search_keyword(index_dir, q.q, k=q.top_k or 6)
+        r_vs = search_vector(index_dir, q.q, k=q.top_k or 6)
         return {"keyword": r_kw, "vector": r_vs}
 
     @app.post("/ask")
     def _ask(q: Q) -> Dict[str, object]:
-        return retrieve_then_answer(index_dir, q.q, top_k=q.top_k, provider=q.provider)
+        return retrieve_then_answer(
+            index_dir, q.q, top_k=q.top_k or 6, provider=q.provider or "openai"
+        )
+
+    @app.get("/manifest")
+    def manifest() -> Dict[str, object]:
+        mf = os.path.join(index_dir, "index_manifest.json")
+        if not os.path.exists(mf):
+            return {"ok": False, "error": "manifest missing"}
+        return {
+            "ok": True,
+            "manifest": json.loads(open(mf, "r", encoding="utf-8").read()),
+        }
 
     if L["uvicorn"] is None:
         raise RuntimeError("uvicorn required to run server")
     L["uvicorn"].run(app, host=host, port=port)
 
 
-# ==== CLI ====
+# -------- CLI --------
 def main() -> None:
     import argparse
 
-    p = argparse.ArgumentParser(description="LAWFORGE MASTER UPGRADE")
+    p = argparse.ArgumentParser(description="LAWFORGE MASTER UPGRADE (hardened)")
     sub = p.add_subparsers(dest="cmd")
+
     p_index = sub.add_parser("index", help="Scan and build corpus")
     p_index.add_argument("--root", required=True)
     p_index.add_argument("--out", required=True)
     p_index.add_argument("--pattern", default=DEFAULT_PATTERN)
     p_index.add_argument("--ocr", choices=["yes", "no"], default="yes")
+
     p_embed = sub.add_parser("embed", help="Embed corpus to vector store")
     p_embed.add_argument("--index", required=True)
     p_embed.add_argument("--model", default="all-MiniLM-L6-v2")
+
     p_search = sub.add_parser("search", help="Keyword search")
     p_search.add_argument("--index", required=True)
     p_search.add_argument("--q", required=True)
     p_search.add_argument("--k", type=int, default=20)
+
     p_vsearch = sub.add_parser("vsearch", help="Vector search")
     p_vsearch.add_argument("--index", required=True)
     p_vsearch.add_argument("--q", required=True)
     p_vsearch.add_argument("--k", type=int, default=10)
     p_vsearch.add_argument("--model", default="all-MiniLM-L6-v2")
+
     p_ask = sub.add_parser("ask", help="RAG Q&A with context")
     p_ask.add_argument("--index", required=True)
     p_ask.add_argument("--q", required=True)
@@ -611,10 +743,12 @@ def main() -> None:
         "--provider", default="openai", choices=["openai", "anthropic", "llama", "hf"]
     )
     p_ask.add_argument("--top_k", type=int, default=6)
+
     p_srv = sub.add_parser("serve", help="Start local API")
     p_srv.add_argument("--index", required=True)
     p_srv.add_argument("--host", default="127.0.0.1")
     p_srv.add_argument("--port", type=int, default=8000)
+
     args = p.parse_args()
     if args.cmd == "index":
         index_folder(args.root, args.out, pattern=args.pattern, ocr=(args.ocr == "yes"))
