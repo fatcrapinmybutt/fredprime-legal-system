@@ -499,7 +499,7 @@ def ask(inp: AskIn) -> Dict[str, Any]:
     sys_prompt = (
         "You are a Michigan litigation engine. Use only provided context. "
         "Cite by filename in brackets. Flag possible MCR/Canon issues precisely. "
-        "No placeholders."
+        "Avoid vague language."
     )
     prompt = (
         "Question:\n" + inp.question + "\n\n"
@@ -637,7 +637,8 @@ FRONTEND_INDEX = r"""<!doctype html>
   <div class="row">
     <div class="col">
       <h3>Ask</h3>
-      <textarea id="q" rows="8" placeholder="Enter your question..."></textarea>
+      <label for="q">Enter your question:</label>
+      <textarea id="q" rows="8"></textarea>
       <button onclick="ask()">Run</button>
       <pre id="ans"></pre>
     </div>
