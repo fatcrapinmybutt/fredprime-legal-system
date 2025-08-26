@@ -9,7 +9,7 @@
     {
         "module": "golden_god_mode_bootstrap",
         "path": "golden_god_mode_bootstrap.py",
-        "hash": "33eb5a241d1ac3c57b18e3c0bee8e9a4f6a3c519622340086a1effedb558d8c3",
+        "hash": "fb1aed4e28282ddb5d7c9540fdd429af67da62b90d0569f6c07f5bd5a81acafa",
         "legal_function": "bootstrap local offline litigation workspace with FastAPI backend, UI, and tooling",
         "dependencies": [
             "fastapi",

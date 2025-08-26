@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 GOLDEN GOD MODE — Offline AI + LLM + Litigation OS Bootstrap (Windows)
 
 What you get
@@ -49,7 +49,11 @@ Delete {root}, re-run this script. Idempotent file writes are guarded.
 
 Author: Strictly synthetic. No opinions. Pure utility.
 """
-import os, sys, argparse, json, shutil, textwrap, subprocess, time
+import argparse
+import json
+import shutil
+import subprocess
+import time
 from pathlib import Path
 
 REQ_TXT = r"""# Core
@@ -598,25 +602,24 @@ PY
 """
 
 
-def write_if_missing(path: Path, content: str, binary=False):
+def write_if_missing(path: Path, content: str, binary: bool = False) -> None:
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
         mode = "wb" if binary else "w"
-        with open(path, mode, encoding=None if binary else "utf-8") as f:
-            f.write(content)
+        with open(path, mode, encoding=None if binary else "utf-8") as file:
+            file.write(content)
 
 
-def run(cmd: str, cwd: Path):
+def run(cmd: str, cwd: Path) -> int:
     print(f"$ {cmd}")
     return subprocess.call(cmd, cwd=str(cwd), shell=True)
 
 
-def install_deps(root: Path, offline: bool):
+def install_deps(root: Path, offline: bool) -> None:
     venv = root / ".venv"
     if not (venv / "Scripts" / "activate").exists():
         run(f'python -m venv "{venv}"', root)
     pip = venv / "Scripts" / "pip.exe"
-    # Upgrade pip quietly
     if not offline:
         run(f'"{pip}" install --upgrade pip', root)
     req = root / "requirements.txt"
@@ -624,17 +627,22 @@ def install_deps(root: Path, offline: bool):
     if offline:
         wheels = root / ".wheels"
         if wheels.exists():
-            run(f'"{pip}" install --no-index --find-links "{wheels}" -r "{req}"', root)
+            run(
+                f'"{pip}" install --no-index --find-links "{wheels}" -r "{req}"',
+                root,
+            )
         else:
             print("[!] Offline mode selected but .wheels not found. Skipping pip.")
     else:
         run(f'"{pip}" install -r "{req}"', root)
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "--root", required=True, help="Install root, e.g., F:\\LAWFORGE_SUPREMACY"
+        "--root",
+        required=True,
+        help="Install root, e.g., F:\\LAWFORGE_SUPREMACY",
     )
     ap.add_argument("--offline", action="store_true", help="Use local wheels only")
     args = ap.parse_args()
