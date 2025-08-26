@@ -5,11 +5,11 @@ GOLDEN GOD MODE — Offline AI + LLM + Litigation OS Bootstrap (Windows)
 What you get
 ------------
 A full, local-first litigation workspace with:
-  • FastAPI backend (evidence scan, ask LLM, vector search, OCR, binder build)
+  • FastAPI backend (incremental evidence catalog, ask LLM, vector search, OCR, binder build)
   • Minimal static UI (index.html + api.js) for query and control
-  • LLM engine that prefers llama.cpp (local GGUF), falls back to Ollama if present
-  • Embeddings/search: TF-IDF baseline; optional FAISS and SBERT if available locally
-  • OCR/Text: PyMuPDF and pdfminer for PDFs; pytesseract if Tesseract is installed
+  • LLM engine that prefers llama.cpp server (HTTP), falls back to local bindings if present
+  • Embeddings/search: hnswlib + SBERT if available, TF-IDF fallback
+  • OCR/Text: ocrmypdf, PyMuPDF and pdfminer for PDFs; pytesseract if Tesseract is installed
   • Canon/MCR scanner: regex rules + YAML config hooks
   • MiFile bundle: DOCX/PDF packing with labeled exhibits + manifest
   • Logs, config, and Windows .bat runners
@@ -39,8 +39,8 @@ Quick start
 
 Switch LLM
 ----------
-- llama.cpp (preferred, CPU ok): set LLAMA_MODEL_PATH in config.yaml to your .gguf
-- Ollama: install Ollama separately, set use_ollama: true and model name in config.yaml
+- llama.cpp server (preferred): set llama_cpp.server_url in config.yaml
+- llama-cpp-python (fallback): set llama_cpp.model_path in config.yaml
 - No LLM available: system still scans, OCRs, and builds binders. Q&A degraded.
 
 One-command full reset
@@ -49,11 +49,10 @@ Delete {root}, re-run this script. Idempotent file writes are guarded.
 
 Author: Strictly synthetic. No opinions. Pure utility.
 """
+from __future__ import annotations
+
 import argparse
-import json
-import shutil
 import subprocess
-import time
 from pathlib import Path
 
 REQ_TXT = r"""# Core
@@ -66,17 +65,33 @@ pyyaml==6.0.2
 # PDF/Text
 pymupdf==1.24.10
 pdfminer.six==20231228
+ocrmypdf==16.2.0
 
 # Search
 scikit-learn==1.5.1
+hnswlib==0.8.0
+watchdog==4.0.0
+requests==2.31.0
 
-# Optional (if present or wheels available)
-# faiss-cpu==1.8.0.post1
+# Optional
 # sentence-transformers==3.0.1
-# llama-cpp-python==0.2.90
-# python-docx==1.1.2
 # pillow==10.4.0
 # pytesseract==0.3.13
+# docx==0.2.4
+"""
+
+CONSTRAINTS_TXT = r"""fastapi==0.115.0 --hash=sha256:17ea427674467486e997206a5ab25760f6b09e069f099b96f5b55a32fb6f1631
+uvicorn==0.30.6 --hash=sha256:65fd46fe3fda5bdc1b03b94eb634923ff18cd35b2f084813ea79d1f103f711b5
+pydantic==2.9.2 --hash=sha256:f048cec7b26778210e28a0459867920654d48e5e62db0958433636cde4254f12
+python-multipart==0.0.9 --hash=sha256:97ca7b8ea7b05f977dc3849c3ba99d51689822fab725c3703af7c866a0c2b215
+pyyaml==6.0.2 --hash=sha256:3ad2a3decf9aaba3d29c8f537ac4b243e36bef957511b4766cb0057d32b0be85
+pymupdf==1.24.10 --hash=sha256:c0d1ccdc062ea9961063790831e838bc43fcf9a8436a8b9f55898addf97c0f86
+pdfminer.six==20231228 --hash=sha256:e8d3c3310e6fbc1fe414090123ab01351634b4ecb021232206c4c9a8ca3e3b8f
+ocrmypdf==16.2.0 --hash=sha256:d2a68e9040e26a0fe9af06e9eccff68dfbb9a481ee345eb762b66670eabfb25a
+scikit-learn==1.5.1 --hash=sha256:689b6f74b2c880276e365fe84fe4f1befd6a774f016339c65655eaff12e10cbf
+hnswlib==0.8.0 --hash=sha256:cb6d037eedebb34a7134e7dc78966441dfd04c9cf5ee93911be911ced951c44c
+watchdog==4.0.0 --hash=sha256:6a80d5cae8c265842c7419c560b9961561556c4361b297b4c431903f8c33b269
+requests==2.31.0 --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f
 """
 
 CONFIG_YAML = r"""# Litigation OS configuration
@@ -93,17 +108,17 @@ llm:
   use_ollama: false
   ollama_model: "llama3:8b-instruct"
   llama_cpp:
-    model_path: "models/llm/model.gguf"   # local GGUF path
+    server_url: "http://127.0.0.1:8080/completion"
+    model_path: "models/llm/model.gguf"
     n_ctx: 8192
     n_threads: 8
     n_gpu_layers: 0
 search:
-  use_faiss_if_available: true
   use_sbert_if_available: true
   sbert_path: "models/emb/sentence-transformers/all-MiniLM-L6-v2"
 ocr:
   use_tesseract_if_available: true
-  tesseract_cmd: "tesseract"  # on PATH; set full path if needed
+  tesseract_cmd: "tesseract"
 scanner:
   max_file_mb: 200
   skip_hidden: true
@@ -111,11 +126,12 @@ mcr_canon:
   enable_scanner: true
   ruleset_yaml: "backend/rules/canon_mcr_rules.yaml"
 mifile:
-  bundle_format: "zip"        # zip for filing; also emits PDF/DOCX if deps available
+  bundle_format: "zip"
   exhibit_label: "Exhibit"
 server:
   host: "127.0.0.1"
   port: 8000
+signing_key: "signing.key"
 """
 
 CANON_RULES = r"""# Canon + MCR quick rules (extend freely)
@@ -123,346 +139,370 @@ CANON_RULES = r"""# Canon + MCR quick rules (extend freely)
 - id: CANON_2A
   title: "Canon 2A: Promote public confidence"
   hint: "Pattern of bias or appearance undermining confidence"
-  pattern: "(?i)\b(bias|prejudge|appearance of impropriety)\b"
+  pattern: "(?i)\\b(bias|prejudge|appearance of impropriety)\\b"
   scope: "text"
 - id: MCR_1_109
   title: "MCR 1.109(E): signatures; MCR 1.109(D): file format"
   hint: "Improper filings, signatures, formats, fraud on the court"
-  pattern: "(?i)\b(1\.109|signature|sanction|fraud on the court)\b"
+  pattern: "(?i)\\b(1\\.109|signature|sanction|fraud on the court)\\b"
   scope: "text"
 - id: MCR_2_114
   title: "MCR 2.114: attorney/self-certification; sanctions"
   hint: "False certifications, frivolous filings"
-  pattern: "(?i)\b(2\.114|frivolous|sanctions)\b"
+  pattern: "(?i)\\b(2\\.114|frivolous|sanctions)\\b"
   scope: "text"
 - id: MCR_2_116
   title: "MCR 2.116: summary disposition"
   hint: "Rule-driven dispositive motions"
-  pattern: "(?i)\b(2\.116|summary disposition)\b"
+  pattern: "(?i)\\b(2\\.116|summary disposition)\\b"
   scope: "text"
 """
 
 BACKEND_APP = r"""# backend/app.py
-import os, io, re, json, time, glob, zipfile, uuid, logging
+import hashlib
+import io
+import json
+import logging
+import os
+import re
+import sqlite3
+import subprocess
+import threading
+import time
 from pathlib import Path
-from typing import List, Optional
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
-from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
-from pydantic import BaseModel
-import yaml
+from typing import Any, Dict, List, Optional
 
-# Optional imports guarded
-def _try_import(name):
+import yaml
+from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
+from pydantic import BaseModel
+
+def _try_import(name: str):
     try:
         return __import__(name)
     except Exception:
         return None
 
-np = _try_import("numpy")
-sk = _try_import("sklearn")
-faiss = _try_import("faiss") or _try_import("faiss_cpu")
-st = _try_import("sentence_transformers")
-fitz = _try_import("fitz")            # PyMuPDF
+fitz = _try_import("fitz")
 pdfminer = _try_import("pdfminer")
 pytesseract = _try_import("pytesseract")
 PIL = _try_import("PIL")
-llama_cpp = _try_import("llama_cpp")
-docx = _try_import("docx")
+st = _try_import("sentence_transformers")
+hnswlib = _try_import("hnswlib")
+requests = _try_import("requests")
 
-from fastapi.middleware.cors import CORSMiddleware
+watchdog = _try_import("watchdog")
+if watchdog:
+    from watchdog.events import FileSystemEventHandler  # type: ignore
+    from watchdog.observers import Observer  # type: ignore
+else:  # pragma: no cover - watchdog missing
+    FileSystemEventHandler = object  # type: ignore
+    Observer = None  # type: ignore
 
 ROOT = Path(__file__).resolve().parents[1]
-CFG = yaml.safe_load(open(ROOT/"config.yaml","r",encoding="utf-8"))
+CFG = yaml.safe_load(open(ROOT / "config.yaml", "r", encoding="utf-8"))
 LOGS = ROOT / CFG["paths"]["LOGS"]
 DATA = ROOT / CFG["paths"]["DATA"]
 MODELS = ROOT / CFG["paths"]["MODELS"]
 OUTPUT = ROOT / CFG["paths"]["OUTPUT"]
 RULES_YAML = ROOT / CFG["mcr_canon"]["ruleset_yaml"]
+DB_PATH = ROOT / "catalog.db"
 
 for p in [LOGS, DATA, MODELS, OUTPUT]:
     p.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
-    filename=str(LOGS/"backend.log"),
+    filename=str(LOGS / "backend.log"),
     level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(message)s"
+    format="%(asctime)s %(levelname)s %(message)s",
 )
 
-app = FastAPI(title="LAWFORGE Litigation OS API", version="1.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
-)
+def init_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY, sha256 TEXT, size INTEGER, mtime INTEGER, text TEXT)"
+    )
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS rule_hits(path TEXT, rule_id TEXT, title TEXT, hint TEXT)"
+    )
+    conn.commit()
+    return conn
 
-# ----------------------------
-# Utility: text extraction
-# ----------------------------
-def extract_text_bytes(name: str, b: bytes) -> str:
-    name_low = name.lower()
-    try:
-        if name_low.endswith(".pdf") and fitz:
-            doc = fitz.open(stream=b, filetype="pdf")
-            chunks = []
-            for page in doc:
-                chunks.append(page.get_text("text"))
-            return "\n".join(chunks)
-        elif name_low.endswith(".pdf") and pdfminer:
-            from pdfminer.high_level import extract_text as pdf_extract
-            bio = io.BytesIO(b)
-            return pdf_extract(bio)
-        elif name_low.endswith(".txt"):
-            return b.decode("utf-8", errors="ignore")
-        elif any(name_low.endswith(ext) for ext in [".png",".jpg",".jpeg",".tif",".tiff"]):
-            if pytesseract and PIL:
-                from PIL import Image
-                img = Image.open(io.BytesIO(b))
-                return pytesseract.image_to_string(img)
-            else:
-                return ""
-        elif name_low.endswith(".docx") and docx:
-            d = docx.Document(io.BytesIO(b))
-            return "\n".join(p.text for p in d.paragraphs)
-    except Exception as e:
-        logging.exception(f"extract_text_bytes error: {e}")
-    return ""
+DB = init_db()
 
-def load_text_from_path(p: Path) -> str:
-    try:
-        if p.suffix.lower()==".pdf" and fitz:
-            doc = fitz.open(p)
-            return "\n".join([pg.get_text("text") for pg in doc])
-        elif p.suffix.lower()==".pdf" and pdfminer:
-            from pdfminer.high_level import extract_text as pdf_extract
-            return pdf_extract(str(p))
-        elif p.suffix.lower()==".txt":
-            return p.read_text("utf-8", errors="ignore")
-        elif p.suffix.lower()==".docx" and docx:
-            d = docx.Document(str(p))
-            return "\n".join(par.text for par in d.paragraphs)
-        elif p.suffix.lower() in [".png",".jpg",".jpeg",".tif",".tiff"] and pytesseract and PIL:
-            from PIL import Image
-            return pytesseract.image_to_string(Image.open(p))
-    except Exception as e:
-        logging.exception(f"load_text_from_path error: {e}")
-    return ""
+RULES = yaml.safe_load(open(RULES_YAML, "r", encoding="utf-8")) if RULES_YAML.exists() else []
 
-# ----------------------------
-# Simple rule scanner (Canon/MCR)
-# ----------------------------
-RULES = []
-if RULES_YAML.exists():
-    RULES = yaml.safe_load(open(RULES_YAML,"r",encoding="utf-8")) or []
-
-def scan_rules(text: str):
-    hits = []
+def scan_rules(text: str) -> List[Dict[str, str]]:
+    hits: List[Dict[str, str]] = []
     for r in RULES:
         try:
-            if re.search(r.get("pattern",""), text):
-                hits.append({"id":r.get("id"), "title":r.get("title"), "hint":r.get("hint")})
+            if re.search(r.get("pattern", ""), text):
+                hits.append(
+                    {"id": r.get("id", ""), "title": r.get("title", ""), "hint": r.get("hint", "")}
+                )
         except Exception:
             continue
     return hits
 
-# ----------------------------
-# Embedding + Search
-# ----------------------------
+def extract_text(path: Path) -> str:
+    try:
+        if path.suffix.lower() == ".pdf":
+            if fitz:
+                doc = fitz.open(path)
+                txt = "\n".join(pg.get_text("text") for pg in doc)
+            elif pdfminer:
+                from pdfminer.high_level import extract_text as pdf_extract
+
+                txt = pdf_extract(str(path))
+            else:
+                txt = ""
+            if not txt.strip():
+                tmp = path.with_suffix(".ocr.pdf")
+                try:
+                    subprocess.run(["ocrmypdf", "--quiet", str(path), str(tmp)], check=True)
+                    txt = extract_text(tmp)
+                finally:
+                    if tmp.exists():
+                        tmp.unlink()
+            return txt
+        if path.suffix.lower() == ".txt":
+            return path.read_text("utf-8", errors="ignore")
+        if path.suffix.lower() == ".docx":
+            docx = _try_import("docx")
+            if docx:
+                d = docx.Document(str(path))
+                return "\n".join(p.text for p in d.paragraphs)
+        if path.suffix.lower() in [".png", ".jpg", ".jpeg", ".tif", ".tiff"]:
+            if pytesseract and PIL:
+                from PIL import Image
+
+                return pytesseract.image_to_string(Image.open(path))
+        return ""
+    except Exception as e:  # pragma: no cover
+        logging.exception("extract_text error: %s", e)
+        return ""
+
+
 class SearchIndex:
-    def __init__(self):
-        self.docs = []      # [(path, text)]
-        self.paths = []
+    def __init__(self) -> None:
+        self.paths: List[str] = []
+        self._sbert = st.SentenceTransformer(str(ROOT / CFG["search"]["sbert_path"])) if st else None
+        self._use_hnsw = bool(self._sbert and hnswlib)
         self._tfidf = None
-        self._faiss = None
-        self._sbert = None
-        self._dim = 0
-        self._use_faiss = bool(CFG["search"]["use_faiss_if_available"] and faiss)
-        self._use_sbert = bool(CFG["search"]["use_sbert_if_available"] and st)
-        if self._use_sbert:
-            try:
-                self._sbert = st.SentenceTransformer(str(ROOT / CFG["search"]["sbert_path"]))
-                self._dim = self._sbert.get_sentence_embedding_dimension()
-            except Exception:
-                self._sbert = None
-                self._use_sbert = False
-
-    def build(self, items: List[Path]):
-        texts, self.paths = [], []
-        for p in items:
-            t = load_text_from_path(p)
-            if t:
-                texts.append(t)
-                self.paths.append(str(p))
-        self.docs = list(zip(self.paths, texts))
-        if not self.docs:
-            return
-        if self._use_sbert and self._sbert:
-            import numpy as np
-            embs = self._sbert.encode([t for _, t in self.docs], normalize_embeddings=True)
-            self._dim = embs.shape[1]
-            if self._use_faiss:
-                self._faiss = faiss.IndexFlatIP(self._dim)
-                self._faiss.add(embs.astype("float32"))
-            else:
-                self._tfidf = None
-        else:
+        if not self._use_hnsw:
             from sklearn.feature_extraction.text import TfidfVectorizer
-            self._tfidf = TfidfVectorizer(max_features=200000, ngram_range=(1,2))
-            self._tfidf.fit([t for _, t in self.docs])
 
-    def search(self, query: str, k: int = 8):
-        if not self.docs:
+            self._tfidf = TfidfVectorizer(max_features=200000, ngram_range=(1, 2))
+        self._index = None
+        self.reload()
+
+    def reload(self) -> None:
+        rows = DB.execute("SELECT path, text FROM files").fetchall()
+        self.paths = [r[0] for r in rows]
+        texts = [r[1] for r in rows]
+        if self._use_hnsw and self._sbert:
+            import numpy as np
+
+            embs = self._sbert.encode(texts, normalize_embeddings=True)
+            dim = embs.shape[1] if len(embs) else self._sbert.get_sentence_embedding_dimension()
+            self._index = hnswlib.Index(space="ip", dim=dim)
+            self._index.init_index(max_elements=len(embs) + 1000, ef_construction=200, M=16)
+            if len(embs):
+                self._index.add_items(embs, list(range(len(embs))))
+            self._index.save_index(str(MODELS / "ann.index"))
+        elif self._tfidf:
+            self._tfidf.fit(texts)
+
+    def add_document(self, path: str, text: str) -> None:
+        if self._use_hnsw and self._sbert and self._index is not None:
+            import numpy as np
+
+            emb = self._sbert.encode([text], normalize_embeddings=True)
+            self._index.add_items(emb, [len(self.paths)])
+            self._index.save_index(str(MODELS / "ann.index"))
+        elif self._tfidf:
+            self._tfidf.fit([text])
+        self.paths.append(path)
+
+    def search(self, query: str, k: int = 8) -> List[Dict[str, Any]]:
+        if not self.paths:
             return []
-        if self._sbert and (self._faiss or not self._use_faiss):
+        if self._use_hnsw and self._sbert and self._index is not None:
             import numpy as np
-            qv = self._sbert.encode([query], normalize_embeddings=True).astype("float32")
-            if self._faiss:
-                D,I = self._faiss.search(qv, min(k, len(self.docs)))
-                idxs = I[0].tolist()
-                scores = D[0].tolist()
-            else:
-                # cosine by dot if normalized
-                corpus = self._sbert.encode([t for _, t in self.docs], normalize_embeddings=True)
-                sims = (corpus @ qv.T).ravel()
-                idxs = sims.argsort()[::-1][:k].tolist()
-                scores = [float(sims[i]) for i in idxs]
+
+            qv = self._sbert.encode([query], normalize_embeddings=True)
+            D, I = self._index.knn_query(qv, k=min(k, len(self.paths)))
+            idxs = I[0].tolist()
+            scores = D[0].tolist()
         else:
-            from sklearn.feature_extraction.text import TfidfVectorizer
             from sklearn.metrics.pairwise import cosine_similarity
-            tfidf = self._tfidf
-            X = tfidf.transform([t for _, t in self.docs])
-            q = tfidf.transform([query])
+
+            texts = [r[0] for r in DB.execute("SELECT text FROM files").fetchall()]
+            X = self._tfidf.transform(texts)  # type: ignore[union-attr]
+            q = self._tfidf.transform([query])  # type: ignore[union-attr]
             sims = cosine_similarity(q, X).ravel()
             idxs = sims.argsort()[::-1][:k].tolist()
             scores = [float(sims[i]) for i in idxs]
-        out = []
+        out: List[Dict[str, Any]] = []
         for i, sc in zip(idxs, scores):
-            path, text = self.docs[i]
-            out.append({"path": path, "score": float(sc), "hits": scan_rules(text) if CFG["mcr_canon"]["enable_scanner"] else []})
+            path = self.paths[i]
+            hits = [
+                {"id": r[1], "title": r[2], "hint": r[3]}
+                for r in DB.execute("SELECT * FROM rule_hits WHERE path=?", (path,))
+            ]
+            out.append({"path": path, "score": sc, "hits": hits})
         return out
 
 INDEX = SearchIndex()
 
-# ----------------------------
-# LLM Engine
-# ----------------------------
-class LLME:
-    def __init__(self, cfg):
-        self.cfg = cfg
-        self.mode = None
-        self.llm = None
-        # try llama.cpp first
-        if llama_cpp and Path(cfg["llm"]["llama_cpp"]["model_path"]).exists():
-            try:
-                from llama_cpp import Llama
-                self.llm = Llama(
-                    model_path=str(ROOT / cfg["llm"]["llama_cpp"]["model_path"]),
-                    n_ctx=cfg["llm"]["llama_cpp"]["n_ctx"],
-                    n_threads=cfg["llm"]["llama_cpp"]["n_threads"],
-                    n_gpu_layers=cfg["llm"]["llama_cpp"]["n_gpu_layers"],
-                    logits_all=False,
-                    verbose=False
-                )
-                self.mode = "llama_cpp"
-            except Exception:
-                self.llm = None
-        # then Ollama
-        if self.llm is None and cfg["llm"]["use_ollama"]:
-            self.mode = "ollama"
 
-    def generate(self, prompt: str, system: Optional[str]=None, max_tokens: int=512, temperature: float=0.2):
-        if self.mode == "llama_cpp" and self.llm:
-            tpl = f"{system+'\n' if system else ''}{prompt}"
-            out = self.llm(
-                prompt=tpl,
-                max_tokens=max_tokens,
-                temperature=temperature,
-                stop=["</s>","<|eot_id|>"]
-            )
-            return out["choices"][0]["text"]
-        elif self.mode == "ollama":
-            try:
-                import subprocess, json
-                cmd = [
-                    "ollama","run", CFG["llm"]["ollama_model"],
-                    "--json"
-                ]
-                p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                req = {"prompt": (system+"\n" if system else "") + prompt}
-                out,_ = p.communicate(json.dumps(req))
-                # stream aware; take last response
-                last = ""
-                for line in out.splitlines():
-                    try:
-                        j = json.loads(line)
-                        if "response" in j:
-                            last += j["response"]
-                    except Exception:
-                        continue
-                return last
-            except Exception:
-                return ""
-        else:
-            return ""  # no LLM configured
+class EvidenceHandler(FileSystemEventHandler):
+    def on_created(self, event):  # type: ignore[override]
+        if not getattr(event, "is_directory", False):
+            index_file(Path(event.src_path))
 
-LLM = LLME(CFG)
+    def on_modified(self, event):  # type: ignore[override]
+        if not getattr(event, "is_directory", False):
+            index_file(Path(event.src_path))
 
-# ----------------------------
-# API Models
-# ----------------------------
+def start_watchers() -> None:
+    if Observer is None:
+        return
+    roots = [Path(CFG["paths"]["MEEK1"]), Path(CFG["paths"]["MEEK2"])]
+    for r in roots:
+        if r.exists():
+            obs = Observer()
+            obs.schedule(EvidenceHandler(), str(r), recursive=True)
+            obs.daemon = True
+            obs.start()
+
+def index_file(path: Path) -> None:
+    text = extract_text(path)
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    stat = path.stat()
+    DB.execute(
+        "REPLACE INTO files(path, sha256, size, mtime, text) VALUES(?,?,?,?,?)",
+        (str(path), sha, stat.st_size, int(stat.st_mtime), text),
+    )
+    DB.execute("DELETE FROM rule_hits WHERE path=?", (str(path),))
+    for hit in scan_rules(text):
+        DB.execute(
+            "INSERT INTO rule_hits(path, rule_id, title, hint) VALUES(?,?,?,?)",
+            (str(path), hit["id"], hit["title"], hit["hint"]),
+        )
+    DB.commit()
+    INDEX.add_document(str(path), text)
+
+def initial_scan() -> None:
+    roots = [Path(CFG["paths"]["MEEK1"]), Path(CFG["paths"]["MEEK2"])]
+    known = {r[0] for r in DB.execute("SELECT path FROM files").fetchall()}
+    for r in roots:
+        if not r.exists():
+            continue
+        for p in r.rglob("*"):
+            if p.is_file() and str(p) not in known:
+                index_file(p)
+
+initial_scan()
+start_watchers()
+
+
 class AskIn(BaseModel):
     question: str
     k: int = 6
 
-class ScanIn(BaseModel):
-    glob: Optional[str] = None
-    max_mb: Optional[int] = None
 
-# ----------------------------
-# Routes
-# ----------------------------
+class ScanOut(BaseModel):
+    ok: bool
+    count: int
+
+
+class LLME:
+    def __init__(self, cfg: Dict[str, Any]):
+        self.cfg = cfg
+
+    def generate(
+        self,
+        prompt: str,
+        system: Optional[str] = None,
+        max_tokens: int = 512,
+        temperature: float = 0.2,
+    ) -> str:
+        server = self.cfg["llm"]["llama_cpp"].get("server_url")
+        if server and requests:
+            try:
+                payload = {
+                    "prompt": (system + "\n" if system else "") + prompt,
+                    "n_predict": max_tokens,
+                    "temperature": temperature,
+                }
+                r = requests.post(server, json=payload, timeout=120)
+                if r.ok:
+                    j = r.json()
+                    return j.get("content", "")
+            except Exception:
+                pass
+        model_path = ROOT / self.cfg["llm"]["llama_cpp"]["model_path"]
+        llama_cpp = _try_import("llama_cpp")
+        if llama_cpp and model_path.exists():
+            try:
+                from llama_cpp import Llama  # type: ignore
+
+                llm = Llama(
+                    model_path=str(model_path),
+                    n_ctx=self.cfg["llm"]["llama_cpp"]["n_ctx"],
+                    n_threads=self.cfg["llm"]["llama_cpp"]["n_threads"],
+                    n_gpu_layers=self.cfg["llm"]["llama_cpp"]["n_gpu_layers"],
+                )
+                out = llm(
+                    prompt=(system + "\n" if system else "") + prompt,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                )
+                return out["choices"][0]["text"]
+            except Exception:
+                return ""
+        return ""
+
+LLM = LLME(CFG)
+
+app = FastAPI(title="LAWFORGE Litigation OS API", version="2.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
-def home():
+def home() -> HTMLResponse:
     return HTMLResponse("<h3>LAWFORGE API online</h3><p>See /docs</p>")
 
 @app.post("/scan")
-def scan(inp: ScanIn):
-    glob_pat = inp.glob or CFG["paths"]["EVIDENCE_GLOB"]
-    max_mb = inp.max_mb or CFG["scanner"]["max_file_mb"]
-    roots = [Path(CFG["paths"]["MEEK1"]), Path(CFG["paths"]["MEEK2"])]
-    files = []
-    for r in roots:
-        if not r.exists(): continue
-        files.extend([p for p in r.rglob("*") if p.is_file()])
-    # Filter by size and extension pattern
-    selected = []
-    import fnmatch
-    patterns = [g.strip() for g in glob_pat.split("|")]
-    for p in files:
-        if any(fnmatch.fnmatch(p.name, pat.replace("**/*.", "*.")) for pat in patterns):
-            sz_mb = p.stat().st_size / (1024*1024)
-            if sz_mb <= max_mb:
-                selected.append(p)
-    INDEX.build(selected)
-    return {"ok": True, "count": len(INDEX.docs), "paths": INDEX.paths[:1000]}
+def scan() -> ScanOut:
+    initial_scan()
+    INDEX.reload()
+    count = DB.execute("SELECT COUNT(*) FROM files").fetchone()[0]
+    return ScanOut(ok=True, count=count)
 
 @app.post("/ask")
-def ask(q: AskIn):
-    # retrieve
-    hits = INDEX.search(q.question, k=q.k)
+def ask(inp: AskIn) -> Dict[str, Any]:
+    hits = INDEX.search(inp.question, k=inp.k)
     context = []
     for h in hits:
-        try:
-            text = load_text_from_path(Path(h["path"]))[:4000]
-        except Exception:
-            text = ""
-        context.append(f"[{Path(h['path']).name}] {text}")
+        row = DB.execute("SELECT text FROM files WHERE path=?", (h["path"],)).fetchone()
+        snippet = row[0][:4000] if row else ""
+        context.append(f"[{Path(h['path']).name}] {snippet}")
     sys_prompt = (
         "You are a Michigan litigation engine. Use only provided context. "
         "Cite by filename in brackets. Flag possible MCR/Canon issues precisely. "
         "No placeholders."
     )
     prompt = (
-        "Question:\n" + q.question + "\n\n"
+        "Question:\n" + inp.question + "\n\n"
         "Context:\n" + "\n\n".join(context[:8]) + "\n\n"
         "Answer with numbered, court-usable points and minimal prose."
     )
@@ -470,45 +510,107 @@ def ask(q: AskIn):
     return {"answer": answer, "retrieval": hits}
 
 @app.post("/ingest_files")
-def ingest(files: List[UploadFile]):
+def ingest(files: List[UploadFile]) -> Dict[str, Any]:
     saved = []
     for f in files:
-        b = f.file.read()
+        data = f.file.read()
         target = DATA / f.filename
-        target.write_bytes(b)
+        target.write_bytes(data)
         saved.append(str(target))
+        index_file(target)
     return {"ok": True, "saved": saved}
 
 @app.post("/bundle_mifile")
-def bundle_mifile():
-    # Build a simple filing ZIP with exhibits + manifest.json
+def bundle_mifile() -> Dict[str, Any]:
     stamp = time.strftime("%Y%m%d_%H%M%S")
     outdir = OUTPUT / f"FILING_{stamp}"
     outdir.mkdir(parents=True, exist_ok=True)
     manifest = []
-    # Sample: copy top 50 indexed docs as Exhibits
-    for i,(path,text) in enumerate(INDEX.docs[:50], start=1):
+    rows = DB.execute("SELECT path FROM files LIMIT 50").fetchall()
+    for i, (path,) in enumerate(rows, start=1):
         src = Path(path)
         label = f"{CFG['mifile']['exhibit_label']} {i:02d} - {src.name}"
         dest = outdir / label
         try:
+            import shutil
+
             shutil.copy2(src, dest)
             manifest.append({"label": label, "source": path})
         except Exception:
             continue
-    (outdir/"manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (outdir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     zip_path = OUTPUT / f"FILING_{stamp}.zip"
+    import zipfile
+
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
         for p in outdir.rglob("*"):
             z.write(p, p.relative_to(OUTPUT))
     return {"ok": True, "zip": str(zip_path), "dir": str(outdir)}
 
-@app.get("/health")
-def health():
-    return {"ok": True, "docs_indexed": len(INDEX.docs), "llm_mode": LLM.mode}
+@app.get("/metrics")
+def metrics() -> Dict[str, Any]:
+    files, size = DB.execute("SELECT COUNT(*), SUM(size) FROM files").fetchone()
+    return {"files": files, "bytes": size or 0, "llm_mode": "server"}
+
+@app.get("/diag")
+def diag() -> Dict[str, Any]:
+    return {"config": CFG, "python": os.sys.version}
+
+@app.post("/manifest/sign")
+def manifest_sign() -> Dict[str, Any]:
+    rows = DB.execute("SELECT path, sha256 FROM files").fetchall()
+    manifest = [{"path": p, "sha256": h} for p, h in rows]
+    out = OUTPUT / "evidence_manifest.json"
+    out.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    key = CFG.get("signing_key")
+    if key and Path(key).exists():
+        sig = out.with_suffix(out.suffix + ".minisig")
+        subprocess.run(["minisign", "-S", "-s", key, "-m", out], check=True)
+        return {"ok": True, "manifest": str(out), "signature": str(sig)}
+    raise HTTPException(status_code=500, detail="signing key not found")
 """
 
-BACKEND_RULES_INIT = r"""# backend/rules/__init__.py
+PYI_SPEC = r"""# golden_god_mode_bootstrap.spec
+# PyInstaller spec for building a portable EXE
+block_cipher = None
+
+a = Analysis(['golden_god_mode_bootstrap.py'], pathex=['.'])
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='golden_god_mode_bootstrap',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=True,
+)
+coll = COLLECT(
+    exe, a.binaries, a.zipfiles, a.datas,
+    strip=False, upx=True, upx_exclude=[],
+    name='golden_god_mode_bootstrap')
+"""
+
+RUN_BACKEND_BAT = r"""@echo off
+setlocal
+cd /d %~dp0
+call .venv\Scripts\activate
+uvicorn backend.app:app --host 127.0.0.1 --port 8000 --log-level info
+"""
+
+RUN_FRONTEND_BAT = r"""@echo off
+setlocal
+cd /d %~dp0\frontend
+echo Serving static UI at http://127.0.0.1:7777  (Ctrl+C to stop)
+python - <<PY
+import http.server, socketserver, os
+os.chdir(os.path.dirname(__file__))
+with socketserver.TCPServer(("127.0.0.1", 7777), http.server.SimpleHTTPRequestHandler) as httpd:
+    httpd.serve_forever()
+PY
 """
 
 FRONTEND_INDEX = r"""<!doctype html>
@@ -557,14 +659,22 @@ FRONTEND_API = r"""const API = "http://127.0.0.1:8000";
 
 async function scan() {
   document.getElementById("scanStatus").innerText = " scanning...";
-  const r = await fetch(API + "/scan", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({})});
+  const r = await fetch(API + "/scan", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({})
+});
   const j = await r.json();
   document.getElementById("scanStatus").innerText = ` indexed: ${j.count}`;
 }
 
 async function ask() {
   const q = document.getElementById("q").value;
-  const r = await fetch(API + "/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({question:q, k:8})});
+  const r = await fetch(API + "/ask", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({question:q, k:8})
+});
   const j = await r.json();
   document.getElementById("ans").innerText = j.answer || "(no LLM output)\n" + JSON.stringify(j.retrieval, null, 2);
 }
@@ -576,29 +686,10 @@ async function bundle() {
 }
 
 async function health() {
-  const r = await fetch(API + "/health");
+  const r = await fetch(API + "/metrics");
   const j = await r.json();
   document.getElementById("healthOut").innerText = JSON.stringify(j, null, 2);
 }
-"""
-
-RUN_BACKEND_BAT = r"""@echo off
-setlocal
-cd /d %~dp0
-call .venv\Scripts\activate
-uvicorn backend.app:app --host 127.0.0.1 --port 8000 --log-level info
-"""
-
-RUN_FRONTEND_BAT = r"""@echo off
-setlocal
-cd /d %~dp0\frontend
-echo Serving static UI at http://127.0.0.1:7777  (Ctrl+C to stop)
-python - <<PY
-import http.server, socketserver, os
-os.chdir(os.path.dirname(__file__))
-with socketserver.TCPServer(("127.0.0.1", 7777), http.server.SimpleHTTPRequestHandler) as httpd:
-    httpd.serve_forever()
-PY
 """
 
 
@@ -606,8 +697,8 @@ def write_if_missing(path: Path, content: str, binary: bool = False) -> None:
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
         mode = "wb" if binary else "w"
-        with open(path, mode, encoding=None if binary else "utf-8") as file:
-            file.write(content)
+        with open(path, mode, encoding=None if binary else "utf-8") as f:
+            f.write(content)
 
 
 def run(cmd: str, cwd: Path) -> int:
@@ -620,29 +711,27 @@ def install_deps(root: Path, offline: bool) -> None:
     if not (venv / "Scripts" / "activate").exists():
         run(f'python -m venv "{venv}"', root)
     pip = venv / "Scripts" / "pip.exe"
-    if not offline:
-        run(f'"{pip}" install --upgrade pip', root)
     req = root / "requirements.txt"
+    con = root / "constraints.txt"
     req.write_text(REQ_TXT, encoding="utf-8")
+    con.write_text(CONSTRAINTS_TXT, encoding="utf-8")
     if offline:
         wheels = root / ".wheels"
         if wheels.exists():
             run(
-                f'"{pip}" install --no-index --find-links "{wheels}" -r "{req}"',
+                f'"{pip}" install --no-index --find-links "{wheels}" -r "{req}" -c "{con}"',
                 root,
             )
         else:
             print("[!] Offline mode selected but .wheels not found. Skipping pip.")
     else:
-        run(f'"{pip}" install -r "{req}"', root)
+        run(f'"{pip}" install -r "{req}" -c "{con}"', root)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "--root",
-        required=True,
-        help="Install root, e.g., F:\\LAWFORGE_SUPREMACY",
+        "--root", required=True, help="Install root, e.g., F:\\LAWFORGE_SUPREMACY"
     )
     ap.add_argument("--offline", action="store_true", help="Use local wheels only")
     args = ap.parse_args()
@@ -650,18 +739,18 @@ def main() -> None:
     root = Path(args.root)
     root.mkdir(parents=True, exist_ok=True)
 
-    # Write skeleton
     write_if_missing(root / "requirements.txt", REQ_TXT)
+    write_if_missing(root / "constraints.txt", CONSTRAINTS_TXT)
     write_if_missing(root / "config.yaml", CONFIG_YAML)
     write_if_missing(root / "backend" / "app.py", BACKEND_APP)
-    write_if_missing(root / "backend" / "rules" / "__init__.py", BACKEND_RULES_INIT)
+    write_if_missing(root / "backend" / "rules" / "__init__.py", "")
     write_if_missing(root / "backend" / "rules" / "canon_mcr_rules.yaml", CANON_RULES)
     write_if_missing(root / "frontend" / "index.html", FRONTEND_INDEX)
     write_if_missing(root / "frontend" / "api.js", FRONTEND_API)
     write_if_missing(root / "run_backend.bat", RUN_BACKEND_BAT)
     write_if_missing(root / "frontend" / "run_frontend.bat", RUN_FRONTEND_BAT)
+    write_if_missing(root / "golden_god_mode_bootstrap.spec", PYI_SPEC)
 
-    # Create standard dirs
     for d in [
         "data",
         "logs",
@@ -672,10 +761,8 @@ def main() -> None:
     ]:
         (root / d).mkdir(parents=True, exist_ok=True)
 
-    # Install deps
     install_deps(root, args.offline)
 
-    # Final hints
     print("\n[READY]")
     print(f"Root: {root}")
     print("1) Activate:    " + str(root / ".venv" / "Scripts" / "activate"))
@@ -685,7 +772,7 @@ def main() -> None:
         "4) Models:      put GGUF at models\\llm\\model.gguf; set config.yaml -> llm.llama_cpp.model_path"
     )
     print(
-        "5) Evidence:    set config.yaml paths.MEEK1, paths.MEEK2; then POST /scan or use UI 'Scan Evidence'"
+        "5) Evidence:    set config.yaml paths.MEEK1, paths.MEEK2; file events auto-index"
     )
 
 
