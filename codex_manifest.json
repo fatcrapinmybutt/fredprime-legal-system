@@ -12,5 +12,12 @@
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
     "legal_function": "launch ingestion and search pipeline",
     "dependencies": ["meek_ingest_cli", "fts_cli"]
+  },
+  {
+    "module": "lawforge_sentinel_gui",
+    "path": "LAWFORGE_SENTINEL_GUI.py",
+    "hash": "a9bb2e75c5be474f8cc19411abd338b1dc5635b502fd0e38dbddc8df668243fd",
+    "legal_function": "scan folders, extract text, detect citations, and build outputs",
+    "dependencies": ["PySide6", "watchdog", "pdfplumber", "pypdfium2", "pytesseract", "pillow", "python-docx", "pandas", "regex", "Unidecode", "tqdm", "networkx", "rapidfuzz", "openpyxl", "pyarrow"]
   }
 ]
