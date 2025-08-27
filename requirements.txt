@@ -11,6 +11,7 @@ python-dotenv>=1.0.1         # Load secrets/env vars securely (token, API keys)
 
 # --- GUI and Interactive Tools ---
 tkinterweb>=4.0.0            # In-app legal web search/browser for Tkinter GUI
+tk>=0.1.0                   # Tcl/Tk bindings for packaged GUI
 PySimpleGUI>=4.60.5          # Optional: advanced cross-platform GUI (modern look)
 rich>=13.7.1                 # CLI logging, progress bars, pretty errors
 

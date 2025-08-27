@@ -12,5 +12,19 @@
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
     "legal_function": "launch ingestion and search pipeline",
     "dependencies": ["meek_ingest_cli", "fts_cli"]
+  },
+  {
+    "module": "drive_search_gui",
+    "path": "scanner/drive_search_gui.py",
+    "hash": "c1169c33ce05b4b8c0922415dc85388b16244aef5b6be2c47f61272db1309ba3",
+    "legal_function": "search Google Drive and local drives for legal documents",
+    "dependencies": ["pydrive2", "tk"]
+  },
+  {
+    "module": "build_drive_search_exe",
+    "path": "scanner/build_drive_search_exe.py",
+    "hash": "d9d4dd0168a460375270092af2b0fb15baca1b1d8bdd8127464045132a329a3f",
+    "legal_function": "build and package Google Drive search tool",
+    "dependencies": ["PyInstaller"]
   }
 ]
