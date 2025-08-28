@@ -1,16 +1,46 @@
 [
-  {
-    "module": "benchbook_loader",
-    "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
-  },
-  {
-    "module": "meek_pipeline_launcher",
-    "path": "scripts/meek_pipeline_launcher.py",
-    "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
-    "legal_function": "launch ingestion and search pipeline",
-    "dependencies": ["meek_ingest_cli", "fts_cli"]
-  }
+    {
+        "module": "benchbook_loader",
+        "path": "modules/benchbook_loader.py",
+        "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+        "legal_function": "extract text from Michigan benchbook PDFs",
+        "dependencies": ["PyPDF2"],
+    },
+    {
+        "module": "lawforge_sentinel_gui",
+        "path": "LAWFORGE_SENTINEL_GUI.py",
+        "hash": "adef02d4e523b2abacb7d4cacda216d8707a2124844d2477b187ff014063ae66",
+        "legal_function": "scan folders for legal citations and produce reports",
+        "dependencies": [
+            "networkx",
+            "openpyxl",
+            "pandas",
+            "pdfplumber",
+            "pillow",
+            "pyarrow",
+            "pypdfium2",
+            "PySide6",
+            "pytesseract",
+            "python-docx",
+            "rapidfuzz",
+            "regex",
+            "tqdm",
+            "Unidecode",
+            "watchdog",
+        ],
+    },
+    {
+        "module": "meek_ingest_cli",
+        "path": "meek_ingest_cli.py",
+        "hash": "14506832827d72b3500277fee6263a36483e41d9992105944bece14b2db2b7f6",
+        "legal_function": "ingest documents for Meek pipeline",
+        "dependencies": [],
+    },
+    {
+        "module": "meek_pipeline_launcher",
+        "path": "scripts/meek_pipeline_launcher.py",
+        "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
+        "legal_function": "launch ingestion and search pipeline",
+        "dependencies": ["meek_ingest_cli", "fts_cli"],
+    },
 ]
