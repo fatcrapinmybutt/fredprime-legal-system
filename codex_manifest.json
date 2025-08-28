@@ -70,5 +70,14 @@
       "openai",
       "anthropic"
     ]
+  },
+  {
+    "module": "codex_selftest",
+    "path": "codex_selftest.py",
+    "hash": "891077444d190cf7d9a5cbbcaae0ed21a73467e8b57e541d39c1e55b92f6d7ca",
+    "legal_function": "verify branch, commit message, and manifest integrity",
+    "dependencies": [
+      "codex_guardian"
+    ]
   }
 ]
