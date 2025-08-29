@@ -12,5 +12,19 @@
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
     "legal_function": "launch ingestion and search pipeline",
     "dependencies": ["meek_ingest_cli", "fts_cli"]
+  },
+  {
+    "module": "foia_autopacker",
+    "path": "foia/autopacker.py",
+    "hash": "6b847f6dfa35be2db3b05f59f40259977c1dacb7fc260f2df6d089f368bda643",
+    "legal_function": "generate FOIA request DOCX files and ZIP package",
+    "dependencies": ["python-docx", "zipfile"]
+  },
+  {
+    "module": "foia_package",
+    "path": "foia/__init__.py",
+    "hash": "cfdbe5f7122d955d73f2ded9e384a23e7750eed11db1ffe33201b5e1a5fdbe2a",
+    "legal_function": "expose FOIA autopacker entry point",
+    "dependencies": []
   }
 ]
