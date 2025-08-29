@@ -8,7 +8,6 @@ desired text and zipped into a minimal DOCX package.
 from __future__ import annotations
 
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Final
 import zipfile
 from xml.sax.saxutils import escape
@@ -66,23 +65,10 @@ def create_docx_from_text(text: str, output_path: Path) -> Path:
 
     document_xml = DOCUMENT_TEMPLATE.format(text=escape(text))
 
-    with TemporaryDirectory() as tmpdir:
-        tmpdir_path = Path(tmpdir)
-        word_dir = tmpdir_path / "word"
-        rels_dir = tmpdir_path / "_rels"
-        word_dir.mkdir()
-        rels_dir.mkdir()
-
-        (word_dir / "document.xml").write_text(document_xml, encoding="utf-8")
-        (tmpdir_path / "[Content_Types].xml").write_text(
-            CONTENT_TYPES_XML, encoding="utf-8"
-        )
-        (rels_dir / ".rels").write_text(RELS_XML, encoding="utf-8")
-
-        with zipfile.ZipFile(output_path, "w") as docx:
-            docx.write(tmpdir_path / "[Content_Types].xml", "[Content_Types].xml")
-            docx.write(rels_dir / ".rels", "_rels/.rels")
-            docx.write(word_dir / "document.xml", "word/document.xml")
+    with zipfile.ZipFile(output_path, "w", compression=zipfile.ZIP_DEFLATED) as docx:
+        docx.writestr("[Content_Types].xml", CONTENT_TYPES_XML)
+        docx.writestr("_rels/.rels", RELS_XML)
+        docx.writestr("word/document.xml", document_xml)
 
     return output_path
 
