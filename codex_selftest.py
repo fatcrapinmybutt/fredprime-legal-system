@@ -1,8 +1,13 @@
 from __future__ import annotations
+
+"""Lightweight self-test ensuring the manifest exists and is populated."""
+
 from pathlib import Path
 
 
 def main() -> None:
+    """Run basic checks against ``codex_manifest.json``."""
+
     manifest = Path("codex_manifest.json")
     if not manifest.exists():
         raise SystemExit("codex_manifest.json missing")

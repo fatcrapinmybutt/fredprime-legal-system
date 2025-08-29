@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Diagnostics and integrity utilities for Codex operations."""
+
 import datetime
 import hashlib
 import json
@@ -15,6 +17,8 @@ PATCH_HISTORY = "patch_history.json"
 
 
 def sha256_file(fpath: str) -> str:
+    """Compute SHA-256 hash for ``fpath`` or return empty string on failure."""
+
     try:
         return hashlib.sha256(Path(fpath).read_bytes()).hexdigest()
     except Exception:
@@ -22,18 +26,26 @@ def sha256_file(fpath: str) -> str:
 
 
 def log_event(event: str, log_file: str = AUDIT_LOG) -> None:
+    """Append a hashed audit entry to ``log_file`` in a safe manner."""
+
     ts = datetime.datetime.now().isoformat()
     hval = hashlib.sha256(event.encode()).hexdigest()
-    with open(log_file, "a", encoding="utf-8") as f:
+    path = Path(log_file)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
         f.write(f"{ts} {hval} {event}\n")
 
 
 def save_state(state: Dict[str, Any], state_file: str = PERSISTENT_STATE_FILE) -> None:
+    """Persist ``state`` to ``state_file`` as JSON."""
+
     with open(state_file, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
 
 def load_state(state_file: str = PERSISTENT_STATE_FILE) -> Dict[str, Any]:
+    """Load state from ``state_file`` or return an empty dictionary."""
+
     if os.path.exists(state_file):
         with open(state_file, encoding="utf-8") as f:
             return cast(Dict[str, Any], json.load(f))
@@ -41,6 +53,8 @@ def load_state(state_file: str = PERSISTENT_STATE_FILE) -> Dict[str, Any]:
 
 
 def self_diagnostic() -> List[str]:
+    """Run basic diagnostics on key files and record the results."""
+
     diagnostics: List[str] = []
     for path in [MANIFEST_FILE, ERROR_LOG, PATCH_HISTORY, PERSISTENT_STATE_FILE]:
         if not os.path.exists(path):
@@ -59,6 +73,8 @@ def self_diagnostic() -> List[str]:
 
 
 def forensic_integrity_check() -> List[str]:
+    """Return list of files whose hashes no longer match the manifest."""
+
     issues: List[str] = []
     if not os.path.exists(MANIFEST_FILE):
         return issues
@@ -74,6 +90,8 @@ def forensic_integrity_check() -> List[str]:
 
 
 def timeline_event_matrix() -> List[Dict[str, Any]]:
+    """Build a timeline view from manifest entries."""
+
     timeline: List[Dict[str, Any]] = []
     if os.path.exists(MANIFEST_FILE):
         manifest: List[Dict[str, Any]] = json.loads(
