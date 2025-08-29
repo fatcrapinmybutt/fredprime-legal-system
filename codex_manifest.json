@@ -1,127 +1,8 @@
 [
   {
-    "module": "openAIkey",
-    "path": "openAIkey.py",
-    "hash": "49da163bedd0e1317a3e750deb3c2e27e0062da03d55866c1aa5f51b67a1d588",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "LITIGATION_CORE_ENGINE_v9999 (2)",
-    "path": "LITIGATION_CORE_ENGINE_v9999 (2).py",
-    "hash": "8c37f48cc658d033fd3d90150e6e931dce89e2e5989429f5c80db75e511938fc",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_selftest",
-    "path": "codex_selftest.py",
-    "hash": "57a1605506fbae184a4a06b3e838deb57b5238102442f298e79819594160841b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "Build_And_Upload_Master_Litigation_Pack_Z",
-    "path": "Build_And_Upload_Master_Litigation_Pack_Z.py",
-    "hash": "705101039d9dcff2071c1a933dc413ec36f4890cc600477906de42c54648285b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "ZIP_VALIDATOR",
-    "path": "ZIP_VALIDATOR.py",
-    "hash": "9a62a2c672416e2fafc3a5325bfb7a84458757abf72b9e24d4b17fc68e8224c5",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_brain",
-    "path": "codex_brain.py",
-    "hash": "b303d4479c175d7c1e0f4c705c554617f91b08ea2374dec2ad160bf8a3c6d5b9",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "FRED_Codex_Bootstrap",
-    "path": "FRED_Codex_Bootstrap.py",
-    "hash": "67d2eeb0b86d338c011d0e9fd1be42e8c4b587ff49403d3b2441308a3ab5abdf",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "litigation_core_engine_v_9999_full",
-    "path": "litigation_core_engine_v_9999_full.py",
-    "hash": "cef6737b0644613eb524d11c1480a08fa4287a9e451cdd086e15a27a9feb26b9",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "gdrive_sync",
-    "path": "gdrive_sync.py",
-    "hash": "fe56fa36b405327688dbb6ac3c0776009d3f5ba8e15dd9e5e606b10dd490ad50",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "LITIGATION_CORE_ENGINE_v9999",
-    "path": "LITIGATION_CORE_ENGINE_v9999.py",
-    "hash": "8b212e7cb2e7a93c6d3ca6e5cdda5600d52ea48baebbf0d1f393bde4f5f4994e",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "DOCUMENT_NEEDS_ENGINE_v9999",
-    "path": "DOCUMENT_NEEDS_ENGINE_v9999.py",
-    "hash": "db0c6d5f0af6677cde41db695c95c013b940366db0e274673526ebc4c6173c54",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "judge_sim_ladas_hoopes_v1",
-    "path": "judge_sim_ladas_hoopes_v1.py",
-    "hash": "c981e83378e265230a70d839009134fad40aacc38c79588d4ce5fed181d00d0e",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "LITIGATION_CORE_ENGINE_v9999 (1)",
-    "path": "LITIGATION_CORE_ENGINE_v9999 (1).py",
-    "hash": "1f94871df920434d262e8d055c34f00dfe790abdcf6f31228f9c159e701fb795",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "litigation_os_generate_motion (1)",
-    "path": "litigation_os_generate_motion (1).py",
-    "hash": "484481b86921ccaa68052be7a29349b0d81b0b6f00138a6049755150fb06fc51",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "fts_cli",
-    "path": "fts_cli.py",
-    "hash": "4593b03cd06a62206a94525596ddbdd7efad85a4602ef7ecd39b12af7f096c47",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_patch_manager",
-    "path": "codex_patch_manager.py",
-    "hash": "a1e1bd5ed84e349d2c81874522c99cd79308f7d7f1934a866cdb9164ed61372f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
     "module": "MBP_Omnia_Engine",
     "path": "MBP_Omnia_Engine.py",
     "hash": "32d2c6ea3bdd85111c60e96639d99c7cff1be52e8be682210edc80f648fe24ed",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "EPOCH_UNPACKER_ENGINE_v1",
-    "path": "EPOCH_UNPACKER_ENGINE_v1.py",
-    "hash": "5d1ed8f26f4500a9cc1ef588b623fc552036e97856c9146908b59d7ed83c4075",
     "legal_function": "",
     "dependencies": []
   },
@@ -133,16 +14,16 @@
     "dependencies": []
   },
   {
-    "module": "build_system",
-    "path": "build_system.py",
-    "hash": "d3cb7ba1fe69ee9ae6cef93a92cb29420c8f5f131f940f28a731ac3a0dadd5eb",
+    "module": "LITIGATION_CORE_ENGINE_v9999 (1)",
+    "path": "LITIGATION_CORE_ENGINE_v9999 (1).py",
+    "hash": "1f94871df920434d262e8d055c34f00dfe790abdcf6f31228f9c159e701fb795",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "BINDER_BUILDER",
-    "path": "BINDER_BUILDER.py",
-    "hash": "dd33a0484431edcff051e7fbb7a9ab35a4aa8ad24a21ba2dfa93da43d7431668",
+    "module": "judge_sim_ladas_hoopes_v1",
+    "path": "judge_sim_ladas_hoopes_v1.py",
+    "hash": "c981e83378e265230a70d839009134fad40aacc38c79588d4ce5fed181d00d0e",
     "legal_function": "",
     "dependencies": []
   },
@@ -154,51 +35,499 @@
     "dependencies": []
   },
   {
+    "module": "EPOCH_UNPACKER_ENGINE_v1",
+    "path": "EPOCH_UNPACKER_ENGINE_v1.py",
+    "hash": "5d1ed8f26f4500a9cc1ef588b623fc552036e97856c9146908b59d7ed83c4075",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "LITIGATION_CORE_ENGINE_v9999",
+    "path": "LITIGATION_CORE_ENGINE_v9999.py",
+    "hash": "8b212e7cb2e7a93c6d3ca6e5cdda5600d52ea48baebbf0d1f393bde4f5f4994e",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "gdrive_sync",
+    "path": "gdrive_sync.py",
+    "hash": "fe56fa36b405327688dbb6ac3c0776009d3f5ba8e15dd9e5e606b10dd490ad50",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "litigation_os_generate_motion (1)",
+    "path": "litigation_os_generate_motion (1).py",
+    "hash": "484481b86921ccaa68052be7a29349b0d81b0b6f00138a6049755150fb06fc51",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "ZIP_VALIDATOR",
+    "path": "ZIP_VALIDATOR.py",
+    "hash": "9a62a2c672416e2fafc3a5325bfb7a84458757abf72b9e24d4b17fc68e8224c5",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "LITIGATION_CORE_ENGINE_v9999 (2)",
+    "path": "LITIGATION_CORE_ENGINE_v9999 (2).py",
+    "hash": "8c37f48cc658d033fd3d90150e6e931dce89e2e5989429f5c80db75e511938fc",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "FRED_Codex_Bootstrap",
+    "path": "FRED_Codex_Bootstrap.py",
+    "hash": "67d2eeb0b86d338c011d0e9fd1be42e8c4b587ff49403d3b2441308a3ab5abdf",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_brain",
+    "path": "codex_brain.py",
+    "hash": "8a3e8bbcd39e6a574fc11e9a789cc5d83b0b816b42e986b38c86a17f7d46f046",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_patch_manager",
+    "path": "codex_patch_manager.py",
+    "hash": "a1e1bd5ed84e349d2c81874522c99cd79308f7d7f1934a866cdb9164ed61372f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "BINDER_BUILDER",
+    "path": "BINDER_BUILDER.py",
+    "hash": "dd33a0484431edcff051e7fbb7a9ab35a4aa8ad24a21ba2dfa93da43d7431668",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "fts_cli",
+    "path": "fts_cli.py",
+    "hash": "4593b03cd06a62206a94525596ddbdd7efad85a4602ef7ecd39b12af7f096c47",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "Build_And_Upload_Master_Litigation_Pack_Z",
+    "path": "Build_And_Upload_Master_Litigation_Pack_Z.py",
+    "hash": "705101039d9dcff2071c1a933dc413ec36f4890cc600477906de42c54648285b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "openAIkey",
+    "path": "openAIkey.py",
+    "hash": "49da163bedd0e1317a3e750deb3c2e27e0062da03d55866c1aa5f51b67a1d588",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "DOCUMENT_NEEDS_ENGINE_v9999",
+    "path": "DOCUMENT_NEEDS_ENGINE_v9999.py",
+    "hash": "db0c6d5f0af6677cde41db695c95c013b940366db0e274673526ebc4c6173c54",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "build_system",
+    "path": "build_system.py",
+    "hash": "d3cb7ba1fe69ee9ae6cef93a92cb29420c8f5f131f940f28a731ac3a0dadd5eb",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_selftest",
+    "path": "codex_selftest.py",
+    "hash": "57a1605506fbae184a4a06b3e838deb57b5238102442f298e79819594160841b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "litigation_core_engine_v_9999_full",
+    "path": "litigation_core_engine_v_9999_full.py",
+    "hash": "cef6737b0644613eb524d11c1480a08fa4287a9e451cdd086e15a27a9feb26b9",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "press_draft_engine",
+    "path": "press/press_draft_engine.py",
+    "hash": "c587e47445999065b332eb61fa958f2b92d87663175197a24b1bbf51ce91f3e9",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
     "module": "__init__",
-    "path": "src/__init__.py",
+    "path": "press/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "env",
-    "path": "src/env.py",
-    "hash": "3d8efadff7fa0d904b9de47168778216e3cb09b2e424ff4006c5c9e5a863a808",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "models",
-    "path": "src/knowledge/models.py",
-    "hash": "dc9a99019d7e7c0afd3512d902d9fc2c535b116097e2f206feae17fa37c94e72",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
     "module": "__init__",
-    "path": "src/knowledge/__init__.py",
+    "path": "mifile/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "b978fb447583_initial",
-    "path": "src/versions/b978fb447583_initial.py",
-    "hash": "b93ea7f00881228c7dd691cd068b1233515ceb8fdf8e95228c6eedb2069b3949",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "models",
-    "path": "src/forms/models.py",
-    "hash": "c7313f85987cb0a45df3767208e65a6f3c659c473d3c8e4b5bb76619869c4692",
+    "module": "stack_dispatcher",
+    "path": "mifile/stack_dispatcher.py",
+    "hash": "7d6fa619c32775d9cba94fb1d88c211f9797513f19b7eb854cbddf7018ff6e10",
     "legal_function": "",
     "dependencies": []
   },
   {
     "module": "__init__",
-    "path": "src/forms/__init__.py",
+    "path": "scheduling/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "scheduler",
+    "path": "scheduling/scheduler.py",
+    "hash": "9b2f103840169e4dec59f03cf085f12c25bf655f9bd2b744dc064b0de711b80b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "complaint_generator",
+    "path": "federal/complaint_generator.py",
+    "hash": "fd9022fccd6ebeffdf37cee7f5fc7c778018a05c46b746f3b96f103ab6baed01",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "federal/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "binder/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "tab_forger",
+    "path": "binder/tab_forger.py",
+    "hash": "9bb122a26c870ca4d69eaaaa880321baef7ee72582ba2d4901e495c1223de0f6",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "autopacker",
+    "path": "foia/autopacker.py",
+    "hash": "e5fa09771522a86256bf9e88e621bd6d028e3b4e2eaa1cb0cd492b3fb20eb439",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "foia/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "video_request_builder",
+    "path": "foia/video_request_builder.py",
+    "hash": "94a3114105be2f951bea4485b202e90d44e4e0c3b2e7eb0c7d9772282d64d9bc",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "warboard/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "svg_motion_binder",
+    "path": "warboard/svg_motion_binder.py",
+    "hash": "36d624555c82a1ab8803d7eac15e96a98a7034b8c065709d9769836c1f1eb407",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "svg_builder",
+    "path": "warboard/svg_builder.py",
+    "hash": "ce7f08a3aecd87e88f67b71b5cd42e74c14a86ad8d965e502e6ce4dd6bb2b753",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "custody_interference_engine",
+    "path": "warboard/custody_interference_engine.py",
+    "hash": "2891b9d18f77ad9d5801cbbb0239a1726debc6c5cfbfd71b3802109b6cca084b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "warboard_engine",
+    "path": "warboard/warboard_engine.py",
+    "hash": "5e59e27131f83b6fbb4d25264c7ad699b256d3f50d0f4c57859def516aa9bf7b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "ppo_warboard",
+    "path": "warboard/ppo_warboard.py",
+    "hash": "a417c56a599e4c34166e8a1b1ebab0bd1a145da529976f0ca8050839ad21dc7f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "warboard_matrix_export",
+    "path": "warboard/warboard_matrix_export.py",
+    "hash": "525f34af3a438fb8f2156ce4a8bfb01ff93dd2d6fbc90def44e97cfa9bc0782e",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "generate_manifest",
+    "path": "cli/generate_manifest.py",
+    "hash": "f24e4ddf7f270629cab44fcd94ebf515987bda3dd116dd3fe86abb096869c46f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "emergency_injunction",
+    "path": "motions/emergency_injunction.py",
+    "hash": "32dfaf5c818d7a5b7af8e45c82dff8bf1cbedbea2222d646ec9fbb9ebee4d239",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "motions/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "protective_order",
+    "path": "motions/protective_order.py",
+    "hash": "756a774aee65c5425c1de46a73a15259e40ad5cfd07f06ce14f85391b6ff59d3",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "scripts/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "meek_pipeline_launcher",
+    "path": "scripts/meek_pipeline_launcher.py",
+    "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "generate_manifest",
+    "path": "scripts/generate_manifest.py",
+    "hash": "0ee5b731d1de9852a902bfe25c2e920a89904979e2d28f57ddb325372d73df3e",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "scanner/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "scan_engine",
+    "path": "scanner/scan_engine.py",
+    "hash": "0710c902353f22b727ceba4e524e85ddeb4434cc4618ccbdf7796849cd756d92",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "meek_pipeline_launcher_test",
+    "path": "tests/meek_pipeline_launcher_test.py",
+    "hash": "16e41e4c59d71f45004a74def51d783dd8563305dc591326b27e113aaf893a70",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "test_codex_supreme",
+    "path": "tests/test_codex_supreme.py",
+    "hash": "228b1184d54483a8c99f77ba23172e0814a83b32c4e062527f29f984edc0618c",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "tests/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "test_codex_guardian",
+    "path": "tests/test_codex_guardian.py",
+    "hash": "3e98cdc408ebde71c1e9661cbbd7038f4530d96c751e358c7e3367cf6e077a46",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "test_benchbook_loader",
+    "path": "tests/test_benchbook_loader.py",
+    "hash": "205a4e4ddcef6817daabf0a518fadc848fc917e0a51cf7c070fa36e10d08aa7b",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "test_codex_manifest",
+    "path": "tests/test_codex_manifest.py",
+    "hash": "4621fe7b4eff552c6464a964440c6519dce5c2a5f72e115aa385078b74dd596c",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "test_generate_manifest_cli",
+    "path": "tests/test_generate_manifest_cli.py",
+    "hash": "a7da9e0d3126b151eeec28f6ffa1e64e96df0bd94539a1ca44f0b05ae0898ba9",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "modules/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_manifest",
+    "path": "modules/codex_manifest.py",
+    "hash": "1c0161744b8f6ac441d990438201aa985573638e0002f499c09212efa89eacbd",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "benchbook_loader",
+    "path": "modules/benchbook_loader.py",
+    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_supreme",
+    "path": "modules/codex_supreme.py",
+    "hash": "4b86164e71983e274b07d2d6ce3c18e283293fba529bebe8d5b18768770ac6a7",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "codex_guardian",
+    "path": "modules/codex_guardian.py",
+    "hash": "14a75d02fab6551cc82c77a2f2a03f53d7fcfc7c44e9573470bcedbcbdac4e91",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "fusion_engine",
+    "path": "timeline/fusion_engine.py",
+    "hash": "336343e8c8ed090ea17f44b90ff6d5d919ff652ae6d4f63eb6f57fd650672d0a",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "timeline/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "builder",
+    "path": "timeline/builder.py",
+    "hash": "637ac28af82f26ba6abdf05dbc00fec6422f77e11eff34a6710451801ef0f32f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "violations/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "misconduct_letter",
+    "path": "violations/misconduct_letter.py",
+    "hash": "fe4dd89ab74e55e58a4b7db1a4fcb33be8e2ff54f5b5d78268cc06bc3b4b943f",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "notices/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "notice_of_claim",
+    "path": "notices/notice_of_claim.py",
+    "hash": "c569cd7a9830579126ccc8df27ece54be68e80c9cc16ec2e22e467a69a73fb02",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "gui/__init__.py",
+    "hash": "0c9300fee85ee111fbcc4beafa5eb3b76e202061d6b5e4fe52a3d61c8f3c928a",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "frontend",
+    "path": "gui/frontend.py",
+    "hash": "427cc6b99d2fc9752c705c53cc5bb6190326690c896918cd086d6179e4e6d523",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "entity_suppression_feed",
+    "path": "gui/modules/entity_suppression_feed.py",
+    "hash": "8e17d21c13bcc9abb6c54a2515ef0048e593fd0f45c67105791e82ca3cab9142",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "gui/modules/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "__init__",
+    "path": "contradictions/__init__.py",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legal_function": "",
+    "dependencies": []
+  },
+  {
+    "module": "contradiction_matrix",
+    "path": "contradictions/contradiction_matrix.py",
+    "hash": "67bc35c4d9a3ea0e62c146f84ed670160d810ea6cbf8f3f27eee58b4cf7f5ef3",
     "legal_function": "",
     "dependencies": []
   },
@@ -225,379 +554,50 @@
   },
   {
     "module": "__init__",
-    "path": "contradictions/__init__.py",
+    "path": "src/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "contradiction_matrix",
-    "path": "contradictions/contradiction_matrix.py",
-    "hash": "67bc35c4d9a3ea0e62c146f84ed670160d810ea6cbf8f3f27eee58b4cf7f5ef3",
+    "module": "env",
+    "path": "src/env.py",
+    "hash": "3d8efadff7fa0d904b9de47168778216e3cb09b2e424ff4006c5c9e5a863a808",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "tab_forger",
-    "path": "binder/tab_forger.py",
-    "hash": "9bb122a26c870ca4d69eaaaa880321baef7ee72582ba2d4901e495c1223de0f6",
+    "module": "b978fb447583_initial",
+    "path": "src/versions/b978fb447583_initial.py",
+    "hash": "b93ea7f00881228c7dd691cd068b1233515ceb8fdf8e95228c6eedb2069b3949",
     "legal_function": "",
     "dependencies": []
   },
   {
     "module": "__init__",
-    "path": "binder/__init__.py",
+    "path": "src/knowledge/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "press_draft_engine",
-    "path": "press/press_draft_engine.py",
-    "hash": "c587e47445999065b332eb61fa958f2b92d87663175197a24b1bbf51ce91f3e9",
+    "module": "models",
+    "path": "src/knowledge/models.py",
+    "hash": "dc9a99019d7e7c0afd3512d902d9fc2c535b116097e2f206feae17fa37c94e72",
     "legal_function": "",
     "dependencies": []
   },
   {
     "module": "__init__",
-    "path": "press/__init__.py",
+    "path": "src/forms/__init__.py",
     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "legal_function": "",
     "dependencies": []
   },
   {
-    "module": "generate_manifest",
-    "path": "cli/generate_manifest.py",
-    "hash": "f24e4ddf7f270629cab44fcd94ebf515987bda3dd116dd3fe86abb096869c46f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "scan_engine",
-    "path": "scanner/scan_engine.py",
-    "hash": "0710c902353f22b727ceba4e524e85ddeb4434cc4618ccbdf7796849cd756d92",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "scanner/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "notices/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "notice_of_claim",
-    "path": "notices/notice_of_claim.py",
-    "hash": "c569cd7a9830579126ccc8df27ece54be68e80c9cc16ec2e22e467a69a73fb02",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "violations/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "misconduct_letter",
-    "path": "violations/misconduct_letter.py",
-    "hash": "fe4dd89ab74e55e58a4b7db1a4fcb33be8e2ff54f5b5d78268cc06bc3b4b943f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "federal/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "complaint_generator",
-    "path": "federal/complaint_generator.py",
-    "hash": "fd9022fccd6ebeffdf37cee7f5fc7c778018a05c46b746f3b96f103ab6baed01",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "stack_dispatcher",
-    "path": "mifile/stack_dispatcher.py",
-    "hash": "7d6fa619c32775d9cba94fb1d88c211f9797513f19b7eb854cbddf7018ff6e10",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "mifile/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "emergency_injunction",
-    "path": "motions/emergency_injunction.py",
-    "hash": "32dfaf5c818d7a5b7af8e45c82dff8bf1cbedbea2222d646ec9fbb9ebee4d239",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "motions/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "protective_order",
-    "path": "motions/protective_order.py",
-    "hash": "756a774aee65c5425c1de46a73a15259e40ad5cfd07f06ce14f85391b6ff59d3",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "generate_manifest",
-    "path": "scripts/generate_manifest.py",
-    "hash": "0ee5b731d1de9852a902bfe25c2e920a89904979e2d28f57ddb325372d73df3e",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "scripts/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "meek_pipeline_launcher",
-    "path": "scripts/meek_pipeline_launcher.py",
-    "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "svg_motion_binder",
-    "path": "warboard/svg_motion_binder.py",
-    "hash": "36d624555c82a1ab8803d7eac15e96a98a7034b8c065709d9769836c1f1eb407",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "warboard_matrix_export",
-    "path": "warboard/warboard_matrix_export.py",
-    "hash": "525f34af3a438fb8f2156ce4a8bfb01ff93dd2d6fbc90def44e97cfa9bc0782e",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "warboard/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "svg_builder",
-    "path": "warboard/svg_builder.py",
-    "hash": "ce7f08a3aecd87e88f67b71b5cd42e74c14a86ad8d965e502e6ce4dd6bb2b753",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "custody_interference_engine",
-    "path": "warboard/custody_interference_engine.py",
-    "hash": "2891b9d18f77ad9d5801cbbb0239a1726debc6c5cfbfd71b3802109b6cca084b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "ppo_warboard",
-    "path": "warboard/ppo_warboard.py",
-    "hash": "a417c56a599e4c34166e8a1b1ebab0bd1a145da529976f0ca8050839ad21dc7f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "warboard_engine",
-    "path": "warboard/warboard_engine.py",
-    "hash": "5e59e27131f83b6fbb4d25264c7ad699b256d3f50d0f4c57859def516aa9bf7b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_guardian",
-    "path": "modules/codex_guardian.py",
-    "hash": "40b5f0ab8b9238038892bb8f561f0090412db7f38aa245f88acfbe6035bdca72",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "modules/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_manifest",
-    "path": "modules/codex_manifest.py",
-    "hash": "1c0161744b8f6ac441d990438201aa985573638e0002f499c09212efa89eacbd",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "codex_supreme",
-    "path": "modules/codex_supreme.py",
-    "hash": "4b86164e71983e274b07d2d6ce3c18e283293fba529bebe8d5b18768770ac6a7",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "benchbook_loader",
-    "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "timeline/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "fusion_engine",
-    "path": "timeline/fusion_engine.py",
-    "hash": "336343e8c8ed090ea17f44b90ff6d5d919ff652ae6d4f63eb6f57fd650672d0a",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "builder",
-    "path": "timeline/builder.py",
-    "hash": "637ac28af82f26ba6abdf05dbc00fec6422f77e11eff34a6710451801ef0f32f",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "autopacker",
-    "path": "foia/autopacker.py",
-    "hash": "e5fa09771522a86256bf9e88e621bd6d028e3b4e2eaa1cb0cd492b3fb20eb439",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "foia/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "video_request_builder",
-    "path": "foia/video_request_builder.py",
-    "hash": "94a3114105be2f951bea4485b202e90d44e4e0c3b2e7eb0c7d9772282d64d9bc",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "test_codex_guardian",
-    "path": "tests/test_codex_guardian.py",
-    "hash": "3e98cdc408ebde71c1e9661cbbd7038f4530d96c751e358c7e3367cf6e077a46",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "test_generate_manifest_cli",
-    "path": "tests/test_generate_manifest_cli.py",
-    "hash": "a7da9e0d3126b151eeec28f6ffa1e64e96df0bd94539a1ca44f0b05ae0898ba9",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "tests/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "test_codex_manifest",
-    "path": "tests/test_codex_manifest.py",
-    "hash": "4621fe7b4eff552c6464a964440c6519dce5c2a5f72e115aa385078b74dd596c",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "test_benchbook_loader",
-    "path": "tests/test_benchbook_loader.py",
-    "hash": "205a4e4ddcef6817daabf0a518fadc848fc917e0a51cf7c070fa36e10d08aa7b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "test_codex_supreme",
-    "path": "tests/test_codex_supreme.py",
-    "hash": "228b1184d54483a8c99f77ba23172e0814a83b32c4e062527f29f984edc0618c",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "meek_pipeline_launcher_test",
-    "path": "tests/meek_pipeline_launcher_test.py",
-    "hash": "16e41e4c59d71f45004a74def51d783dd8563305dc591326b27e113aaf893a70",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "frontend",
-    "path": "gui/frontend.py",
-    "hash": "427cc6b99d2fc9752c705c53cc5bb6190326690c896918cd086d6179e4e6d523",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "gui/__init__.py",
-    "hash": "0c9300fee85ee111fbcc4beafa5eb3b76e202061d6b5e4fe52a3d61c8f3c928a",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "entity_suppression_feed",
-    "path": "gui/modules/entity_suppression_feed.py",
-    "hash": "8e17d21c13bcc9abb6c54a2515ef0048e593fd0f45c67105791e82ca3cab9142",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "gui/modules/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "scheduler",
-    "path": "scheduling/scheduler.py",
-    "hash": "9b2f103840169e4dec59f03cf085f12c25bf655f9bd2b744dc064b0de711b80b",
-    "legal_function": "",
-    "dependencies": []
-  },
-  {
-    "module": "__init__",
-    "path": "scheduling/__init__.py",
-    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "module": "models",
+    "path": "src/forms/models.py",
+    "hash": "c7313f85987cb0a45df3767208e65a6f3c659c473d3c8e4b5bb76619869c4692",
     "legal_function": "",
     "dependencies": []
   }
