@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import hashlib
 import json
-import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Any, Dict, List, cast
 
 MANIFEST_FILE = "codex_manifest.json"
-BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
+BANNED_KEYWORDS: List[str] = ["TODO", "WIP", "temp_var", "placeholder"]
 
 
 def get_current_branch() -> str:
@@ -22,12 +24,14 @@ def get_last_commit_message() -> str:
 
 
 def hash_file(path: Path) -> str:
+    """Return SHA-256 hash of ``path`` contents."""
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_manifest() -> list[dict]:
+def load_manifest() -> List[Dict[str, Any]]:
     if Path(MANIFEST_FILE).exists():
-        return json.loads(Path(MANIFEST_FILE).read_text())
+        data = json.loads(Path(MANIFEST_FILE).read_text(encoding="utf-8"))
+        return cast(List[Dict[str, Any]], data)
     return []
 
 
