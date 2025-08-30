@@ -12,5 +12,12 @@
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
     "legal_function": "launch ingestion and search pipeline",
     "dependencies": ["meek_ingest_cli", "fts_cli"]
+  },
+  {
+    "module": "graph_preview",
+    "path": "scripts/graph_preview.py",
+    "hash": "ac7997a6555b8cf4ec0c4d8772ab51347c953095c50a2e245c217c3ea59aba80",
+    "legal_function": "generate interactive D3 graph preview",
+    "dependencies": ["d3"]
   }
 ]
