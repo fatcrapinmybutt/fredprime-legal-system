@@ -188,6 +188,12 @@ if __name__ == '__main__':
     main()
 PY
 chmod +x "$OUTDIR/graph_preview.py"
+cp "$(dirname "$0")/graph_preview.py" "$OUTDIR/graph_preview.py"
+
+# 1a) try to cache a local D3 for offline use
+if command -v curl >/dev/null 2>&1; then
+  curl -fsSL "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" -o "$OUTDIR/graph/d3.v7.min.js" || true
+fi
 
 # 2) EC_GRAPH wrapper
 cat <<'H' > "$HOME/.local/bin/EC_GRAPH"

@@ -16,7 +16,7 @@
   {
     "module": "graph_preview",
     "path": "scripts/graph_preview.py",
-    "hash": "ac7997a6555b8cf4ec0c4d8772ab51347c953095c50a2e245c217c3ea59aba80",
+    "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
     "legal_function": "generate interactive D3 graph preview",
     "dependencies": ["d3"]
   }
