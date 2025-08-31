@@ -1,29 +1,28 @@
-# MBP Codex Supreme Configuration
-branch_prefix: 'codex/'
-run_tests_on_changes:
-  - '**/*.py'
-  - '**/*.js'
-  - '**/*.ts'
-  - '**/*.json'
-trigger_branches:
-  - core
-  - engine
-  - matrix
-  - echelon
-  - patch
-  - hotfix
-commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+'
-banned_keywords:
-  - TODO
-  - WIP
-  - temp_var
-  - placeholder
-manifest: 'codex_manifest.json'
-required_folders:
-  - core
-  - modules
-  - gui
-  - cli
-  - config
-  - docs
-  - tests
+enforce:
+  branch_prefix: "codex/"
+  commit_pattern: "^(\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ).+"
+  banned_keywords:
+    - TODO
+    - WIP
+    - temp_var
+    - placeholder
+  required_dirs:
+    - core
+    - modules
+    - gui
+    - cli
+    - config
+    - docs
+    - tests
+  test_triggers:
+    - core
+    - engine
+    - matrix
+    - protocol
+    - epoch
+    - echelon
+    - hotfix
+    - merge
+  runtime_checks:
+    - codex_brain.py
+    - codex_patch_manager.py
