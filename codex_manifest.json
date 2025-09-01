@@ -7,6 +7,20 @@
     "dependencies": ["PyPDF2"]
   },
   {
+    "module": "codex_guardian",
+    "path": "modules/codex_guardian.py",
+    "hash": "ed7d4a3d851d8e112cb98601ae228e5a00a1778d0e48f9639778e3137fa519f4",
+    "legal_function": "enforce branch and commit policy",
+    "dependencies": []
+  },
+  {
+    "module": "codex_brain",
+    "path": "codex_brain.py",
+    "hash": "d5526d6915b4bbc5809ad773eb184d7611bbe20f376acf4291ba9a7054ade610",
+    "legal_function": "update manifest and run diagnostics",
+    "dependencies": []
+  },
+  {
     "module": "meek_pipeline_launcher",
     "path": "scripts/meek_pipeline_launcher.py",
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
@@ -16,8 +30,8 @@
   {
     "module": "graph_preview",
     "path": "scripts/graph_preview.py",
-    "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
-    "legal_function": "generate interactive D3 graph preview",
-    "dependencies": ["d3"]
+    "hash": "ab1a670e380e05158f96683f708ce3e16378bf34f1386fadc8c096003b61d562",
+    "legal_function": "generate interactive D3 graph preview and build SQLite snapshot",
+    "dependencies": ["d3", "sqlite3"]
   }
 ]
