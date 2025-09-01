@@ -12,7 +12,7 @@ trigger_branches:
   - echelon
   - patch
   - hotfix
-commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+'
+commit_message_format: '^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] .+'
 banned_keywords:
   - TODO
   - WIP
