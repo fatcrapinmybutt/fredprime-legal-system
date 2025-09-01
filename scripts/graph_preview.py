@@ -2,9 +2,12 @@
 import csv
 import os
 import json
+import sqlite3
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 import sys
+from typing import Any
 
 if sys.version_info < (3, 8):
     raise SystemExit("Python 3.8+ required")
@@ -78,9 +81,53 @@ def load_graph() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     return nodes_f, edges_f
 
 
-def write_html(nodes: list[dict[str, str]], edges: list[dict[str, str]]) -> None:
+def find_hubs(edges: list[dict[str, str]], threshold: int = 5) -> set[str]:
+    counts: Counter[str] = Counter()
+    for e in edges:
+        counts[e["source"]] += 1
+        counts[e["target"]] += 1
+    return {n for n, c in counts.items() if c >= threshold}
+
+
+def build_db(
+    nodes: list[dict[str, str]],
+    edges: list[dict[str, str]],
+    db_path: Path | None = None,
+) -> Path:
+    _mk(GRAPH_DIR)
+    path = db_path or (GRAPH_DIR / "graph.db")
+    with sqlite3.connect(path) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS nodes ("
+            "id TEXT PRIMARY KEY, "
+            "label TEXT, path TEXT, value TEXT, "
+            "doc_type TEXT, case_no TEXT)"
+        )
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS edges (source TEXT, target TEXT, type TEXT)"
+        )
+        cur.execute("DELETE FROM nodes")
+        cur.execute("DELETE FROM edges")
+        cur.executemany(
+            "INSERT INTO nodes (id, label, path, value, doc_type, case_no) "
+            "VALUES (:id, :label, :path, :value, :doc_type, :case_no)",
+            nodes,
+        )
+        cur.executemany(
+            "INSERT INTO edges (source, target, type) VALUES (:source, :target, :type)",
+            edges,
+        )
+        conn.commit()
+    return path
+
+
+def write_html(nodes: list[dict[str, Any]], edges: list[dict[str, str]]) -> None:
     ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     _mk(GRAPH_DIR)
+    hub_ids = find_hubs(edges)
+    for n in nodes:
+        n["hub"] = n["id"] in hub_ids
     out = GRAPH_DIR / f"preview_{ts}.html"
     data = {"nodes": nodes, "links": edges}
     template = """<!DOCTYPE html>
@@ -100,6 +147,7 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
 .node-name { fill:#8c564b; }
 .node-citation { fill:#d62728; }
 .node-caseid { fill:#17becf; }
+.node-hub { stroke:#000; stroke-width:2; }
 .link { stroke:#999; stroke-opacity:.6; }
 </style>
 </head>
@@ -107,7 +155,9 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
 <div id='toolbar'>
   <strong>Evidence Graph</strong>
   <span class='badge' id='counts'></span>
-  <input id='q' placeholder='filter (case no, email, doc_type...)' style='flex:1; padding:6px 8px; border:1px solid #ddd; border-radius:8px'/>
+  <input id='q'
+         placeholder='filter (case no, email, doc_type...)'
+         style='flex:1; padding:6px 8px; border:1px solid #ddd; border-radius:8px'/>
   <button id='reset'>Reset</button>
   <button id='export'>Export PNG</button>
 </div>
@@ -131,8 +181,10 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
     const zoom = d3.zoom().scaleExtent([0.1, 6]).on('zoom', (ev)=> g.attr('transform', ev.transform));
     svg.call(zoom);
     const colorByLabel = (lbl)=> ({
-      'Document':'node-doc','Email':'node-email','Phone':'node-phone','Money':'node-money','Name':'node-name',
-      'MCL':'node-citation','MCR':'node-citation','MRE':'node-citation','USC':'node-citation','FRCP':'node-citation','FRE':'node-citation',
+      'Document':'node-doc','Email':'node-email','Phone':'node-phone',
+      'Money':'node-money','Name':'node-name',
+      'MCL':'node-citation','MCR':'node-citation','MRE':'node-citation',
+      'USC':'node-citation','FRCP':'node-citation','FRE':'node-citation',
       'MI_CASE':'node-citation','FED_CASE':'node-citation','CaseID':'node-caseid'
     }[lbl]||'node-name');
     document.getElementById('counts').textContent = data.nodes.length + ' nodes / ' + data.links.length + ' edges';
@@ -146,11 +198,16 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
 
     const node = g.append('g').selectAll('circle')
       .data(data.nodes).enter().append('circle')
-      .attr('r', d=> d.label==='Document' ? 5 : 3)
-      .attr('class', d=> colorByLabel(d.label))
+      .attr('r', d=> d.hub ? 8 : (d.label==='Document' ? 5 : 3))
+      .attr('class', d=> colorByLabel(d.label)+(d.hub ? ' node-hub' : ''))
       .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
-    node.append('title').text(d=> `${d.label}${d.doc_type? ' · '+d.doc_type:''}${d.case_no? ' · '+d.case_no:''}${d.value? ' · '+d.value:''}${d.path? ' · '+d.path:''}`);
+    node.append('title').text(d=>
+      `${d.label}${d.doc_type? ' · '+d.doc_type:''}`+
+      `${d.case_no? ' · '+d.case_no:''}`+
+      `${d.value? ' · '+d.value:''}`+
+      `${d.path? ' · '+d.path:''}`
+    );
 
     sim.on('tick', ()=>{
       link.attr('x1', d=>d.source.x).attr('y1', d=>d.source.y)
@@ -213,6 +270,7 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
 
 def main() -> None:
     nodes, edges = load_graph()
+    build_db(nodes, edges)
     write_html(nodes, edges)
 
 

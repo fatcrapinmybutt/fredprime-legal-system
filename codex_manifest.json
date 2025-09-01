@@ -30,8 +30,8 @@
   {
     "module": "graph_preview",
     "path": "scripts/graph_preview.py",
-    "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
-    "legal_function": "generate interactive D3 graph preview",
-    "dependencies": ["d3"]
+    "hash": "ab1a670e380e05158f96683f708ce3e16378bf34f1386fadc8c096003b61d562",
+    "legal_function": "generate interactive D3 graph preview and build SQLite snapshot",
+    "dependencies": ["d3", "sqlite3"]
   }
 ]
