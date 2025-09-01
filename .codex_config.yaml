@@ -9,10 +9,13 @@ trigger_branches:
   - core
   - engine
   - matrix
+  - protocol
+  - epoch
   - echelon
   - patch
   - hotfix
-commit_message_format: '^[\\[(]?(core|hotfix|docs|merge|patch|engine|matrix|echelon)[\\])? .+'
+  - merge
+commit_message_format: '^\[(core|hotfix|docs|merge)\] .+'
 banned_keywords:
   - TODO
   - WIP

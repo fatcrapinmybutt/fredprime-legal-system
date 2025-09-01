@@ -34,7 +34,7 @@ def load_manifest() -> list[dict]:
 def verify_commit_message(msg: str) -> None:
     if any(k in msg for k in BANNED_KEYWORDS):
         raise ValueError("Commit message contains banned keyword")
-    if not re.match(r"^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ", msg):
+    if not re.match(r"^\[(core|hotfix|docs|merge)\] ", msg):
         raise ValueError("Commit message format invalid")
 
 
@@ -48,6 +48,7 @@ def verify_branch_name(branch: str) -> bool:
         "protocol",
         "epoch",
         "echelon",
+        "patch",
         "hotfix",
         "merge",
     ]

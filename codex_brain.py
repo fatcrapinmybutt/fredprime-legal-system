@@ -14,11 +14,19 @@ def hash_file(path: Path) -> str:
 
 
 def update_manifest():
-    manifest = []
+    manifest: list[dict] = []
     for p in Path(".").rglob("*.py"):
-        if p.parts[0].startswith("."):  # skip hidden dirs
+        if p.parts[0].startswith("."):
             continue
-        manifest.append({"module": p.stem, "path": str(p), "hash": hash_file(p)})
+        manifest.append(
+            {
+                "module": p.stem,
+                "path": str(p),
+                "hash": hash_file(p),
+                "legal_function": "",
+                "dependencies": [],
+            }
+        )
     Path(MANIFEST).write_text(json.dumps(manifest, indent=2))
 
 
