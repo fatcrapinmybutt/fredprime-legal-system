@@ -4,20 +4,39 @@
     "path": "modules/benchbook_loader.py",
     "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
     "legal_function": "extract text from Michigan benchbook PDFs",
-    "dependencies": ["PyPDF2"]
+    "dependencies": [
+      "PyPDF2"
+    ]
   },
   {
     "module": "meek_pipeline_launcher",
     "path": "scripts/meek_pipeline_launcher.py",
     "hash": "44c2d8693f71df0a1de0049e5d6900116c6ba3cb3fcfd544376b0323c07e642f",
     "legal_function": "launch ingestion and search pipeline",
-    "dependencies": ["meek_ingest_cli", "fts_cli"]
+    "dependencies": [
+      "meek_ingest_cli",
+      "fts_cli"
+    ]
+  },
+  {
+    "module": "meek_orchestrator",
+    "path": "scripts/meek_orchestrator.py",
+    "hash": "a186a8266eb1f51aa2bf1626553fec0bf2ba50270b5d2adc27c161370478f1cf",
+    "legal_function": "ingest and normalize evidence from rclone to SQLite with metadata",
+    "dependencies": [
+      "rclone",
+      "ocrmypdf",
+      "pdfminer.six",
+      "pandas"
+    ]
   },
   {
     "module": "graph_preview",
     "path": "scripts/graph_preview.py",
     "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
     "legal_function": "generate interactive D3 graph preview",
-    "dependencies": ["d3"]
+    "dependencies": [
+      "d3"
+    ]
   }
 ]
