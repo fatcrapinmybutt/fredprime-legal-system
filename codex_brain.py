@@ -6,6 +6,24 @@ from modules.codex_guardian import run_guardian
 from modules.codex_supreme import self_diagnostic
 
 MANIFEST = "codex_manifest.json"
+BANNED_PATTERNS = [
+    "TODO",
+    "WIP",
+    "temp_var",
+    "placeholder",
+    "eval(",
+    "exec(",
+]
+
+
+def hard_coded_guardian() -> None:
+    for path in Path(".").rglob("*.py"):
+        if path.match("modules/codex_guardian.py"):
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for pat in BANNED_PATTERNS:
+            if pat in text:
+                raise ValueError(f"Banned pattern '{pat}' found in {path}")
 
 
 def hash_file(path: Path) -> str:
@@ -23,6 +41,7 @@ def update_manifest():
 
 
 def main() -> None:
+    hard_coded_guardian()
     run_guardian()
     update_manifest()
     self_diagnostic()

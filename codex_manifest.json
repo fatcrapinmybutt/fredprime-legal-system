@@ -19,5 +19,12 @@
     "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
     "legal_function": "generate interactive D3 graph preview",
     "dependencies": ["d3"]
+  },
+  {
+    "module": "codex_brain",
+    "path": "codex_brain.py",
+    "hash": "71639805b6bb14c80e02ec8435fe880a5da23866eea29974a42d6f3bf66640a2",
+    "legal_function": "enforce repository policy and manage manifest",
+    "dependencies": ["modules.codex_guardian", "modules.codex_supreme"]
   }
 ]
