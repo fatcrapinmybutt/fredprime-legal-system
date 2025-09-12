@@ -33,15 +33,15 @@ def log_patch(patch, target, backup, status):
         "target": target,
         "backup": backup,
         "status": status,
-        "timestamp": datetime.datetime.now().isoformat()
+        "timestamp": datetime.datetime.now().isoformat(),
     }
     if os.path.exists(PATCH_HISTORY):
-        with open(PATCH_HISTORY, 'r') as f:
+        with open(PATCH_HISTORY, "r") as f:
             history = json.load(f)
     else:
         history = []
     history.append(entry)
-    with open(PATCH_HISTORY, 'w') as f:
+    with open(PATCH_HISTORY, "w") as f:
         json.dump(history, f, indent=2)
 
 
