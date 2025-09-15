@@ -1,4 +1,5 @@
 # --- Core Document/Exhibit Processing ---
+PyMuPDF>=1.23.8             # Fast PDF text and layout extraction
 PyPDF2>=3.0.1                # Reliable PDF extraction, annotations, bookmarks
 python-docx>=1.1.0           # Court/affidavit DOCX gen, form overlays
 pillow>=10.2.0               # Imaging, evidence prep, screen capture, redaction
@@ -16,6 +17,8 @@ rich>=13.7.1                 # CLI logging, progress bars, pretty errors
 
 # --- AI/NLP Integration (Optional for AI/LLM support) ---
 openai>=1.13.3               # If integrating LLM queries or semantic search
+anthropic>=0.7.8           # Anthropic Claude API client
+faster-whisper>=1.0.3       # Efficient Whisper transcription
 sentence-transformers>=2.7.0 # Exhibit similarity search, AI timelines
 
 # --- Database/Search ---
