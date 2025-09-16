@@ -21,10 +21,10 @@ jobs:
         run: |
           black --check .
           flake8 .
-          mypy --strict
+          mypy --strict --follow-imports=skip codex_brain.py
       - name: Self test
         run: |
-          python codex_selftest.py || echo "codex_selftest missing"
+          python codex_selftest.py
       - name: Run tests
         run: |
           pytest

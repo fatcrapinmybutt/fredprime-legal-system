@@ -107,7 +107,7 @@ body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-s
 <div id='toolbar'>
   <strong>Evidence Graph</strong>
   <span class='badge' id='counts'></span>
-  <input id='q' placeholder='filter (case no, email, doc_type...)' style='flex:1; padding:6px 8px; border:1px solid #ddd; border-radius:8px'/>
+  <input id='q' title='filter (case no, email, doc_type...)' style='flex:1; padding:6px 8px; border:1px solid #ddd; border-radius:8px'/>
   <button id='reset'>Reset</button>
   <button id='export'>Export PNG</button>
 </div>

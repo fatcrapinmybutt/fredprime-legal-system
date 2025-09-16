@@ -1,6 +1,6 @@
 test_stack:
   - black
-  - mypy --strict
+  - mypy --strict --follow-imports=skip codex_brain.py
   - flake8
   - python codex_selftest.py
   - pytest

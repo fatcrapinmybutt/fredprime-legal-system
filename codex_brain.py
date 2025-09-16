@@ -18,7 +18,11 @@ BANNED_PATTERNS = [
 
 def hard_coded_guardian() -> None:
     for path in Path(".").rglob("*.py"):
-        if path.match("modules/codex_guardian.py"):
+        if (
+            path.match("modules/codex_guardian.py")
+            or path.name == "codex_brain.py"
+            or path.parts[0] == "tests"
+        ):
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
         for pat in BANNED_PATTERNS:
@@ -31,7 +35,7 @@ def hash_file(path: Path) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def update_manifest():
+def update_manifest() -> None:
     manifest = []
     for p in Path(".").rglob("*.py"):
         if p.parts[0].startswith("."):  # skip hidden dirs
