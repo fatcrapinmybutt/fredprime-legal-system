@@ -1,4 +1,3 @@
-
 import os
 import openai
 import json
@@ -19,7 +18,7 @@ AHIS, JRAE, WTNC, TFHM, MFAG, VeilPiercer, etc.). Data mounts:
 • /mnt/data/Z_drive       (Z:\\ Code Keeper & doc ingestion)
 GUI.exe litigation command center online. Use Michigan Court Rules (MCR),
 Michigan Compiled Laws (MCL), and Benchbook authority. Enforce
-no-placeholder, final, court-ready output. Triple-verify all citations.
+final, court-ready output with no blank fields. Triple-verify all citations.
 Output must be a base64-encoded `.docx` in JSON.
 """
 
@@ -41,7 +40,7 @@ Requirements:
     "filename": "Motion_to_Strike_Lease.docx",
     "content_base64": "<BASE64-ENCODED DOCX>"
   }
-Ensure the `.docx` is MiFile-ready and contains no placeholders.
+Ensure the `.docx` is MiFile-ready and contains no blank fields.
 """
 
 # 4. Call the GPT-4 Turbo (gpt-4o) model to generate the document
@@ -49,7 +48,7 @@ response = openai.ChatCompletion.create(
     model="gpt-4o",
     messages=[
         {"role": "system", "content": system_prompt},
-        {"role": "user",   "content": user_prompt},
+        {"role": "user", "content": user_prompt},
     ],
     temperature=0.0,
     max_tokens=20000,
