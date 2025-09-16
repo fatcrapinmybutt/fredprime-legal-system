@@ -19,5 +19,12 @@
     "hash": "ee95d6ebcc077fe2d00a41dd30ab2ac3ce76261aac025ceb486e7343b55e79f4",
     "legal_function": "generate interactive D3 graph preview",
     "dependencies": ["d3"]
+  },
+  {
+    "module": "litigation_os_cycle",
+    "path": "bundles/omega4_gitbash/litigation_os_cycle.py",
+    "hash": "42a3fca04676c31f5bf093bf2a99012fd44be8d70e2302265aadd955317c7fed",
+    "legal_function": "persist litigation graph nodes and edges for reuse",
+    "dependencies": []
   }
 ]
