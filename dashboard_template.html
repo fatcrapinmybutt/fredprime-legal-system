@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Litigation Intelligence Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: #f7f7fb;
+            --card: #ffffff;
+            --border: #d9dce3;
+            --text: #1f2430;
+            --muted: #5f6c7b;
+            --accent: #2d5ef7;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Inter", "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 32px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .tabs {
+            display: inline-flex;
+            border-radius: 999px;
+            background: rgba(45, 94, 247, 0.08);
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--muted);
+            background: transparent;
+        }
+
+        .tab.active {
+            background: var(--card);
+            color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 16px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead th {
+            text-align: left;
+            padding-bottom: 12px;
+            color: var(--muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr + tr {
+            border-top: 1px solid var(--border);
+        }
+
+        td {
+            padding: 12px 0;
+            vertical-align: top;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(45, 94, 247, 0.12);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.02em;
+        }
+
+        .filename {
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 24px 18px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tabs {
+                width: 100%;
+            }
+
+            .tab {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1>Litigation Intelligence Engine</h1>
+        <p style="margin: 8px 0 0; color: var(--muted);">Live exhibits, real-time trigger detection, court-ready.</p>
+    </div>
+    <nav class="tabs" aria-label="View selector">
+        <span class="tab active">Overview</span>
+        <span class="tab">Event Timeline</span>
+    </nav>
+</header>
+
+<section class="grid">
+    <article class="card" aria-labelledby="exhibit-overview">
+        <h2 id="exhibit-overview">Exhibit Overview</h2>
+        <table>
+            <thead>
+            <tr>
+                <th scope="col">filename</th>
+                <th scope="col">detected_triggers</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="filename">custody_order_may.docx</td>
+                <td class="badge-group">
+                    <span class="badge">Custody</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">visitation_arrangement.pdf</td>
+                <td class="badge-group">
+                    <span class="badge">Custody</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">eviction_notice_january.pdf</td>
+                <td class="badge-group">
+                    <span class="badge">Housing</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">divorce_petition_2022.docx</td>
+                <td class="badge-group">
+                    <span class="badge">Custody</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">billing_fraud_report.txt</td>
+                <td class="badge-group">
+                    <span class="badge">Fraud</span>
+                    <span class="badge">Billing Fraud</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">harassment_complaint.docx</td>
+                <td class="badge-group">
+                    <span class="badge">Harassment</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">restraining_order_june.docx</td>
+                <td class="badge-group">
+                    <span class="badge">Custody</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="filename">contempt_motion.docx</td>
+                <td class="badge-group">
+                    <span class="badge">Custody</span>
+                    <span class="badge">Restraining Order</span>
+                    <span class="badge">Abuse</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </article>
+
+    <article class="card" aria-labelledby="triggers-fired">
+        <h2 id="triggers-fired">Triggers Fired</h2>
+        <table>
+            <thead>
+            <tr>
+                <th scope="col">file</th>
+                <th scope="col">trigger</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="filename">custody_order_may.docx</td>
+                <td>Custody</td>
+            </tr>
+            <tr>
+                <td class="filename">visitation_arrangement.pdf</td>
+                <td>Custody</td>
+            </tr>
+            <tr>
+                <td class="filename">eviction_notice_january.pdf</td>
+                <td>Eviction</td>
+            </tr>
+            <tr>
+                <td class="filename">divorce_petition_2022.docx</td>
+                <td>Custody</td>
+            </tr>
+            <tr>
+                <td class="filename">billing_fraud_report.txt</td>
+                <td>Fraud; Billing Fraud</td>
+            </tr>
+            <tr>
+                <td class="filename">lease_violation_letter.docx</td>
+                <td>Eviction</td>
+            </tr>
+            <tr>
+                <td class="filename">harassment_complaint.docx</td>
+                <td>Harassment</td>
+            </tr>
+            </tbody>
+        </table>
+    </article>
+</section>
+</body>
+</html>
