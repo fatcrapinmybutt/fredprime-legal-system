@@ -272,14 +272,15 @@ def launch_gui():
     tk.Label(window, text="MBP Litigation OS", font=("Helvetica", 18, "bold")).pack(
         pady=8
     )
-    tk.Button(
-        window, text="Scan F:/ + D:/", command=scan_drives, width=35
-    ).pack(pady=3)
+    tk.Button(window, text="Scan F:/ + D:/", command=scan_drives, width=35).pack(pady=3)
     tk.Button(
         window, text="Run Patch Manager", command=run_patch_manager, width=35
     ).pack(pady=3)
     tk.Button(
-        window, text="Run Compliance Scan", command=scan_manifest_for_red_flags, width=35
+        window,
+        text="Run Compliance Scan",
+        command=scan_manifest_for_red_flags,
+        width=35,
     ).pack(pady=3)
     tk.Button(
         window,
@@ -287,17 +288,20 @@ def launch_gui():
         command=generate_foia_request,
         width=35,
     ).pack(pady=3)
-    tk.Button(
-        window, text="Export Data", command=export_codex_data, width=25
-    ).pack(pady=2)
-    tk.Button(
-        window, text="Import Data", command=import_codex_data, width=25
-    ).pack(pady=2)
+    tk.Button(window, text="Export Data", command=export_codex_data, width=25).pack(
+        pady=2
+    )
+    tk.Button(window, text="Import Data", command=import_codex_data, width=25).pack(
+        pady=2
+    )
     tk.Button(
         window, text="Help: Motions", command=lambda: show_help("motion"), width=20
     ).pack(pady=1)
     tk.Button(
-        window, text="Help: Affidavits", command=lambda: show_help("affidavit"), width=20
+        window,
+        text="Help: Affidavits",
+        command=lambda: show_help("affidavit"),
+        width=20,
     ).pack(pady=1)
     tk.Button(
         window, text="Help: Canons", command=lambda: show_help("canon"), width=20

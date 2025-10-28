@@ -1,4 +1,3 @@
-
 import os
 import openai
 import json
@@ -49,7 +48,7 @@ response = openai.ChatCompletion.create(
     model="gpt-4o",
     messages=[
         {"role": "system", "content": system_prompt},
-        {"role": "user",   "content": user_prompt},
+        {"role": "user", "content": user_prompt},
     ],
     temperature=0.0,
     max_tokens=20000,

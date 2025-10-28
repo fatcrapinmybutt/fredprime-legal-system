@@ -36,14 +36,17 @@ MODULES = {
 DEPENDENCIES = ["PowerShell 5+", "Git (if pushing back)", "Windows OS"]
 EXEC_COMMAND = "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1"
 
+
 def safe_mkdir(path: Path):
     """Create a directory if it doesn't exist."""
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
+
 def sha256_obj(obj):
     """Hash a Python object for provenance."""
     return hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()
+
 
 def validate_paths(paths):
     """Check if critical paths exist."""
@@ -52,6 +55,7 @@ def validate_paths(paths):
         if not p.exists():
             missing.append(str(p))
     return missing
+
 
 def build_systemdef():
     # Ensure output/log directories exist
@@ -85,7 +89,9 @@ def build_systemdef():
     litigation_system_definition["validation"] = validation
 
     # Add a hash for provenance
-    litigation_system_definition["config_hash"] = sha256_obj(litigation_system_definition)
+    litigation_system_definition["config_hash"] = sha256_obj(
+        litigation_system_definition
+    )
 
     # Audit metadata
     litigation_system_definition["audit"] = {
@@ -94,6 +100,7 @@ def build_systemdef():
     }
 
     return litigation_system_definition
+
 
 def write_systemdef_file(systemdef: dict, path: Path):
     try:
@@ -105,6 +112,7 @@ def write_systemdef_file(systemdef: dict, path: Path):
         logging.basicConfig(filename="systemdef_build_errors.log", level=logging.ERROR)
         logging.error(f"Failed to write system definition: {e}")
         print(f"❌ Failed to write system definition: {e}")
+
 
 if __name__ == "__main__":
     systemdef = build_systemdef()
