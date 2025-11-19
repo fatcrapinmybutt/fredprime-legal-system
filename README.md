@@ -6,17 +6,10 @@ readme_content = """
 
 This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
 
----
-
 ## ✅ What This System Does
 
-- 🔖 Auto-labels exhibits (Exhibit A–Z)
-- 🔗 Links motions to matching exhibits
-- 🧾 Validates MCR 1.109(D)(3) signature block compliance
-- 📅 Builds parenting time violation matrix from AppClose logs (Exhibit Y)
-- 🛑 Tracks false police reports and PPO misuse (Exhibit S)
-- ⚖️ Logs judicial irregularities (Exhibit U)
+## 🗂 Structure
 
 ---
 
-## 🗂 Structure
+Developer note: MCP / CONTEXT7 key setup information and a Makefile helper are documented in `docs/README_MCP.md` and `docs/MAKEFILE_USAGE.md`.

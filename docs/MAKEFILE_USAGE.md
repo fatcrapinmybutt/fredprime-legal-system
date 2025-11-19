@@ -1,5 +1,4 @@
-Makefile helper: CONTEXT7 key bootstrap
-=====================================
+# Makefile helper: CONTEXT7 key bootstrap
 
 This short document explains the `tools/context7-setup` Makefile target and the `tools/bootstrap_context7_key.sh` helper.
 
