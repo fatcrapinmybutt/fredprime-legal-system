@@ -34,7 +34,6 @@ FOIA_discovery_request.txt
 *.bak
 *.tmp
 *.swp
-/tests/
 .DS_Store
 Thumbs.db
 
