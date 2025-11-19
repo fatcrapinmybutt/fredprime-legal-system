@@ -7,6 +7,9 @@ from warboard.ppo_warboard import build_ppo_warboard
 from warboard.custody_interference_engine import build_custody_warboard
 from scheduling.scheduler import build_schedule
 from gui.modules.entity_suppression_feed import load_events
+from agents import menu as agents_menu
+import threading
+import importlib
 
 
 def launch_dashboard():
@@ -39,6 +42,63 @@ def launch_dashboard():
     schedule_text.pack(fill='both', expand=True)
     suppression_text = tk.Text(suppression_tab)
     suppression_text.pack(fill='both', expand=True)
+    # Agents tab: list available agents and allow running their sample main()
+    agents_tab = ttk.Frame(notebook)
+    notebook.add(agents_tab, text='🤖 Agents')
+
+    agents_listbox = tk.Listbox(agents_tab, height=12)
+    agents_listbox.pack(fill='both', expand=False, padx=8, pady=8)
+    agent_desc = tk.Text(agents_tab, height=6)
+    agent_desc.pack(fill='both', expand=False, padx=8, pady=4)
+
+    def load_agents_into_list():
+        items = agents_menu.get_menu_items(root=None)
+        agents_listbox.delete(0, tk.END)
+        agents_listbox._items = items
+        for it in items:
+            agents_listbox.insert(tk.END, f"{it['id']} - {it['name']}")
+
+    def on_agent_select(evt=None):
+        sel = agents_listbox.curselection()
+        if not sel:
+            return
+        it = agents_listbox._items[sel[0]]
+        agent_desc.delete('1.0', tk.END)
+        agent_desc.insert(tk.END, f"{it.get('description','')}\nTopics: {it.get('topics','')}\nPath: {it.get('path','')}")
+
+    def run_selected_agent():
+        sel = agents_listbox.curselection()
+        if not sel:
+            return
+        it = agents_listbox._items[sel[0]]
+        # attempt to import the agent module and call main() in a background thread
+        def _run():
+            try:
+                mod_path = Path(it.get('path')) / 'agent_core.py'
+                # derive module importable name from path if possible
+                # fallback: execute file as script
+                try:
+                    spec = importlib.util.spec_from_file_location(it['id'], str(mod_path))
+                    mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(mod)
+                    if hasattr(mod, 'main'):
+                        mod.main()
+                    elif hasattr(mod, 'run'):
+                        mod.run()
+                except Exception:
+                    # last resort: exec file
+                    with open(str(mod_path)) as f:
+                        code = f.read()
+                    exec(code, {})
+            except Exception as e:
+                print('Agent run error:', e)
+
+        threading.Thread(target=_run, daemon=True).start()
+
+    agents_listbox.bind('<<ListboxSelect>>', on_agent_select)
+    ttk.Button(agents_tab, text='Refresh Agents', command=load_agents_into_list).pack(pady=4)
+    ttk.Button(agents_tab, text='Run Selected Agent', command=run_selected_agent).pack(pady=4)
+    load_agents_into_list()
 
     def refresh_warboard():
         deploy_supra_warboard()
