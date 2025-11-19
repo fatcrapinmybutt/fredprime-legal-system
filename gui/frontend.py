@@ -10,6 +10,9 @@ from gui.modules.entity_suppression_feed import load_events
 from agents import menu as agents_menu
 import threading
 import importlib
+import subprocess
+import sys
+from pathlib import Path
 
 
 def launch_dashboard():
@@ -71,29 +74,23 @@ def launch_dashboard():
         if not sel:
             return
         it = agents_listbox._items[sel[0]]
-        # attempt to import the agent module and call main() in a background thread
-        def _run():
+        # run the agent script in a subprocess for isolation
+        def _run_subproc():
             try:
                 mod_path = Path(it.get('path')) / 'agent_core.py'
-                # derive module importable name from path if possible
-                # fallback: execute file as script
-                try:
-                    spec = importlib.util.spec_from_file_location(it['id'], str(mod_path))
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
-                    if hasattr(mod, 'main'):
-                        mod.main()
-                    elif hasattr(mod, 'run'):
-                        mod.run()
-                except Exception:
-                    # last resort: exec file
-                    with open(str(mod_path)) as f:
-                        code = f.read()
-                    exec(code, {})
+                if not mod_path.exists():
+                    print(f"Agent file not found: {mod_path}")
+                    return
+                # Use the same Python interpreter used by the GUI
+                proc = subprocess.run([sys.executable, str(mod_path)], capture_output=True, text=True, timeout=60)
+                if proc.stdout:
+                    print(f"[agent stdout] {proc.stdout}")
+                if proc.stderr:
+                    print(f"[agent stderr] {proc.stderr}")
             except Exception as e:
-                print('Agent run error:', e)
+                print('Agent subprocess error:', e)
 
-        threading.Thread(target=_run, daemon=True).start()
+        threading.Thread(target=_run_subproc, daemon=True).start()
 
     agents_listbox.bind('<<ListboxSelect>>', on_agent_select)
     ttk.Button(agents_tab, text='Refresh Agents', command=load_agents_into_list).pack(pady=4)

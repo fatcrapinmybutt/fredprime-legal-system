@@ -47,6 +47,21 @@ RULES = {
         "summary": "Procedure for bringing or responding to motions for summary disposition (analogous to summary judgment in some contexts).",
         "source": "https://courts.michigan.gov",
     },
+    "MCR 2.602": {
+        "title": "Service of Process by Publication",
+        "summary": "Rules for substituted service and publication where personal service cannot be made.",
+        "source": "https://courts.michigan.gov",
+    },
+    "MCR 3.203": {
+        "title": "Child Custody and Parenting Time",
+        "summary": "Procedural provisions for domestic relations pleadings and custody-related motions.",
+        "source": "https://courts.michigan.gov",
+    },
+    "MRE 702": {
+        "title": "Testimony by Expert Witnesses",
+        "summary": "Standards for admissibility of expert testimony based on specialized knowledge, skill, experience, training, or education.",
+        "source": "https://courts.michigan.gov",
+    },
 }
 
 
