@@ -17,6 +17,11 @@ RULES = {
         "summary": "Requirements and procedures to commence a civil action in Michigan circuit court.",
         "source": "https://courts.michigan.gov",
     },
+    "MCR 2.104": {
+        "title": "Time and Place of Filing",
+        "summary": "Procedural rules about filing and docketing civil complaints and related documents.",
+        "source": "https://courts.michigan.gov",
+    },
     "MRE 401": {
         "title": "Definition of Relevant Evidence",
         "summary": "Evidence having any tendency to make a fact more or less probable than it would be without the evidence.",
@@ -30,6 +35,16 @@ RULES = {
     "MCR 7.203": {
         "title": "Briefs and Appendices in Appellate Practice",
         "summary": "Standards and requirements for briefs and appendices in Michigan appellate procedure.",
+        "source": "https://courts.michigan.gov",
+    },
+    "MCL 600.5805": {
+        "title": "Actions to Recover Real Property; Statute of Limitations (example)",
+        "summary": "Commonly-cited statute in property actions; include for reference and linking to statutory text when needed.",
+        "source": "https://legislature.mi.gov",
+    },
+    "MCR 2.116": {
+        "title": "Summary Disposition",
+        "summary": "Procedure for bringing or responding to motions for summary disposition (analogous to summary judgment in some contexts).",
         "source": "https://courts.michigan.gov",
     },
 }

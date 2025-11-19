@@ -29,6 +29,7 @@ pdf2image>=1.17.0            # Convert PDF pages to images for OCR
 # --- Testing/Dev ---
 pytest>=8.2.0                # Unit tests for CLI, microservices, evidence intake
 requests>=2.31.0             # FastAPI/CLI API and network access
+PyYAML>=6.0                    # YAML parsing for agent configs
 
 # --- [Platform Specific] Windows Imaging ---
 pywin32; platform_system == "Windows"  # Native file dialogs, evidence screenshot

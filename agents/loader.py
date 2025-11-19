@@ -11,6 +11,15 @@ dependencies.
 import os
 from pathlib import Path
 
+# Prefer PyYAML for config parsing if available; otherwise fall back to a
+# small builtin parser used earlier. This lets callers use richer YAML when
+# desired without hard dependency.
+try:
+    import yaml  # type: ignore
+    _HAS_YAML = True
+except Exception:
+    _HAS_YAML = False
+
 
 def read_simple_yaml(path: Path):
     """Very small YAML-like reader for our simple `config.yaml` files.
@@ -45,7 +54,13 @@ def discover_agents(root: str = None):
             continue
         cfg = entry / "config.yaml"
         if cfg.exists():
-            meta = read_simple_yaml(cfg)
+            if _HAS_YAML:
+                try:
+                    meta = yaml.safe_load(cfg.read_text(encoding="utf-8")) or {}
+                except Exception:
+                    meta = read_simple_yaml(cfg)
+            else:
+                meta = read_simple_yaml(cfg)
             agent_id = meta.get("id") or entry.name
             results[agent_id] = {"path": str(entry.resolve()), "config": meta}
     return results
