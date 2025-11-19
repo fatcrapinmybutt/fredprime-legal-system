@@ -25,3 +25,7 @@ Environment variables
 - `FREDPRIME_BASE` — default base path if `--base` not provided
 - `FREDPRIME_JSON` — default JSON output path if `--out` not provided
 - `FREDPRIME_SCHEMA` — override the schema path for validation
+
+New option
+
+- `--no-validate` — skip JSON Schema validation before writing the output (useful for fast local runs)

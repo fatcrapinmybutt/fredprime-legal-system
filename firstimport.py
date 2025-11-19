@@ -1,13 +1,3 @@
-"""Build a JSON system definition for FRED PRIME.
-
-This script is intentionally small and cross-platform. It:
-- builds a JSON object describing the system
-- writes the JSON to a configurable output path
-- provides a CLI to override defaults
-
-Usage: `python firstimport.py --out /path/to/out.json` or set `FREDPRIME_BASE` env var.
-"""
-
 import argparse
 import json
 import os
@@ -17,6 +7,13 @@ import hashlib
 import platform
 import getpass
 import logging
+
+# Optional: try to import jsonschema for validation (not required)
+try:
+    import jsonschema
+    from jsonschema import validate as _jsonschema_validate
+except Exception:
+    jsonschema = None
 
 # === CONFIGURATION (defaults) ===
 SYSTEM_NAME = "FRED PRIME Litigation Deployment Engine"
@@ -54,7 +51,6 @@ def safe_mkdir(path: Path):
     try:
         path.mkdir(parents=True, exist_ok=True)
     except Exception:
-        # If path is a file or permission problem, let caller handle it
         pass
 
 
@@ -75,10 +71,13 @@ def validate_paths(paths):
     return missing
 
 
-def build_systemdef(base_path: Path, output_path: Path, log_path: Path):
-    # Ensure output/log directories exist
-    safe_mkdir(output_path)
-    safe_mkdir(log_path)
+def build_systemdef(base_path: Path = None, output_path: Path = None, log_path: Path = None):
+    base = Path(base_path) if base_path is not None else DEFAULT_BASE
+    output = Path(output_path) if output_path is not None else DEFAULT_OUTPUT
+    log = Path(log_path) if log_path is not None else DEFAULT_LOG
+
+    safe_mkdir(output)
+    safe_mkdir(log)
 
     litigation_system_definition = {
         "system": SYSTEM_NAME,
@@ -86,9 +85,9 @@ def build_systemdef(base_path: Path, output_path: Path, log_path: Path):
         "generated": datetime.now().isoformat(),
         "os": platform.system(),
         "user": getpass.getuser(),
-        "base_path": str(base_path),
-        "output_path": str(output_path),
-        "log_path": str(log_path),
+        "base_path": str(base),
+        "output_path": str(output),
+        "log_path": str(log),
         "config": CONFIG,
         "modules": MODULES,
         "execution_command": EXEC_COMMAND,
@@ -97,8 +96,7 @@ def build_systemdef(base_path: Path, output_path: Path, log_path: Path):
         "dependencies": DEPENDENCIES,
     }
 
-    # Validation block
-    critical_paths = [base_path, output_path, log_path]
+    critical_paths = [base, output, log]
     missing_paths = validate_paths(critical_paths)
     validation = {
         "missing_paths": missing_paths,
@@ -106,10 +104,8 @@ def build_systemdef(base_path: Path, output_path: Path, log_path: Path):
     }
     litigation_system_definition["validation"] = validation
 
-    # Add a hash for provenance
     litigation_system_definition["config_hash"] = sha256_obj(litigation_system_definition)
 
-    # Audit metadata
     litigation_system_definition["audit"] = {
         "generator": "firstimport.py",
         "timestamp": datetime.now().isoformat(),
@@ -118,9 +114,32 @@ def build_systemdef(base_path: Path, output_path: Path, log_path: Path):
     return litigation_system_definition
 
 
-def write_systemdef_file(systemdef: dict, path: Path):
+def validate_systemdef(systemdef: dict, schema_path: Path):
+    """Validate the system definition against a JSON Schema file.
+
+    Raises jsonschema.ValidationError on failure.
+    """
+    if jsonschema is None:
+        raise RuntimeError("jsonschema is not installed; cannot validate system definition")
+    with open(schema_path, "r", encoding="utf-8") as fh:
+        schema = json.load(fh)
+    _jsonschema_validate(instance=systemdef, schema=schema)
+
+
+def write_systemdef_file(systemdef: dict, path: Path, validate: bool = True):
     try:
         safe_mkdir(path.parent)
+
+        if validate:
+            schema_path = Path(os.environ.get("FREDPRIME_SCHEMA", Path(systemdef.get("base_path", ".")) / "schema" / "systemdef.schema.json"))
+            if schema_path.exists() and jsonschema is not None:
+                try:
+                    validate_systemdef(systemdef, schema_path)
+                except Exception as ve:
+                    logging.basicConfig(filename=str(path.parent / "systemdef_build_errors.log"), level=logging.ERROR)
+                    logging.error(f"Schema validation failed: {ve}")
+                    raise
+
         with open(path, "w", encoding="utf-8") as f:
             json.dump(systemdef, f, indent=4)
         print(f"✅ System definition written to: {path}")
@@ -137,6 +156,7 @@ def _parse_args():
     p.add_argument("--base", type=Path, default=DEFAULT_BASE, help="Base path for the project")
     p.add_argument("--out", type=Path, default=DEFAULT_JSON, help="Output JSON file path")
     p.add_argument("--version", action="store_true", help="Print version and exit")
+    p.add_argument("--no-validate", action="store_true", help="Skip JSON Schema validation before writing output")
     return p.parse_args()
 
 
@@ -151,7 +171,7 @@ def main():
     log = base / "logs"
 
     systemdef = build_systemdef(base, output.parent, log)
-    write_systemdef_file(systemdef, output)
+    write_systemdef_file(systemdef, output, validate=not getattr(args, "no_validate", False))
 
 
 if __name__ == "__main__":

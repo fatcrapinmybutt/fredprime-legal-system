@@ -1,7 +1,7 @@
 {
     "system": "FRED PRIME Litigation Deployment Engine",
     "version": "v2025.07.20",
-    "generated": "2025-11-19T03:20:13.493849",
+    "generated": "2025-11-19T03:45:58.925393",
     "os": "Linux",
     "user": "codespace",
     "base_path": "/workspaces/fredprime-legal-system",
@@ -35,9 +35,9 @@
         "missing_paths": [],
         "all_paths_exist": true
     },
-    "config_hash": "0fce9dce38abc5195f885c2903c5418701215ce5ff3a7047feb898d697ecc424",
+    "config_hash": "ce64bfcd57260d6b90108b87943b1eb3277ccac95b4f9d19722fdf7ab69cad83",
     "audit": {
         "generator": "firstimport.py",
-        "timestamp": "2025-11-19T03:20:13.494044"
+        "timestamp": "2025-11-19T03:45:58.925537"
     }
 }
