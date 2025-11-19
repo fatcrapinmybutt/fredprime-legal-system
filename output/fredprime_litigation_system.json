@@ -1,0 +1,43 @@
+{
+    "system": "FRED PRIME Litigation Deployment Engine",
+    "version": "v2025.07.20",
+    "generated": "2025-11-19T03:20:13.493849",
+    "os": "Linux",
+    "user": "codespace",
+    "base_path": "/workspaces/fredprime-legal-system",
+    "output_path": "/workspaces/fredprime-legal-system/output",
+    "log_path": "/workspaces/fredprime-legal-system/logs",
+    "config": {
+        "exhibit_labeling": true,
+        "motion_linking": true,
+        "signature_validation": true,
+        "judicial_audit": true,
+        "parenting_time_matrix": true,
+        "conspiracy_tracker": true
+    },
+    "modules": {
+        "exhibit_labeler": "Renames evidence files A\u2013Z and builds Exhibit_Index.md",
+        "motion_exhibit_linker": "Scans motions, finds exhibit references, builds Motion_to_Exhibit_Map.md",
+        "signature_validator": "Checks for MCR 1.109(D)(3) compliance",
+        "judicial_conduct_tracker": "Builds Exhibit U with judge behavior patterns",
+        "appclose_matrix": "Parses AppClose logs to generate Exhibit Y (violations matrix)",
+        "conspiracy_log": "Parses police reports and logs false allegations into Exhibit S"
+    },
+    "execution_command": "powershell -ExecutionPolicy Bypass -File fred_deploy.ps1",
+    "offline_capable": true,
+    "token_usage": "Zero (local execution only)",
+    "dependencies": [
+        "PowerShell 5+",
+        "Git (if pushing back)",
+        "Windows OS"
+    ],
+    "validation": {
+        "missing_paths": [],
+        "all_paths_exist": true
+    },
+    "config_hash": "0fce9dce38abc5195f885c2903c5418701215ce5ff3a7047feb898d697ecc424",
+    "audit": {
+        "generator": "firstimport.py",
+        "timestamp": "2025-11-19T03:20:13.494044"
+    }
+}
