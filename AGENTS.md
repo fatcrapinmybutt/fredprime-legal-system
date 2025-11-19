@@ -180,3 +180,65 @@ FRED_SUPREME_LITIGATION_OS/
     ├── codex_patch_manager.py
     ├── MBP_Omnia_Engine.py
     └── SUPREME_AUTO_EXPAND.py
+
+├── agents/
+│   ├── agent_001/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_002/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_003/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_004/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_005/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_006/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_007/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_008/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_009/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_010/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_011/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_012/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_013/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_014/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_015/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_016/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_017/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_018/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   ├── agent_019/
+│   │   ├── agent_core.py
+│   │   └── config.yaml
+│   └── agent_020/
+│       ├── agent_core.py
+│       └── config.yaml
