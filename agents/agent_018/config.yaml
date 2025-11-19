@@ -1,4 +1,8 @@
 name: agent_018
 id: agent_018
-description: "Auto-generated scaffold for agent_018"
-version: 0.1
+description: "Michigan court specialist scaffold (civil procedure, evidence, filings)"
+version: 0.2
+jurisdiction: Michigan
+role: Michigan Court Specialist
+topics: "civil procedure, evidence, filings, appellate"
+skills: "summarize-rule,search-rules,briefing-guidance"
