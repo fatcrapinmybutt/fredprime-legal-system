@@ -12,6 +12,7 @@ token.json
 *.secret
 .env
 .env.*
+openAIkey.py
 
 # System and warboard caches
 *.db
