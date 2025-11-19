@@ -82,7 +82,7 @@ jobs:
         path: output/supreme_audit.json
         if-no-files-found: ignore
 
-    - name: 🕵️‍♂️ Post-run: Show last 40 lines of main log
+    - name: 🕵️‍♂️ Post-run
       if: always()
       run: |
         tail -n 40 output/allinone_run.log || echo "Log not found"
