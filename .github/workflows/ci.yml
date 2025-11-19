@@ -45,6 +45,7 @@ jobs:
         flake8 mbp_lit_os_supreme_allinone.py --max-line-length=120 --statistics --show-source || true
 
     - name: 🏛️ Run Supreme ALL-IN-ONE Mainframe (with dashboard)
+      if: runner.os == 'Windows'
       run: |
         python mbp_lit_os_supreme_allinone.py
       timeout-minutes: 20

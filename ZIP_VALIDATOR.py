@@ -12,6 +12,7 @@ required_files = [
     "ProofOfService/MC_304_Certificate_of_Mailing.pdf",
 ]
 
+
 def validate_zip_folder(base_path):
     missing = []
     for file in required_files:
@@ -23,6 +24,7 @@ def validate_zip_folder(base_path):
             print(f" - {m}")
     else:
         print("✅ All required files present and ready for ZIP")
+
 
 if __name__ == "__main__":
     validate_zip_folder("F:/MiFILE/STRIKE_SANCTION_CONVERT_2025_08_06")

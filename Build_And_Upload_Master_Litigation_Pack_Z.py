@@ -1,9 +1,9 @@
-
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import os
 import zipfile
 import shutil
+
 
 # === GOOGLE DRIVE SETUP ===
 def setup_drive():
@@ -11,13 +11,14 @@ def setup_drive():
     gauth.LocalWebserverAuth()  # Opens local web browser for OAuth2
     return GoogleDrive(gauth)
 
+
 # === FILE PREPARATION ===
 def prepare_files():
     files = {
         "Z:/PLAINTIFF_REBUTTAL_vOmegaPlus_FINAL_FIXED.docx": "MASTER_MOTION.docx",
         "Z:/Unified_Affirmative_Defense_and_Rebuttal_ShowCause5_6_4d8033f2.docx": "MASTER_AFFIDAVIT.docx",
         "Z:/STRIKEBACK_LINE_BY_LINE_REBUTTAL_vOMEGA.docx": "MASTER_SANCTIONS_REBUTTAL.docx",
-        "Z:/STRIKEBACK_PARAGRAPH_6_TO_30_REBUTTAL.docx": "MASTER_PARAGRAPH_REBUTTAL.docx"
+        "Z:/STRIKEBACK_PARAGRAPH_6_TO_30_REBUTTAL.docx": "MASTER_PARAGRAPH_REBUTTAL.docx",
     }
 
     output_dir = r"Z:/F_LITIGATION_OS_STAGING"
@@ -33,7 +34,7 @@ def prepare_files():
             print(f"[WARNING] Missing: {src}")
 
     # Compress files
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for file in os.listdir(output_dir):
             abs_path = os.path.join(output_dir, file)
             zf.write(abs_path, arcname=file)
@@ -41,13 +42,15 @@ def prepare_files():
 
     return zip_path
 
+
 # === GOOGLE DRIVE UPLOAD ===
 def upload_to_drive(drive, file_path):
     file_name = os.path.basename(file_path)
-    f = drive.CreateFile({'title': file_name})
+    f = drive.CreateFile({"title": file_name})
     f.SetContentFile(file_path)
     f.Upload()
     print(f"[📤] Uploaded to Google Drive: {file_name}")
+
 
 if __name__ == "__main__":
     drive = setup_drive()

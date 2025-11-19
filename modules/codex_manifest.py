@@ -20,7 +20,7 @@ def generate_manifest(modules: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, 
 
 
 def save_manifest(manifest: Dict[str, Dict[str, Any]], file_path: str) -> None:
-    with open(file_path, 'w', encoding='utf-8') as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
 

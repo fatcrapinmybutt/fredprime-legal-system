@@ -5,7 +5,9 @@ import zipfile
 from pathlib import Path
 
 
-URL = os.environ.get("FRED_STAGE2_URL", "https://example.com/FRED_STAGE2_FULL_DEPLOY.zip")
+URL = os.environ.get(
+    "FRED_STAGE2_URL", "https://example.com/FRED_STAGE2_FULL_DEPLOY.zip"
+)
 EXPECTED_SHA256 = os.environ.get(
     "FRED_STAGE2_SHA256",
     "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
