@@ -211,6 +211,11 @@ A: Yes—designed for full MCR, MCL, FOIA, and federal compliance.
 | :------------------------------------------------------------: | :-----------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
 
 ---
+## 🛠️ **Unified Build Pipeline**
+
+Each stage in the build pipeline executes through `run_step`. If a stage raises an exception, the system logs a full stack trace with `LOGGER.exception` and the pipeline exits with a non-zero status code after all stages finish.
+
+---
 ## 🔄 **Continuous Integration**
 
 The `Codex Build` workflow automatically runs on pushes or pull requests to `main` or any `codex/*` branch. It installs dependencies, lints with `black`, `mypy`, and `flake8`, and runs `pytest` whenever relevant source files change or the branch name includes keywords like `core`, `engine`, `matrix`, `echelon`, `patch`, or `hotfix`.
