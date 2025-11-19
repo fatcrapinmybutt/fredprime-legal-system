@@ -8,16 +8,40 @@ from tqdm import tqdm
 
 # Mapping of file extensions to categories
 CATEGORIES = {
-    'Documents': ['.pdf', '.doc', '.docx', '.txt', '.xls', '.xlsx', '.ppt', '.pptx', '.csv', '.odt', '.ods', '.odp'],
-    'Images': ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg'],
-    'Music': ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma'],
-    'Videos': ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv'],
-    'Archives': ['.zip', '.rar', '.7z', '.tar', '.gz', '.bz2'],
-    'Code': ['.py', '.js', '.html', '.css', '.java', '.c', '.cpp', '.cs', '.rb', '.php'],
+    "Documents": [
+        ".pdf",
+        ".doc",
+        ".docx",
+        ".txt",
+        ".xls",
+        ".xlsx",
+        ".ppt",
+        ".pptx",
+        ".csv",
+        ".odt",
+        ".ods",
+        ".odp",
+    ],
+    "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg"],
+    "Music": [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma"],
+    "Videos": [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv"],
+    "Archives": [".zip", ".rar", ".7z", ".tar", ".gz", ".bz2"],
+    "Code": [
+        ".py",
+        ".js",
+        ".html",
+        ".css",
+        ".java",
+        ".c",
+        ".cpp",
+        ".cs",
+        ".rb",
+        ".php",
+    ],
 }
 
-DEFAULT_CATEGORY = 'Other'
-ORGANIZED_FOLDER = 'Organized'
+DEFAULT_CATEGORY = "Other"
+ORGANIZED_FOLDER = "Organized"
 
 
 def get_category(file_path: Path) -> str:
@@ -58,7 +82,7 @@ def move_file(base_output: Path, file_path: Path) -> None:
 def remove_empty_dirs(base_path: Path) -> None:
     for dirpath, dirnames, filenames in os.walk(base_path, topdown=False):
         p = Path(dirpath)
-        if not list(p.glob('*')):
+        if not list(p.glob("*")):
             try:
                 p.rmdir()
                 logging.info("Removed empty directory %s", p)
@@ -67,7 +91,9 @@ def remove_empty_dirs(base_path: Path) -> None:
 
 
 def organize_drive(target_path: Path, output_path: Path | None = None) -> None:
-    base_output = output_path.resolve() if output_path else target_path / ORGANIZED_FOLDER
+    base_output = (
+        output_path.resolve() if output_path else target_path / ORGANIZED_FOLDER
+    )
     base_output.mkdir(exist_ok=True)
 
     files_to_move = []
@@ -87,16 +113,21 @@ def organize_drive(target_path: Path, output_path: Path | None = None) -> None:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Organize files on a drive")
-    parser.add_argument('path', nargs='?', default='F:/', help='Path to organize (default F:/)')
-    parser.add_argument('--log', default='organize_drive.log', help='Log file path')
-    parser.add_argument('--output', default=None, help='Optional output directory')
+    parser.add_argument(
+        "path", nargs="?", default="F:/", help="Path to organize (default F:/)"
+    )
+    parser.add_argument("--log", default="organize_drive.log", help="Log file path")
+    parser.add_argument("--output", default=None, help="Optional output directory")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    logging.basicConfig(filename=args.log, level=logging.INFO,
-                        format='%(asctime)s %(levelname)s: %(message)s')
+    logging.basicConfig(
+        filename=args.log,
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s: %(message)s",
+    )
     target_path = Path(args.path)
     if not target_path.exists():
         print(f"Path {target_path} does not exist.")
@@ -106,5 +137,5 @@ def main():
     print("Organization complete.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

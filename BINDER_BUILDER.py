@@ -9,10 +9,12 @@ exhibits = [
     ("Exhibit F", "Previous Case Orders and Lease Docs"),
 ]
 
+
 def generate_index():
     print("📘 STRIKEBACK BINDER – EXHIBIT INDEX")
     for tag, desc in exhibits:
         print(f"{tag} – {desc}")
+
 
 if __name__ == "__main__":
     generate_index()

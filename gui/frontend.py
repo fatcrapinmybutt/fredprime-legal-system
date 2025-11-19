@@ -11,11 +11,11 @@ from gui.modules.entity_suppression_feed import load_events
 
 def launch_dashboard():
     root = tk.Tk()
-    root.title('Litigation OS')
-    root.geometry('900x600')
+    root.title("Litigation OS")
+    root.geometry("900x600")
 
     notebook = ttk.Notebook(root)
-    notebook.pack(fill='both', expand=True)
+    notebook.pack(fill="both", expand=True)
 
     warboard_tab = ttk.Frame(notebook)
     ppo_tab = ttk.Frame(notebook)
@@ -23,59 +23,68 @@ def launch_dashboard():
     schedule_tab = ttk.Frame(notebook)
     suppression_tab = ttk.Frame(notebook)
 
-    notebook.add(warboard_tab, text='🗺️ Shady Oaks Warboard')
-    notebook.add(ppo_tab, text='🛡️ PPO Timeline')
-    notebook.add(custody_tab, text='👨‍👩‍👧 Custody Map')
-    notebook.add(schedule_tab, text='📆 Timeline Tracker')
-    notebook.add(suppression_tab, text='🧱 Entity Suppression')
+    notebook.add(warboard_tab, text="🗺️ Shady Oaks Warboard")
+    notebook.add(ppo_tab, text="🛡️ PPO Timeline")
+    notebook.add(custody_tab, text="👨‍👩‍👧 Custody Map")
+    notebook.add(schedule_tab, text="📆 Timeline Tracker")
+    notebook.add(suppression_tab, text="🧱 Entity Suppression")
 
     frame = HtmlFrame(warboard_tab)
-    frame.pack(fill='both', expand=True)
+    frame.pack(fill="both", expand=True)
     ppo_frame = HtmlFrame(ppo_tab)
-    ppo_frame.pack(fill='both', expand=True)
+    ppo_frame.pack(fill="both", expand=True)
     cust_frame = HtmlFrame(custody_tab)
-    cust_frame.pack(fill='both', expand=True)
+    cust_frame.pack(fill="both", expand=True)
     schedule_text = tk.Text(schedule_tab)
-    schedule_text.pack(fill='both', expand=True)
+    schedule_text.pack(fill="both", expand=True)
     suppression_text = tk.Text(suppression_tab)
-    suppression_text.pack(fill='both', expand=True)
+    suppression_text.pack(fill="both", expand=True)
 
     def refresh_warboard():
         deploy_supra_warboard()
-        with open('warboard/exports/SHADY_OAKS_WARBOARD.svg') as f:
+        with open("warboard/exports/SHADY_OAKS_WARBOARD.svg") as f:
             frame.set_content(f.read())
 
     def refresh_ppo():
         build_ppo_warboard()
-        with open('warboard/exports/PPO_WARBOARD.svg') as f:
+        with open("warboard/exports/PPO_WARBOARD.svg") as f:
             ppo_frame.set_content(f.read())
 
     def refresh_custody():
         build_custody_warboard()
-        with open('warboard/exports/CUSTODY_INTERFERENCE_MAP.svg') as f:
+        with open("warboard/exports/CUSTODY_INTERFERENCE_MAP.svg") as f:
             cust_frame.set_content(f.read())
 
     def refresh_schedule():
         build_schedule()
-        if os.path.exists('data/timeline.json'):
+        if os.path.exists("data/timeline.json"):
             import json
-            with open('data/timeline.json') as f:
+
+            with open("data/timeline.json") as f:
                 events = json.load(f)
-            schedule_text.delete('1.0', tk.END)
+            schedule_text.delete("1.0", tk.END)
             for e in events:
                 schedule_text.insert(tk.END, f"{e['date']} - {e['description']}\n")
 
     def refresh_suppression():
         events = load_events()
-        suppression_text.delete('1.0', tk.END)
+        suppression_text.delete("1.0", tk.END)
         for ev in events:
             suppression_text.insert(tk.END, f"{ev['entity']}: {ev['action']}\n")
 
-    ttk.Button(warboard_tab, text='Build Warboard', command=refresh_warboard).pack(pady=5)
-    ttk.Button(ppo_tab, text='Build PPO Warboard', command=refresh_ppo).pack(pady=5)
-    ttk.Button(custody_tab, text='Build Custody Map', command=refresh_custody).pack(pady=5)
-    ttk.Button(schedule_tab, text='Sync From File', command=refresh_schedule).pack(pady=5)
-    ttk.Button(suppression_tab, text='Refresh', command=refresh_suppression).pack(pady=5)
+    ttk.Button(warboard_tab, text="Build Warboard", command=refresh_warboard).pack(
+        pady=5
+    )
+    ttk.Button(ppo_tab, text="Build PPO Warboard", command=refresh_ppo).pack(pady=5)
+    ttk.Button(custody_tab, text="Build Custody Map", command=refresh_custody).pack(
+        pady=5
+    )
+    ttk.Button(schedule_tab, text="Sync From File", command=refresh_schedule).pack(
+        pady=5
+    )
+    ttk.Button(suppression_tab, text="Refresh", command=refresh_suppression).pack(
+        pady=5
+    )
 
     refresh_warboard()
     refresh_suppression()
@@ -83,5 +92,5 @@ def launch_dashboard():
     root.mainloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     launch_dashboard()

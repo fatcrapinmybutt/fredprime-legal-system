@@ -109,7 +109,15 @@ if __name__ == "__main__":
     os.makedirs(Path(TASK_QUEUE_PATH).parent, exist_ok=True)
     os.makedirs(Path(VIOLATION_LOG_PATH).parent, exist_ok=True)
     os.makedirs(AUTO_DOC_OUTPUT_PATH, exist_ok=True)
-    for core in ["BENCHBOOKS", "MCR", "FORMS", "CANON", "EVIDENCE", "JUDGES", "TRANSCRIPTS"]:
+    for core in [
+        "BENCHBOOKS",
+        "MCR",
+        "FORMS",
+        "CANON",
+        "EVIDENCE",
+        "JUDGES",
+        "TRANSCRIPTS",
+    ]:
         os.makedirs(f"F:/MBP_CORE/{core}", exist_ok=True)
     os.makedirs("F:/MBP_MODULES", exist_ok=True)
     os.makedirs("F:/MBP_LOGS", exist_ok=True)
