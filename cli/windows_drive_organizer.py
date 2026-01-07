@@ -265,11 +265,18 @@ class SecretScanner:
         return findings
 
 
+def sanitize_label(value: str) -> str:
+    cleaned = [ch for ch in value if ch.isalnum() or ch in {"_", "-", "."}]
+    label = "".join(cleaned) or "branch"
+    return label[:64]
+
+
 @dataclass
 class FileTask:
     source: Path
     drive_root: Path
     extension: str
+    branch: Optional[str] = None
 
 
 class EvidenceOrganizer:
@@ -295,6 +302,7 @@ class EvidenceOrganizer:
         self.sqlite_index = SQLiteIndex(self.logs_dir / "evidence.db") if args.sqlite_index else None
         self.bates_counter = max(1, int(args.bates_start))
         self._bates_lock = threading.Lock()
+        self.branch_roots = self._load_branch_roots()
         self._setup_logging()
         self.manifest_entries: List[dict] = []
         self.secret_findings: List[dict] = []
@@ -307,6 +315,7 @@ class EvidenceOrganizer:
             "errors": 0,
             "bytes_copied": 0,
             "bates_assigned": 0,
+            "branch_sources": len(self.branch_roots),
         }
 
     def _setup_logging(self) -> None:
@@ -357,19 +366,59 @@ class EvidenceOrganizer:
         if usage.free < estimated_bytes and not self.args.force:
             raise RuntimeError("Insufficient disk space. Use --force to override.")
 
+    def _load_branch_roots(self) -> Dict[str, Path]:
+        branches: Dict[str, Path] = {}
+        specs: List[str] = list(self.args.branch or [])
+        if self.args.branches_file:
+            branch_file = Path(self.args.branches_file)
+            if branch_file.exists():
+                try:
+                    payload = json.loads(branch_file.read_text(encoding="utf-8"))
+                    if isinstance(payload, dict):
+                        for key, value in payload.items():
+                            specs.append(f"{key}={value}")
+                    elif isinstance(payload, list):
+                        for entry in payload:
+                            if isinstance(entry, dict) and entry.get("label") and entry.get("path"):
+                                specs.append(f"{entry['label']}={entry['path']}")
+                except Exception as exc:
+                    logging.warning("Failed to parse branches file %s: %s", branch_file, exc)
+        for spec in specs:
+            label, path = self._parse_branch_spec(spec)
+            if not label:
+                continue
+            branches[label] = path
+        if branches:
+            logging.info("Loaded %d branch expansions", len(branches))
+        return branches
+
+    def _parse_branch_spec(self, spec: str) -> Tuple[str, Path]:
+        if "=" not in spec:
+            logging.warning("Invalid branch spec (expected label=path): %s", spec)
+            return "", Path(".")
+        label, raw_path = spec.split("=", 1)
+        label = sanitize_label(label.strip())
+        path = Path(raw_path.strip()).expanduser().resolve()
+        return label, path
+
     def discover_files(self) -> List[FileTask]:
         tasks: List[FileTask] = []
-        for drive in self.args.drives:
-            drive_path = Path(drive)
-            if not drive_path.exists():
-                logging.warning("Drive %s is unavailable", drive)
+        sources: List[Tuple[Path, Optional[str]]] = [(Path(drive), None) for drive in self.args.drives]
+        for label, path in self.branch_roots.items():
+            sources.append((Path(path), label))
+        for base_root, branch_label in sources:
+            if not base_root.exists():
+                if branch_label:
+                    logging.warning("Branch %s path %s is unavailable", branch_label, base_root)
+                else:
+                    logging.warning("Drive %s is unavailable", base_root)
                 continue
-            for root, dirs, files in os.walk(drive_path, topdown=True):
-                root_path = Path(root)
+            for root, dirs, files in os.walk(base_root, topdown=True):
+                current_root = Path(root)
                 if not self.args.include_hidden:
-                    dirs[:] = [d for d in dirs if not is_hidden(root_path / d)]
+                    dirs[:] = [d for d in dirs if not is_hidden(current_root / d)]
                 for name in files:
-                    candidate = root_path / name
+                    candidate = current_root / name
                     if not self.args.include_hidden and is_hidden(candidate):
                         continue
                     ext = candidate.suffix.lower()
@@ -381,7 +430,7 @@ class EvidenceOrganizer:
                         logging.warning("Skipping inaccessible file %s", candidate)
                         self.stats["skipped"] += 1
                         continue
-                    tasks.append(FileTask(candidate, drive_path, ext))
+                    tasks.append(FileTask(candidate, base_root, ext, branch=branch_label))
         logging.info("Discovered %d candidate files", len(tasks))
         return tasks
 
@@ -391,6 +440,9 @@ class EvidenceOrganizer:
         except ValueError:
             rel = Path(task.source.name)
         drive_label = getattr(task.drive_root, "drive", "") or task.drive_root.anchor.strip(":/\\") or task.drive_root.name
+        if task.branch:
+            branch_label = sanitize_label(task.branch)
+            return Path("BRANCHES") / branch_label / rel
         return Path(drive_label) / rel
 
     def safe_copy(self, src: Path, dest: Path) -> None:
@@ -433,6 +485,7 @@ class EvidenceOrganizer:
         record = {
             "source": str(task.source),
             "extension": task.extension,
+            "branch": task.branch or "",
             "status": "PENDING",
             "error": "",
             "size": None,
@@ -530,6 +583,7 @@ class EvidenceOrganizer:
             "source",
             "dest",
             "extension",
+            "branch",
             "status",
             "size",
             "sha256",
@@ -700,6 +754,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--sqlite-index", action="store_true", help="Persist evidence records to SQLite.")
     parser.add_argument("--secret-scan-limit", type=int, default=1024 * 1024, help="Max bytes for secret scanning per file.")
     parser.add_argument("--secret-exts", nargs="*", default=sorted(DEFAULT_SECRET_EXTENSIONS), help="Extensions to scan for secrets.")
+    parser.add_argument(
+        "--branch",
+        action="append",
+        default=[],
+        metavar="LABEL=PATH",
+        help="Additional branch roots to scan (label=absolute_path).",
+    )
+    parser.add_argument(
+        "--branches-file",
+        help="JSON file containing branch specs as {'label': 'Case', 'path': 'R:/Case'} entries or a label:path mapping.",
+    )
     parser.add_argument("--bates-prefix", default="", help="Optional Bates prefix (e.g., LIT-); numbering is zero-padded.")
     parser.add_argument("--bates-start", type=int, default=1, help="Starting number for Bates labels when prefix is provided.")
     parser.add_argument("--evidence-stamp", default="", help="Stamp label to record with each copied entry.")
