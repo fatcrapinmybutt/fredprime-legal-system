@@ -1,0 +1,39 @@
+{
+  "rulesets": [
+    {
+      "name": "Enforce Code Quality on Main",
+      "description": "Enforces code quality and testing standards on the main branch",
+      "target": "branch",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "include": ["refs/heads/main"],
+          "exclude": []
+        }
+      },
+      "rules": [
+        {
+          "type": "pull_request",
+          "parameters": {
+            "dismiss_stale_reviews_on_push": true,
+            "require_code_owner_review": false,
+            "require_last_push_approval": false,
+            "required_approving_review_count": 1
+          }
+        },
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "do_not_enforce_on_create": false,
+            "do_not_enforce_on_push": false,
+            "required_status_check_contexts": []
+          }
+        },
+        {
+          "type": "dismiss_stale_reviews_on_push"
+        }
+      ]
+    }
+  ],
+  "instructions": "To apply these rulesets via GitHub CLI with admin access:\n\ngh api --method POST repos/fatcrapinmybutt/fredprime-legal-system/rulesets -f name='Enforce Code Quality on Main' -f target='branch' -f enforcement='active' -f conditions='...' -f rules='...'\n\nOr use the GitHub Web UI: Settings > Rules and security > Rulesets"
+}
