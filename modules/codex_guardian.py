@@ -1,9 +1,13 @@
+"""Guardian enforcement routines for Codex build hygiene."""
+
+from __future__ import annotations
+
 import hashlib
 import json
-import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Any, Dict, List, cast
 
 MANIFEST_FILE = "codex_manifest.json"
 BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
@@ -25,14 +29,16 @@ def hash_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_manifest() -> list[dict]:
+def load_manifest() -> List[Dict[str, Any]]:
     if Path(MANIFEST_FILE).exists():
-        return json.loads(Path(MANIFEST_FILE).read_text())
+        return cast(
+            List[Dict[str, Any]], json.loads(Path(MANIFEST_FILE).read_text())
+        )
     return []
 
 
 def verify_commit_message(msg: str) -> None:
-    if any(k in msg for k in BANNED_KEYWORDS):
+    if any(keyword in msg for keyword in BANNED_KEYWORDS):
         raise ValueError("Commit message contains banned keyword")
     if not re.match(r"^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ", msg):
         raise ValueError("Commit message format invalid")
@@ -64,10 +70,11 @@ def verify_manifest_hashes() -> None:
             raise ValueError(f"Hash mismatch for {path}")
 
 
-def run_guardian() -> None:
+def run_guardian() -> bool:
     branch = get_current_branch()
     msg = get_last_commit_message().splitlines()[0]
-    verify_branch_name(branch)
+    high_priority = verify_branch_name(branch)
     verify_commit_message(msg)
     if Path(MANIFEST_FILE).exists():
         verify_manifest_hashes()
+    return high_priority

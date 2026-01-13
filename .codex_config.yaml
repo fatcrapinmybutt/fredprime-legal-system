@@ -1,29 +1,67 @@
-# MBP Codex Supreme Configuration
-branch_prefix: 'codex/'
-run_tests_on_changes:
-  - '**/*.py'
-  - '**/*.js'
-  - '**/*.ts'
-  - '**/*.json'
-trigger_branches:
-  - core
-  - engine
-  - matrix
-  - echelon
-  - patch
-  - hotfix
-commit_message_format: '^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] .+'
-banned_keywords:
-  - TODO
-  - WIP
-  - temp_var
-  - placeholder
-manifest: 'codex_manifest.json'
-required_folders:
-  - core
-  - modules
-  - gui
-  - cli
-  - config
-  - docs
-  - tests
+{
+  "enforcement": {
+    "branch_prefix": "codex/",
+    "commit_format": "^(\\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\\] ).+",
+    "banned_keywords": [
+      "TODO",
+      "WIP",
+      "temp_var",
+      "placeholder"
+    ],
+    "required_directories": [
+      "core",
+      "modules",
+      "gui",
+      "cli",
+      "config",
+      "docs",
+      "tests",
+      "scanner",
+      "timeline",
+      "warboard",
+      "contradictions"
+    ]
+  },
+  "tests": {
+    "commands": [
+      "black --check .",
+      "flake8",
+      "mypy --strict",
+      "pytest"
+    ],
+    "high_priority_branch_keywords": [
+      "core",
+      "engine",
+      "matrix",
+      "protocol",
+      "epoch",
+      "echelon",
+      "hotfix",
+      "merge"
+    ],
+    "zip_validator_path": "ZIP_VALIDATOR.py"
+  },
+  "manifest": {
+    "track_extensions": [
+      ".py"
+    ],
+    "legal_map": {
+      "core": "core-system-orchestration",
+      "modules": "modular-logic-layer",
+      "cli": "command-line-interface",
+      "config": "configuration-management",
+      "docs": "documentation-governance",
+      "gui": "graphical-user-interface",
+      "tests": "verification-suite",
+      "scripts": "automation-workflow",
+      "scanner": "evidence-ingestion-pipeline",
+      "timeline": "timeline-analysis",
+      "warboard": "litigation-warboard",
+      "contradictions": "conflict-detection",
+      "federal": "federal-litigation-assets",
+      "violations": "violation-detection",
+      "binder": "binder-production",
+      "mifile": "efile-integration"
+    }
+  }
+}
