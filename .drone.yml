@@ -1,0 +1,141 @@
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  branch:
+    - main
+    - develop
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: lint
+    image: python:3.11-slim
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - pip install black flake8 mypy isort pylint
+      - echo "🔍 Checking import sorting..."
+      - isort --check-only --diff . || true
+      - echo "🎨 Checking code formatting..."
+      - black --check . || true
+      - echo "📋 Running Flake8..."
+      - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
+      - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics || true
+      - echo "🏷️  Running MyPy type checker..."
+      - mypy . --ignore-missing-imports --no-error-summary 2>/dev/null || true
+
+  - name: install-deps
+    image: python:3.11-slim
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-html
+
+  - name: test-3.10
+    image: python:3.10-slim
+    depends_on:
+      - install-deps
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - pip install pytest pytest-cov pytest-timeout pytest-xdist
+      - echo "Testing on Python 3.10..."
+      - python -m py_compile firstimport.py
+      - pytest -v --tb=short --timeout=300 --cov=. --cov-report=html:coverage-3.10 -n auto || true
+
+  - name: test-3.11
+    image: python:3.11-slim
+    depends_on:
+      - install-deps
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - pip install pytest pytest-cov pytest-timeout pytest-xdist
+      - echo "Testing on Python 3.11..."
+      - python -m py_compile firstimport.py
+      - pytest -v --tb=short --timeout=300 --cov=. --cov-report=html:coverage-3.11 -n auto || true
+
+  - name: test-3.12
+    image: python:3.12-slim
+    depends_on:
+      - install-deps
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - pip install pytest pytest-cov pytest-timeout pytest-xdist
+      - echo "Testing on Python 3.12..."
+      - python -m py_compile firstimport.py
+      - pytest -v --tb=short --timeout=300 --cov=. --cov-report=html:coverage-3.12 -n auto || true
+
+  - name: security
+    image: python:3.11-slim
+    depends_on:
+      - install-deps
+    commands:
+      - pip install --upgrade pip
+      - pip install safety bandit pip-audit
+      - echo "🔒 Running dependency vulnerability checks..."
+      - safety check --json --output safety-report.json || true
+      - pip-audit --desc --format json --output pip-audit-report.json || true
+      - echo "🛡️  Running code security analysis..."
+      - bandit -r . -f json -o bandit-report.json 2>/dev/null || true
+
+  - name: build
+    image: python:3.11-slim
+    depends_on:
+      - test-3.11
+      - lint
+    when:
+      event:
+        - push
+      branch:
+        - main
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - pip install build twine
+      - echo "📦 Building distribution packages..."
+      - if [ -f setup.py ]; then python -m build; fi || echo "No setup.py found"
+
+  - name: notify
+    image: python:3.11-slim
+    when:
+      status:
+        - failure
+    commands:
+      - echo "❌ Pipeline failed. Check logs for details."
+
+services:
+  # Optional: Add a PostgreSQL service for integration tests
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: test_db
+  #     POSTGRES_USER: testuser
+  #     POSTGRES_PASSWORD: testpass
+  #   ports:
+  #     - 5432:5432
+
+# Cron jobs for scheduled testing
+---
+kind: pipeline
+type: docker
+name: nightly-security-scan
+
+trigger:
+  cron:
+    - weekly
+
+steps:
+  - name: full-security-audit
+    image: python:3.11-slim
+    commands:
+      - pip install --upgrade pip
+      - pip install safety bandit pip-audit semgrep
+      - echo "🔍 Running comprehensive security scan..."
+      - safety check --json --output nightly-safety.json || true
+      - pip-audit --desc --format json --output nightly-pip-audit.json || true
+      - bandit -r . -f json -o nightly-bandit.json || true
+      - echo "✅ Nightly security scan complete"

@@ -2,9 +2,11 @@ name: Supreme MBP Litigation OS CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 env:
   PYTHONUNBUFFERED: "1"
@@ -14,75 +16,75 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout repo
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: 🚀 Upgrade pip, wheel, setuptools
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
+      - name: Upgrade pip, wheel, setuptools
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
 
-    - name: 📦 Install Poetry (if pyproject.toml exists)
-      run: |
-        if [ -f pyproject.toml ]; then
-          pip install poetry
-          poetry install
-        fi
+      - name: Install Poetry (if pyproject.toml exists)
+        run: |
+          if [ -f pyproject.toml ]; then
+            pip install poetry
+            poetry install
+          fi
 
-    - name: 📦 Install requirements.txt (if present)
-      run: |
-        if [ -f requirements.txt ]; then
-          pip install -r requirements.txt
-        fi
+      - name: Install requirements.txt (if present)
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
 
-    - name: 🔎 Lint ALL-IN-ONE system
-      run: |
-        pip install flake8
-        flake8 mbp_lit_os_supreme_allinone.py --max-line-length=120 --statistics --show-source || true
+      - name: Lint ALL-IN-ONE system
+        run: |
+          pip install flake8
+          flake8 mbp_lit_os_supreme_allinone.py --max-line-length=120 \
+            --statistics --show-source || true
 
-    - name: 🏛️ Run Supreme ALL-IN-ONE Mainframe (with dashboard)
-      if: runner.os == 'Windows'
-      run: |
-        python mbp_lit_os_supreme_allinone.py
-      timeout-minutes: 20
+      - name: Run Supreme ALL-IN-ONE Mainframe (with dashboard)
+        if: runner.os == 'Windows'
+        run: python mbp_lit_os_supreme_allinone.py
+        timeout-minutes: 20
 
-    - name: 🧪 Run pytest (if any test exists)
-      run: |
-        if [ -d tests ]; then
-          pip install pytest
-          pytest --maxfail=2 --disable-warnings
-        fi
+      - name: Run pytest (if any test exists)
+        run: |
+          if [ -d tests ]; then
+            pip install pytest
+            pytest --maxfail=2 --disable-warnings
+          fi
 
-    - name: 📑 Upload system output/logs/artifacts (audit-proof)
-      uses: actions/upload-artifact@v4
-      with:
-        name: output
-        path: |
-          output/
-          !**/__pycache__/
-          !**/*.pyc
-          !**/*.pyo
-        if-no-files-found: ignore
+      - name: Upload system output/logs/artifacts (audit-proof)
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: |
+            output/
+            !**/__pycache__/
+            !**/*.pyc
+            !**/*.pyo
+          if-no-files-found: ignore
 
-    - name: 📊 Upload live dashboard artifact (HTML)
-      uses: actions/upload-artifact@v4
-      with:
-        name: dashboard
-        path: output/dashboard.html
-        if-no-files-found: ignore
+      - name: Upload live dashboard artifact (HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: output/dashboard.html
+          if-no-files-found: ignore
 
-    - name: 🔍 Upload audit summary (legal proof)
-      uses: actions/upload-artifact@v4
-      with:
-        name: audit
-        path: output/supreme_audit.json
-        if-no-files-found: ignore
+      - name: Upload audit summary (legal proof)
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit
+          path: output/supreme_audit.json
+          if-no-files-found: ignore
 
-    - name: 🕵️‍♂️ Post-run: Show last 40 lines of main log
-      if: always()
-      run: |
-        tail -n 40 output/allinone_run.log || echo "Log not found"
+      - name: Post-run Show last 40 lines of main log
+        if: always()
+        run: |
+          tail -n 40 output/allinone_run.log || echo "Log not found"
