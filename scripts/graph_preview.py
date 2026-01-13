@@ -2,7 +2,7 @@
 import csv
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 import sys
 
@@ -79,7 +79,7 @@ def load_graph() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
 
 
 def write_html(nodes: list[dict[str, str]], edges: list[dict[str, str]]) -> None:
-    ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
     _mk(GRAPH_DIR)
     out = GRAPH_DIR / f"preview_{ts}.html"
     data = {"nodes": nodes, "links": edges}
