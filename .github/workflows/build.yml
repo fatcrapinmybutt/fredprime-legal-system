@@ -2,13 +2,19 @@ name: Codex Build
 
 on:
   push:
-    branches: ["main", "codex/**"]
+    branches:
+      - main
+      - codex/**
   pull_request:
-    branches: ["main", "codex/**"]
+    branches:
+      - main
+      - codex/**
 
 jobs:
   codex-check:
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/codex/')
+    if: |
+      github.ref == 'refs/heads/main' ||
+      startsWith(github.ref, 'refs/heads/codex/')
     runs-on: ubuntu-latest
     defaults:
       run:
