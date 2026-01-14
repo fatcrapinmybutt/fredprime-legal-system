@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, List
 from functools import lru_cache
 
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
@@ -111,9 +111,12 @@ class AppSettings(BaseSettings):
         nested_delimiter="__",  # Support nested env vars like LOGGING__LEVEL
     )
     
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def expand_paths(cls, values):
-        """Expand relative paths to absolute."""
+        """Expand relative paths to absolute (runs before validation)."""
+        # Ensure we operate on a mutable mapping
+        if not isinstance(values, dict):
+            return values
         for field in ["project_root", "data_dir", "documents_dir", "output_dir", "logs_dir"]:
             if field in values and values[field]:
                 p = Path(values[field])
@@ -122,7 +125,7 @@ class AppSettings(BaseSettings):
                 values[field] = p
         return values
     
-    @validator("environment")
+    @field_validator("environment")
     def validate_environment(cls, v):
         """Ensure environment is valid."""
         if v not in ("development", "staging", "production"):
