@@ -1,0 +1,8 @@
+# Default code owners
+* @fatcrapinmybutt
+
+# Owners for critical directories
+/docs/ @fatcrapinmybutt
+/.github/ @fatcrapinmybutt
+/src/ @fatcrapinmybutt
+/modules/ @fatcrapinmybutt

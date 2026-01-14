@@ -1,0 +1,37 @@
+name: Pull Request
+about: Use this template for pull requests
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Pull Request Checklist
+
+        - [ ] Title follows conventional commits (`feat:`, `fix:`, `chore:`, `docs:`)
+        - [ ] Include tests for new code
+        - [ ] Lint, format, and type checks pass
+        - [ ] CI is green for all required checks
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary of changes
+      description: Provide a brief description of what this PR does
+      placeholder: "Summary..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Detailed description
+      description: More context for reviewers
+
+  - type: checklist
+    id: checklist
+    attributes:
+      label: Additional checks
+      options:
+        - label: Update changelog
+        - label: Bump version if needed
+        - label: Add migration scripts
