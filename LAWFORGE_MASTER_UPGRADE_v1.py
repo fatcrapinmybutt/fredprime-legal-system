@@ -177,9 +177,7 @@ def sha256_file(path: str) -> str:
 
 def safe_relpath(path: str, root: str) -> str:
     try:
-        return str(
-            pathlib.Path(path).resolve().relative_to(pathlib.Path(root).resolve())
-        )
+        return str(pathlib.Path(path).resolve().relative_to(pathlib.Path(root).resolve()))
     except Exception:
         return os.path.abspath(path)
 
@@ -205,9 +203,7 @@ def tokenize_len(s: str) -> int:
     return max(1, len(s) // 4)
 
 
-def chunk_text(
-    s: str, tokens: int = CHUNK_TOKENS, overlap: int = CHUNK_OVERLAP
-) -> List[str]:
+def chunk_text(s: str, tokens: int = CHUNK_TOKENS, overlap: int = CHUNK_OVERLAP) -> List[str]:
     words = s.split()
     stride = max(1, tokens - overlap)
     chunks, i = [], 0
@@ -336,9 +332,7 @@ def _write_manifest(outdir: str, manifest: Dict) -> None:
         f.write(json.dumps(manifest, ensure_ascii=False, indent=2))
 
 
-def index_folder(
-    root: str, outdir: str, pattern: str = DEFAULT_PATTERN, ocr: bool = True
-) -> None:
+def index_folder(root: str, outdir: str, pattern: str = DEFAULT_PATTERN, ocr: bool = True) -> None:
     os.makedirs(outdir, exist_ok=True)
     corpus_path = os.path.join(outdir, "corpus.jsonl")
     seen_hashes = set()
@@ -367,9 +361,7 @@ def index_folder(
                     if file_mb(full) > MAX_FILE_MB:
                         skipped += 1
                         continue
-                    if is_binary_by_mime(full) and not full.lower().endswith(
-                        (".mp3", ".wav", ".m4a", ".ogg")
-                    ):
+                    if is_binary_by_mime(full) and not full.lower().endswith((".mp3", ".wav", ".m4a", ".ogg")):
                         skipped += 1
                         continue
                     h = sha256_file(full)
@@ -379,9 +371,7 @@ def index_folder(
                     if (
                         not txt
                         and ocr
-                        and full.lower().endswith(
-                            (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".heic")
-                        )
+                        and full.lower().endswith((".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".heic"))
                     ):
                         txt = extract_text_image(full)
                     record = {
@@ -411,21 +401,15 @@ def index_folder(
     }
     _write_manifest(outdir, manifest)
     jlog(outdir, "index_complete", **manifest)
-    print(
-        f"[index] added={added} skipped={skipped} secs={manifest['duration_sec']} out={corpus_path}"
-    )
+    print(f"[index] added={added} skipped={skipped} secs={manifest['duration_sec']} out={corpus_path}")
 
 
 # -------- Embeddings + Vector store --------
-def ensure_vector_store(
-    index_dir: str, model_name: str = "all-MiniLM-L6-v2"
-) -> Tuple[object, object]:
+def ensure_vector_store(index_dir: str, model_name: str = "all-MiniLM-L6-v2") -> Tuple[object, object]:
     if L["chromadb"] is None or L["SentenceTransformer"] is None:
         raise RuntimeError("chromadb and sentence-transformers required")
     chroma_path = os.path.join(index_dir, "chroma")
-    client = L["chromadb"].PersistentClient(
-        path=chroma_path, settings=L["ChromaSettings"](anonymized_telemetry=False)
-    )
+    client = L["chromadb"].PersistentClient(path=chroma_path, settings=L["ChromaSettings"](anonymized_telemetry=False))
     coll = client.get_or_create_collection("lawforge")
     model = L["SentenceTransformer"](model_name)
     return coll, model
@@ -445,9 +429,7 @@ def _chroma_upsert(coll, ids, texts, metas, embs) -> None:
     coll.add(ids=ids, embeddings=embs, metadatas=metas, documents=texts)
 
 
-def embed_corpus(
-    index_dir: str, model_name: str = "all-MiniLM-L6-v2", batch: int = 64
-) -> None:
+def embed_corpus(index_dir: str, model_name: str = "all-MiniLM-L6-v2", batch: int = 64) -> None:
     corpus_path = os.path.join(index_dir, "corpus.jsonl")
     if not os.path.exists(corpus_path):
         raise FileNotFoundError(corpus_path)
@@ -474,16 +456,12 @@ def embed_corpus(
                     }
                 )
                 if len(ids) >= batch:
-                    embs = model.encode(
-                        texts, show_progress_bar=False, convert_to_numpy=True
-                    ).tolist()
+                    embs = model.encode(texts, show_progress_bar=False, convert_to_numpy=True).tolist()
                     _chroma_upsert(coll, ids, texts, metas, embs)
                     added += len(ids)
                     ids, texts, metas = [], [], []
     if ids:
-        embs = model.encode(
-            texts, show_progress_bar=False, convert_to_numpy=True
-        ).tolist()
+        embs = model.encode(texts, show_progress_bar=False, convert_to_numpy=True).tolist()
         _chroma_upsert(coll, ids, texts, metas, embs)
         added += len(ids)
     end = int(time.time())
@@ -520,9 +498,7 @@ def ensure_vs(index_dir: str, model_name="all-MiniLM-L6-v2"):
     return ensure_vector_store(index_dir, model_name)
 
 
-def search_vector(
-    index_dir: str, q: str, k: int = 10, model_name="all-MiniLM-L6-v2"
-) -> List[Dict]:
+def search_vector(index_dir: str, q: str, k: int = 10, model_name="all-MiniLM-L6-v2") -> List[Dict]:
     coll, model = ensure_vs(index_dir, model_name=model_name)
     emb = model.encode([q], convert_to_numpy=True).tolist()[0]
     out = coll.query(query_embeddings=[emb], n_results=k)
@@ -546,9 +522,7 @@ def search_vector(
 
 
 # -------- Q&A --------
-def answer_with_llm(
-    context: str, question: str, provider: str = "openai", max_tokens: int = 512
-) -> str:
+def answer_with_llm(context: str, question: str, provider: str = "openai", max_tokens: int = 512) -> str:
     provider = provider.lower().strip()
     if provider == "openai":
         try:
@@ -601,9 +575,7 @@ def answer_with_llm(
             if not model_path:
                 return "[llama-error] LLAMA_CPP_MODEL env var not set"
             ctx = int(os.getenv("LLAMA_CTX", "4096"))
-            llm = llama_cpp.Llama(
-                model_path=model_path, n_ctx=ctx, logits_all=False, n_threads=8
-            )
+            llm = llama_cpp.Llama(model_path=model_path, n_ctx=ctx, logits_all=False, n_threads=8)
             prompt = (
                 "You are a Michigan litigation assistant. Use only the provided context.\n"
                 f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"
@@ -634,9 +606,7 @@ def answer_with_llm(
     return "[provider-error] Unknown provider"
 
 
-def retrieve_then_answer(
-    index_dir: str, q: str, top_k: int = 6, provider: str = "openai"
-) -> Dict:
+def retrieve_then_answer(index_dir: str, q: str, top_k: int = 6, provider: str = "openai") -> Dict:
     kw = search_keyword(index_dir, q, k=top_k)
     vs = search_vector(index_dir, q, k=top_k)
     seen, ctx_parts = set(), []
@@ -689,9 +659,7 @@ def run_api(index_dir: str, host: str = "127.0.0.1", port: int = 8000):
 
     @app.post("/ask")
     def _ask(q: Q) -> Dict[str, object]:
-        return retrieve_then_answer(
-            index_dir, q.q, top_k=q.top_k or 6, provider=q.provider or "openai"
-        )
+        return retrieve_then_answer(index_dir, q.q, top_k=q.top_k or 6, provider=q.provider or "openai")
 
     @app.get("/manifest")
     def manifest() -> Dict[str, object]:
@@ -739,9 +707,7 @@ def main() -> None:
     p_ask = sub.add_parser("ask", help="RAG Q&A with context")
     p_ask.add_argument("--index", required=True)
     p_ask.add_argument("--q", required=True)
-    p_ask.add_argument(
-        "--provider", default="openai", choices=["openai", "anthropic", "llama", "hf"]
-    )
+    p_ask.add_argument("--provider", default="openai", choices=["openai", "anthropic", "llama", "hf"])
     p_ask.add_argument("--top_k", type=int, default=6)
 
     p_srv = sub.add_parser("serve", help="Start local API")
@@ -766,9 +732,7 @@ def main() -> None:
         print(json.dumps(res, ensure_ascii=False, indent=2))
         return
     if args.cmd == "ask":
-        res = retrieve_then_answer(
-            args.index, args.q, top_k=args.top_k, provider=args.provider
-        )
+        res = retrieve_then_answer(args.index, args.q, top_k=args.top_k, provider=args.provider)
         print(json.dumps(res, ensure_ascii=False, indent=2))
         return
     if args.cmd == "serve":

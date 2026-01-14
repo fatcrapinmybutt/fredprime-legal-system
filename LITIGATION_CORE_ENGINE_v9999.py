@@ -94,10 +94,7 @@ def run_evidence_pipeline(case_num: str, cfg: ConfigSchema, db: DBRepository):
 
     ocr_results = []
     with ThreadPoolExecutor(max_workers=cfg.ocr_threads) as executor:
-        future_map = {
-            executor.submit(OCRFallback().parse, itm["path"], case_num): itm
-            for itm in items
-        }
+        future_map = {executor.submit(OCRFallback().parse, itm["path"], case_num): itm for itm in items}
         for future in as_completed(future_map, timeout=cfg.ocr_timeout):
             itm = future_map[future]
             try:

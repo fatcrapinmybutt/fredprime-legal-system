@@ -124,13 +124,9 @@ class KnowledgeStore:
             (like,),
         )
         rows = cur.fetchall()
-        return [
-            {"id": row[0], "path": row[1], "description": row[2]} for row in rows
-        ]
+        return [{"id": row[0], "path": row[1], "description": row[2]} for row in rows]
 
-    def link_form(
-        self, evidence_id: int, form_id: str, note: str = ""
-    ) -> None:
+    def link_form(self, evidence_id: int, form_id: str, note: str = "") -> None:
         cur = self.conn.cursor()
         cur.execute(
             "INSERT INTO links (evidence_id, form_id, note) VALUES (?, ?, ?)",
@@ -208,9 +204,7 @@ class KnowledgeStore:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Manage litigation knowledge store"
-    )
+    parser = argparse.ArgumentParser(description="Manage litigation knowledge store")
     parser.add_argument("--db", default="knowledge.db")
     parser.add_argument(
         "--add-evidence",

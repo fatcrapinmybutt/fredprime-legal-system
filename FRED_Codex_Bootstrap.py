@@ -5,9 +5,7 @@ import zipfile
 from pathlib import Path
 
 
-URL = os.environ.get(
-    "FRED_STAGE2_URL", "https://example.com/FRED_STAGE2_FULL_DEPLOY.zip"
-)
+URL = os.environ.get("FRED_STAGE2_URL", "https://example.com/FRED_STAGE2_FULL_DEPLOY.zip")
 EXPECTED_SHA256 = os.environ.get(
     "FRED_STAGE2_SHA256",
     "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
@@ -42,9 +40,7 @@ def main() -> None:
     checksum = sha256sum(dest)
     print(f"Checksum: {checksum}")
     if checksum != EXPECTED_SHA256:
-        raise RuntimeError(
-            f"Checksum mismatch! expected {EXPECTED_SHA256} but got {checksum}"
-        )
+        raise RuntimeError(f"Checksum mismatch! expected {EXPECTED_SHA256} but got {checksum}")
     print("Checksum verified. Extracting archive...")
     with zipfile.ZipFile(dest, "r") as zf:
         zf.extractall()

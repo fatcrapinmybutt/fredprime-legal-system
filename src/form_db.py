@@ -164,9 +164,7 @@ class FormDatabase:
         return matches
 
 
-def load_manifest(
-    manifest_path: Path, db: FormDatabase, forms_dir: Path
-) -> None:
+def load_manifest(manifest_path: Path, db: FormDatabase, forms_dir: Path) -> None:
     data = json.loads(manifest_path.read_text())
     for entry in data:
         file_path = forms_dir / entry.get("filename", "")
@@ -183,9 +181,7 @@ def load_manifest(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Import court forms into a database"
-    )
+    parser = argparse.ArgumentParser(description="Import court forms into a database")
     parser.add_argument(
         "--db",
         default="forms.db",

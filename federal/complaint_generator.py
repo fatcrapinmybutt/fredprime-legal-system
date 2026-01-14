@@ -12,9 +12,7 @@ def generate_complaint():
     doc.add_heading("Federal Complaint", 0)
     doc.add_paragraph("Court: U.S. District Court – WDMI")
     doc.add_paragraph("Plaintiff: Andrew Pigors")
-    doc.add_paragraph(
-        "Defendants: Shady Oaks Park MHP LLC, Homes of America LLC, John Doe Owners"
-    )
+    doc.add_paragraph("Defendants: Shady Oaks Park MHP LLC, Homes of America LLC, John Doe Owners")
 
     doc.add_heading("Counts", level=1)
     counts = [

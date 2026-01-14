@@ -23,14 +23,10 @@ def run_post_process() -> None:
 def main(argv: list[str] | None = None) -> None:
     """Launch the Meek ingestion and search pipeline."""
     parser = argparse.ArgumentParser(description="Meek pipeline launcher")
-    parser.add_argument(
-        "--skip-ingest", action="store_true", help="Skip ingestion stage"
-    )
+    parser.add_argument("--skip-ingest", action="store_true", help="Skip ingestion stage")
     parser.add_argument("--skip-search", action="store_true", help="Skip search stage")
     parser.add_argument("--search-query", help="Query string for search")
-    parser.add_argument(
-        "--post-process", action="store_true", help="Run post-processing stage"
-    )
+    parser.add_argument("--post-process", action="store_true", help="Run post-processing stage")
     args = parser.parse_args(argv)
 
     if not args.skip_ingest:

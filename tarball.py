@@ -58,9 +58,7 @@ def run_command(command: Sequence[str]) -> None:
         LOGGER.debug("stderr:\n%s", result.stderr.strip())
 
     if result.returncode != 0:
-        raise TarballError(
-            f"Command '{' '.join(command)}' failed with exit code {result.returncode}"
-        )
+        raise TarballError(f"Command '{' '.join(command)}' failed with exit code {result.returncode}")
 
 
 def import_images(image_dir: Path, ctr_namespace: str) -> None:
@@ -75,14 +73,10 @@ def import_images(image_dir: Path, ctr_namespace: str) -> None:
         return
 
     for image in image_files:
-        run_command(
-            [importer, "--namespace", ctr_namespace, "images", "import", str(image)]
-        )
+        run_command([importer, "--namespace", ctr_namespace, "images", "import", str(image)])
 
 
-def load_helm_chart(
-    chart_dir: Path, release: str, namespace: str, registry: str, values: Path
-) -> None:
+def load_helm_chart(chart_dir: Path, release: str, namespace: str, registry: str, values: Path) -> None:
     """Install or upgrade a Helm chart extracted from a tarball."""
     helm = shutil.which("helm")
     if helm is None:
@@ -94,9 +88,7 @@ def load_helm_chart(
     chart_path = chart_dir / release
     if not chart_path.exists():
         available = ", ".join(sorted(item.name for item in chart_dir.iterdir()))
-        raise TarballError(
-            f"Unable to locate chart directory '{chart_path}'. Available entries: {available or 'none'}"
-        )
+        raise TarballError(f"Unable to locate chart directory '{chart_path}'. Available entries: {available or 'none'}")
 
     run_command(
         [
@@ -127,9 +119,7 @@ def apply_kubectl(manifest_dir: Path) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     """Create the CLI argument parser."""
-    parser = argparse.ArgumentParser(
-        description="Deploy Litigation OS assets from tarballs"
-    )
+    parser = argparse.ArgumentParser(description="Deploy Litigation OS assets from tarballs")
     parser.add_argument(
         "--images",
         type=Path,
@@ -198,9 +188,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("/app/configs"),
         help="Destination directory for configuration bundle",
     )
-    parser.add_argument(
-        "--verbose", action="store_true", help="Enable verbose logging output"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging output")
     return parser
 
 
@@ -230,9 +218,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         LOGGER.error("%s", exc)
         return 1
 
-    LOGGER.info(
-        "Installation complete. Set license with 'litigation-cli license set <KEY>'"
-    )
+    LOGGER.info("Installation complete. Set license with 'litigation-cli license set <KEY>'")
     return 0
 
 

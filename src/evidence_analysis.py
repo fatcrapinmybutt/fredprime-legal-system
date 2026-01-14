@@ -20,9 +20,7 @@ def suggest_forms(descriptions: List[str]) -> List[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Suggest motions from evidence"
-    )
+    parser = argparse.ArgumentParser(description="Suggest motions from evidence")
     parser.add_argument("--db", default="forms.db", help="Form database path")
     parser.add_argument(
         "--knowledge",
@@ -41,9 +39,9 @@ def main() -> None:
         if record:
             print(f"Suggested form {fid}: {record['title']}")
             print(f"  Rules: {', '.join(record['rules'])}")
-            if record.get('statutes'):
+            if record.get("statutes"):
                 print(f"  Statutes: {', '.join(record['statutes'])}")
-            if record.get('benchbook'):
+            if record.get("benchbook"):
                 print(f"  Benchbook: {', '.join(record['benchbook'])}")
             print()
 

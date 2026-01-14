@@ -91,9 +91,7 @@ def remove_empty_dirs(base_path: Path) -> None:
 
 
 def organize_drive(target_path: Path, output_path: Path | None = None) -> None:
-    base_output = (
-        output_path.resolve() if output_path else target_path / ORGANIZED_FOLDER
-    )
+    base_output = output_path.resolve() if output_path else target_path / ORGANIZED_FOLDER
     base_output.mkdir(exist_ok=True)
 
     files_to_move = []
@@ -113,9 +111,7 @@ def organize_drive(target_path: Path, output_path: Path | None = None) -> None:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Organize files on a drive")
-    parser.add_argument(
-        "path", nargs="?", default="F:/", help="Path to organize (default F:/)"
-    )
+    parser.add_argument("path", nargs="?", default="F:/", help="Path to organize (default F:/)")
     parser.add_argument("--log", default="organize_drive.log", help="Log file path")
     parser.add_argument("--output", default=None, help="Optional output directory")
     return parser.parse_args()

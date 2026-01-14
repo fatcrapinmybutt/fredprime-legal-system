@@ -119,6 +119,4 @@ if __name__ == "__main__":
     results = evaluate_document_needs(case_posture)
     print("📄 Required Document Checklist:")
     for r in results:
-        print(
-            f"{r['Document']}: Required={r['Required']} | Status={r['Status']} | Rule={r['Rule']}"
-        )
+        print(f"{r['Document']}: Required={r['Required']} | Status={r['Status']} | Rule={r['Rule']}")

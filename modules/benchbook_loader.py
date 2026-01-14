@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict
 
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 
 def load_benchbook_texts(directory: str) -> Dict[str, str]:

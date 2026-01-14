@@ -33,7 +33,9 @@ def test_cli_generates_valid_json(tmp_path):
     )
 
     if completed.returncode != 0:
-        raise RuntimeError(f"script failed: {completed.returncode}\nSTDOUT:\n{completed.stdout}\nSTDERR:\n{completed.stderr}")
+        raise RuntimeError(
+            f"script failed: {completed.returncode}\nSTDOUT:\n{completed.stdout}\nSTDERR:\n{completed.stderr}"
+        )
 
     assert out_file.exists(), "Output JSON file was not created"
 

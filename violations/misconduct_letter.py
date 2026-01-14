@@ -10,9 +10,7 @@ def generate_letter():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     doc = Document()
     doc.add_heading("Judicial Misconduct Letter", 0)
-    doc.add_paragraph(
-        "To: Chief Judge of the 60th District Court and Michigan Judicial Tenure Commission"
-    )
+    doc.add_paragraph("To: Chief Judge of the 60th District Court and Michigan Judicial Tenure Commission")
     doc.add_paragraph("")
     bullet_points = [
         "Judge proceeded with eviction despite conditional trial agreement not being honored",

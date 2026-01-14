@@ -21,9 +21,7 @@ MAX_EDGES = int(os.environ.get("MAX_EDGES", "20000"))
 
 
 def newest(pattern: str) -> Path | None:
-    files = sorted(
-        GRAPH_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True
-    )
+    files = sorted(GRAPH_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
     return files[0] if files else None
 
 

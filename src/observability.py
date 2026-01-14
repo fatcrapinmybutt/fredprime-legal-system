@@ -35,6 +35,7 @@ except Exception:
     Summary = None
     make_asgi_app = None
 
+
 # Provide lightweight fallbacks to avoid import-time failures
 class _DummyMetric:
     def __init__(self, *a, **k):

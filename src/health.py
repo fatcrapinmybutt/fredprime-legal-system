@@ -29,7 +29,7 @@ def _default_checks() -> dict:
     }
     try:
         # Example: warn if free space low
-        statvfs = os.statvfs('.')
+        statvfs = os.statvfs(".")
         free_bytes = statvfs.f_bavail * statvfs.f_frsize
         checks["free_bytes"] = free_bytes
         checks["disk_ok"] = free_bytes > 50 * 1024 * 1024  # 50MB

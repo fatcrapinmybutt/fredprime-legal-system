@@ -285,9 +285,7 @@ def extract_text_video(path: Path) -> str:
                 "16000",
                 str(audio_path),
             ]
-            subprocess.run(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False
-            )
+            subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
             if audio_path.exists():
                 return transcribe_audio(audio_path)
             return ""
@@ -331,9 +329,7 @@ def call_llm(prompt: str) -> str:
                 system="You are a Michigan-focused litigation expert.",
                 messages=[{"role": "user", "content": prompt}],
             )
-            text = "".join(
-                block.text for block in msg.content if hasattr(block, "text")
-            )
+            text = "".join(block.text for block in msg.content if hasattr(block, "text"))
     except Exception:
         pass
     return text
@@ -644,10 +640,7 @@ def build_master_narrative() -> None:
     )
     narrative = call_llm(prompt)
     NARRATIVE_DIR.mkdir(parents=True, exist_ok=True)
-    out = (
-        NARRATIVE_DIR
-        / f"Master_Narrative_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    )
+    out = NARRATIVE_DIR / f"Master_Narrative_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     out.write_text(narrative, encoding="utf-8", errors="ignore")
 
 

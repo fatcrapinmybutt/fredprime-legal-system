@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyPDF2 import PdfWriter
+from pypdf import PdfWriter
 
 from modules.benchbook_loader import load_benchbook_texts
 

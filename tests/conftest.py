@@ -87,81 +87,82 @@ def mock_file_system(tmp_path: Path) -> Dict[str, Path]:
         "output": tmp_path / "output",
         "evidence": tmp_path / "evidence",
     }
-    
+
     for directory in structure.values():
         directory.mkdir(parents=True, exist_ok=True)
-    
+
     return structure
 
 
 @pytest.fixture
 def benchmark_timer():
     """Simple benchmark timer fixture."""
+
     class Timer:
         def __init__(self):
             self.start_time = None
             self.elapsed = None
-        
+
         def start(self):
             self.start_time = time.perf_counter()
-        
+
         def stop(self) -> float:
             if self.start_time is None:
                 raise RuntimeError("Timer not started")
             self.elapsed = time.perf_counter() - self.start_time
             return self.elapsed
-        
+
         def __enter__(self):
             self.start()
             return self
-        
+
         def __exit__(self, exc_type, exc_val, exc_tb):
             self.stop()
-    
+
     return Timer()
 
 
 class MockDatabaseSession:
     """Mock database session for testing."""
-    
+
     def __init__(self):
         self.data = {}
         self.committed = False
         self.rolled_back = False
-    
+
     def add(self, obj):
         self.data[obj.id] = obj
-    
+
     def commit(self):
         self.committed = True
-    
+
     def rollback(self):
         self.rolled_back = True
         self.data.clear()
-    
+
     def query(self, model_class):
         return MockQuery(model_class, self.data)
-    
+
     def close(self):
         pass
 
 
 class MockQuery:
     """Mock query builder for testing."""
-    
+
     def __init__(self, model_class, data):
         self.model_class = model_class
         self.data = data
         self.filters = {}
-    
+
     def filter(self, condition):
         # Simple mock filter
         self.filters.update(condition)
         return self
-    
+
     def all(self):
         return list(self.data.values())
-    
+
     def first(self):
         results = self.all()
         return results[0] if results else None
@@ -174,11 +175,14 @@ def mock_db_session():
 
 
 # Parametrized test example
-@pytest.mark.parametrize("input_value,expected_output", [
-    ("MC-12", "Motion to Adjourn"),
-    ("FOC-87", "Motion Regarding Parenting Time"),
-    ("MC-97", "Complaint for Injunctive Relief"),
-])
+@pytest.mark.parametrize(
+    "input_value,expected_output",
+    [
+        ("MC-12", "Motion to Adjourn"),
+        ("FOC-87", "Motion Regarding Parenting Time"),
+        ("MC-97", "Complaint for Injunctive Relief"),
+    ],
+)
 def test_form_lookup(input_value, expected_output):
     """Example parametrized test."""
     # This demonstrates the pattern - actual implementation would use real form database
@@ -188,12 +192,13 @@ def test_form_lookup(input_value, expected_output):
 # Performance test example
 def test_form_loading_performance(benchmark_timer, sample_form_data):
     """Example performance test."""
+
     def load_forms():
         return json.dumps(sample_form_data)
-    
+
     with benchmark_timer:
         result = load_forms()
-    
+
     assert result is not None
     # Could assert performance threshold: assert benchmark_timer.elapsed < 0.1
 
@@ -201,7 +206,7 @@ def test_form_loading_performance(benchmark_timer, sample_form_data):
 # Integration test helper class
 class IntegrationTestHelper:
     """Helper for integration tests."""
-    
+
     @staticmethod
     def create_test_case(case_id: str, case_type: str) -> Dict[str, Any]:
         """Create test case data."""
@@ -213,7 +218,7 @@ class IntegrationTestHelper:
             "documents": [],
             "timeline": [],
         }
-    
+
     @staticmethod
     def create_test_document(filename: str, content: str = "") -> Dict[str, Any]:
         """Create test document."""
@@ -223,7 +228,7 @@ class IntegrationTestHelper:
             "size": len(content),
             "created_at": "2025-01-14T10:30:00",
         }
-    
+
     @staticmethod
     def create_test_evidence() -> List[Dict[str, Any]]:
         """Create test evidence items."""

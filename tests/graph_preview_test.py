@@ -13,12 +13,8 @@ def test_graph_preview_generates_html() -> None:
         outdir = Path(tmpdir)
         graph_dir = outdir / "graph"
         graph_dir.mkdir(parents=True, exist_ok=True)
-        create_csv(
-            graph_dir / "nodes_test.csv", "id:ID,label:string", ["1,Document", "2,Name"]
-        )
-        create_csv(
-            graph_dir / "edges_test.csv", ":START_ID,:END_ID,:TYPE", ["1,2,LINK"]
-        )
+        create_csv(graph_dir / "nodes_test.csv", "id:ID,label:string", ["1,Document", "2,Name"])
+        create_csv(graph_dir / "edges_test.csv", ":START_ID,:END_ID,:TYPE", ["1,2,LINK"])
         os.environ["OUTDIR"] = str(outdir)
         gp = importlib.reload(importlib.import_module("scripts.graph_preview"))
         nodes, edges = gp.load_graph()

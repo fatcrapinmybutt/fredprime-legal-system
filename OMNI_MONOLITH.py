@@ -58,6 +58,7 @@ IDEMPOTENCY_ENV = "OMNI_TOKEN"
 DEFAULT_MAX_WORKERS = max(4, (os.cpu_count() or 4) // 2)
 STATE_FLUSH_INTERVAL = 10
 
+
 # ----------------------------- Data Models ---------------------------------
 @dataclass
 class RunConfig:
@@ -223,7 +224,9 @@ class JsonLogHandler(logging.Handler):
             self._handler.flush()
 
 
-def discover_files(roots: Iterable[Path], extensions: Sequence[str], include_hidden: bool, logger: logging.Logger) -> List[Path]:
+def discover_files(
+    roots: Iterable[Path], extensions: Sequence[str], include_hidden: bool, logger: logging.Logger
+) -> List[Path]:
     candidates: List[Path] = []
     for root in roots:
         if not root.exists():
@@ -468,12 +471,14 @@ def write_secret_report(context: RunContext, records: List[FileRecord]) -> None:
     findings = []
     for record in records:
         if record.secrets:
-            findings.append({
-                "sha256": record.sha256,
-                "original_path": record.original_path,
-                "relative_path": record.relative_path,
-                "patterns": record.secrets,
-            })
+            findings.append(
+                {
+                    "sha256": record.sha256,
+                    "original_path": record.original_path,
+                    "relative_path": record.relative_path,
+                    "patterns": record.secrets,
+                }
+            )
     atomic_write_text(context.output_dir / SECRET_REPORT, json.dumps(findings, ensure_ascii=False, indent=2))
 
 
@@ -502,7 +507,9 @@ def parse_arguments(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--token", help="Idempotency token to reuse run outputs")
     parser.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS, help="Thread pool size")
     parser.add_argument("--resume", action="store_true", help="Resume from previous run state")
-    parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"], help="Console log level")
+    parser.add_argument(
+        "--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"], help="Console log level"
+    )
     return parser.parse_args(argv)
 
 
@@ -524,7 +531,10 @@ def prepare_context(args: argparse.Namespace) -> RunContext:
     roots = args.roots if args.roots else [root for root in DEFAULT_ROOTS if root.exists()]
     if not roots:
         roots = [Path.cwd()]
-    extensions = [ext.lower() if ext.startswith('.') else f".{ext.lower()}" for ext in (args.extensions or sorted(DEFAULT_EXTENSIONS))]
+    extensions = [
+        ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+        for ext in (args.extensions or sorted(DEFAULT_EXTENSIONS))
+    ]
     config = RunConfig(
         token=token,
         timestamp=timestamp,

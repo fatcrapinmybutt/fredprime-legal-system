@@ -101,9 +101,7 @@ def scan_and_repair_modules(required_files):
             logger.info("✅ Repaired missing module", extra={"file": file})
         else:
             sha = compute_sha256(file)
-            logger.info(
-                "Module integrity verified", extra={"file": file, "sha256": sha}
-            )
+            logger.info("Module integrity verified", extra={"file": file, "sha256": sha})
 
 
 REQUIRED_MODULES = [
@@ -166,10 +164,7 @@ def run_evidence_pipeline(case_num: str, cfg: ConfigSchema, db: DBRepository):
 
     ocr_results = []
     with ThreadPoolExecutor(max_workers=cfg.ocr_threads) as executor:
-        future_map = {
-            executor.submit(OCRFallback().parse, itm["path"], case_num): itm
-            for itm in items
-        }
+        future_map = {executor.submit(OCRFallback().parse, itm["path"], case_num): itm for itm in items}
         for future in tqdm(
             as_completed(future_map, timeout=cfg.ocr_timeout),
             total=len(items),
@@ -220,9 +215,7 @@ if __name__ == "__main__":
     parser.add_argument("--case", help="Case number")
     parser.add_argument("--config", default="config.json")
     parser.add_argument("--gui", action="store_true", help="Launch GUI instead")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Dry run without actual execution"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Dry run without actual execution")
     parser.add_argument("--log-level", default="INFO", help="Set logging verbosity")
     args = parser.parse_args()
 

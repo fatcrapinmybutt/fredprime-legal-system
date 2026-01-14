@@ -14,9 +14,7 @@ def detect_contradictions(index_path="data/scan_index.json", output_path=OUTPUT_
     for i, a in enumerate(paths):
         for b in paths[i + 1 :]:
             if a.split("/")[-1] == b.split("/")[-1]:
-                matrix.append(
-                    {"file_a": a, "file_b": b, "contradiction": "duplicate filename"}
-                )
+                matrix.append({"file_a": a, "file_b": b, "contradiction": "duplicate filename"})
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(matrix, f, indent=2)

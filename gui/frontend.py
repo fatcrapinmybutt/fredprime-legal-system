@@ -72,19 +72,11 @@ def launch_dashboard():
         for ev in events:
             suppression_text.insert(tk.END, f"{ev['entity']}: {ev['action']}\n")
 
-    ttk.Button(warboard_tab, text="Build Warboard", command=refresh_warboard).pack(
-        pady=5
-    )
+    ttk.Button(warboard_tab, text="Build Warboard", command=refresh_warboard).pack(pady=5)
     ttk.Button(ppo_tab, text="Build PPO Warboard", command=refresh_ppo).pack(pady=5)
-    ttk.Button(custody_tab, text="Build Custody Map", command=refresh_custody).pack(
-        pady=5
-    )
-    ttk.Button(schedule_tab, text="Sync From File", command=refresh_schedule).pack(
-        pady=5
-    )
-    ttk.Button(suppression_tab, text="Refresh", command=refresh_suppression).pack(
-        pady=5
-    )
+    ttk.Button(custody_tab, text="Build Custody Map", command=refresh_custody).pack(pady=5)
+    ttk.Button(schedule_tab, text="Sync From File", command=refresh_schedule).pack(pady=5)
+    ttk.Button(suppression_tab, text="Refresh", command=refresh_suppression).pack(pady=5)
 
     refresh_warboard()
     refresh_suppression()

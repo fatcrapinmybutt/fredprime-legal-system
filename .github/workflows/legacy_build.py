@@ -25,9 +25,7 @@ HELP_TOPICS = {
         "MCR 2.119 governs motions. Benchbook, Motions section details formal "
         "requirements. Ensure all mandatory elements (caption, relief, signature) are present."
     ),
-    "affidavit": (
-        "MCR 2.119(B) details affidavits: must be signed, state facts, and have a notary if required."
-    ),
+    "affidavit": ("MCR 2.119(B) details affidavits: must be signed, state facts, and have a notary if required."),
     "canon": (
         "Canon violations should be documented with factual detail and referenced to the Michigan Judicial Conduct Canon text."
     ),
@@ -83,9 +81,7 @@ def scan_drives():
     try:
         with open(MANIFEST_FILE, "w") as out:
             json.dump(manifest, out, indent=2)
-        messagebox.showinfo(
-            "Scan Complete", f"Absorption complete. {len(manifest)} files processed."
-        )
+        messagebox.showinfo("Scan Complete", f"Absorption complete. {len(manifest)} files processed.")
     except Exception as e:
         logging.error(f"Failed to write manifest: {e}")
         messagebox.showerror("Scan Failed", f"Failed to write manifest: {e}")
@@ -231,14 +227,14 @@ def show_help(context):
 
 
 def simulate_judicial_response():
-    action = tk.simpledialog.askstring(
-        "Simulate Judicial Response", "Describe action/context:"
-    )
+    action = tk.simpledialog.askstring("Simulate Judicial Response", "Describe action/context:")
     if not action:
         return
     context = action.lower()
     if "ex parte" in context:
-        msg = "Warning: Ex parte relief often triggers heightened judicial scrutiny. If opposed, expect a prompt hearing."
+        msg = (
+            "Warning: Ex parte relief often triggers heightened judicial scrutiny. If opposed, expect a prompt hearing."
+        )
     elif "canon violation" in context:
         msg = "A well-documented Canon violation may trigger recusal or misconduct review. Be sure to cite all supporting facts."
     elif "motion to dismiss" in context:
@@ -269,13 +265,9 @@ def launch_gui():
         window.after(4000, update_status)
 
     update_status()
-    tk.Label(window, text="MBP Litigation OS", font=("Helvetica", 18, "bold")).pack(
-        pady=8
-    )
+    tk.Label(window, text="MBP Litigation OS", font=("Helvetica", 18, "bold")).pack(pady=8)
     tk.Button(window, text="Scan F:/ + D:/", command=scan_drives, width=35).pack(pady=3)
-    tk.Button(
-        window, text="Run Patch Manager", command=run_patch_manager, width=35
-    ).pack(pady=3)
+    tk.Button(window, text="Run Patch Manager", command=run_patch_manager, width=35).pack(pady=3)
     tk.Button(
         window,
         text="Run Compliance Scan",
@@ -288,33 +280,23 @@ def launch_gui():
         command=generate_foia_request,
         width=35,
     ).pack(pady=3)
-    tk.Button(window, text="Export Data", command=export_codex_data, width=25).pack(
-        pady=2
-    )
-    tk.Button(window, text="Import Data", command=import_codex_data, width=25).pack(
-        pady=2
-    )
-    tk.Button(
-        window, text="Help: Motions", command=lambda: show_help("motion"), width=20
-    ).pack(pady=1)
+    tk.Button(window, text="Export Data", command=export_codex_data, width=25).pack(pady=2)
+    tk.Button(window, text="Import Data", command=import_codex_data, width=25).pack(pady=2)
+    tk.Button(window, text="Help: Motions", command=lambda: show_help("motion"), width=20).pack(pady=1)
     tk.Button(
         window,
         text="Help: Affidavits",
         command=lambda: show_help("affidavit"),
         width=20,
     ).pack(pady=1)
-    tk.Button(
-        window, text="Help: Canons", command=lambda: show_help("canon"), width=20
-    ).pack(pady=1)
+    tk.Button(window, text="Help: Canons", command=lambda: show_help("canon"), width=20).pack(pady=1)
     tk.Button(
         window,
         text="Simulate Judicial Response",
         command=simulate_judicial_response,
         width=35,
     ).pack(pady=3)
-    tk.Label(window, text="Version: FINAL", font=("Helvetica", 10)).pack(
-        side="bottom", pady=10
-    )
+    tk.Label(window, text="Version: FINAL", font=("Helvetica", 10)).pack(side="bottom", pady=10)
     window.mainloop()
 
 
