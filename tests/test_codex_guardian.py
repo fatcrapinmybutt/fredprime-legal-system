@@ -1,5 +1,6 @@
-from modules import codex_guardian
 import pytest
+
+from modules import codex_guardian
 
 
 def test_verify_commit_message_ok():

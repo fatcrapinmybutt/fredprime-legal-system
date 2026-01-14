@@ -23,12 +23,12 @@ class LocalScanner:
 class GoogleDriveSync:
     def __init__(self, credentials_file: Path, token_file: Path):
         try:
-            from googleapiclient.discovery import build  # type: ignore
+            from google.auth.transport.requests import Request
+            from google.oauth2.credentials import Credentials
             from google_auth_oauthlib.flow import (
                 InstalledAppFlow,
-            )  # type: ignore
-            from google.auth.transport.requests import Request  # type: ignore
-            from google.oauth2.credentials import Credentials  # type: ignore
+            )
+            from googleapiclient.discovery import build
         except ImportError:
             raise RuntimeError(
                 "google-api-python-client is not installed.\n"

@@ -2,10 +2,10 @@ import json
 import re
 from pathlib import Path
 from typing import List
-
-import requests
-from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+
+import requests  # type: ignore
+from bs4 import BeautifulSoup
 
 BASE_URL = "https://courts.michigan.gov/Administration/SCAO/Forms/Pages/default.aspx"
 
@@ -22,7 +22,7 @@ def fetch_forms() -> List[dict]:
     soup = BeautifulSoup(resp.text, "html.parser")
     forms = []
     for link in soup.find_all("a", href=True):
-        href = link["href"]
+        href = str(link["href"])
         if not href.lower().endswith(".pdf"):
             continue
         text = link.get_text(strip=True)

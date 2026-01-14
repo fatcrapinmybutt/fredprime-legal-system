@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import csv
-import os
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import sys
 
 if sys.version_info < (3, 8):
     raise SystemExit("Python 3.8+ required")

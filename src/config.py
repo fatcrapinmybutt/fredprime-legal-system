@@ -10,15 +10,15 @@ Provides:
 - Multi-environment support (dev/staging/prod)
 """
 
-import os
 import json
-from pathlib import Path
-from typing import Any, Dict, Optional, List
+import os
 from functools import lru_cache
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from dotenv import load_dotenv
 
 
 class LoggingConfig(BaseModel):
@@ -71,10 +71,10 @@ class AppSettings(BaseSettings):
 
     # Paths
     project_root: Path = Field(default_factory=Path.cwd)
-    data_dir: Path = Field(default="data")
-    documents_dir: Path = Field(default="documents")
-    output_dir: Path = Field(default="output")
-    logs_dir: Path = Field(default="logs")
+    data_dir: Path = Field(default=Path("data"))
+    documents_dir: Path = Field(default=Path("documents"))
+    output_dir: Path = Field(default=Path("output"))
+    logs_dir: Path = Field(default=Path("logs"))
 
     # Feature flags
     enable_document_validation: bool = Field(default=True)
@@ -95,14 +95,13 @@ class AppSettings(BaseSettings):
 
     # Legal system
     court_system: str = Field(default="michigan")
-    document_template_path: Path = Field(default="forms")
-    forms_manifest: Path = Field(default="data/forms_manifest.json")
+    document_template_path: Path = Field(default=Path("forms"))
+    forms_manifest: Path = Field(default=Path("data/forms_manifest.json"))
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
-        nested_delimiter="__",  # Support nested env vars like LOGGING__LEVEL
     )
 
     @model_validator(mode="before")
