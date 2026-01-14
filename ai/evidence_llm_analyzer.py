@@ -12,15 +12,11 @@ from enum import Enum
 from datetime import datetime
 
 try:
-    from transformers import (
-        pipeline,
-        AutoTokenizer,
-        AutoModelForSequenceClassification,
-        AutoModelForTokenClassification,
-    )
-    HAS_TRANSFORMERS = True
+    from transformers import pipeline
+    _has_transformers = True
 except ImportError:
-    HAS_TRANSFORMERS = False
+    _has_transformers = False
+    pipeline = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -74,15 +70,15 @@ class AnalyzedEvidence:
     content: str
     evidence_type: EvidenceType
     extraction_timestamp: str
-    extracted_entities: List[EvidenceEntity] = field(default_factory=list)
+    extracted_entities: List[EvidenceEntity] = field(default_factory=lambda: [])
     semantic_summary: str = ""
-    key_phrases: List[str] = field(default_factory=list)
+    key_phrases: List[str] = field(default_factory=lambda: [])
     scores: Optional[EvidenceScore] = None
-    relationships: List[str] = field(default_factory=list)
+    relationships: List[str] = field(default_factory=lambda: [])
     confidence: float = 0.0
-    contradictions: List[Dict[str, Any]] = field(default_factory=list)
-    supporting_evidence_ids: List[str] = field(default_factory=list)
-    legal_implications: List[str] = field(default_factory=list)
+    contradictions: List[Dict[str, Any]] = field(default_factory=lambda: [])
+    supporting_evidence_ids: List[str] = field(default_factory=lambda: [])
+    legal_implications: List[str] = field(default_factory=lambda: [])
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
@@ -103,7 +99,7 @@ class EvidenceLLMAnalyzer:
     def __init__(self, model_name: str = "distilbert-base-uncased-finetuned-sst-2-english"):
         """Initialize the evidence analyzer"""
         self.model_name = model_name
-        self.transformers_available = HAS_TRANSFORMERS
+        self.transformers_available = _has_transformers
 
         if self.transformers_available:
             try:
@@ -278,10 +274,6 @@ class EvidenceLLMAnalyzer:
             return self._calculate_evidence_scores_fallback(content)
 
         try:
-            # Assess sentiment (negativity indicates potential impact)
-            sentiment = self.sentiment_pipeline(content[:512])[0]
-            sentiment_score = 1.0 if sentiment['label'] == 'NEGATIVE' else 0.5
-
             # Determine relevance based on case type
             relevance_labels = [
                 f"evidence relevant to {case_type}",

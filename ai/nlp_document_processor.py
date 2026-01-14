@@ -13,11 +13,12 @@ from enum import Enum
 from collections import defaultdict
 import re
 
+# Check transformers availability at runtime
 try:
-    # Importing transformers is optional; guard usage at runtime.
-    transformers_available = True
-except Exception:
-    transformers_available = False
+    import transformers  # noqa: F401
+    _transformers_available = True
+except ImportError:
+    _transformers_available = False
 
 logger = logging.getLogger(__name__)
 
@@ -76,13 +77,13 @@ class DocumentMetadata:
     parties_involved: List[str]
     jurisdiction: Optional[str]
     summary: str
-    entities: List[EntityInfo] = field(default_factory=list)
-    relationships: List[Relationship] = field(default_factory=list)
+    entities: List[EntityInfo] = field(default_factory=lambda: [])
+    relationships: List[Relationship] = field(default_factory=lambda: [])
     sentiment: SentimentType = SentimentType.NEUTRAL
     sentiment_score: float = 0.0
-    key_concepts: List[str] = field(default_factory=list)
-    action_items: List[str] = field(default_factory=list)
-    deadlines: List[str] = field(default_factory=list)
+    key_concepts: List[str] = field(default_factory=lambda: [])
+    action_items: List[str] = field(default_factory=lambda: [])
+    deadlines: List[str] = field(default_factory=lambda: [])
     confidence_score: float = 0.0
 
     def to_dict(self):
@@ -150,7 +151,7 @@ class NLPDocumentProcessor:
 
     def __init__(self):
         """Initialize the NLP document processor"""
-        self.transformers_available = transformers_available
+        self.transformers_available = _transformers_available
         self.sentiment_pipeline: Optional[Any] = None
         self.ner_pipeline: Optional[Any] = None
 
