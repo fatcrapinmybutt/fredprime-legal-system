@@ -35,5 +35,143 @@
       ]
     }
   ],
-  "instructions": "To apply these rulesets via GitHub CLI with admin access:\n\ngh api --method POST repos/fatcrapinmybutt/fredprime-legal-system/rulesets -f name='Enforce Code Quality on Main' -f target='branch' -f enforcement='active' -f conditions='...' -f rules='...'\n\nOr use the GitHub Web UI: Settings > Rules and security > Rulesets"
+  "open_source_ruleset": {
+    "name": "Code Quality Enforcement (Open Source)",
+    "description": "Complete ruleset using open-source tools - no API required",
+    "rules": [
+      {
+        "id": "file-size-check",
+        "name": "File Size Limit",
+        "description": "Prevents files larger than 10MB from being committed",
+        "tool": "shell/bash",
+        "enabled": true
+      },
+      {
+        "id": "python-syntax",
+        "name": "Python Syntax Validation",
+        "description": "Ensures all Python files have valid syntax",
+        "tool": "py_compile",
+        "enabled": true
+      },
+      {
+        "id": "debug-statements",
+        "name": "Debug Statement Check",
+        "description": "Warns about print statements in production code",
+        "tool": "grep/bash",
+        "enabled": true,
+        "severity": "warning"
+      },
+      {
+        "id": "trailing-whitespace",
+        "name": "Trailing Whitespace",
+        "description": "Removes trailing whitespace from files",
+        "tool": "pre-commit",
+        "enabled": true
+      },
+      {
+        "id": "large-files",
+        "name": "Large Files Detector",
+        "description": "Prevents adding large files (pre-commit hook)",
+        "tool": "pre-commit",
+        "enabled": true
+      },
+      {
+        "id": "code-formatting",
+        "name": "Code Formatting (Black)",
+        "description": "Enforces consistent code style with Black",
+        "tool": "black",
+        "enabled": true
+      },
+      {
+        "id": "import-sorting",
+        "name": "Import Sorting (isort)",
+        "description": "Sorts and organizes Python imports",
+        "tool": "isort",
+        "enabled": true
+      },
+      {
+        "id": "linting",
+        "name": "Linting (Flake8)",
+        "description": "Checks code quality and style issues",
+        "tool": "flake8",
+        "enabled": true
+      },
+      {
+        "id": "security",
+        "name": "Security Scanning (Bandit)",
+        "description": "Detects common security issues in Python code",
+        "tool": "bandit",
+        "enabled": true
+      },
+      {
+        "id": "secrets-detection",
+        "name": "Secrets Detection",
+        "description": "Prevents committing API keys and sensitive data",
+        "tool": "detect-secrets",
+        "enabled": true
+      },
+      {
+        "id": "yaml-validation",
+        "name": "YAML Validation",
+        "description": "Validates YAML syntax in config files",
+        "tool": "pre-commit",
+        "enabled": true
+      },
+      {
+        "id": "json-validation",
+        "name": "JSON Validation",
+        "description": "Validates JSON syntax in config files",
+        "tool": "pre-commit",
+        "enabled": true
+      },
+      {
+        "id": "branch-naming",
+        "name": "Branch Naming Convention",
+        "description": "Enforces conventional branch naming (feature/*, bugfix/*, etc.)",
+        "tool": "shell/bash",
+        "enabled": true,
+        "severity": "warning"
+      },
+      {
+        "id": "commit-message",
+        "name": "Commit Message Format",
+        "description": "Suggests conventional commit format",
+        "tool": "shell/bash",
+        "enabled": true,
+        "severity": "warning"
+      },
+      {
+        "id": "github-actions",
+        "name": "GitHub Actions Validation",
+        "description": "Validates GitHub Actions workflow syntax",
+        "tool": "actionlint",
+        "enabled": true
+      },
+      {
+        "id": "markdown-lint",
+        "name": "Markdown Linting",
+        "description": "Validates markdown file formatting",
+        "tool": "markdownlint",
+        "enabled": true
+      }
+    ],
+    "execution": {
+      "precommit": "Runs automatically before each commit (via pre-commit hooks)",
+      "manual": "Run: bash scripts/enforce_rulesets.sh",
+      "ci": "Runs in GitHub Actions on pull requests"
+    }
+  },
+  "instructions": {
+    "setup": [
+      "1. Install pre-commit: pip install pre-commit",
+      "2. Install hooks: pre-commit install",
+      "3. Run manually: pre-commit run --all-files"
+    ],
+    "enforcement": [
+      "For local enforcement: bash scripts/enforce_rulesets.sh",
+      "For strict mode: ENFORCE_STRICT=1 bash scripts/enforce_rulesets.sh",
+      "For GitHub API (admin only): python3 scripts/manage_rulesets.py create"
+    ]
+  }
 }
+

@@ -59,7 +59,6 @@ repos:
     rev: 1.7.5
     hooks:
       - id: bandit
-        args: [-c, .bandit]
         exclude: ^tests/
 
   # Markdown linting
@@ -80,7 +79,33 @@ repos:
     rev: v1.4.0
     hooks:
       - id: detect-secrets
-        args: [--baseline, .secrets.baseline]
+        exclude: ^(tests|docs)/
+
+  # Python static analysis with Pylint
+  - repo: https://github.com/PyCQA/pylint
+    rev: pylint-3.0.3
+    hooks:
+      - id: pylint
+        args: [--disable=missing-docstring, --disable=too-many-arguments]
+        exclude: ^(tests|docs)/
+        stages: [manual]
+
+  # Code complexity checker
+  - repo: https://github.com/PyCQA/radon
+    rev: "6.1"
+    hooks:
+      - id: radon-cc
+        args: [-nc, -s]
+        exclude: ^(tests|docs|__pycache__)/
+        stages: [manual]
+
+  # Docstring checker
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        exclude: ^(tests|docs)/
+        stages: [manual]
 
 default_language_version:
   python: python3.11
