@@ -153,20 +153,22 @@ fredprime-legal-system/                 # Root
 ## Module Initialization Sequence
 
 ### Phase 1: System Boot (Startup)
+
 **Load configuration and prepare environment**
 
 ```
 1. config/settings.py
    └─ Load configuration from JSON/ENV
-   
+
 2. config/logger_config.py
    └─ Initialize logging system
-   
+
 3. utils/constants.py
    └─ Define system constants
 ```
 
 ### Phase 2: Foundation Layer (Setup)
+
 **Initialize core dependencies**
 
 ```
@@ -193,6 +195,7 @@ fredprime-legal-system/                 # Root
 ```
 
 ### Phase 3: Integration Layer (Bridges)
+
 **Connect components together**
 
 ```
@@ -206,6 +209,7 @@ fredprime-legal-system/                 # Root
 ```
 
 ### Phase 4: Workflows (Business Logic)
+
 **Setup case processing workflows**
 
 ```
@@ -227,6 +231,7 @@ fredprime-legal-system/                 # Root
 ```
 
 ### Phase 5: Application (Execution)
+
 **Run application**
 
 ```
@@ -295,63 +300,70 @@ main.py (Entry Point)
 
 ## File Relationship Matrix
 
-| Module | Depends On | Provides | Status |
-|--------|-----------|----------|--------|
-| evidence_llm_analyzer.py | utils | Evidence analysis | ✅ Ready |
-| nlp_document_processor.py | utils | Document NLP | ✅ Ready |
-| argument_reasoning.py | utils | Argument analysis | ✅ Ready |
-| ai_pipeline_orchestrator.py | all AI modules | Orchestration | ✅ Ready |
-| ai_integration_bridge.py | AI modules, utils | AI interface | ✅ Ready |
-| github_integration.py | utils | GitHub API | ✅ Ready |
-| court_api_integration.py | utils | Court API | ✅ Ready |
-| mifile_integration.py | utils | E-filing | ✅ Ready |
-| master_integration_bridge.py | all integrations | Master interface | ✅ Ready |
-| case_intake_workflow.py | bridges, utils | Intake flow | ✅ Ready |
-| evidence_workflow.py | bridges, validators | Evidence flow | ✅ Ready |
-| document_workflow.py | bridges, formatters | Document flow | ✅ Ready |
-| motion_workflow.py | all workflows | Motion flow | ✅ Ready |
+| Module                       | Depends On          | Provides          | Status   |
+| ---------------------------- | ------------------- | ----------------- | -------- |
+| evidence_llm_analyzer.py     | utils               | Evidence analysis | ✅ Ready |
+| nlp_document_processor.py    | utils               | Document NLP      | ✅ Ready |
+| argument_reasoning.py        | utils               | Argument analysis | ✅ Ready |
+| ai_pipeline_orchestrator.py  | all AI modules      | Orchestration     | ✅ Ready |
+| ai_integration_bridge.py     | AI modules, utils   | AI interface      | ✅ Ready |
+| github_integration.py        | utils               | GitHub API        | ✅ Ready |
+| court_api_integration.py     | utils               | Court API         | ✅ Ready |
+| mifile_integration.py        | utils               | E-filing          | ✅ Ready |
+| master_integration_bridge.py | all integrations    | Master interface  | ✅ Ready |
+| case_intake_workflow.py      | bridges, utils      | Intake flow       | ✅ Ready |
+| evidence_workflow.py         | bridges, validators | Evidence flow     | ✅ Ready |
+| document_workflow.py         | bridges, formatters | Document flow     | ✅ Ready |
+| motion_workflow.py           | all workflows       | Motion flow       | ✅ Ready |
 
 ---
 
 ## Migration Checklist
 
 ### Step 1: Prepare Environment
+
 - [ ] Create new directory structure: `mkdir -p src/{ai,integrations,bridges,workflows,utils,config}`
 - [ ] Create test structure: `mkdir -p tests/{unit,integration}`
 - [ ] Create documentation: `mkdir -p docs scripts examples`
 - [ ] Backup current structure: `git commit -m "pre-migration backup"`
 
 ### Step 2: Move Core Modules
+
 - [ ] Move AI components to `src/ai/`
 - [ ] Move integration modules to `src/integrations/`
 - [ ] Move bridge to `src/bridges/`
 - [ ] Move utilities to `src/utils/`
 
 ### Step 3: Organize Tests
+
 - [ ] Move unit tests to `tests/unit/`
 - [ ] Create integration tests in `tests/integration/`
 - [ ] Update `conftest.py` with fixtures
 - [ ] Run tests: `pytest tests/ -v`
 
 ### Step 4: Update Imports
+
 - [ ] Update all `from ai.* import` → `from src.ai.* import`
 - [ ] Update all internal imports to new structure
 - [ ] Validate imports: `python scripts/validate_imports.py`
 - [ ] Check for circular imports
 
 ### Step 5: Documentation
+
 - [ ] Update README.md with new structure
 - [ ] Create ARCHITECTURE.md
 - [ ] Create INSTALLATION.md
 - [ ] Create EXAMPLES.md
 
 ### Step 6: Verification
+
 - [ ] Run type checker: `mypy src/ tests/ --strict`
 - [ ] Run linter: `pylint src/ tests/`
 - [ ] Run tests: `pytest tests/ -v`
 - [ ] Check coverage: `pytest tests/ --cov=src`
 
 ### Step 7: Deployment
+
 - [ ] Review all changes
 - [ ] Merge to main branch
 - [ ] Tag release
@@ -362,6 +374,7 @@ main.py (Entry Point)
 ## Code Quality Standards for New Modules
 
 ### Type Hints (REQUIRED)
+
 ```python
 from typing import Dict, List, Optional, Any
 
@@ -375,17 +388,18 @@ def process_case(
 ```
 
 ### Docstrings (REQUIRED)
+
 ```python
 def analyze_evidence(evidence_text: str) -> Dict[str, float]:
     """
     Analyze evidence text for relevance and reliability.
-    
+
     Args:
         evidence_text: Raw text of evidence item
-    
+
     Returns:
         Dict with scores for relevance, reliability, impact
-    
+
     Raises:
         ValueError: If evidence_text is empty
     """
@@ -393,6 +407,7 @@ def analyze_evidence(evidence_text: str) -> Dict[str, float]:
 ```
 
 ### Import Organization (REQUIRED)
+
 ```python
 # Standard library imports
 import logging
@@ -408,6 +423,7 @@ from src.config import settings
 ```
 
 ### Logging (REQUIRED)
+
 ```python
 import logging
 
@@ -440,6 +456,7 @@ def process():
 ## Performance Optimization Guidelines
 
 ### Caching
+
 ```python
 from functools import lru_cache
 
@@ -450,6 +467,7 @@ def get_case_type_rules(case_type: str) -> Dict:
 ```
 
 ### Async Processing
+
 ```python
 async def process_cases(cases: List[Case]) -> List[Result]:
     """Process cases concurrently."""
@@ -458,11 +476,12 @@ async def process_cases(cases: List[Case]) -> List[Result]:
 ```
 
 ### Lazy Loading
+
 ```python
 class Bridge:
     def __init__(self):
         self._analyzer = None
-    
+
     @property
     def analyzer(self):
         if self._analyzer is None:
@@ -475,6 +494,7 @@ class Bridge:
 ## Troubleshooting Guide
 
 ### Import Errors
+
 ```bash
 # Validate all imports
 python -m py_compile src/**/*.py
@@ -482,12 +502,14 @@ python scripts/validate_imports.py
 ```
 
 ### Type Errors
+
 ```bash
 # Check with mypy
 mypy src/ tests/ --strict
 ```
 
 ### Test Failures
+
 ```bash
 # Run tests with verbose output
 pytest tests/ -v --tb=short
@@ -519,6 +541,6 @@ pytest tests/ -v --pdb  # Drop to debugger on failure
 
 ---
 
-**Document Version**: 1.0  
-**Status**: Production Ready  
+**Document Version**: 1.0
+**Status**: Production Ready
 **Last Updated**: March 2024
