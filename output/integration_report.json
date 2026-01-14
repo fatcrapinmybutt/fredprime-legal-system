@@ -1,0 +1,31 @@
+{
+  "timestamp": "/workspaces/fredprime-legal-system",
+  "results": {
+    "environment": {
+      "Python Version": true,
+      "Git Repository": true,
+      "Virtual Environment": true
+    },
+    "structure": {
+      "missing": [],
+      "status": "ok"
+    },
+    "code_quality": {
+      "flake8": true,
+      "black": false
+    },
+    "tests": {
+      "status": "pass",
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.1, pytest-9.0.2, pluggy-1.6.0\nrootdir: /workspaces/fredprime-legal-system\nconfigfile: pyproject.toml\ntestpaths: tests\nplugins: anyio-4.12.1\ncollected 14 items\n\ntests/graph_preview_test.py .                                            [  7%]\ntests/meek_pipeline_launcher_test.py .                                   [ 14%]\ntests/test_benchbook_loader.py .                                         [ 21%]\ntests/test_codex_guardian.py ...                                         [ 42%]\ntests/test_codex_manifest.py .                                           [ 50%]\ntests/test_codex_supreme.py ..                                           [ 64%]\ntests/test_firstimport.py ..                                             [ 78%]\ntests/test_generate_manifest_cli.py .                                    [ 85%]\ntests/test_integration_firstimport.py .                                  [ 92%]\ntests/test_tools_makefile.py .                                           [100%]\n\n=============================== warnings summary ===============================\n../../home/codespace/.local/lib/python3.12/site-packages/PyPDF2/__init__.py:21\n  /home/codespace/.local/lib/python3.12/site-packages/PyPDF2/__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 14 passed, 1 warning in 2.98s =========================\n"
+    },
+    "documentation": {
+      "found": 5,
+      "total": 5
+    }
+  },
+  "warnings": [
+    "Consider using a virtual environment"
+  ],
+  "failed": [],
+  "status": "pass"
+}
