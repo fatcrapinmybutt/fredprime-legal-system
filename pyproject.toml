@@ -1,0 +1,134 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fredprime-legal-system"
+version = "1.0.0"
+description = "FRED Supreme Litigation OS - Advanced legal system automation and document management"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "FatCrapInMyButt", email = "fatcrapinmybutt1@gmail.com"}
+]
+keywords = [
+    "legal", "litigation", "automation", "document-management", 
+    "court-forms", "legal-tech", "python"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Legal Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Legal",
+]
+
+dependencies = [
+    "pyyaml>=6.0",
+    "requests>=2.31.0",
+    "click>=8.1.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.13.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "bandit>=1.7.5",
+    "pre-commit>=3.5.0",
+]
+docs = [
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "sphinx-autodoc-typehints>=1.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/fatcrapinmybutt/fredprime-legal-system"
+Documentation = "https://github.com/fatcrapinmybutt/fredprime-legal-system/blob/main/README.md"
+Repository = "https://github.com/fatcrapinmybutt/fredprime-legal-system.git"
+"Bug Tracker" = "https://github.com/fatcrapinmybutt/fredprime-legal-system/issues"
+
+[tool.setuptools]
+packages = ["src", "modules", "cli", "scripts"]
+include-package-data = true
+
+[tool.black]
+line-length = 120
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | tests/fixtures
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip_gitignore = true
+known_first_party = ["src", "modules", "cli", "scripts"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+]
+
+[tool.coverage.run]
+source = ["src", "modules", "cli", "scripts"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.bandit]
+exclude_dirs = ["/test", "/tests", "/venv", "/.venv"]
+skips = ["B101", "B601"]
