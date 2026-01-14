@@ -1,0 +1,83 @@
+[
+  {
+    "module": "benchbook_loader",
+    "path": "modules/benchbook_loader.py",
+    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+    "legal_function": "extract text from Michigan benchbook PDFs",
+    "dependencies": [
+      "PyPDF2"
+    ]
+  },
+  {
+    "module": "golden_god_mode_bootstrap",
+    "path": "golden_god_mode_bootstrap.py",
+    "hash": "5d75d906b3e8ec114e62956a67540d37f3ec2d91aa2313ca4ff7e362efd9e722",
+    "legal_function": "bootstrap local offline litigation workspace with FastAPI backend, UI, and tooling",
+    "dependencies": [
+      "fastapi",
+      "uvicorn",
+      "pydantic",
+      "python-multipart",
+      "pyyaml",
+      "pymupdf",
+      "pdfminer.six",
+      "ocrmypdf",
+      "scikit-learn",
+      "hnswlib",
+      "watchdog",
+      "requests"
+    ]
+  },
+  {
+    "module": "lawforge_master_upgrade_v1",
+    "path": "LAWFORGE_MASTER_UPGRADE_v1.py",
+    "hash": "1a15cd35b60ee2983c2859d7cf5183c5694767ebc9ade742fb6abe1cfce1a295",
+    "legal_function": "scan, OCR, index, embed, search, and provide RAG Q&A for litigation documents",
+    "dependencies": [
+      "chromadb",
+      "sentence-transformers",
+      "pdfminer.six",
+      "pypdf",
+      "pdfplumber",
+      "pillow",
+      "pytesseract",
+      "rapidfuzz",
+      "unstructured",
+      "pydantic",
+      "python-magic-bin",
+      "tiktoken",
+      "uvicorn",
+      "fastapi",
+      "watchdog",
+      "pillow-heif",
+      "faster-whisper",
+      "openai-whisper",
+      "ocrmypdf"
+    ]
+  },
+  {
+    "module": "golden_litigator_os",
+    "path": "golden_litigator_os.py",
+    "hash": "9450d3bc5331057c80053ae4d8149c065b78a1c1107b916d812d2e42be130dac",
+    "legal_function": "self-evolving litigation intelligence with OCR, transcription, timeline, and narrative builder",
+    "dependencies": [
+      "python-docx",
+      "pymupdf",
+      "pytesseract",
+      "Pillow",
+      "faster-whisper",
+      "whisper",
+      "openai",
+      "anthropic"
+    ]
+  },
+  {
+    "module": "codex_selftest",
+    "path": "codex_selftest.py",
+    "hash": "891077444d190cf7d9a5cbbcaae0ed21a73467e8b57e541d39c1e55b92f6d7ca",
+    "legal_function": "verify branch, commit message, and manifest integrity",
+    "dependencies": [
+      "codex_guardian"
+    ]
+  }
+]
