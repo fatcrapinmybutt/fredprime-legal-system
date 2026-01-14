@@ -106,27 +106,20 @@ class EvidenceLLMAnalyzer:
         if self.transformers_available:
             try:
                 # Load sentiment analysis pipeline
-                from typing import Any, cast
                 # Import pipeline locally to help mypy resolve overloads
-                from transformers import pipeline as _pipeline  # type: ignore
-                self.sentiment_pipeline = cast(
-                    Any,
-                    _pipeline(
-                        "sentiment-analysis",
-                        model=model_name,
-                        device=-1,  # CPU by default
-                    ),
+                from transformers import pipeline as _pipeline
+                self.sentiment_pipeline = _pipeline(
+                    "sentiment-analysis",
+                    model=model_name,
+                    device=-1,  # CPU by default
                 )
                 logger.info(f"Loaded sentiment analysis model: {model_name}")
 
                 # Load zero-shot classification for evidence relevance
-                self.relevance_pipeline = cast(
-                    Any,
-                    _pipeline(
-                        "zero-shot-classification",
-                        model="facebook/bart-large-mnli",
-                        device=-1,
-                    ),
+                self.relevance_pipeline = _pipeline(
+                    "zero-shot-classification",
+                    model="facebook/bart-large-mnli",
+                    device=-1,
                 )
                 logger.info("Loaded relevance classification model")
 
