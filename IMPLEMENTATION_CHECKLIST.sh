@@ -47,7 +47,7 @@ fi
 
 # Install dependencies
 echo "Installing dependencies..."
-pip3 install -q click rich pyyaml pytest pytest-asyncio 2>/dev/null
+pip3 install -q click rich pyyaml pytest pytest-asyncio || { echo -e "${cross_mark} Dependency installation failed"; exit 1; }
 echo -e "${check_mark} Dependencies installed"
 
 echo ""
