@@ -109,7 +109,7 @@ class EvidenceLLMAnalyzer:
                 # Import pipeline locally to help mypy resolve overloads
                 from transformers import pipeline as _pipeline
                 self.sentiment_pipeline = _pipeline(
-                    "sentiment-analysis",
+                    "text-classification",
                     model=model_name,
                     device=-1,  # CPU by default
                 )
