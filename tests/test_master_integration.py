@@ -398,7 +398,7 @@ class TestPerformance:
     @pytest.mark.asyncio
     async def test_intake_performance_with_many_files(self, case_context, temp_workspace):
         """Benchmark intake handler performance."""
-        from src.master_integration_bridge import get_handler_registry
+        from src.master_integration_bridge import get_handler_registry, CaseContext
         import time
 
         registry = get_handler_registry()
