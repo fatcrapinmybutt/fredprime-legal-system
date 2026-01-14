@@ -1,31 +1,32 @@
 # LITIGATION_CORE_ENGINE_v9999.py (FULL SYSTEM – LEVEL 9999, *GUI-WRAPPED EXECUTABLE + CONFIG-DRIVEN THREAD POOL + PREFECT + GPT + RETRIES + LOGGING + DAG + ALERTS + AUDIT + METRICS + SMS/EMAIL + SHA256 + GUI.EXE*)
 
-import os
-import sys
-import json
 import argparse
-import logging
 import hashlib
+import json
+import logging
+import os
 import smtplib
+import sys
 import threading
-from email.message import EmailMessage
-from fastapi import FastAPI
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from email.message import EmailMessage
+
+from alerts import send_email, send_sms
+from behavior_manager import BehaviorManager
+from config_manager import ConfigManager, ConfigSchema
+from db_repo import DBRepository, PostgresDBRepo
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from gpt_tools import classify_step, determine_filings, extract_text
+from gui_wrapper import launch_gui
+from memory_crawler import MemoryCrawler
+from metrics import doc_build_counter
+from ocr_engine import OCRFallback
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from pythonjsonlogger import jsonlogger
 from prefect import flow, task
 from prefect.task_runners import ConcurrentTaskRunner
-from gui_wrapper import launch_gui
-from config_manager import ConfigManager, ConfigSchema
-from ocr_engine import OCRFallback
-from memory_crawler import MemoryCrawler
-from gpt_tools import extract_text, classify_step, determine_filings
-from db_repo import PostgresDBRepo, DBRepository
-from metrics import doc_build_counter
-from behavior_manager import BehaviorManager
-from alerts import send_sms, send_email
+from pythonjsonlogger import jsonlogger
 
 # === Logging Configuration ===
 logger = logging.getLogger("LitigationEngine")
@@ -94,10 +95,7 @@ def run_evidence_pipeline(case_num: str, cfg: ConfigSchema, db: DBRepository):
 
     ocr_results = []
     with ThreadPoolExecutor(max_workers=cfg.ocr_threads) as executor:
-        future_map = {
-            executor.submit(OCRFallback().parse, itm["path"], case_num): itm
-            for itm in items
-        }
+        future_map = {executor.submit(OCRFallback().parse, itm["path"], case_num): itm for itm in items}
         for future in as_completed(future_map, timeout=cfg.ocr_timeout):
             itm = future_map[future]
             try:

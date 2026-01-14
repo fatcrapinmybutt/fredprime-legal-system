@@ -23,17 +23,17 @@ for PDF/Word parsing are used only if installed; otherwise the script logs a
 warning and continues.
 """
 
-import os
-import sys
 import csv
+import hashlib
 import json
 import logging
-import hashlib
-import zipfile
-from pathlib import Path
-from datetime import datetime
-from typing import List, Dict, Any, Optional, Iterable
+import os
 import re
+import sys
+import zipfile
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional
 
 # ---------------------------------------------------------------------------
 # Global paths and configuration
@@ -91,6 +91,7 @@ RUN_ID_FORMAT = "%Y%m%d-%H%M%S"
 # Logging & config
 # ---------------------------------------------------------------------------
 
+
 def current_run_id() -> str:
     return datetime.utcnow().strftime(RUN_ID_FORMAT)
 
@@ -136,6 +137,7 @@ def load_config() -> Dict[str, Any]:
 # Utility helpers
 # ---------------------------------------------------------------------------
 
+
 def compute_hash(path: Path, chunk_size: int = 1024 * 1024) -> str:
     """Compute SHA-256 hash of a file. Logs and re-raises on error."""
     h = hashlib.sha256()
@@ -158,6 +160,7 @@ def safe_relpath(path: Path, root: Path) -> str:
 # ---------------------------------------------------------------------------
 # Phase 1 – Evidence Intake & Universe Scanner
 # ---------------------------------------------------------------------------
+
 
 def discover_scan_roots(extra_paths: Optional[List[str]] = None) -> List[Path]:
     """Return a list of existing scan roots, including defaults, config, extras,
@@ -211,8 +214,9 @@ def discover_scan_roots(extra_paths: Optional[List[str]] = None) -> List[Path]:
     return roots
 
 
-def phase1_intake_scan(extra_paths: Optional[List[str]] = None,
-                       max_files: Optional[int] = None) -> List[Dict[str, Any]]:
+def phase1_intake_scan(
+    extra_paths: Optional[List[str]] = None, max_files: Optional[int] = None
+) -> List[Dict[str, Any]]:
     """Phase 1: recursively scan roots and build an inventory of artifacts.
 
     - Roots come from defaults, config, auto-discovered drives, and extras.
@@ -349,6 +353,7 @@ def phase1_intake_scan(extra_paths: Optional[List[str]] = None,
 # Phase 2 – OCR/Text Extraction & Metadata Harvester
 # ---------------------------------------------------------------------------
 
+
 def load_inventory() -> List[Dict[str, Any]]:
     if INVENTORY_JSON.exists():
         with INVENTORY_JSON.open("r", encoding="utf-8") as f:
@@ -403,8 +408,8 @@ def extract_text_from_docx(path: Path) -> str:
             doc = docx.Document(str(path))
             return "\n".join(p.text for p in doc.paragraphs)
         except ImportError:
-            import zipfile
             import html
+            import zipfile
 
             text_lines: List[str] = []
             with zipfile.ZipFile(path) as z:
@@ -486,15 +491,17 @@ def phase2_text_and_metadata() -> None:
             text_file = str(text_path)
 
         meta = guess_meta_from_filename(art["filename"])
-        doc_meta_rows.append({
-            "artifact_id": artifact_id,
-            "title_guess": meta["title_guess"],
-            "date_guess": meta["date_guess"],
-            "case_number_guess": meta["case_number_guess"],
-            "court_guess": meta["court_guess"],
-            "participants": ";".join(meta["participants"]),
-            "track_tags": ";".join(meta["track_tags"]),
-        })
+        doc_meta_rows.append(
+            {
+                "artifact_id": artifact_id,
+                "title_guess": meta["title_guess"],
+                "date_guess": meta["date_guess"],
+                "case_number_guess": meta["case_number_guess"],
+                "court_guess": meta["court_guess"],
+                "participants": ";".join(meta["participants"]),
+                "track_tags": ";".join(meta["track_tags"]),
+            }
+        )
 
         record = {
             "artifact_id": artifact_id,
@@ -521,6 +528,7 @@ def phase2_text_and_metadata() -> None:
 # ---------------------------------------------------------------------------
 # Phase 3 – Chain-of-Custody & Source-of-Record mapping
 # ---------------------------------------------------------------------------
+
 
 def phase3_coc_and_sor() -> None:
     ensure_dirs()
@@ -574,9 +582,7 @@ def phase3_coc_and_sor() -> None:
         # Prefer artifact with shortest abs_path as SoR
         best_artifact_id = min(
             art_ids,
-            key=lambda aid: len(
-                next(a["abs_path"] for a in inventory if a["id"] == aid)
-            ),
+            key=lambda aid: len(next(a["abs_path"] for a in inventory if a["id"] == aid)),
         )
         sor_map[logical_id] = {
             "logical_id": logical_id,
@@ -594,6 +600,7 @@ def phase3_coc_and_sor() -> None:
 # ---------------------------------------------------------------------------
 # Phase 4 – Normalization & Source-of-Record Builder
 # ---------------------------------------------------------------------------
+
 
 def classify_family(filename: str, ext: str) -> str:
     name = filename.lower()
@@ -680,6 +687,7 @@ def load_normalized_docs() -> List[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Evidence Store & Authority Universe helpers
 # ---------------------------------------------------------------------------
+
 
 def load_textmap_index() -> Dict[str, Dict[str, Any]]:
     """Return artifact_id -> {text_path, char_len, has_text}."""
@@ -771,8 +779,9 @@ def build_evidence_store() -> None:
     with EVIDENCE_STORE_JSON.open("w", encoding="utf-8") as f:
         json.dump(evidence_store, f, indent=2)
 
-    logging.info("Evidence Store built: %d logical docs, %d cases, %d tracks.",
-                 len(by_logical), len(by_case), len(by_track))
+    logging.info(
+        "Evidence Store built: %d logical docs, %d cases, %d tracks.", len(by_logical), len(by_case), len(by_track)
+    )
 
 
 def build_authority_universe() -> None:
@@ -825,14 +834,17 @@ def build_authority_universe() -> None:
             for match in patt.findall(text):
                 citation = match.strip()
                 citations_found.append(citation)
-                info = by_citation.setdefault(citation, {
-                    "citation": citation,
-                    "type": c_type,
-                    "hit_count": 0,
-                    "logical_ids": [],
-                    "case_ids": [],
-                    "tracks": [],
-                })
+                info = by_citation.setdefault(
+                    citation,
+                    {
+                        "citation": citation,
+                        "type": c_type,
+                        "hit_count": 0,
+                        "logical_ids": [],
+                        "case_ids": [],
+                        "tracks": [],
+                    },
+                )
                 info["hit_count"] += 1
                 if logical_id not in info["logical_ids"]:
                     info["logical_ids"].append(logical_id)
@@ -862,34 +874,38 @@ def build_authority_universe() -> None:
     with AUTHORITY_UNIVERSE_JSON.open("w", encoding="utf-8") as f:
         json.dump(authority_universe, f, indent=2)
 
-    logging.info("Authority Universe built: %d citations, %d docs with citations.",
-                 len(by_citation), len(by_logical_id))
+    logging.info(
+        "Authority Universe built: %d citations, %d docs with citations.", len(by_citation), len(by_logical_id)
+    )
 
 
 # ---------------------------------------------------------------------------
 # Timeline builder
 # ---------------------------------------------------------------------------
 
+
 def build_timeline_from_normalized() -> List[Dict[str, Any]]:
     docs = load_normalized_docs()
     timeline: List[Dict[str, Any]] = []
     for idx, doc in enumerate(docs, start=1):
         event_id = f"EVT-{idx:06d}"
-        timeline.append({
-            "event_id": event_id,
-            "date": doc.get("date_primary", ""),
-            "case_id": doc.get("case_anchor", ""),
-            "track": doc.get("track_tags", ""),
-            "short_label": doc.get("family", "") + " " + doc.get("logical_id", ""),
-            "description": (
-                f"Document {doc.get('logical_id', '')} in family {doc.get('family', '')} "
-                f"treated as timeline event."
-            ),
-            "doc_refs": doc.get("logical_id", ""),
-            "exh_refs": "",
-            "legal_significance": doc.get("family", ""),
-            "tags": doc.get("track_tags", ""),
-        })
+        timeline.append(
+            {
+                "event_id": event_id,
+                "date": doc.get("date_primary", ""),
+                "case_id": doc.get("case_anchor", ""),
+                "track": doc.get("track_tags", ""),
+                "short_label": doc.get("family", "") + " " + doc.get("logical_id", ""),
+                "description": (
+                    f"Document {doc.get('logical_id', '')} in family {doc.get('family', '')} "
+                    f"treated as timeline event."
+                ),
+                "doc_refs": doc.get("logical_id", ""),
+                "exh_refs": "",
+                "legal_significance": doc.get("family", ""),
+                "tags": doc.get("track_tags", ""),
+            }
+        )
     return timeline
 
 
@@ -910,6 +926,7 @@ def write_timeline_csv(events: List[Dict[str, Any]]) -> None:
 # Graph builder (MindEye2 + Neo4j exports)
 # ---------------------------------------------------------------------------
 
+
 def build_graph_from_normalized_and_timeline() -> None:
     docs = load_normalized_docs()
     events: List[Dict[str, Any]] = []
@@ -925,17 +942,19 @@ def build_graph_from_normalized_and_timeline() -> None:
     case_ids = sorted({d.get("case_anchor", "") for d in docs if d.get("case_anchor")})
     for idx, case_id in enumerate(case_ids, start=1):
         node_id = f"CASE-{idx:04d}"
-        nodes.append({
-            "node_id": node_id,
-            "node_type": "CASE",
-            "label": case_id,
-            "track_tags": "",
-            "case_anchor": case_id,
-            "date_primary": "",
-            "severity": "",
-            "source_logical_id": "",
-            "sor_artifact_id": "",
-        })
+        nodes.append(
+            {
+                "node_id": node_id,
+                "node_type": "CASE",
+                "label": case_id,
+                "track_tags": "",
+                "case_anchor": case_id,
+                "date_primary": "",
+                "severity": "",
+                "source_logical_id": "",
+                "sor_artifact_id": "",
+            }
+        )
 
     case_node_by_case_id = {n["case_anchor"]: n["node_id"] for n in nodes if n.get("case_anchor")}
 
@@ -945,29 +964,33 @@ def build_graph_from_normalized_and_timeline() -> None:
         if not logical_id:
             continue
         node_id = logical_id
-        nodes.append({
-            "node_id": node_id,
-            "node_type": "DOCUMENT",
-            "label": logical_id,
-            "track_tags": doc.get("track_tags", ""),
-            "case_anchor": doc.get("case_anchor", ""),
-            "date_primary": doc.get("date_primary", ""),
-            "severity": "",
-            "source_logical_id": logical_id,
-            "sor_artifact_id": doc.get("primary_artifact_id", ""),
-        })
+        nodes.append(
+            {
+                "node_id": node_id,
+                "node_type": "DOCUMENT",
+                "label": logical_id,
+                "track_tags": doc.get("track_tags", ""),
+                "case_anchor": doc.get("case_anchor", ""),
+                "date_primary": doc.get("date_primary", ""),
+                "severity": "",
+                "source_logical_id": logical_id,
+                "sor_artifact_id": doc.get("primary_artifact_id", ""),
+            }
+        )
 
         case_anchor = doc.get("case_anchor", "")
         if case_anchor and case_anchor in case_node_by_case_id:
-            edges.append({
-                "edge_id": f"EDG-CASE-DOC-{logical_id}",
-                "src": case_node_by_case_id[case_anchor],
-                "dst": node_id,
-                "edge_type": "CASE_HAS_DOCUMENT",
-                "weight": 1,
-                "track_tags": doc.get("track_tags", ""),
-                "notes": "",
-            })
+            edges.append(
+                {
+                    "edge_id": f"EDG-CASE-DOC-{logical_id}",
+                    "src": case_node_by_case_id[case_anchor],
+                    "dst": node_id,
+                    "edge_type": "CASE_HAS_DOCUMENT",
+                    "weight": 1,
+                    "track_tags": doc.get("track_tags", ""),
+                    "notes": "",
+                }
+            )
 
     # Event nodes
     for ev in events:
@@ -975,29 +998,33 @@ def build_graph_from_normalized_and_timeline() -> None:
         if not evt_id:
             continue
         node_id = evt_id
-        nodes.append({
-            "node_id": node_id,
-            "node_type": "EVENT",
-            "label": ev.get("short_label", ""),
-            "track_tags": ev.get("tags", ""),
-            "case_anchor": ev.get("case_id", ""),
-            "date_primary": ev.get("date", ""),
-            "severity": "",
-            "source_logical_id": ev.get("doc_refs", ""),
-            "sor_artifact_id": "",
-        })
+        nodes.append(
+            {
+                "node_id": node_id,
+                "node_type": "EVENT",
+                "label": ev.get("short_label", ""),
+                "track_tags": ev.get("tags", ""),
+                "case_anchor": ev.get("case_id", ""),
+                "date_primary": ev.get("date", ""),
+                "severity": "",
+                "source_logical_id": ev.get("doc_refs", ""),
+                "sor_artifact_id": "",
+            }
+        )
 
         doc_ref = ev.get("doc_refs", "")
         if doc_ref:
-            edges.append({
-                "edge_id": f"EDG-EVENT-DOC-{evt_id}",
-                "src": node_id,
-                "dst": doc_ref,
-                "edge_type": "EVENT_RELATES_TO_DOCUMENT",
-                "weight": 1,
-                "track_tags": ev.get("tags", ""),
-                "notes": "",
-            })
+            edges.append(
+                {
+                    "edge_id": f"EDG-EVENT-DOC-{evt_id}",
+                    "src": node_id,
+                    "dst": doc_ref,
+                    "edge_type": "EVENT_RELATES_TO_DOCUMENT",
+                    "weight": 1,
+                    "track_tags": ev.get("tags", ""),
+                    "notes": "",
+                }
+            )
 
     # Write nodes/edges CSV
     if nodes:
@@ -1043,16 +1070,18 @@ def build_neo4j_exports_from_graph() -> None:
             "DOCUMENT": "Document",
             "EVENT": "Event",
         }.get(node_type, "Node")
-        neo_nodes.append({
-            "nodeId:ID": node_id,
-            "labels:LABEL": label,
-            "name": n.get("label", node_id),
-            "node_type": node_type,
-            "case_anchor": n.get("case_anchor", ""),
-            "track_tags": n.get("track_tags", ""),
-            "date_primary": n.get("date_primary", ""),
-            "severity": n.get("severity", ""),
-        })
+        neo_nodes.append(
+            {
+                "nodeId:ID": node_id,
+                "labels:LABEL": label,
+                "name": n.get("label", node_id),
+                "node_type": node_type,
+                "case_anchor": n.get("case_anchor", ""),
+                "track_tags": n.get("track_tags", ""),
+                "date_primary": n.get("date_primary", ""),
+                "severity": n.get("severity", ""),
+            }
+        )
 
     if neo_nodes:
         with NEO4J_NODES_CSV.open("w", encoding="utf-8", newline="") as f:
@@ -1072,14 +1101,16 @@ def build_neo4j_exports_from_graph() -> None:
             weight_int = int(weight_val)
         except Exception:
             weight_int = 1
-        neo_rels.append({
-            ":START_ID": src,
-            ":END_ID": dst,
-            ":TYPE": etype,
-            "weight:long": weight_int,
-            "track_tags": e.get("track_tags", ""),
-            "notes": e.get("notes", ""),
-        })
+        neo_rels.append(
+            {
+                ":START_ID": src,
+                ":END_ID": dst,
+                ":TYPE": etype,
+                "weight:long": weight_int,
+                "track_tags": e.get("track_tags", ""),
+                "notes": e.get("notes", ""),
+            }
+        )
 
     if neo_rels:
         with NEO4J_RELS_CSV.open("w", encoding="utf-8", newline="") as f:
@@ -1102,73 +1133,90 @@ def build_neo4j_exports_from_graph() -> None:
 # Lint rules & violations table
 # ---------------------------------------------------------------------------
 
+
 def run_lint_checks() -> None:
     """Apply a small set of concrete lint rules to the vault and outputs."""
     results: List[Dict[str, Any]] = []
 
     if not INVENTORY_JSON.exists():
-        results.append({
-            "rule_id": "LV-P1-INVENTORY-001",
-            "severity": "critical",
-            "description": "INVENTORY.json missing; intake has not been run.",
-            "recommended_actions": ["Run phase1_intake_scan()"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-P1-INVENTORY-001",
+                "severity": "critical",
+                "description": "INVENTORY.json missing; intake has not been run.",
+                "recommended_actions": ["Run phase1_intake_scan()"],
+            }
+        )
 
     if INVENTORY_JSON.exists() and not TEXTMAP_JSONL.exists():
-        results.append({
-            "rule_id": "LV-P2-TEXTMAP-001",
-            "severity": "warning",
-            "description": "TEXTMAP.jsonl missing; text extraction has not been run.",
-            "recommended_actions": ["Run phase2_text_and_metadata()"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-P2-TEXTMAP-001",
+                "severity": "warning",
+                "description": "TEXTMAP.jsonl missing; text extraction has not been run.",
+                "recommended_actions": ["Run phase2_text_and_metadata()"],
+            }
+        )
 
     if INVENTORY_JSON.exists() and not SOR_MAP_JSON.exists():
-        results.append({
-            "rule_id": "LV-P3-SOR-001",
-            "severity": "warning",
-            "description": "SOR_MAP.json missing; chain-of-custody and SoR selection not recorded.",
-            "recommended_actions": ["Run phase3_coc_and_sor()"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-P3-SOR-001",
+                "severity": "warning",
+                "description": "SOR_MAP.json missing; chain-of-custody and SoR selection not recorded.",
+                "recommended_actions": ["Run phase3_coc_and_sor()"],
+            }
+        )
 
     if INVENTORY_JSON.exists() and not NORMALIZED_DOCS_JSONL.exists():
-        results.append({
-            "rule_id": "LV-P4-NORM-001",
-            "severity": "warning",
-            "description": "NORMALIZED_DOCS.jsonl missing; normalization phase not run.",
-            "recommended_actions": ["Run phase4_normalization()"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-P4-NORM-001",
+                "severity": "warning",
+                "description": "NORMALIZED_DOCS.jsonl missing; normalization phase not run.",
+                "recommended_actions": ["Run phase4_normalization()"],
+            }
+        )
 
     if NORMALIZED_DOCS_JSONL.exists() and not EVIDENCE_STORE_JSON.exists():
-        results.append({
-            "rule_id": "LV-EVIDENCE-001",
-            "severity": "info",
-            "description": "EVIDENCE_STORE.json missing; evidence store not built.",
-            "recommended_actions": ["Run evidence store builder."],
-        })
+        results.append(
+            {
+                "rule_id": "LV-EVIDENCE-001",
+                "severity": "info",
+                "description": "EVIDENCE_STORE.json missing; evidence store not built.",
+                "recommended_actions": ["Run evidence store builder."],
+            }
+        )
 
     if NORMALIZED_DOCS_JSONL.exists() and not AUTHORITY_UNIVERSE_JSON.exists():
-        results.append({
-            "rule_id": "LV-AUTH-001",
-            "severity": "info",
-            "description": "AUTHORITY_UNIVERSE.json missing; authority universe not built.",
-            "recommended_actions": ["Run authority universe builder."],
-        })
+        results.append(
+            {
+                "rule_id": "LV-AUTH-001",
+                "severity": "info",
+                "description": "AUTHORITY_UNIVERSE.json missing; authority universe not built.",
+                "recommended_actions": ["Run authority universe builder."],
+            }
+        )
 
     if NORMALIZED_DOCS_JSONL.exists() and not TIMELINE_MASTER_CSV.exists():
-        results.append({
-            "rule_id": "LV-TIMELINE-001",
-            "severity": "info",
-            "description": "Timeline CSV is missing; can be built from normalized documents.",
-            "recommended_actions": ["Build timeline from normalized docs and write timeline_master.csv"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-TIMELINE-001",
+                "severity": "info",
+                "description": "Timeline CSV is missing; can be built from normalized documents.",
+                "recommended_actions": ["Build timeline from normalized docs and write timeline_master.csv"],
+            }
+        )
 
     if NORMALIZED_DOCS_JSONL.exists() and not (NODES_CSV.exists() and EDGES_CSV.exists()):
-        results.append({
-            "rule_id": "LV-GRAPH-001",
-            "severity": "info",
-            "description": "Graph CSVs are missing; build graph from normalized docs and timeline.",
-            "recommended_actions": ["Run build_graph_from_normalized_and_timeline()"],
-        })
+        results.append(
+            {
+                "rule_id": "LV-GRAPH-001",
+                "severity": "info",
+                "description": "Graph CSVs are missing; build graph from normalized docs and timeline.",
+                "recommended_actions": ["Run build_graph_from_normalized_and_timeline()"],
+            }
+        )
 
     with LINT_RESULTS_JSON.open("w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
@@ -1193,12 +1241,14 @@ def tool_violations_table() -> None:
     out_path = OUTPUT_DIR / "violations_todo.csv"
     rows: List[Dict[str, Any]] = []
     for item in data:
-        rows.append({
-            "rule_id": item.get("rule_id", ""),
-            "severity": item.get("severity", ""),
-            "description": item.get("description", ""),
-            "recommended_actions": "; ".join(item.get("recommended_actions", [])),
-        })
+        rows.append(
+            {
+                "rule_id": item.get("rule_id", ""),
+                "severity": item.get("severity", ""),
+                "description": item.get("description", ""),
+                "recommended_actions": "; ".join(item.get("recommended_actions", [])),
+            }
+        )
     if rows:
         with out_path.open("w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
@@ -1215,6 +1265,7 @@ def tool_violations_table() -> None:
 # ---------------------------------------------------------------------------
 # Pack builder
 # ---------------------------------------------------------------------------
+
 
 def build_zip_pack(pack_name: Optional[str] = None) -> Path:
     ensure_dirs()
@@ -1262,6 +1313,7 @@ def build_zip_pack(pack_name: Optional[str] = None) -> Path:
 # ---------------------------------------------------------------------------
 # Helper tools: status, index, affidavit, search
 # ---------------------------------------------------------------------------
+
 
 def tool_status_report() -> None:
     """Write a simple status report summarizing vault and outputs."""
@@ -1404,6 +1456,7 @@ def tool_search_text(query: str) -> Path:
 # Run manifest
 # ---------------------------------------------------------------------------
 
+
 def build_run_manifest() -> None:
     """Build a JSON manifest summarizing current core artifacts."""
     manifest = {
@@ -1435,6 +1488,7 @@ def build_run_manifest() -> None:
 # ---------------------------------------------------------------------------
 # HTML dashboard
 # ---------------------------------------------------------------------------
+
 
 def build_html_dashboard() -> None:
     """Build a rich HTML dashboard in output/index.html."""
@@ -1516,13 +1570,21 @@ def build_html_dashboard() -> None:
     html_lines.append("  <meta charset='utf-8'>")
     html_lines.append("  <title>Litigation OS Dashboard</title>")
     html_lines.append("  <style>")
-    html_lines.append("    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #0f172a; color: #e5e7eb; }")
+    html_lines.append(
+        "    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #0f172a; color: #e5e7eb; }"
+    )
     html_lines.append("    header { padding: 16px 24px; background: #111827; border-bottom: 1px solid #1f2937; }")
     html_lines.append("    h1 { margin: 0; font-size: 24px; }")
-    html_lines.append("    h2 { margin-top: 24px; font-size: 20px; border-bottom: 1px solid #1f2937; padding-bottom: 4px; }")
+    html_lines.append(
+        "    h2 { margin-top: 24px; font-size: 20px; border-bottom: 1px solid #1f2937; padding-bottom: 4px; }"
+    )
     html_lines.append("    main { padding: 16px 24px 40px 24px; }")
-    html_lines.append("    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); grid-gap: 16px; }")
-    html_lines.append("    .card { background: #020617; border-radius: 12px; padding: 12px 16px; border: 1px solid #1f2937; box-shadow: 0 8px 18px rgba(0,0,0,0.35); }")
+    html_lines.append(
+        "    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); grid-gap: 16px; }"
+    )
+    html_lines.append(
+        "    .card { background: #020617; border-radius: 12px; padding: 12px 16px; border: 1px solid #1f2937; box-shadow: 0 8px 18px rgba(0,0,0,0.35); }"
+    )
     html_lines.append("    .card h3 { margin-top: 0; font-size: 16px; }")
     html_lines.append("    table { width: 100%; border-collapse: collapse; font-size: 13px; }")
     html_lines.append("    th, td { border-bottom: 1px solid #111827; padding: 4px 6px; text-align: left; }")
@@ -1530,17 +1592,23 @@ def build_html_dashboard() -> None:
     html_lines.append("    a { color: #38bdf8; text-decoration: none; }")
     html_lines.append("    a:hover { text-decoration: underline; }")
     html_lines.append("    code { background: #020617; padding: 2px 4px; border-radius: 4px; font-size: 12px; }")
-    html_lines.append("    .pill { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 11px; background: #0f172a; border: 1px solid #1f2937; margin-right: 4px; }")
+    html_lines.append(
+        "    .pill { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 11px; background: #0f172a; border: 1px solid #1f2937; margin-right: 4px; }"
+    )
     html_lines.append("    .pill-critical { border-color: #f97373; color: #fecaca; }")
     html_lines.append("    .pill-warning { border-color: #facc15; color: #fef9c3; }")
     html_lines.append("    .pill-info { border-color: #38bdf8; color: #e0f2fe; }")
-    html_lines.append("    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }")
+    html_lines.append(
+        "    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }"
+    )
     html_lines.append("  </style>")
     html_lines.append("</head>")
     html_lines.append("<body>")
     html_lines.append("  <header>")
     html_lines.append("    <h1>Litigation OS Dashboard</h1>")
-    html_lines.append(f"    <div style='margin-top:4px;font-size:13px;'>Run at <span class='mono'>{now_iso}</span> • Base dir: <span class='mono'>{BASE_DIR}</span></div>")
+    html_lines.append(
+        f"    <div style='margin-top:4px;font-size:13px;'>Run at <span class='mono'>{now_iso}</span> • Base dir: <span class='mono'>{BASE_DIR}</span></div>"
+    )
     html_lines.append("  </header>")
     html_lines.append("  <main>")
 
@@ -1559,7 +1627,9 @@ def build_html_dashboard() -> None:
     html_lines.append("          <h3>Config Snapshot</h3>")
     if cfg:
         cfg_str = json.dumps(cfg, indent=2)
-        html_lines.append("          <pre class='mono' style='white-space:pre-wrap;font-size:11px;'>" + cfg_str + "</pre>")
+        html_lines.append(
+            "          <pre class='mono' style='white-space:pre-wrap;font-size:11px;'>" + cfg_str + "</pre>"
+        )
     else:
         html_lines.append("          <div style='font-size:13px;'>No config.json loaded. Defaults in effect.</div>")
     html_lines.append("        </div>")
@@ -1598,15 +1668,21 @@ def build_html_dashboard() -> None:
     html_lines.append("      <h2>3. Case / Track Index</h2>")
     if case_track_rows:
         html_lines.append("      <div class='card'>")
-        html_lines.append("        <div style='margin-bottom:6px;'><a href='case_track_index.csv'>Open full case_track_index.csv</a></div>")
+        html_lines.append(
+            "        <div style='margin-bottom:6px;'><a href='case_track_index.csv'>Open full case_track_index.csv</a></div>"
+        )
         html_lines.append("        <table>")
         html_lines.append("          <tr><th>Case ID</th><th>Track</th><th>Doc count</th></tr>")
         for row in case_track_rows[:50]:
-            html_lines.append(f"          <tr><td>{row.get('case_id','')}</td><td>{row.get('track','')}</td><td>{row.get('doc_count','')}</td></tr>")
+            html_lines.append(
+                f"          <tr><td>{row.get('case_id','')}</td><td>{row.get('track','')}</td><td>{row.get('doc_count','')}</td></tr>"
+            )
         html_lines.append("        </table>")
         html_lines.append("      </div>")
     else:
-        html_lines.append("      <div class='card'>No case_track_index.csv yet. Run the 'index' tool after normalization.</div>")
+        html_lines.append(
+            "      <div class='card'>No case_track_index.csv yet. Run the 'index' tool after normalization.</div>"
+        )
     html_lines.append("    </section>")
 
     # Timeline preview
@@ -1614,15 +1690,21 @@ def build_html_dashboard() -> None:
     html_lines.append("      <h2>4. Timeline Preview</h2>")
     if timeline_rows:
         html_lines.append("      <div class='card'>")
-        html_lines.append("        <div style='margin-bottom:6px;'><a href='timeline_master.csv'>Open full timeline_master.csv</a></div>")
+        html_lines.append(
+            "        <div style='margin-bottom:6px;'><a href='timeline_master.csv'>Open full timeline_master.csv</a></div>"
+        )
         html_lines.append("        <table>")
         html_lines.append("          <tr><th>Date</th><th>Case</th><th>Track</th><th>Label</th></tr>")
         for row in timeline_rows[:50]:
-            html_lines.append(f"          <tr><td>{row.get('date','')}</td><td>{row.get('case_id','')}</td><td>{row.get('track','')}</td><td>{row.get('short_label','')}</td></tr>")
+            html_lines.append(
+                f"          <tr><td>{row.get('date','')}</td><td>{row.get('case_id','')}</td><td>{row.get('track','')}</td><td>{row.get('short_label','')}</td></tr>"
+            )
         html_lines.append("        </table>")
         html_lines.append("      </div>")
     else:
-        html_lines.append("      <div class='card'>Timeline not yet built. Run 'timeline' or 'all' after normalization.</div>")
+        html_lines.append(
+            "      <div class='card'>Timeline not yet built. Run 'timeline' or 'all' after normalization.</div>"
+        )
     html_lines.append("    </section>")
 
     # Lint summary
@@ -1656,7 +1738,9 @@ def build_html_dashboard() -> None:
             desc = item.get("description", "")
             html_lines.append(f"            <tr><td>{sev}</td><td>{rule_id}</td><td>{desc}</td></tr>")
         html_lines.append("          </table>")
-        html_lines.append("          <div style='margin-top:6px;'><a href='lint_results.json'>Open lint_results.json</a> • <a href='violations_todo.csv'>Open violations_todo.csv</a></div>")
+        html_lines.append(
+            "          <div style='margin-top:6px;'><a href='lint_results.json'>Open lint_results.json</a> • <a href='violations_todo.csv'>Open violations_todo.csv</a></div>"
+        )
     else:
         html_lines.append("          <div>No lint issues recorded yet.</div>")
     html_lines.append("        </div>")
@@ -1685,7 +1769,9 @@ def build_html_dashboard() -> None:
     html_lines.append("            <li><a href='../vault/INVENTORY.csv'>vault/INVENTORY.csv</a></li>")
     html_lines.append("            <li><a href='../vault/NORMALIZED_DOCS.jsonl'>vault/NORMALIZED_DOCS.jsonl</a></li>")
     html_lines.append("            <li><a href='../vault/EVIDENCE_STORE.json'>vault/EVIDENCE_STORE.json</a></li>")
-    html_lines.append("            <li><a href='../vault/AUTHORITY_UNIVERSE.json'>vault/AUTHORITY_UNIVERSE.json</a></li>")
+    html_lines.append(
+        "            <li><a href='../vault/AUTHORITY_UNIVERSE.json'>vault/AUTHORITY_UNIVERSE.json</a></li>"
+    )
     html_lines.append("            <li><a href='mindeye2_nodes.csv'>output/mindeye2_nodes.csv</a></li>")
     html_lines.append("            <li><a href='mindeye2_edges.csv'>output/mindeye2_edges.csv</a></li>")
     html_lines.append("            <li><a href='neo4j_nodes.csv'>output/neo4j_nodes.csv</a></li>")
@@ -1700,8 +1786,12 @@ def build_html_dashboard() -> None:
     html_lines.append("      <h2>7. Affidavit Fact Stubs</h2>")
     html_lines.append("      <div class='card'>")
     if affidavit_lines:
-        html_lines.append("        <div style='margin-bottom:6px;'><a href='affidavit_blocks.txt'>Open affidavit_blocks.txt</a></div>")
-        html_lines.append("        <pre class='mono' style='white-space:pre-wrap;font-size:11px;max-height:260px;overflow:auto;'>")
+        html_lines.append(
+            "        <div style='margin-bottom:6px;'><a href='affidavit_blocks.txt'>Open affidavit_blocks.txt</a></div>"
+        )
+        html_lines.append(
+            "        <pre class='mono' style='white-space:pre-wrap;font-size:11px;max-height:260px;overflow:auto;'>"
+        )
         for line in affidavit_lines[:80]:
             safe_line = line.replace("<", "&lt;").replace(">", "&gt;")
             html_lines.append(safe_line)
@@ -1715,10 +1805,14 @@ def build_html_dashboard() -> None:
     html_lines.append("    <section>")
     html_lines.append("      <h2>8. Neo4j Nucleus Wheel Import</h2>")
     html_lines.append("      <div class='card'>")
-    html_lines.append("        <p>Use these files with Neo4j's <code>LOAD CSV</code> to build the nucleus wheel graph:</p>")
+    html_lines.append(
+        "        <p>Use these files with Neo4j's <code>LOAD CSV</code> to build the nucleus wheel graph:</p>"
+    )
     html_lines.append("        <ul>")
     html_lines.append("          <li><a href='neo4j_nodes.csv'>neo4j_nodes.csv</a> (nodes)</li>")
-    html_lines.append("          <li><a href='neo4j_relationships.csv'>neo4j_relationships.csv</a> (relationships)</li>")
+    html_lines.append(
+        "          <li><a href='neo4j_relationships.csv'>neo4j_relationships.csv</a> (relationships)</li>"
+    )
     html_lines.append("        </ul>")
     cypher_example = (
         "LOAD CSV WITH HEADERS FROM 'file:///neo4j_nodes.csv' AS row\n"
@@ -1737,7 +1831,9 @@ def build_html_dashboard() -> None:
         "    r.track_tags = row.track_tags,\n"
         "    r.notes = row.notes;"
     )
-    html_lines.append("        <pre class='mono' style='white-space:pre-wrap;font-size:11px;'>" + cypher_example + "</pre>")
+    html_lines.append(
+        "        <pre class='mono' style='white-space:pre-wrap;font-size:11px;'>" + cypher_example + "</pre>"
+    )
     html_lines.append("      </div>")
     html_lines.append("    </section>")
 
@@ -1758,7 +1854,7 @@ def build_html_dashboard() -> None:
         "python LITIGATION_OS_MASTER_MONOLITH.py neo4j\n"
         "python LITIGATION_OS_MASTER_MONOLITH.py lint\n"
         "python LITIGATION_OS_MASTER_MONOLITH.py pack [pack_name.zip]\n"
-        "python LITIGATION_OS_MASTER_MONOLITH.py search \"query text\"\n"
+        'python LITIGATION_OS_MASTER_MONOLITH.py search "query text"\n'
         "python LITIGATION_OS_MASTER_MONOLITH.py status\n"
         "python LITIGATION_OS_MASTER_MONOLITH.py affidavit\n"
         "python LITIGATION_OS_MASTER_MONOLITH.py index\n"
@@ -1783,6 +1879,7 @@ def build_html_dashboard() -> None:
 # CLI entry point
 # ---------------------------------------------------------------------------
 
+
 def print_usage() -> None:
     print("Usage:")
     print("  python LITIGATION_OS_MASTER_MONOLITH.py all")
@@ -1797,7 +1894,7 @@ def print_usage() -> None:
     print("  python LITIGATION_OS_MASTER_MONOLITH.py neo4j")
     print("  python LITIGATION_OS_MASTER_MONOLITH.py lint")
     print("  python LITIGATION_OS_MASTER_MONOLITH.py pack [pack_name.zip]")
-    print("  python LITIGATION_OS_MASTER_MONOLITH.py search \"query text\"")
+    print('  python LITIGATION_OS_MASTER_MONOLITH.py search "query text"')
     print("  python LITIGATION_OS_MASTER_MONOLITH.py status")
     print("  python LITIGATION_OS_MASTER_MONOLITH.py affidavit")
     print("  python LITIGATION_OS_MASTER_MONOLITH.py index")

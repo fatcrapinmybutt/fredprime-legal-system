@@ -1,8 +1,9 @@
 """Minimal helper for uploading files to Google Drive."""
 
+import os
+
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-import os
 
 
 def upload_to_drive(path: str) -> None:

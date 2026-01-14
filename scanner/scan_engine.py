@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from datetime import datetime
 
 DEFAULT_OUTPUT = os.path.join("data", "scan_index.json")

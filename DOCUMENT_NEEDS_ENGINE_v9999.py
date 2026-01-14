@@ -3,7 +3,7 @@
 # Purpose: Autonomously determines all necessary filings, forms, and legal artifacts based on real-time litigation posture
 
 import datetime
-from typing import List, Dict
+from typing import Dict, List
 
 # === SYSTEM PARADIGMS ENGAGED ===
 # ⚖️ MCR/MCL Benchbook Linkage Engine
@@ -119,6 +119,4 @@ if __name__ == "__main__":
     results = evaluate_document_needs(case_posture)
     print("📄 Required Document Checklist:")
     for r in results:
-        print(
-            f"{r['Document']}: Required={r['Required']} | Status={r['Status']} | Rule={r['Rule']}"
-        )
+        print(f"{r['Document']}: Required={r['Required']} | Status={r['Status']} | Rule={r['Rule']}")

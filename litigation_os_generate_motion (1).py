@@ -1,7 +1,8 @@
-import os
-import openai
-import json
 import base64
+import json
+import os
+
+import openai
 
 # 1. Set your API key in your environment:
 #    export OPENAI_API_KEY="sk-…" (or equivalent on Windows)

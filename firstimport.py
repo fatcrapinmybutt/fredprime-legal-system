@@ -1,12 +1,12 @@
 import argparse
-import json
-import os
-from pathlib import Path
-from datetime import datetime
-import hashlib
-import platform
 import getpass
+import hashlib
+import json
 import logging
+import os
+import platform
+from datetime import datetime
+from pathlib import Path
 
 # Optional: try to import jsonschema for validation (not required)
 try:
@@ -131,7 +131,11 @@ def write_systemdef_file(systemdef: dict, path: Path, validate: bool = True):
         safe_mkdir(path.parent)
 
         if validate:
-            schema_path = Path(os.environ.get("FREDPRIME_SCHEMA", Path(systemdef.get("base_path", ".")) / "schema" / "systemdef.schema.json"))
+            schema_path = Path(
+                os.environ.get(
+                    "FREDPRIME_SCHEMA", Path(systemdef.get("base_path", ".")) / "schema" / "systemdef.schema.json"
+                )
+            )
             if schema_path.exists() and jsonschema is not None:
                 try:
                     validate_systemdef(systemdef, schema_path)

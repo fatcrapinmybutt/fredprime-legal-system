@@ -48,10 +48,9 @@ import textwrap
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import requests
-
 
 # ==============================
 # Benchbook / MCR Rules Helpers
@@ -120,9 +119,8 @@ def _rule_contempt_incarceration_without_ability(text: str, meta: Dict[str, Any]
 
 def _rule_ppo_custody_interaction(text: str, meta: Dict[str, Any]) -> Optional[RuleResult]:
     lower = text.lower()
-    if (
-        ("personal protection order" in lower or "ppo" in lower)
-        and ("custody" in lower or "parenting time" in lower or "parenting-time" in lower)
+    if ("personal protection order" in lower or "ppo" in lower) and (
+        "custody" in lower or "parenting time" in lower or "parenting-time" in lower
     ):
         return {
             "rule": "MCL 600.2950 / 600.2950a / PPO Benchbook",
@@ -266,9 +264,7 @@ def setup_logging(outdir: Path) -> None:
 
     fh = logging.FileHandler(log_file, encoding="utf-8")
     fh.setLevel(logging.DEBUG)
-    fh.setFormatter(
-        logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s")
-    )
+    fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s"))
     logger.addHandler(fh)
 
 
@@ -386,9 +382,7 @@ class LMStudioClient:
         except Exception as e:
             raise RuntimeError(f"Error calling LM Studio /chat/completions: {e}") from e
         if resp.status_code != 200:
-            raise RuntimeError(
-                f"LM Studio /chat/completions HTTP {resp.status_code}: {resp.text}"
-            )
+            raise RuntimeError(f"LM Studio /chat/completions HTTP {resp.status_code}: {resp.text}")
         try:
             data = resp.json()
         except ValueError as e:
@@ -492,9 +486,7 @@ def materialize_project_from_llm(text: str, project_root: Path) -> List[str]:
             i += 1
 
     if not created_paths:
-        logging.warning(
-            "No FILE markers found; writing the entire LLM output to PROJECT_PLAN_AND_CODE.txt"
-        )
+        logging.warning("No FILE markers found; writing the entire LLM output to PROJECT_PLAN_AND_CODE.txt")
         fallback = "PROJECT_PLAN_AND_CODE.txt"
         project_root.joinpath(fallback).write_text(text, encoding="utf-8")
         created_paths.append(fallback)
@@ -510,17 +502,16 @@ def inject_litigation_service(project_root: Path, lit_api_path: Optional[Path]) 
             raise FileNotFoundError(f"litigation-api file not found: {lit_api_path}")
         target_api = project_root / "litigation_os_api.py"
         logging.info("Copying litigation_api %s → %s", lit_api_path, target_api)
-        target_api.write_text(
-            lit_api_path.read_text(encoding="utf-8"), encoding="utf-8"
-        )
+        target_api.write_text(lit_api_path.read_text(encoding="utf-8"), encoding="utf-8")
 
     services_dir = project_root / "services"
     services_dir.mkdir(parents=True, exist_ok=True)
     (services_dir / "__init__.py").touch()
     service_path = services_dir / "litigation_service.py"
 
-    service_code = textwrap.dedent(
-        """
+    service_code = (
+        textwrap.dedent(
+            '''
         """Lightweight facade into a litigation_os_api module."""
 
         from typing import Any, Dict
@@ -564,19 +555,17 @@ def inject_litigation_service(project_root: Path, lit_api_path: Optional[Path]) 
                         f"litigation_os_api.{task_name} is not callable"
                     )
                 return fn(**kwargs)
-        """
-    ).strip() + "\n"
+        '''
+        ).strip()
+        + "\n"
+    )
 
     service_path.write_text(service_code, encoding="utf-8")
-    logging.info(
-        "Injected litigation_service.py into %s", service_path.relative_to(project_root)
-    )
+    logging.info("Injected litigation_service.py into %s", service_path.relative_to(project_root))
 
 
 def parse_lexvault_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="LEXVAULT Large-Input → Program Synthesizer (LM Studio Edition)"
-    )
+    parser = argparse.ArgumentParser(description="LEXVAULT Large-Input → Program Synthesizer (LM Studio Edition)")
     parser.add_argument(
         "--input",
         required=True,
@@ -612,10 +601,7 @@ def parse_lexvault_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         "--max-output-tokens",
         type=int,
         default=4096,
-        help=(
-            "Maximum tokens for the primary /chat/completions call. "
-            "Default: %(default)s"
-        ),
+        help=("Maximum tokens for the primary /chat/completions call. " "Default: %(default)s"),
     )
     parser.add_argument(
         "--litigation-api",
@@ -628,10 +614,7 @@ def parse_lexvault_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help=(
-            "Build the corpus and prompt, but do not call the LLM. "
-            "Writes DRY_RUN_PROMPT.txt into the outdir."
-        ),
+        help=("Build the corpus and prompt, but do not call the LLM. " "Writes DRY_RUN_PROMPT.txt into the outdir."),
     )
     return parser.parse_args(argv)
 
@@ -681,11 +664,7 @@ def main_lexvault(argv: Optional[List[str]] = None) -> None:
     project_root = outdir / project_name
     created_files = materialize_project_from_llm(response_text, project_root)
 
-    lit_api_path = (
-        Path(args.litigation_api).expanduser().resolve()
-        if args.litigation_api
-        else None
-    )
+    lit_api_path = Path(args.litigation_api).expanduser().resolve() if args.litigation_api else None
     if args.litigation_api is not None:
         inject_litigation_service(project_root, lit_api_path)
 
@@ -894,12 +873,7 @@ def merge_base_graph_with_violations(
                 adapted[id_field] = str(adapted["id"])
 
         if label_field and label_field not in adapted:
-            lbl = (
-                adapted.get("label")
-                or adapted.get("rule")
-                or adapted.get("detail")
-                or "Benchbook violation"
-            )
+            lbl = adapted.get("label") or adapted.get("rule") or adapted.get("detail") or "Benchbook violation"
             adapted[label_field] = str(lbl)
 
         if type_field and type_field not in adapted:
@@ -967,9 +941,7 @@ def main_merge_violations(argv: Optional[List[str]] = None) -> None:
     base_nodes, base_edges = load_base_graph_csv(nodes_path, edges_path)
     violation_graph = load_violations_json(violations_path)
 
-    merged_nodes, merged_edges = merge_base_graph_with_violations(
-        base_nodes, base_edges, violation_graph
-    )
+    merged_nodes, merged_edges = merge_base_graph_with_violations(base_nodes, base_edges, violation_graph)
 
     write_merged_csvs(merged_nodes, merged_edges, outdir)
     logging.info("Merge complete; merged_nodes.csv and merged_edges.csv written to %s", outdir)
@@ -991,10 +963,7 @@ def parse_decorate_violations_args(argv: Optional[List[str]] = None) -> argparse
         "--in",
         dest="in_path",
         required=True,
-        help=(
-            "Input violations.json file (from rule_results_to_graph / "
-            "merge_violation_graph_collections)."
-        ),
+        help=("Input violations.json file (from rule_results_to_graph / " "merge_violation_graph_collections)."),
     )
     parser.add_argument(
         "--out",
@@ -1036,9 +1005,7 @@ def decorate_violation_graph_json(
 
     allowed_severities: Optional[set] = None
     if severity_filter:
-        allowed_severities = {
-            s.strip().lower() for s in severity_filter if s and s.strip()
-        }
+        allowed_severities = {s.strip().lower() for s in severity_filter if s and s.strip()}
         if not allowed_severities:
             allowed_severities = None
 
@@ -1050,9 +1017,7 @@ def decorate_violation_graph_json(
         if node.get("type") != GRAPH_VIOLATION_NODE_TYPE:
             sev_raw = str(node.get("severity") or "").lower()
             node_id = (
-                str(node.get("id"))
-                if node.get("id") is not None
-                else str(node.get(":ID") or node.get("id_str") or "")
+                str(node.get("id")) if node.get("id") is not None else str(node.get(":ID") or node.get("id_str") or "")
             )
             if node_id:
                 node_severity[node_id] = sev_raw
@@ -1100,9 +1065,7 @@ def decorate_violation_graph_json(
         node.setdefault("viz_size", size)
 
         node_id = (
-            str(node.get("id"))
-            if node.get("id") is not None
-            else str(node.get(":ID") or node.get("id_str") or "")
+            str(node.get("id")) if node.get("id") is not None else str(node.get(":ID") or node.get("id_str") or "")
         )
         if node_id:
             node_severity[node_id] = sev
@@ -1126,25 +1089,15 @@ def decorate_violation_graph_json(
         nodes = filtered_nodes
     else:
         kept_ids = {
-            str(node.get("id"))
-            if node.get("id") is not None
-            else str(node.get(":ID") or node.get("id_str") or "")
+            str(node.get("id")) if node.get("id") is not None else str(node.get(":ID") or node.get("id_str") or "")
             for node in nodes
-            if node.get("id") is not None
-            or node.get(":ID") is not None
-            or node.get("id_str") is not None
+            if node.get("id") is not None or node.get(":ID") is not None or node.get("id_str") is not None
         }
 
     decorated_edges: List[Dict[str, Any]] = []
     for edge in edges:
-        src = (
-            str(edge.get("source"))
-            or str(edge.get("src") or edge.get("from") or "")
-        )
-        tgt = (
-            str(edge.get("target"))
-            or str(edge.get("dst") or edge.get("to") or "")
-        )
+        src = str(edge.get("source")) or str(edge.get("src") or edge.get("from") or "")
+        tgt = str(edge.get("target")) or str(edge.get("dst") or edge.get("to") or "")
 
         if kept_ids and (src not in kept_ids and tgt not in kept_ids):
             continue
@@ -1443,11 +1396,7 @@ if __name__ == "__main__":
         out_path = Path(args.out_path).expanduser().resolve()
         sev_filter: Optional[List[str]] = None
         if getattr(args, "severity_filter", None):
-            sev_filter = [
-                s.strip()
-                for s in str(args.severity_filter).split(",")
-                if s and s.strip()
-            ]
+            sev_filter = [s.strip() for s in str(args.severity_filter).split(",") if s and s.strip()]
         setup_logging(out_path.parent)
         logging.info("Decorating violations graph JSON")
         logging.info("Input : %s", in_path)

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import csv
-import os
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import sys
 
 if sys.version_info < (3, 8):
     raise SystemExit("Python 3.8+ required")
@@ -21,9 +21,7 @@ MAX_EDGES = int(os.environ.get("MAX_EDGES", "20000"))
 
 
 def newest(pattern: str) -> Path | None:
-    files = sorted(
-        GRAPH_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True
-    )
+    files = sorted(GRAPH_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
     return files[0] if files else None
 
 

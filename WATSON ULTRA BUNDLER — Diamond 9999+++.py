@@ -57,8 +57,8 @@ import re
 import shutil
 import sys
 import zipfile
+from collections import Counter, defaultdict
 from pathlib import Path
-from collections import defaultdict, Counter
 
 # Optional imports (handled gracefully)
 HAVE_PYMUPDF = False
@@ -68,15 +68,18 @@ HAVE_EXIFREAD = False
 
 try:
     import fitz  # PyMuPDF
+
     HAVE_PYMUPDF = True
 except Exception:
     pass
 
 try:
     from PIL import Image
+
     HAVE_PIL = True
     try:
         import pytesseract
+
         HAVE_TESSERACT = True
     except Exception:
         HAVE_TESSERACT = False
@@ -85,6 +88,7 @@ except Exception:
 
 try:
     import exifread
+
     HAVE_EXIFREAD = True
 except Exception:
     HAVE_EXIFREAD = False
@@ -97,8 +101,8 @@ except Exception as e:
 
 try:
     from docx import Document
-    from docx.shared import Pt, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.shared import Inches, Pt
 except Exception:
     print("Missing dependency: python-docx. Install with: pip install python-docx")
     raise
@@ -119,44 +123,82 @@ HOUSING_KWS = re.compile(
 
 # Family/case keywords (to prioritize for pin-cites)
 FAMILY_KWS = [
-    "PPO", "show cause", "AppClose", "NSPD", "Ella Randall", "USB", "RusCOPA",
-    "parenting time", "exchange", "affidavit", "ex parte", "recording", "mental health",
-    "meth", "welfare check", "police report", "transcript", "CPS", "FOIA",
-    "bias", "canon", "best interest", "MCR", "MCL"
+    "PPO",
+    "show cause",
+    "AppClose",
+    "NSPD",
+    "Ella Randall",
+    "USB",
+    "RusCOPA",
+    "parenting time",
+    "exchange",
+    "affidavit",
+    "ex parte",
+    "recording",
+    "mental health",
+    "meth",
+    "welfare check",
+    "police report",
+    "transcript",
+    "CPS",
+    "FOIA",
+    "bias",
+    "canon",
+    "best interest",
+    "MCR",
+    "MCL",
 ]
 
 # Claims & elements (Michigan-aligned; neutral language)
 CLAIMS = [
-    ("Defamation / Defamation by Implication", [
-        "Statement of fact about Plaintiff", "Falsity", "Publication to a third person",
-        "Fault (≥ negligence; actual malice if privilege)", "Damages (or presumed per se)"
-    ]),
-    ("False Light", [
-        "Publicity placing Plaintiff in a false light", "Highly offensive to a reasonable person",
-        "Knowledge or reckless disregard", "Causation and damages"
-    ]),
-    ("Intentional Infliction of Emotional Distress (IIED)", [
-        "Extreme and outrageous conduct", "Intent or recklessness",
-        "Causation", "Severe emotional distress"
-    ]),
-    ("Abuse of Process", [
-        "Use of process after issuance", "Ulterior purpose", "Damage to Plaintiff"
-    ]),
-    ("Tortious Interference with Parental Rights (narrow)", [
-        "Lawful parenting-time/custody right", "Intentional interference without justification",
-        "Causation", "Damages (missed overnights/holidays, costs)"
-    ]),
-    ("Civil Conspiracy / Aiding and Abetting", [
-        "Agreement or substantial assistance", "Underlying tort", "Damages trace to tort"
-    ]),
-    ("Declaratory and Injunctive Relief", [
-        "Actual controversy", "Narrow tailoring", "Balance of harms/public interest"
-    ]),
+    (
+        "Defamation / Defamation by Implication",
+        [
+            "Statement of fact about Plaintiff",
+            "Falsity",
+            "Publication to a third person",
+            "Fault (≥ negligence; actual malice if privilege)",
+            "Damages (or presumed per se)",
+        ],
+    ),
+    (
+        "False Light",
+        [
+            "Publicity placing Plaintiff in a false light",
+            "Highly offensive to a reasonable person",
+            "Knowledge or reckless disregard",
+            "Causation and damages",
+        ],
+    ),
+    (
+        "Intentional Infliction of Emotional Distress (IIED)",
+        ["Extreme and outrageous conduct", "Intent or recklessness", "Causation", "Severe emotional distress"],
+    ),
+    ("Abuse of Process", ["Use of process after issuance", "Ulterior purpose", "Damage to Plaintiff"]),
+    (
+        "Tortious Interference with Parental Rights (narrow)",
+        [
+            "Lawful parenting-time/custody right",
+            "Intentional interference without justification",
+            "Causation",
+            "Damages (missed overnights/holidays, costs)",
+        ],
+    ),
+    (
+        "Civil Conspiracy / Aiding and Abetting",
+        ["Agreement or substantial assistance", "Underlying tort", "Damages trace to tort"],
+    ),
+    (
+        "Declaratory and Injunctive Relief",
+        ["Actual controversy", "Narrow tailoring", "Balance of harms/public interest"],
+    ),
 ]
 
 # Date pattern to build timeline
-DATE_PAT = re.compile(r"\b(20[12]\d)[-/.](0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])\b|"
-                      r"\b(0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])[-/.](20[12]\d)\b")
+DATE_PAT = re.compile(
+    r"\b(20[12]\d)[-/.](0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])\b|"
+    r"\b(0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])[-/.](20[12]\d)\b"
+)
 
 # Exhibit pin-cite detection (used also for audits)
 PIN_REGEX = re.compile(
@@ -166,9 +208,15 @@ PIN_REGEX = re.compile(
 
 # Child privacy tokens to redact from public complaint
 PRIVACY_TOKENS = [
-    r"\bDate\s*of\s*Birth\b", r"\bDOB\b", r"\bSSN\b", r"\bSocial\s*Security\b",
-    r"\bStudent\s*ID\b", r"\bSchool\b\s*Name\b", r"\bAddress:\s*\d+"
+    r"\bDate\s*of\s*Birth\b",
+    r"\bDOB\b",
+    r"\bSSN\b",
+    r"\bSocial\s*Security\b",
+    r"\bStudent\s*ID\b",
+    r"\bSchool\b\s*Name\b",
+    r"\bAddress:\s*\d+",
 ]
+
 
 # ---------------------------
 # UTILITIES
@@ -180,14 +228,17 @@ def sha256_of_path(p: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def makedirs(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path
+
 
 def copy_with_hash(src: Path, dst: Path) -> str:
     makedirs(dst.parent)
     shutil.copy2(src, dst)
     return sha256_of_path(dst)
+
 
 def text_from_pdf(p: Path) -> str:
     if HAVE_PYMUPDF:
@@ -212,6 +263,7 @@ def text_from_pdf(p: Path) -> str:
     except Exception:
         return ""
 
+
 def text_from_image(p: Path) -> str:
     if HAVE_PIL and HAVE_TESSERACT:
         try:
@@ -221,12 +273,14 @@ def text_from_image(p: Path) -> str:
             return ""
     return ""
 
+
 def text_from_docx(p: Path) -> str:
     try:
         doc = Document(p.as_posix())
         return "\n".join(par.text for par in doc.paragraphs)
     except Exception:
         return ""
+
 
 def text_from_txt(p: Path) -> str:
     try:
@@ -236,6 +290,7 @@ def text_from_txt(p: Path) -> str:
             return p.read_text(encoding="latin-1", errors="ignore")
         except Exception:
             return ""
+
 
 def extract_text(p: Path) -> str:
     ext = p.suffix.lower()
@@ -249,6 +304,7 @@ def extract_text(p: Path) -> str:
         return text_from_txt(p)
     return ""
 
+
 def exif_dict(p: Path) -> dict:
     out = {}
     if HAVE_EXIFREAD and p.suffix.lower() in IMG_EXT:
@@ -261,6 +317,7 @@ def exif_dict(p: Path) -> dict:
             pass
     return out
 
+
 def derive_ts_from_files(paths: list[Path]) -> str:
     h = hashlib.sha256()
     for p in sorted(paths, key=lambda x: x.as_posix()):
@@ -272,6 +329,7 @@ def derive_ts_from_files(paths: list[Path]) -> str:
     digest = h.hexdigest()[:8]
     return dt.datetime.now().strftime("%Y%m%d") + f"_{digest}"
 
+
 def sanitize_for_public(text: str, child_name: str, child_initials: str) -> str:
     # Replace child name case-insensitively with initials
     text = re.sub(re.escape(child_name), child_initials, text, flags=re.IGNORECASE)
@@ -280,8 +338,10 @@ def sanitize_for_public(text: str, child_name: str, child_initials: str) -> str:
         text = re.sub(pat, "[REDACTED]", text, flags=re.IGNORECASE)
     return text
 
+
 def is_housing_file(path: Path, text: str) -> bool:
     return bool(HOUSING_KWS.search(path.name)) or bool(HOUSING_KWS.search(text))
+
 
 def find_dates(text: str) -> list[str]:
     hits = []
@@ -289,13 +349,16 @@ def find_dates(text: str) -> list[str]:
         hits.append(m.group(0))
     return hits
 
+
 def chunk_snippet(text: str, max_len=140) -> str:
     s = re.sub(r"\s+", " ", text).strip()
     return (s[:max_len] + "…") if len(s) > max_len else s
 
+
 def split_into_sentences(text: str) -> list[str]:
     s = re.sub(r"\s+", " ", text)
     return re.split(r"(?<=[\.\?\!])\s+", s)
+
 
 # ---------------------------
 # DISCOVERY & INDEXING
@@ -308,6 +371,7 @@ def discover_files(scan_root: Path) -> list[Path]:
             if p.suffix.lower() in ALLOWED_EXT and p.is_file():
                 files.append(p)
     return files
+
 
 def build_index(scan_root: Path, child_name: str, child_initials: str) -> list[dict]:
     rows = []
@@ -327,11 +391,21 @@ def build_index(scan_root: Path, child_name: str, child_initials: str) -> list[d
         preview = sanitize_for_public(text[:2000], child_name, child_initials) if text else ""
         dates = find_dates(text) if text else []
         exif = exif_dict(p) if p.suffix.lower() in IMG_EXT else {}
-        rows.append({
-            "path": p, "name": p.name, "ext": p.suffix.lower(), "size": size, "sha256": sha,
-            "text": text, "preview": preview, "dates": dates, "exif": exif
-        })
+        rows.append(
+            {
+                "path": p,
+                "name": p.name,
+                "ext": p.suffix.lower(),
+                "size": size,
+                "sha256": sha,
+                "text": text,
+                "preview": preview,
+                "dates": dates,
+                "exif": exif,
+            }
+        )
     return rows
+
 
 # ---------------------------
 # EXHIBIT BUILDER
@@ -350,9 +424,12 @@ def stage_exhibits(index_rows: list[dict], dst_exhibits_dir: Path) -> list[dict]
         except Exception:
             mtime = 0
         rank = 0
-        if r["ext"] in PDF_EXT: rank = 3
-        elif r["ext"] in IMG_EXT: rank = 2
-        elif r["ext"] in TEXTY_EXT: rank = 1
+        if r["ext"] in PDF_EXT:
+            rank = 3
+        elif r["ext"] in IMG_EXT:
+            rank = 2
+        elif r["ext"] in TEXTY_EXT:
+            rank = 1
         scored.append((rank, -mtime, r))
     scored.sort(reverse=True)  # high rank, newest first
 
@@ -361,20 +438,27 @@ def stage_exhibits(index_rows: list[dict], dst_exhibits_dir: Path) -> list[dict]
     for _, _, r in scored:
         label = f"H-{counter}"
         src = r["path"]
-        dst = dst_exhibits_dir / f"{label}_{src.stem}.pdf" if r["ext"] in PDF_EXT else dst_exhibits_dir / f"{label}_{src.stem}{r['ext']}"
-        exhibits.append({
-            "label": label,
-            "src": src,
-            "dst": dst,
-            "sha256": r["sha256"],
-            "size": r["size"],
-            "dates": r["dates"],
-            "text": r["text"],
-            "preview": r["preview"],
-            "ext": r["ext"]
-        })
+        dst = (
+            dst_exhibits_dir / f"{label}_{src.stem}.pdf"
+            if r["ext"] in PDF_EXT
+            else dst_exhibits_dir / f"{label}_{src.stem}{r['ext']}"
+        )
+        exhibits.append(
+            {
+                "label": label,
+                "src": src,
+                "dst": dst,
+                "sha256": r["sha256"],
+                "size": r["size"],
+                "dates": r["dates"],
+                "text": r["text"],
+                "preview": r["preview"],
+                "ext": r["ext"],
+            }
+        )
         counter += 1
     return exhibits
+
 
 # ---------------------------
 # MATRICES (Elements, Privilege, SOL)
@@ -388,11 +472,23 @@ def build_elements_table(exhibits: list[dict], out_csv: Path) -> dict:
     cmap = {
         "Defamation / Defamation by Implication": ["meth", "drug", "abuse", "unsafe", "criminal", "lied", "danger"],
         "False Light": ["false", "misleading", "imply", "implication", "portray"],
-        "Intentional Infliction of Emotional Distress (IIED)": ["outrageous", "severe", "emotional", "distress", "harass"],
+        "Intentional Infliction of Emotional Distress (IIED)": [
+            "outrageous",
+            "severe",
+            "emotional",
+            "distress",
+            "harass",
+        ],
         "Abuse of Process": ["ppo", "show cause", "subpoena", "process", "coerce", "ulterior"],
-        "Tortious Interference with Parental Rights (narrow)": ["parenting time", "withhold", "exchange", "custody", "deny"],
+        "Tortious Interference with Parental Rights (narrow)": [
+            "parenting time",
+            "withhold",
+            "exchange",
+            "custody",
+            "deny",
+        ],
         "Civil Conspiracy / Aiding and Abetting": ["conspire", "coordinate", "assist", "plan", "joint"],
-        "Declaratory and Injunctive Relief": ["injunction", "declaratory", "order", "tailor"]
+        "Declaratory and Injunctive Relief": ["injunction", "declaratory", "order", "tailor"],
     }
     rows = []
     evidence_map = defaultdict(list)  # claim -> [pin-cite strings]
@@ -421,8 +517,17 @@ def build_elements_table(exhibits: list[dict], out_csv: Path) -> dict:
             for elem in elements:
                 pin_str = " | ".join(p for p, _ in pins) if pins else ""
                 cor_str = " | ".join(s for _, s in pins[:5]) if pins else ""
-                w.writerow([claim, elem, pin_str, cor_str, "" if pin_str else "No automatic hits — add manual cite if appropriate"])
+                w.writerow(
+                    [
+                        claim,
+                        elem,
+                        pin_str,
+                        cor_str,
+                        "" if pin_str else "No automatic hits — add manual cite if appropriate",
+                    ]
+                )
     return {"evidence_map": evidence_map}
+
 
 def build_privilege_matrix(exhibits: list[dict], out_csv: Path) -> None:
     """
@@ -446,6 +551,7 @@ def build_privilege_matrix(exhibits: list[dict], out_csv: Path) -> None:
                 use = "context-only"
             w.writerow([ex["src"].name, ptype, basis, use, ""])
 
+
 def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
     """
     Rough SOL computation by first detected date per exhibit. Conservative defaults.
@@ -453,6 +559,7 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
     - Abuse of Process/IIED/False Light: 3 years (general tort)
     - Interference (parental): assume 3 years unless rule dictates otherwise
     """
+
     def earliest_year(dates):
         years = []
         for d in dates:
@@ -468,7 +575,7 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
         "Abuse of Process": 3,
         "Tortious Interference with Parental Rights (narrow)": 3,
         "Civil Conspiracy / Aiding and Abetting": 3,
-        "Declaratory and Injunctive Relief": 0  # N/A, tied to controversy
+        "Declaratory and Injunctive Relief": 0,  # N/A, tied to controversy
     }
     this_year = dt.datetime.now().year
     with out_csv.open("w", encoding="utf-8", newline="") as f:
@@ -496,6 +603,7 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
                     treat = "background-only"
             w.writerow([claim, acc, limit, status, treat, "Heuristic; confirm with event-level dates."])
 
+
 # ---------------------------
 # VERIFIED COMPLAINT GENERATOR
 # ---------------------------
@@ -506,16 +614,26 @@ def add_heading(doc: Document, text: str, size=13):
     run.bold = True
     run.font.size = Pt(size)
 
+
 def numbered_par(doc: Document, idx: int, text: str):
     doc.add_paragraph(f"{idx}. {text}")
 
-def make_verified_complaint(out_docx: Path, case_title: str, county: str,
-                            exhibits: list[dict], evidence_map: dict,
-                            child_name: str, child_initials: str):
+
+def make_verified_complaint(
+    out_docx: Path,
+    case_title: str,
+    county: str,
+    exhibits: list[dict],
+    evidence_map: dict,
+    child_name: str,
+    child_initials: str,
+):
     doc = Document()
     add_heading(doc, f"STATE OF MICHIGAN — IN THE CIRCUIT COURT FOR {county.upper()} COUNTY", 12)
     add_heading(doc, case_title, 14)
-    doc.add_paragraph("VERIFIED COMPLAINT — JURY DEMAND — SANCTIONS REQUEST (MCR 1.109(E))").alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph("VERIFIED COMPLAINT — JURY DEMAND — SANCTIONS REQUEST (MCR 1.109(E))").alignment = (
+        WD_ALIGN_PARAGRAPH.CENTER
+    )
     doc.add_paragraph("")
 
     # Preliminary Statement
@@ -523,7 +641,8 @@ def make_verified_complaint(out_docx: Path, case_title: str, county: str,
     doc.add_paragraph(
         "Plaintiff alleges a coordinated pattern of wrongful conduct by Defendants that harmed his reputation, "
         "interfered with his parental relationship, and misused court and police processes. The allegations below "
-        "are pin-cited to specific exhibits.")
+        "are pin-cited to specific exhibits."
+    )
 
     # Factual Allegations (neutral, pin-cited from exhibits)
     doc.add_heading("Factual Allegations", level=1)
@@ -538,7 +657,7 @@ def make_verified_complaint(out_docx: Path, case_title: str, county: str,
             pick = candidates[0] if candidates else sents[0]
             top_snips.append((ex["label"], pick))
     # Write facts with pin-cites
-    for (label, sent) in top_snips[:12]:
+    for label, sent in top_snips[:12]:
         numbered_par(doc, n, sanitize_for_public(f"{sent} (Exhibit {label} p.1)", child_name, child_initials))
         n += 1
 
@@ -565,14 +684,16 @@ def make_verified_complaint(out_docx: Path, case_title: str, county: str,
     doc.add_heading("Sanctions (MCR 1.109(E))", level=2)
     doc.add_paragraph(
         "Plaintiff requests findings that identified statements or papers by Defendants were presented for improper purpose "
-        "or without evidentiary support after reasonable inquiry, and an award of reasonable expenses and attorney fees.")
+        "or without evidentiary support after reasonable inquiry, and an award of reasonable expenses and attorney fees."
+    )
 
     # Anti-SLAPP / Privilege rebuttal
     doc.add_heading("Privilege and Petitioning", level=2)
     doc.add_paragraph(
         "Michigan provides no broad anti-SLAPP bar. Litigation or petitioning privileges do not extend to knowing falsehoods, "
         "sham use of process, non-judicial republication, or misuse after issuance. Any privileged statements are not used as "
-        "claim predicates and appear only as context; claims rest on non-privileged acts and publications.")
+        "claim predicates and appear only as context; claims rest on non-privileged acts and publications."
+    )
 
     # Prayer
     doc.add_heading("Prayer for Relief", level=1)
@@ -582,7 +703,7 @@ def make_verified_complaint(out_docx: Path, case_title: str, county: str,
         "Declaratory and narrow injunctive relief to halt identified wrongful conduct.",
         "Sanctions and reasonable expenses under MCR 1.109(E).",
         "Costs and interest as allowed by law.",
-        "Such further relief as is just."
+        "Such further relief as is just.",
     ]:
         doc.add_paragraph(f"• {item}")
 
@@ -594,13 +715,15 @@ def make_verified_complaint(out_docx: Path, case_title: str, county: str,
     doc.add_heading("Verification", level=1)
     doc.add_paragraph(
         "I declare that the factual allegations above are true to the best of my knowledge, information, and belief. "
-        "I understand that a willful false statement is subject to penalty.").alignment = WD_ALIGN_PARAGRAPH.LEFT
+        "I understand that a willful false statement is subject to penalty."
+    ).alignment = WD_ALIGN_PARAGRAPH.LEFT
     doc.add_paragraph("Dated: " + dt.datetime.now().strftime("%B %d, %Y"))
     doc.add_paragraph("/s/ Andrew J. Pigors")
 
     # Save
     makedirs(out_docx.parent)
     doc.save(out_docx.as_posix())
+
 
 # ---------------------------
 # ORDERS / TEMPLATES GENERATORS
@@ -615,88 +738,128 @@ def gen_docx(out_path: Path, title: str, paras: list[str], case_title: str):
     makedirs(out_path.parent)
     doc.save(out_path.as_posix())
 
+
 def ensure_orders(dst_orders_dir: Path, case_title: str):
     orders = {
         "Sanctions_Order_MCR_1_109_E.docx": [
             "ORDER: The Court finds the identified papers were presented for improper purpose or lacked evidentiary support under MCR 1.109(E).",
             "Defendants shall pay Plaintiff’s reasonable expenses and attorney fees within 21 days.",
             "Plaintiff shall file a fee affidavit within 14 days; objections due 14 days thereafter.",
-            "IT IS SO ORDERED."
+            "IT IS SO ORDERED.",
         ],
         "Protective_Order_MCR_2_302_C.docx": [
             "ORDER: Child identified by initials in public filings; redact sensitive identifiers under MCR 1.109(D)(9) and MCR 2.302(C).",
             "Sensitive exhibits filed under seal; audio/video produced in native format with SHA-256 hash.",
-            "Clawback for inadvertent production; use limited to this case."
+            "Clawback for inadvertent production; use limited to this case.",
         ],
         "Alternate_Service_Order_MCR_2_105.docx": [
             "ORDER: Alternate service authorized under MCR 2.105 upon affidavit of diligent attempts.",
-            "Service by certified mail + first-class mail + email and posting as permitted; proof due within 14 days."
+            "Service by certified mail + first-class mail + email and posting as permitted; proof due within 14 days.",
         ],
         "Motions_in_Limine_Order.docx": [
             "ORDER: Evidence excluded as follows: MRE 404 character/propensity; MRE 401–403 remote/cumulative; hearsay outside MRE 803/804; unauthenticated media lacking MRE 901 foundation; privileged/settlement communications."
         ],
         "Narrow_Injunction_Order.docx": [
             "ORDER: Defendants shall not publish adjudicated false statements; shall not obstruct court-ordered exchanges.",
-            "Party communications limited to logistics via agreed channel; violations subject to contempt."
+            "Party communications limited to logistics via agreed channel; violations subject to contempt.",
         ],
     }
     for fname, body in orders.items():
         gen_docx(dst_orders_dir / fname, fname.replace("_", " ").replace(".docx", ""), body, case_title)
 
+
 def ensure_discovery(dst_discovery_dir: Path, case_title: str):
-    gen_docx(dst_discovery_dir / "ESI_Protocol.docx", "ESI Protocol", [
-        "Custodians: parties; carriers; AppClose; clerk media-intake; police/CPS.",
-        "Formats: PST/MBOX+CSV (email); JSON/CSV+PDF (messages); native+SHA-256 (audio/video); photos with EXIF.",
-        "Hashing: SHA-256; manifest required. De-dup by hash. Privilege log categorical; clawback in order.",
-        "Search: exchange terms and hit-counts; rolling production with Bates and exhibit IDs."
-    ], case_title)
-    gen_docx(dst_discovery_dir / "Discovery_Plan.docx", "Discovery Plan", [
-        "Scope: elements-based discovery tied to Complaint counts.",
-        "Deadlines: to be set at MCR 2.401 conference.",
-        "Protective Order: child privacy; sealed exhibits.",
-        "Mediation/Case Evaluation: schedule per local practice; consider MCR 2.403 and MCR 2.405 timing."
-    ], case_title)
+    gen_docx(
+        dst_discovery_dir / "ESI_Protocol.docx",
+        "ESI Protocol",
+        [
+            "Custodians: parties; carriers; AppClose; clerk media-intake; police/CPS.",
+            "Formats: PST/MBOX+CSV (email); JSON/CSV+PDF (messages); native+SHA-256 (audio/video); photos with EXIF.",
+            "Hashing: SHA-256; manifest required. De-dup by hash. Privilege log categorical; clawback in order.",
+            "Search: exchange terms and hit-counts; rolling production with Bates and exhibit IDs.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_discovery_dir / "Discovery_Plan.docx",
+        "Discovery Plan",
+        [
+            "Scope: elements-based discovery tied to Complaint counts.",
+            "Deadlines: to be set at MCR 2.401 conference.",
+            "Protective Order: child privacy; sealed exhibits.",
+            "Mediation/Case Evaluation: schedule per local practice; consider MCR 2.403 and MCR 2.405 timing.",
+        ],
+        case_title,
+    )
+
 
 def ensure_pretrial(dst_pretrial_dir: Path, case_title: str):
-    gen_docx(dst_pretrial_dir / "Pretrial_Statement.docx", "Pretrial Statement", [
-        "Stipulated Facts: [complete before conference].",
-        "Contested Facts: numbered with exhibit pin-cites.",
-        "Issues of Law: privilege, SOL, elements, evidence.",
-        "Witnesses: names, contact, offers of proof, time estimates.",
-        "Exhibits: ID, description, source path, SHA-256, foundation, objections.",
-        "Motions in Limine: list with authority.",
-        "Time Estimates: openings, case-in-chief, cross, rebuttal.",
-        "ADR: case evaluation and offers of judgment status."
-    ], case_title)
-    gen_docx(dst_pretrial_dir / "Proposed_Jury_Instructions.docx", "Proposed Jury Instructions (Outline)", [
-        "Defamation: statement of fact; falsity; publication; fault; damages; privilege burden.",
-        "False Light: false implication; publicity; knowledge/reckless disregard; damages.",
-        "IIED: extreme/outrageous; intent/recklessness; causation; severe distress.",
-        "Abuse of Process: use after issuance; ulterior purpose; damages.",
-        "Interference with Parental Rights (narrow): lawful right; intentional interference; lack of justification; damages.",
-        "Civil Conspiracy/Aiding: agreement/substantial assistance; damages trace to underlying tort."
-    ], case_title)
+    gen_docx(
+        dst_pretrial_dir / "Pretrial_Statement.docx",
+        "Pretrial Statement",
+        [
+            "Stipulated Facts: [complete before conference].",
+            "Contested Facts: numbered with exhibit pin-cites.",
+            "Issues of Law: privilege, SOL, elements, evidence.",
+            "Witnesses: names, contact, offers of proof, time estimates.",
+            "Exhibits: ID, description, source path, SHA-256, foundation, objections.",
+            "Motions in Limine: list with authority.",
+            "Time Estimates: openings, case-in-chief, cross, rebuttal.",
+            "ADR: case evaluation and offers of judgment status.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_pretrial_dir / "Proposed_Jury_Instructions.docx",
+        "Proposed Jury Instructions (Outline)",
+        [
+            "Defamation: statement of fact; falsity; publication; fault; damages; privilege burden.",
+            "False Light: false implication; publicity; knowledge/reckless disregard; damages.",
+            "IIED: extreme/outrageous; intent/recklessness; causation; severe distress.",
+            "Abuse of Process: use after issuance; ulterior purpose; damages.",
+            "Interference with Parental Rights (narrow): lawful right; intentional interference; lack of justification; damages.",
+            "Civil Conspiracy/Aiding: agreement/substantial assistance; damages trace to underlying tort.",
+        ],
+        case_title,
+    )
+
 
 def ensure_service(dst_service_dir: Path, case_title: str):
-    gen_docx(dst_service_dir / "Service_Playbook.docx", "Service Playbook (MCR 2.105)", [
-        "Summons (MC 01): obtain from clerk; 91-day validity (MCR 2.102).",
-        "Personal service attempts: log dates/times/locations; attach photo proof where safe.",
-        "Alternate Service Motion: attach affidavit of diligent attempts; propose certified mail + first-class + email + posting.",
-        "Proof of Service: file promptly; calendar answer deadlines (21/28 days)."
-    ], case_title)
-    gen_docx(dst_service_dir / "Affidavit_of_Diligence.docx", "Affidavit of Diligence", [
-        "Affiant states under oath the following diligent attempts at personal service were made:",
-        "1) Date/Time/Location/Outcome",
-        "2) Date/Time/Location/Outcome",
-        "3) Additional notes and photographs available.",
-        "Subscribed and sworn on ________.",
-        "Signature: __________________________"
-    ], case_title)
-    gen_docx(dst_service_dir / "Retraction_Demand_Template.docx", "Retraction Demand (Defamation Mitigation)", [
-        "Identify publication(s): date, medium, audience, verbatim or accurate paraphrase.",
-        "State falsity and harm. Demand retraction within 10 days. Request republication channel.",
-        "Reserve rights. Attach delivery proof."
-    ], case_title)
+    gen_docx(
+        dst_service_dir / "Service_Playbook.docx",
+        "Service Playbook (MCR 2.105)",
+        [
+            "Summons (MC 01): obtain from clerk; 91-day validity (MCR 2.102).",
+            "Personal service attempts: log dates/times/locations; attach photo proof where safe.",
+            "Alternate Service Motion: attach affidavit of diligent attempts; propose certified mail + first-class + email + posting.",
+            "Proof of Service: file promptly; calendar answer deadlines (21/28 days).",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_service_dir / "Affidavit_of_Diligence.docx",
+        "Affidavit of Diligence",
+        [
+            "Affiant states under oath the following diligent attempts at personal service were made:",
+            "1) Date/Time/Location/Outcome",
+            "2) Date/Time/Location/Outcome",
+            "3) Additional notes and photographs available.",
+            "Subscribed and sworn on ________.",
+            "Signature: __________________________",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_service_dir / "Retraction_Demand_Template.docx",
+        "Retraction Demand (Defamation Mitigation)",
+        [
+            "Identify publication(s): date, medium, audience, verbatim or accurate paraphrase.",
+            "State falsity and harm. Demand retraction within 10 days. Request republication channel.",
+            "Reserve rights. Attach delivery proof.",
+        ],
+        case_title,
+    )
+
 
 # ---------------------------
 # AUDITS / GATES
@@ -713,6 +876,7 @@ def audit_pin_cites(complaint_docx: Path) -> tuple[int, list[int]]:
                 missing_idx.append(i + 1)
     return total, missing_idx
 
+
 def audit_child_privacy_docx(docx_path: Path, child_name: str, child_initials: str) -> list[str]:
     doc = Document(docx_path.as_posix())
     blob = "\n".join(p.text for p in doc.paragraphs)
@@ -727,11 +891,13 @@ def audit_child_privacy_docx(docx_path: Path, child_name: str, child_initials: s
             flags.append(f"PII token not redacted: {pat}")
     return flags
 
+
 def write_manifest(manifest_path: Path, entries: list[list]):
     with manifest_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(["RelativePath", "Bytes", "SHA256"])
         w.writerows(entries)
+
 
 # ---------------------------
 # MAIN
@@ -739,7 +905,9 @@ def write_manifest(manifest_path: Path, entries: list[list]):
 def main():
     ap = argparse.ArgumentParser(description="WATSON ULTRA BUNDLER — Michigan Locked, Autonomous")
     ap.add_argument("--scan-root", required=True, help="Root folder to scan for candidate evidence (PDF/IMG/DOCX/TXT)")
-    ap.add_argument("--input-root", required=True, help="Optional source tree with preexisting Complaint/Exhibits/Matrices/etc.")
+    ap.add_argument(
+        "--input-root", required=True, help="Optional source tree with preexisting Complaint/Exhibits/Matrices/etc."
+    )
     ap.add_argument("--output-root", default="F:\\LegalResults", help="Output root")
     ap.add_argument("--case-title", default="Pigors v. Emily A. Watson, et al.", help="Caption line")
     ap.add_argument("--county", default="Muskegon", help="Venue county name")
@@ -782,13 +950,13 @@ def main():
 
     # Directory structure
     d_complaint = makedirs(bundle_dir / "Complaint")
-    d_exhibits  = makedirs(bundle_dir / "Exhibits")
-    d_matrices  = makedirs(bundle_dir / "Matrices")
+    d_exhibits = makedirs(bundle_dir / "Exhibits")
+    d_matrices = makedirs(bundle_dir / "Matrices")
     d_discovery = makedirs(bundle_dir / "Discovery")
-    d_pretrial  = makedirs(bundle_dir / "Pretrial")
-    d_orders    = makedirs(bundle_dir / "Orders")
-    d_service   = makedirs(bundle_dir / "Service")
-    d_damages   = makedirs(bundle_dir / "Damages")
+    d_pretrial = makedirs(bundle_dir / "Pretrial")
+    d_orders = makedirs(bundle_dir / "Orders")
+    d_service = makedirs(bundle_dir / "Service")
+    d_damages = makedirs(bundle_dir / "Damages")
 
     manifest = []
 
@@ -815,8 +983,8 @@ def main():
     # 3) MATRICES (Elements, Privilege, SOL)
     logging.info("[3] Generating Matrices…")
     elements_csv = d_matrices / "Elements_Table.csv"
-    priv_csv     = d_matrices / "Privilege_Matrix.csv"
-    sol_csv      = d_matrices / "SOL_Matrix.csv"
+    priv_csv = d_matrices / "Privilege_Matrix.csv"
+    sol_csv = d_matrices / "SOL_Matrix.csv"
     m = build_elements_table(exhibits, elements_csv)
     build_privilege_matrix(exhibits, priv_csv)
     build_sol_matrix(exhibits, sol_csv)
@@ -828,7 +996,9 @@ def main():
     # 4) VERIFIED COMPLAINT (auto-generated; neutral, pin-cited)
     logging.info("[4] Generating Verified Complaint (DOCX)…")
     complaint_docx = d_complaint / "Verified_Complaint.docx"
-    make_verified_complaint(complaint_docx, args.case_title, args.county, exhibits, m["evidence_map"], args.child_name, args.child_initials)
+    make_verified_complaint(
+        complaint_docx, args.case_title, args.county, exhibits, m["evidence_map"], args.child_name, args.child_initials
+    )
     if args.no_dry_run:
         sha = sha256_of_path(complaint_docx)
         manifest.append([complaint_docx.relative_to(bundle_dir).as_posix(), complaint_docx.stat().st_size, sha])
@@ -849,13 +1019,13 @@ def main():
     logging.info("[6] Building Damages Workbook CSV shell…")
     damages_csv = d_damages / "Damages_Workbook.csv"
     rows = [
-        ["Category","Proof Sources","Amount","Method","Exhibit Pin-Cites"],
-        ["Lost wages/opportunities","","","Rate x Period",""],
-        ["Out-of-pocket expenses","","","Summation",""],
-        ["Emotional distress","","","Qualitative + corroboration",""],
-        ["Reputational/business loss","","","Before/after metrics",""],
-        ["Parenting-time losses","","","Nights x valuation",""],
-        ["Exemplary damages (egregiousness)","","","Court’s discretion",""]
+        ["Category", "Proof Sources", "Amount", "Method", "Exhibit Pin-Cites"],
+        ["Lost wages/opportunities", "", "", "Rate x Period", ""],
+        ["Out-of-pocket expenses", "", "", "Summation", ""],
+        ["Emotional distress", "", "", "Qualitative + corroboration", ""],
+        ["Reputational/business loss", "", "", "Before/after metrics", ""],
+        ["Parenting-time losses", "", "", "Nights x valuation", ""],
+        ["Exemplary damages (egregiousness)", "", "", "Court’s discretion", ""],
     ]
     if args.no_dry_run:
         with damages_csv.open("w", encoding="utf-8", newline="") as f:
@@ -889,14 +1059,14 @@ def main():
         errs = []
         with p.open("r", encoding="utf-8-sig", newline="") as f:
             r = csv.DictReader(f)
-            need = {"Source","PrivilegeType","UseAllowed"}
+            need = {"Source", "PrivilegeType", "UseAllowed"}
             if not need.issubset(set(r.fieldnames or [])):
                 errs.append("Privilege_Matrix.csv missing required columns.")
                 return errs
             for row in r:
                 pt = (row.get("PrivilegeType") or "").strip().lower()
                 ua = (row.get("UseAllowed") or "").strip().lower()
-                if pt in {"absolute","qualified"} and ua not in {"context-only","none"}:
+                if pt in {"absolute", "qualified"} and ua not in {"context-only", "none"}:
                     errs.append(f"Privileged item not context-only: {row}")
         return errs
 
@@ -913,7 +1083,7 @@ def main():
         errs = []
         with p.open("r", encoding="utf-8-sig", newline="") as f:
             r = csv.DictReader(f)
-            need = {"Claim","Status","Treatment"}
+            need = {"Claim", "Status", "Treatment"}
             if not need.issubset(set(r.fieldnames or [])):
                 errs.append("SOL_Matrix.csv missing required columns.")
                 return errs
@@ -937,7 +1107,9 @@ def main():
     manifest_path = bundle_dir / "Manifest.csv"
     if args.no_dry_run:
         write_manifest(manifest_path, manifest)
-        with zipfile.ZipFile((out_root / f"Watson_Complaint_Bundle_{ts}.zip").as_posix(), "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        with zipfile.ZipFile(
+            (out_root / f"Watson_Complaint_Bundle_{ts}.zip").as_posix(), "w", compression=zipfile.ZIP_DEFLATED
+        ) as zf:
             for root, _, files in os.walk(bundle_dir.as_posix()):
                 for name in files:
                     p = Path(root) / name
@@ -954,6 +1126,7 @@ def main():
     if args.no_dry_run:
         logging.info(f"ZIP: {out_root / f'Watson_Complaint_Bundle_{ts}.zip'}")
     logging.info("All gates passed. Ready for MiFILE upload. Housing excluded by design.")
+
 
 if __name__ == "__main__":
     try:

@@ -1,8 +1,8 @@
 # LITIGATION_CORE_ENGINE_v9999.py (FULL SYSTEM – LEVEL 9999, *GUI-WRAPPED EXECUTABLE + CONFIG-DRIVEN THREAD POOL + PREFECT + GPT + RETRIES + LOGGING + DAG + ALERTS + AUDIT + METRICS + SMS/EMAIL + SHA256 + GUI.EXE + SELF-HEALING + PROGRESS BAR + AI ENHANCEMENTS*)
 
 # === AUTONOMOUS DEPENDENCY INSTALLER ===
-import subprocess
 import importlib
+import subprocess
 import sys
 
 # Install missing dependencies before import
@@ -33,35 +33,37 @@ def ensure_package(pkg, pip_name=None):
 for module_path, pip_name in core_dependencies.items():
     ensure_package(module_path.split(".")[0], pip_name)
 
+import argparse
+import hashlib
+import json
+import logging
+
 # === System Imports (Post Validation) ===
 import os
-import json
-import argparse
-import logging
-import hashlib
 import smtplib
 import threading
-from tqdm import tqdm
-from email.message import EmailMessage
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-from jinja2 import Template
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from email.message import EmailMessage
+
+from alerts import send_email, send_sms
+from behavior_manager import BehaviorManager
+from config_manager import ConfigManager, ConfigSchema
+from db_repo import DBRepository, PostgresDBRepo
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from gpt_tools import classify_step, determine_filings, extract_text
+from gui_wrapper import launch_gui
+from jinja2 import Template
+from memory_crawler import MemoryCrawler
+from metrics import doc_build_counter
+from ocr_engine import OCRFallback
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from pythonjsonlogger import jsonlogger
 from prefect import flow, task
 from prefect.task_runners import ConcurrentTaskRunner
-from gui_wrapper import launch_gui
-from config_manager import ConfigManager, ConfigSchema
-from ocr_engine import OCRFallback
-from memory_crawler import MemoryCrawler
-from gpt_tools import extract_text, classify_step, determine_filings
-from db_repo import PostgresDBRepo, DBRepository
-from metrics import doc_build_counter
-from behavior_manager import BehaviorManager
-from alerts import send_sms, send_email
+from pythonjsonlogger import jsonlogger
+from tqdm import tqdm
 
 # === Logging Configuration ===
 logger = logging.getLogger("LitigationEngine")
@@ -101,9 +103,7 @@ def scan_and_repair_modules(required_files):
             logger.info("✅ Repaired missing module", extra={"file": file})
         else:
             sha = compute_sha256(file)
-            logger.info(
-                "Module integrity verified", extra={"file": file, "sha256": sha}
-            )
+            logger.info("Module integrity verified", extra={"file": file, "sha256": sha})
 
 
 REQUIRED_MODULES = [
@@ -166,10 +166,7 @@ def run_evidence_pipeline(case_num: str, cfg: ConfigSchema, db: DBRepository):
 
     ocr_results = []
     with ThreadPoolExecutor(max_workers=cfg.ocr_threads) as executor:
-        future_map = {
-            executor.submit(OCRFallback().parse, itm["path"], case_num): itm
-            for itm in items
-        }
+        future_map = {executor.submit(OCRFallback().parse, itm["path"], case_num): itm for itm in items}
         for future in tqdm(
             as_completed(future_map, timeout=cfg.ocr_timeout),
             total=len(items),
@@ -220,9 +217,7 @@ if __name__ == "__main__":
     parser.add_argument("--case", help="Case number")
     parser.add_argument("--config", default="config.json")
     parser.add_argument("--gui", action="store_true", help="Launch GUI instead")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Dry run without actual execution"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Dry run without actual execution")
     parser.add_argument("--log-level", default="INFO", help="Set logging verbosity")
     args = parser.parse_args()
 

@@ -1,6 +1,7 @@
-import os
 import json
+import os
 from datetime import datetime
+
 from docx import Document
 
 BASE_DIR = os.getenv("LEGAL_RESULTS_DIR", os.path.join("F:/", "LegalResults"))

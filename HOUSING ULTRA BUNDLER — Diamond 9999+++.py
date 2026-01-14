@@ -23,7 +23,7 @@ Purpose (Strictly Housing):
   • Emit Manifest.csv with sizes + SHA-256 and a ready-to-file ZIP bundle.
 
 Legal Anchors (Michigan-Locked; script text is neutral and evidence-tethered):
-  • Habitability/Common Areas: MCL 554.139 (duty to keep premises in reasonable repair/fit for intended use; common areas). 
+  • Habitability/Common Areas: MCL 554.139 (duty to keep premises in reasonable repair/fit for intended use; common areas).
   • Unlawful Interference with Possessory Interest (self-help/utility shutoff): MCL 600.2918 (including interference by utility termination).
   • Nuisance (private), Negligence (duty/breach/causation/damages), Breach of Contract/Unjust Enrichment (overbilling/unauthorized charges).
   • Civil discovery/procedure: MCR 1.109 (signatures/redaction/sanctions), 2.111–2.113 (pleading), 2.302–2.313 (discovery/ESI), 2.105 (service), 2.508(A) (jury).
@@ -63,8 +63,8 @@ import re
 import shutil
 import sys
 import zipfile
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 # Optional imports (handled gracefully)
 HAVE_PYMUPDF = False
@@ -74,15 +74,18 @@ HAVE_EXIFREAD = False
 
 try:
     import fitz  # PyMuPDF
+
     HAVE_PYMUPDF = True
 except Exception:
     pass
 
 try:
     from PIL import Image
+
     HAVE_PIL = True
     try:
         import pytesseract
+
         HAVE_TESSERACT = True
     except Exception:
         HAVE_TESSERACT = False
@@ -91,6 +94,7 @@ except Exception:
 
 try:
     import exifread
+
     HAVE_EXIFREAD = True
 except Exception:
     HAVE_EXIFREAD = False
@@ -103,8 +107,8 @@ except Exception as e:
 
 try:
     from docx import Document
-    from docx.shared import Pt, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.shared import Inches, Pt
 except Exception:
     print("Missing dependency: python-docx. Install with: pip install python-docx")
     raise
@@ -148,45 +152,72 @@ PIN_REGEX = re.compile(
 
 # PII/Financial tokens to sanitize in public complaint
 PII_TOKENS = [
-    r"\bSSN\b", r"\bSocial\s*Security\b", r"\bDriver'?s\s*License\b", r"\bDL\s*#\b",
-    r"\bAccount\s*Number\b", r"\bRouting\s*Number\b", r"\bCredit\s*Card\b", r"\bCVV\b",
-    r"\bBank\b\s*(Account|Acct)\b", r"\bDOB\b", r"\bDate\s*of\s*Birth\b"
+    r"\bSSN\b",
+    r"\bSocial\s*Security\b",
+    r"\bDriver'?s\s*License\b",
+    r"\bDL\s*#\b",
+    r"\bAccount\s*Number\b",
+    r"\bRouting\s*Number\b",
+    r"\bCredit\s*Card\b",
+    r"\bCVV\b",
+    r"\bBank\b\s*(Account|Acct)\b",
+    r"\bDOB\b",
+    r"\bDate\s*of\s*Birth\b",
 ]
 
 # Housing claims & neutral elements (Michigan-aligned)
 HOUSING_CLAIMS = [
-    ("Breach of the Covenant of Habitability / Common Areas (MCL 554.139)", [
-        "Premises/common areas were not kept in reasonable repair or fit for their intended use",
-        "Defendant was the lessor/park operator responsible for relevant premises/common systems",
-        "Breach caused damages (loss of use, abatement, health risks, costs)"
-    ]),
-    ("Unlawful Interference with Possessory Interest (MCL 600.2918)", [
-        "Plaintiff had lawful possessory interest",
-        "Defendant interfered (including by utility shutoff/obstruction/self-help)",
-        "Interference was willful or without legal process",
-        "Damages (including treble where applicable)"
-    ]),
-    ("Nuisance (Private)", [
-        "Defendant’s conduct or condition substantially and unreasonably interfered with Plaintiff’s use and enjoyment",
-        "Causation attributable to Defendant",
-        "Damages (including discomfort, property, and remediation costs)"
-    ]),
-    ("Negligence (Maintenance/Operations)", [
-        "Duty to maintain park premises/common systems with reasonable care",
-        "Breach (e.g., sewage leaks, unsafe infrastructure, delayed repairs)",
-        "Causation and damages"
-    ]),
-    ("Breach of Contract / Unjust Enrichment (Overbilling/Unauthorized Charges)", [
-        "Contract terms or lawful rates exceeded or ignored; or conferral of benefit without right",
-        "Non-conforming billing/fees/charges (e.g., water/sewer/trash/admin) collected",
-        "Damages: refund/credit, fee disgorgement, restitution"
-    ]),
-    ("Declaratory and Injunctive Relief", [
-        "Actual controversy over rights/duties/charges/conditions",
-        "Narrow injunction and repair order necessary to prevent continuing harm",
-        "Balancing of equities favors relief"
-    ]),
+    (
+        "Breach of the Covenant of Habitability / Common Areas (MCL 554.139)",
+        [
+            "Premises/common areas were not kept in reasonable repair or fit for their intended use",
+            "Defendant was the lessor/park operator responsible for relevant premises/common systems",
+            "Breach caused damages (loss of use, abatement, health risks, costs)",
+        ],
+    ),
+    (
+        "Unlawful Interference with Possessory Interest (MCL 600.2918)",
+        [
+            "Plaintiff had lawful possessory interest",
+            "Defendant interfered (including by utility shutoff/obstruction/self-help)",
+            "Interference was willful or without legal process",
+            "Damages (including treble where applicable)",
+        ],
+    ),
+    (
+        "Nuisance (Private)",
+        [
+            "Defendant’s conduct or condition substantially and unreasonably interfered with Plaintiff’s use and enjoyment",
+            "Causation attributable to Defendant",
+            "Damages (including discomfort, property, and remediation costs)",
+        ],
+    ),
+    (
+        "Negligence (Maintenance/Operations)",
+        [
+            "Duty to maintain park premises/common systems with reasonable care",
+            "Breach (e.g., sewage leaks, unsafe infrastructure, delayed repairs)",
+            "Causation and damages",
+        ],
+    ),
+    (
+        "Breach of Contract / Unjust Enrichment (Overbilling/Unauthorized Charges)",
+        [
+            "Contract terms or lawful rates exceeded or ignored; or conferral of benefit without right",
+            "Non-conforming billing/fees/charges (e.g., water/sewer/trash/admin) collected",
+            "Damages: refund/credit, fee disgorgement, restitution",
+        ],
+    ),
+    (
+        "Declaratory and Injunctive Relief",
+        [
+            "Actual controversy over rights/duties/charges/conditions",
+            "Narrow injunction and repair order necessary to prevent continuing harm",
+            "Balancing of equities favors relief",
+        ],
+    ),
 ]
+
 
 # ---------------------------
 # UTILITIES
@@ -198,14 +229,17 @@ def sha256_of_path(p: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def makedirs(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path
+
 
 def copy_with_hash(src: Path, dst: Path) -> str:
     makedirs(dst.parent)
     shutil.copy2(src, dst)
     return sha256_of_path(dst)
+
 
 def derive_ts_from_files(paths: list[Path]) -> str:
     h = hashlib.sha256()
@@ -218,9 +252,11 @@ def derive_ts_from_files(paths: list[Path]) -> str:
     digest = h.hexdigest()[:8]
     return dt.datetime.now().strftime("%Y%m%d") + f"_{digest}"
 
+
 def chunk_snippet(text: str, max_len=160) -> str:
     s = re.sub(r"\s+", " ", text or "").strip()
     return (s[:max_len] + "…") if len(s) > max_len else s
+
 
 def sanitize_public_text(text: str) -> str:
     # Redact obvious PII/financial tokens
@@ -229,8 +265,10 @@ def sanitize_public_text(text: str) -> str:
         sanitized = re.sub(pat, "[REDACTED]", sanitized, flags=re.IGNORECASE)
     return sanitized
 
+
 def split_sentences(text: str) -> list[str]:
     return re.split(r"(?<=[\.\?\!])\s+", re.sub(r"\s+", " ", text or "").strip())
+
 
 # ---------------------------
 # TEXT/EXIF EXTRACTION
@@ -254,6 +292,7 @@ def text_from_pdf(p: Path) -> str:
     except Exception:
         return ""
 
+
 def text_from_image(p: Path) -> str:
     if HAVE_PIL and HAVE_TESSERACT:
         try:
@@ -263,12 +302,14 @@ def text_from_image(p: Path) -> str:
             return ""
     return ""
 
+
 def text_from_docx(p: Path) -> str:
     try:
         doc = Document(p.as_posix())
         return "\n".join(par.text for par in doc.paragraphs)
     except Exception:
         return ""
+
 
 def text_from_txt(p: Path) -> str:
     for enc in ("utf-8", "utf-16", "latin-1"):
@@ -277,6 +318,7 @@ def text_from_txt(p: Path) -> str:
         except Exception:
             continue
     return ""
+
 
 def extract_text(p: Path) -> str:
     ext = p.suffix.lower()
@@ -290,6 +332,7 @@ def extract_text(p: Path) -> str:
         return text_from_txt(p)
     return ""
 
+
 def exif_dict(p: Path) -> dict:
     out = {}
     if HAVE_EXIFREAD and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".tif", ".tiff"}:
@@ -301,6 +344,7 @@ def exif_dict(p: Path) -> dict:
         except Exception:
             pass
     return out
+
 
 # ---------------------------
 # DISCOVERY & FILTERING
@@ -314,13 +358,16 @@ def discover_files(scan_root: Path) -> list[Path]:
                 items.append(p)
     return items
 
+
 def is_housing_candidate(path: Path, text: str) -> bool:
     name_hit = bool(HOUSING_POSITIVE.search(path.name))
     text_hit = bool(HOUSING_POSITIVE.search(text))
     return name_hit or text_hit
 
+
 def is_family_excluded(path: Path, text: str) -> bool:
     return bool(FAMILY_NEGATIVE.search(path.name)) or bool(FAMILY_NEGATIVE.search(text))
+
 
 def build_index(scan_root: Path) -> list[dict]:
     rows = []
@@ -337,11 +384,20 @@ def build_index(scan_root: Path) -> list[dict]:
             continue  # not a housing document
         exif = exif_dict(p)
         preview = sanitize_public_text(txt[:2000]) if txt else ""
-        rows.append({
-            "path": p, "name": p.name, "ext": p.suffix.lower(), "size": size, "sha256": sha,
-            "text": txt, "preview": preview, "exif": exif
-        })
+        rows.append(
+            {
+                "path": p,
+                "name": p.name,
+                "ext": p.suffix.lower(),
+                "size": size,
+                "sha256": sha,
+                "text": txt,
+                "preview": preview,
+                "exif": exif,
+            }
+        )
     return rows
+
 
 # ---------------------------
 # EXHIBITS
@@ -359,9 +415,12 @@ def stage_exhibits(index_rows: list[dict], dst_dir: Path, prefix: str) -> list[d
         except Exception:
             mtime = 0
         rank = 0
-        if r["ext"] == ".pdf": rank = 3
-        elif r["ext"] in {".png", ".jpg", ".jpeg", ".tif", ".tiff"}: rank = 2
-        else: rank = 1
+        if r["ext"] == ".pdf":
+            rank = 3
+        elif r["ext"] in {".png", ".jpg", ".jpeg", ".tif", ".tiff"}:
+            rank = 2
+        else:
+            rank = 1
         scored.append((rank, -mtime, r))
     scored.sort(reverse=True)
 
@@ -371,18 +430,21 @@ def stage_exhibits(index_rows: list[dict], dst_dir: Path, prefix: str) -> list[d
         label = f"{prefix}{n}"
         src = r["path"]
         dst = dst_dir / f"{label}_{src.stem}{src.suffix.lower()}"
-        out.append({
-            "label": label,
-            "src": src,
-            "dst": dst,
-            "sha256": r["sha256"],
-            "size": r["size"],
-            "text": r["text"],
-            "preview": r["preview"],
-            "ext": r["ext"]
-        })
+        out.append(
+            {
+                "label": label,
+                "src": src,
+                "dst": dst,
+                "sha256": r["sha256"],
+                "size": r["size"],
+                "text": r["text"],
+                "preview": r["preview"],
+                "ext": r["ext"],
+            }
+        )
         n += 1
     return out
+
 
 # ---------------------------
 # MATRICES
@@ -392,11 +454,45 @@ def build_elements_table(exhibits: list[dict], out_csv: Path) -> dict:
     Build Elements Table per HOUSING_CLAIM with heuristic pin-cites based on keyword hits.
     """
     cmap = {
-        "Breach of the Covenant of Habitability / Common Areas (MCL 554.139)": ["sewage", "sewer", "leak", "egle", "repair", "habitability", "unsafe", "unsanitary"],
-        "Unlawful Interference with Possessory Interest (MCL 600.2918)": ["shut off", "shutoff", "water off", "utility", "lockout", "self-help", "no notice"],
+        "Breach of the Covenant of Habitability / Common Areas (MCL 554.139)": [
+            "sewage",
+            "sewer",
+            "leak",
+            "egle",
+            "repair",
+            "habitability",
+            "unsafe",
+            "unsanitary",
+        ],
+        "Unlawful Interference with Possessory Interest (MCL 600.2918)": [
+            "shut off",
+            "shutoff",
+            "water off",
+            "utility",
+            "lockout",
+            "self-help",
+            "no notice",
+        ],
         "Nuisance (Private)": ["odor", "stink", "sewage", "noise", "interfere", "enjoyment"],
-        "Negligence (Maintenance/Operations)": ["duty", "breach", "negligent", "failure to maintain", "unsafe", "injury"],
-        "Breach of Contract / Unjust Enrichment (Overbilling/Unauthorized Charges)": ["bill", "overbill", "admin fee", "trash", "water", "sewer", "ledger", "statement", "rate"],
+        "Negligence (Maintenance/Operations)": [
+            "duty",
+            "breach",
+            "negligent",
+            "failure to maintain",
+            "unsafe",
+            "injury",
+        ],
+        "Breach of Contract / Unjust Enrichment (Overbilling/Unauthorized Charges)": [
+            "bill",
+            "overbill",
+            "admin fee",
+            "trash",
+            "water",
+            "sewer",
+            "ledger",
+            "statement",
+            "rate",
+        ],
         "Declaratory and Injunctive Relief": ["injunction", "repair", "abatement", "order", "declaratory"],
     }
     evidence_map = defaultdict(list)
@@ -415,14 +511,17 @@ def build_elements_table(exhibits: list[dict], out_csv: Path) -> dict:
         for claim, elements in HOUSING_CLAIMS:
             pins = evidence_map.get(claim, [])
             for elem in elements:
-                w.writerow([
-                    claim,
-                    elem,
-                    " | ".join(p for p, _ in pins) if pins else "",
-                    " | ".join(s for _, s in pins[:5]) if pins else "",
-                    "" if pins else "No automatic hits — add manual cite if appropriate"
-                ])
+                w.writerow(
+                    [
+                        claim,
+                        elem,
+                        " | ".join(p for p, _ in pins) if pins else "",
+                        " | ".join(s for _, s in pins[:5]) if pins else "",
+                        "" if pins else "No automatic hits — add manual cite if appropriate",
+                    ]
+                )
     return {"evidence_map": evidence_map}
+
 
 def build_privilege_matrix(exhibits: list[dict], out_csv: Path) -> None:
     with out_csv.open("w", encoding="utf-8", newline="") as f:
@@ -431,10 +530,15 @@ def build_privilege_matrix(exhibits: list[dict], out_csv: Path) -> None:
         for ex in exhibits:
             txt = ex["text"] or ""
             ptype, basis, use = "", "", "claim"
-            if re.search(r"STATE OF MICHIGAN|CIRCUIT COURT|DISTRICT COURT|COURT OF APPEALS|EGLE|NOTICE OF VIOLATION", txt, re.IGNORECASE):
+            if re.search(
+                r"STATE OF MICHIGAN|CIRCUIT COURT|DISTRICT COURT|COURT OF APPEALS|EGLE|NOTICE OF VIOLATION",
+                txt,
+                re.IGNORECASE,
+            ):
                 # Treat official filings/reports conservatively re: privilege/fair report context
                 ptype, basis, use = "qualified", "official-report/fair-report indicators", "context-only"
             w.writerow([ex["src"].name, ptype, basis, use, ""])
+
 
 def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
     """
@@ -444,12 +548,12 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
       - Declaratory/Injunctive: N/A; tracks ongoing controversy.
     """
     claim_limits = {
-        "Breach of the Covenant of Habitability / Common Areas (MCL 554.139)": 3,   # tort-leaning habitability harms
+        "Breach of the Covenant of Habitability / Common Areas (MCL 554.139)": 3,  # tort-leaning habitability harms
         "Unlawful Interference with Possessory Interest (MCL 600.2918)": 3,
         "Nuisance (Private)": 3,
         "Negligence (Maintenance/Operations)": 3,
         "Breach of Contract / Unjust Enrichment (Overbilling/Unauthorized Charges)": 6,
-        "Declaratory and Injunctive Relief": 0
+        "Declaratory and Injunctive Relief": 0,
     }
     this_year = dt.datetime.now().year
     with out_csv.open("w", encoding="utf-8", newline="") as f:
@@ -458,7 +562,9 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
         for claim, _ in HOUSING_CLAIMS:
             limit = claim_limits[claim]
             # Heuristic: if any exhibit text contains a year, choose the earliest as accrual proxy
-            years = set(int(y) for y in re.findall(r"\b(20[0-3]\d)\b", " ".join([(ex["text"] or "") for ex in exhibits])))
+            years = set(
+                int(y) for y in re.findall(r"\b(20[0-3]\d)\b", " ".join([(ex["text"] or "") for ex in exhibits]))
+            )
             accrual = min(years) if years else this_year
             if limit == 0:
                 status, treat = "timely", "claim"
@@ -470,6 +576,7 @@ def build_sol_matrix(exhibits: list[dict], out_csv: Path) -> None:
                     status, treat = "stale", "background-only"
             w.writerow([claim, accrual, limit, status, treat, "Heuristic; confirm with event-level dates."])
 
+
 # ---------------------------
 # DOCX HELPERS
 # ---------------------------
@@ -480,8 +587,10 @@ def add_heading(doc: Document, text: str, size=13, center=True):
     run.bold = True
     run.font.size = Pt(size)
 
+
 def numbered_par(doc: Document, idx: int, text: str):
     doc.add_paragraph(f"{idx}. {text}")
+
 
 def gen_docx(out_path: Path, title: str, paras: list[str], case_title: str):
     doc = Document()
@@ -494,11 +603,13 @@ def gen_docx(out_path: Path, title: str, paras: list[str], case_title: str):
     makedirs(out_path.parent)
     doc.save(out_path.as_posix())
 
+
 # ---------------------------
 # VERIFIED HOUSING COMPLAINT
 # ---------------------------
-def make_verified_housing_complaint(out_docx: Path, case_title: str, county: str,
-                                    exhibits: list[dict], evidence_map: dict):
+def make_verified_housing_complaint(
+    out_docx: Path, case_title: str, county: str, exhibits: list[dict], evidence_map: dict
+):
     doc = Document()
     add_heading(doc, f"STATE OF MICHIGAN — IN THE CIRCUIT COURT FOR {county.upper()} COUNTY", 12)
     add_heading(doc, case_title, 14)
@@ -532,7 +643,11 @@ def make_verified_housing_complaint(out_docx: Path, case_title: str, county: str
             n += 1
     if n == 1:
         # Ensure at least one factual statement referencing an exhibit (no placeholders)
-        numbered_par(doc, n, f"Documents reflecting housing conditions and charges are attached. (Exhibit {exhibits[0]['label']} p.1)")
+        numbered_par(
+            doc,
+            n,
+            f"Documents reflecting housing conditions and charges are attached. (Exhibit {exhibits[0]['label']} p.1)",
+        )
         n += 1
 
     # Counts — element-by-element with evidence_map pins
@@ -562,7 +677,7 @@ def make_verified_housing_complaint(out_docx: Path, case_title: str, county: str
         "Declaratory and narrow injunctive relief to halt interference, restore/utilities/repairs, and correct billing;",
         "Sanctions and reasonable expenses under MCR 1.109(E);",
         "Costs and interest as permitted;",
-        "Further relief as is just."
+        "Further relief as is just.",
     ]:
         doc.add_paragraph(f"• {item}")
 
@@ -582,6 +697,7 @@ def make_verified_housing_complaint(out_docx: Path, case_title: str, county: str
     makedirs(out_docx.parent)
     doc.save(out_docx.as_posix())
 
+
 # ---------------------------
 # AUDITS / GATES
 # ---------------------------
@@ -596,6 +712,7 @@ def audit_pin_cites(docx_path: Path) -> tuple[int, list[int]]:
                 missing.append(i + 1)
     return total, missing
 
+
 def audit_pii_redaction(docx_path: Path) -> list[str]:
     doc = Document(docx_path.as_posix())
     blob = "\n".join(p.text for p in doc.paragraphs)
@@ -605,89 +722,155 @@ def audit_pii_redaction(docx_path: Path) -> list[str]:
             flags.append(f"PII token not redacted: {pat}")
     return flags
 
+
 def write_manifest(manifest_path: Path, entries: list[list]):
     with manifest_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["RelativePath","Bytes","SHA256"])
+        w.writerow(["RelativePath", "Bytes", "SHA256"])
         w.writerows(entries)
+
 
 # ---------------------------
 # PROPOSED ORDERS & DOCS
 # ---------------------------
 def ensure_orders(dst_orders_dir: Path, case_title: str):
-    gen_docx(dst_orders_dir / "Preliminary_Injunction_Order.docx", "Preliminary Injunction (Repairs/Utilities/Non-Interference)", [
-        "ORDER: Defendants shall promptly restore and maintain essential services (including water/sewer/utilities) and abate hazard conditions.",
-        "ORDER: Defendants shall not engage in self-help or utility interference; all remedies must proceed by lawful process.",
-        "ORDER: Defendants shall implement repairs consistent with industry standards and applicable codes; status report due in 14 days.",
-        "ORDER: Clerk to schedule compliance review; violations subject to contempt."
-    ], case_title)
-    gen_docx(dst_orders_dir / "Protective_Order_MCR_2_302_C.docx", "Protective Order (MCR 2.302(C))", [
-        "ORDER: Financial account identifiers and resident PII shall be redacted in public filings under MCR 1.109(D)(9).",
-        "ORDER: Sensitive exhibits may be filed under seal; use limited to this case; clawback applies to inadvertent production."
-    ], case_title)
-    gen_docx(dst_orders_dir / "Alternate_Service_Order_MCR_2_105.docx", "Alternate Service Order (MCR 2.105)", [
-        "ORDER: Alternate service authorized upon affidavit of diligent attempts; service by certified mail + first-class + email + posting as permitted.",
-        "ORDER: Proof of service to be filed within 14 days."
-    ], case_title)
-    gen_docx(dst_orders_dir / "Motions_in_Limine_Order.docx", "Motions in Limine (MRE 401–403, 404, 802, 901)", [
-        "ORDER: Exclude character/propensity; remote or cumulative evidence; hearsay without exception; and unauthenticated media lacking MRE 901 foundation."
-    ], case_title)
-    gen_docx(dst_orders_dir / "Sanctions_Order_MCR_1_109_E.docx", "Sanctions Order (MCR 1.109(E))", [
-        "ORDER: The Court finds the identified papers lacked evidentiary support or were presented for improper purpose.",
-        "ORDER: Defendants shall pay Plaintiff’s reasonable expenses and fees; fee affidavit within 14 days; objections due 14 days thereafter."
-    ], case_title)
+    gen_docx(
+        dst_orders_dir / "Preliminary_Injunction_Order.docx",
+        "Preliminary Injunction (Repairs/Utilities/Non-Interference)",
+        [
+            "ORDER: Defendants shall promptly restore and maintain essential services (including water/sewer/utilities) and abate hazard conditions.",
+            "ORDER: Defendants shall not engage in self-help or utility interference; all remedies must proceed by lawful process.",
+            "ORDER: Defendants shall implement repairs consistent with industry standards and applicable codes; status report due in 14 days.",
+            "ORDER: Clerk to schedule compliance review; violations subject to contempt.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_orders_dir / "Protective_Order_MCR_2_302_C.docx",
+        "Protective Order (MCR 2.302(C))",
+        [
+            "ORDER: Financial account identifiers and resident PII shall be redacted in public filings under MCR 1.109(D)(9).",
+            "ORDER: Sensitive exhibits may be filed under seal; use limited to this case; clawback applies to inadvertent production.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_orders_dir / "Alternate_Service_Order_MCR_2_105.docx",
+        "Alternate Service Order (MCR 2.105)",
+        [
+            "ORDER: Alternate service authorized upon affidavit of diligent attempts; service by certified mail + first-class + email + posting as permitted.",
+            "ORDER: Proof of service to be filed within 14 days.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_orders_dir / "Motions_in_Limine_Order.docx",
+        "Motions in Limine (MRE 401–403, 404, 802, 901)",
+        [
+            "ORDER: Exclude character/propensity; remote or cumulative evidence; hearsay without exception; and unauthenticated media lacking MRE 901 foundation."
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_orders_dir / "Sanctions_Order_MCR_1_109_E.docx",
+        "Sanctions Order (MCR 1.109(E))",
+        [
+            "ORDER: The Court finds the identified papers lacked evidentiary support or were presented for improper purpose.",
+            "ORDER: Defendants shall pay Plaintiff’s reasonable expenses and fees; fee affidavit within 14 days; objections due 14 days thereafter.",
+        ],
+        case_title,
+    )
+
 
 def ensure_discovery(dst_discovery_dir: Path, case_title: str):
-    gen_docx(dst_discovery_dir / "ESI_Protocol.docx", "ESI Protocol (Housing)", [
-        "Custodians: park management; billing/ledger custodian; maintenance; third-party utility providers (Zego, Consumers Energy, water/sewer), EGLE contacts.",
-        "Formats: PST/MBOX+CSV (email); JSON/CSV+PDF (messages/ledgers); native+SHA-256 (audio/video); photos with EXIF.",
-        "Hashing: SHA-256 manifest; dedup by hash; categorical privilege log; clawback.",
-        "Search: exchange terms & hit counts; rolling production with Bates and exhibit IDs."
-    ], case_title)
-    gen_docx(dst_discovery_dir / "Discovery_Plan.docx", "Discovery Plan (Housing)", [
-        "Scope: elements-based discovery (habitability defects, utility events, ledgers/billing, notices, repair logs, EGLE interactions).",
-        "Deadlines: per MCR 2.401 scheduling. Protective Order for PII/financials.",
-        "Subpoenas: utilities, EGLE, vendors, maintenance contractors; ledger systems/export specs.",
-        "ADR: consider case evaluation and offers of judgment timing (MCR 2.403/2.405)."
-    ], case_title)
+    gen_docx(
+        dst_discovery_dir / "ESI_Protocol.docx",
+        "ESI Protocol (Housing)",
+        [
+            "Custodians: park management; billing/ledger custodian; maintenance; third-party utility providers (Zego, Consumers Energy, water/sewer), EGLE contacts.",
+            "Formats: PST/MBOX+CSV (email); JSON/CSV+PDF (messages/ledgers); native+SHA-256 (audio/video); photos with EXIF.",
+            "Hashing: SHA-256 manifest; dedup by hash; categorical privilege log; clawback.",
+            "Search: exchange terms & hit counts; rolling production with Bates and exhibit IDs.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_discovery_dir / "Discovery_Plan.docx",
+        "Discovery Plan (Housing)",
+        [
+            "Scope: elements-based discovery (habitability defects, utility events, ledgers/billing, notices, repair logs, EGLE interactions).",
+            "Deadlines: per MCR 2.401 scheduling. Protective Order for PII/financials.",
+            "Subpoenas: utilities, EGLE, vendors, maintenance contractors; ledger systems/export specs.",
+            "ADR: consider case evaluation and offers of judgment timing (MCR 2.403/2.405).",
+        ],
+        case_title,
+    )
+
 
 def ensure_pretrial(dst_pretrial_dir: Path, case_title: str):
-    gen_docx(dst_pretrial_dir / "Pretrial_Statement.docx", "Pretrial Statement (Housing)", [
-        "Stipulated Facts: to be refined pre-conference.",
-        "Contested Facts: numbered with exhibit pin-cites.",
-        "Issues of Law: MCL 554.139; MCL 600.2918; negligence/nuisance; contract/unjust enrichment; evidentiary issues.",
-        "Witnesses: management, maintenance, billing, residents, utility reps; time estimates.",
-        "Exhibits: ID, description, source, SHA-256, foundation, objections.",
-        "Motions in Limine: list with authority.",
-        "Time Estimates & Tech: audio/video playback, ledger display with hash verification."
-    ], case_title)
-    gen_docx(dst_pretrial_dir / "Proposed_Jury_Instructions.docx", "Proposed Jury Instructions (Outline — Housing)", [
-        "Habitability/Common Areas (elements; reasonable repair/fitness; damages).",
-        "Unlawful Interference with Possessory Interest (elements; interference/self-help; damages/treble where applicable).",
-        "Nuisance (substantial and unreasonable interference; damages).",
-        "Negligence (duty/breach/causation/damages).",
-        "Contract/Unjust Enrichment (terms/benefit/retention unjust; damages)."
-    ], case_title)
+    gen_docx(
+        dst_pretrial_dir / "Pretrial_Statement.docx",
+        "Pretrial Statement (Housing)",
+        [
+            "Stipulated Facts: to be refined pre-conference.",
+            "Contested Facts: numbered with exhibit pin-cites.",
+            "Issues of Law: MCL 554.139; MCL 600.2918; negligence/nuisance; contract/unjust enrichment; evidentiary issues.",
+            "Witnesses: management, maintenance, billing, residents, utility reps; time estimates.",
+            "Exhibits: ID, description, source, SHA-256, foundation, objections.",
+            "Motions in Limine: list with authority.",
+            "Time Estimates & Tech: audio/video playback, ledger display with hash verification.",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_pretrial_dir / "Proposed_Jury_Instructions.docx",
+        "Proposed Jury Instructions (Outline — Housing)",
+        [
+            "Habitability/Common Areas (elements; reasonable repair/fitness; damages).",
+            "Unlawful Interference with Possessory Interest (elements; interference/self-help; damages/treble where applicable).",
+            "Nuisance (substantial and unreasonable interference; damages).",
+            "Negligence (duty/breach/causation/damages).",
+            "Contract/Unjust Enrichment (terms/benefit/retention unjust; damages).",
+        ],
+        case_title,
+    )
+
 
 def ensure_service(dst_service_dir: Path, case_title: str):
-    gen_docx(dst_service_dir / "Service_Playbook.docx", "Service Playbook (MCR 2.105)", [
-        "Summons (MC 01): obtain; 91-day validity (MCR 2.102).",
-        "Personal service attempts: log dates/times/locations; photo proof when safe.",
-        "Alternate Service Motion: attach diligence affidavit; propose certified mail + first-class + email + posting.",
-        "Proof of Service: file promptly; calendar answer deadlines (21/28 days)."
-    ], case_title)
-    gen_docx(dst_service_dir / "Affidavit_of_Diligence.docx", "Affidavit of Diligence", [
-        "Affiant states diligent attempts at personal service:",
-        "1) Date/Time/Location/Outcome",
-        "2) Date/Time/Location/Outcome",
-        "3) Additional notes/photographs available.",
-        "Subscribed and sworn on ________.",
-        "Signature: __________________________"
-    ], case_title)
-    gen_docx(dst_service_dir / "Correction_Demand_Template.docx", "Correction/Adjustment Demand (Billing/Charges)", [
-        "Identify specific billings/charges by date and amount; state basis for correction/refund.",
-        "Demand written correction within 10 days; reserve rights; attach delivery proof."
-    ], case_title)
+    gen_docx(
+        dst_service_dir / "Service_Playbook.docx",
+        "Service Playbook (MCR 2.105)",
+        [
+            "Summons (MC 01): obtain; 91-day validity (MCR 2.102).",
+            "Personal service attempts: log dates/times/locations; photo proof when safe.",
+            "Alternate Service Motion: attach diligence affidavit; propose certified mail + first-class + email + posting.",
+            "Proof of Service: file promptly; calendar answer deadlines (21/28 days).",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_service_dir / "Affidavit_of_Diligence.docx",
+        "Affidavit of Diligence",
+        [
+            "Affiant states diligent attempts at personal service:",
+            "1) Date/Time/Location/Outcome",
+            "2) Date/Time/Location/Outcome",
+            "3) Additional notes/photographs available.",
+            "Subscribed and sworn on ________.",
+            "Signature: __________________________",
+        ],
+        case_title,
+    )
+    gen_docx(
+        dst_service_dir / "Correction_Demand_Template.docx",
+        "Correction/Adjustment Demand (Billing/Charges)",
+        [
+            "Identify specific billings/charges by date and amount; state basis for correction/refund.",
+            "Demand written correction within 10 days; reserve rights; attach delivery proof.",
+        ],
+        case_title,
+    )
+
 
 # ---------------------------
 # MAIN
@@ -733,13 +916,13 @@ def main():
 
     # Directory structure
     d_complaint = makedirs(bundle_dir / "Complaint")
-    d_exhibits  = makedirs(bundle_dir / "Exhibits")
-    d_matrices  = makedirs(bundle_dir / "Matrices")
+    d_exhibits = makedirs(bundle_dir / "Exhibits")
+    d_matrices = makedirs(bundle_dir / "Matrices")
     d_discovery = makedirs(bundle_dir / "Discovery")
-    d_pretrial  = makedirs(bundle_dir / "Pretrial")
-    d_orders    = makedirs(bundle_dir / "Orders")
-    d_service   = makedirs(bundle_dir / "Service")
-    d_damages   = makedirs(bundle_dir / "Damages")
+    d_pretrial = makedirs(bundle_dir / "Pretrial")
+    d_orders = makedirs(bundle_dir / "Orders")
+    d_service = makedirs(bundle_dir / "Service")
+    d_damages = makedirs(bundle_dir / "Damages")
 
     manifest = []
 
@@ -764,8 +947,8 @@ def main():
     # 3) MATRICES (Elements/Privilege/SOL)
     logging.info("[3] Generating Matrices…")
     elements_csv = d_matrices / "Elements_Table_Housing.csv"
-    priv_csv     = d_matrices / "Privilege_Matrix_Housing.csv"
-    sol_csv      = d_matrices / "SOL_Matrix_Housing.csv"
+    priv_csv = d_matrices / "Privilege_Matrix_Housing.csv"
+    sol_csv = d_matrices / "SOL_Matrix_Housing.csv"
     m = build_elements_table(exhibits, elements_csv)
     build_privilege_matrix(exhibits, priv_csv)
     build_sol_matrix(exhibits, sol_csv)
@@ -778,7 +961,13 @@ def main():
     complaint_docx = d_complaint / "Verified_Housing_Complaint.docx"
     make_verified_housing_complaint(complaint_docx, args.case_title, args.county, exhibits, m["evidence_map"])
     if args.no_dry_run:
-        manifest.append([complaint_docx.relative_to(bundle_dir).as_posix(), complaint_docx.stat().st_size, sha256_of_path(complaint_docx)])
+        manifest.append(
+            [
+                complaint_docx.relative_to(bundle_dir).as_posix(),
+                complaint_docx.stat().st_size,
+                sha256_of_path(complaint_docx),
+            ]
+        )
 
     # 5) Orders / Discovery / Pretrial / Service
     logging.info("[5] Creating Proposed Orders & Support Docs…")
@@ -795,20 +984,22 @@ def main():
     logging.info("[6] Building Damages Workbook CSV…")
     damages_csv = d_damages / "Damages_Workbook_Housing.csv"
     rows = [
-        ["Category","Proof Sources","Amount","Method","Exhibit Pin-Cites"],
-        ["Rent abatement (loss of use)","","","Rate x Affected Period",""],
-        ["Refunds for unauthorized charges (water/sewer/trash/admin)","","","Ledger reconciliation",""],
-        ["Hotel/relocation/supplies (mitigation)","","","Receipts",""],
-        ["Cleanup/remediation costs","","","Invoices",""],
-        ["Property loss/damage","","","Estimate/receipts",""],
-        ["Medical/health impact (if any)","","","Records/notes",""],
-        ["Emotional distress (housing impact)","","","Qualitative + corroboration",""],
-        ["Exemplary damages (egregious conduct)","","","Court’s discretion",""]
+        ["Category", "Proof Sources", "Amount", "Method", "Exhibit Pin-Cites"],
+        ["Rent abatement (loss of use)", "", "", "Rate x Affected Period", ""],
+        ["Refunds for unauthorized charges (water/sewer/trash/admin)", "", "", "Ledger reconciliation", ""],
+        ["Hotel/relocation/supplies (mitigation)", "", "", "Receipts", ""],
+        ["Cleanup/remediation costs", "", "", "Invoices", ""],
+        ["Property loss/damage", "", "", "Estimate/receipts", ""],
+        ["Medical/health impact (if any)", "", "", "Records/notes", ""],
+        ["Emotional distress (housing impact)", "", "", "Qualitative + corroboration", ""],
+        ["Exemplary damages (egregious conduct)", "", "", "Court’s discretion", ""],
     ]
     if args.no_dry_run:
         with damages_csv.open("w", encoding="utf-8", newline="") as f:
             csv.writer(f).writerows(rows)
-        manifest.append([damages_csv.relative_to(bundle_dir).as_posix(), damages_csv.stat().st_size, sha256_of_path(damages_csv)])
+        manifest.append(
+            [damages_csv.relative_to(bundle_dir).as_posix(), damages_csv.stat().st_size, sha256_of_path(damages_csv)]
+        )
 
     # 7) GATES — fail-fast audits
     logging.info("[7] Running Gating Audits…")
@@ -834,20 +1025,22 @@ def main():
         errs = []
         with p.open("r", encoding="utf-8-sig", newline="") as f:
             r = csv.DictReader(f)
-            need = {"Source","PrivilegeType","Basis","UseAllowed"}
+            need = {"Source", "PrivilegeType", "Basis", "UseAllowed"}
             if not need.issubset(set(r.fieldnames or [])):
                 errs.append("Privilege_Matrix_Housing.csv missing required columns.")
                 return errs
             for row in r:
                 pt = (row.get("PrivilegeType") or "").strip().lower()
                 ua = (row.get("UseAllowed") or "").strip().lower()
-                if pt in {"absolute","qualified"} and ua not in {"context-only","none"}:
+                if pt in {"absolute", "qualified"} and ua not in {"context-only", "none"}:
                     errs.append(f"Privileged item not context-only: {row}")
         return errs
+
     perrs = audit_priv_csv(priv_csv)
     if perrs:
         logging.error("Privilege Matrix audit FAILED:")
-        for e in perrs[:10]: logging.error(f"  - {e}")
+        for e in perrs[:10]:
+            logging.error(f"  - {e}")
         sys.exit(2)
     logging.info("[OK] Privilege Matrix gate passed.")
 
@@ -856,7 +1049,7 @@ def main():
         errs = []
         with p.open("r", encoding="utf-8-sig", newline="") as f:
             r = csv.DictReader(f)
-            need = {"Claim","Status","Treatment"}
+            need = {"Claim", "Status", "Treatment"}
             if not need.issubset(set(r.fieldnames or [])):
                 errs.append("SOL_Matrix_Housing.csv missing required columns.")
                 return errs
@@ -866,10 +1059,12 @@ def main():
                 if st == "stale" and "background" not in tr:
                     errs.append(f"Stale item not confined to background: {row}")
         return errs
+
     serrs = audit_sol_csv(sol_csv)
     if serrs:
         logging.error("SOL Matrix audit FAILED:")
-        for e in serrs[:10]: logging.error(f"  - {e}")
+        for e in serrs[:10]:
+            logging.error(f"  - {e}")
         sys.exit(2)
     logging.info("[OK] SOL Matrix gate passed.")
 
@@ -878,7 +1073,9 @@ def main():
     manifest_path = bundle_dir / "Manifest.csv"
     if args.no_dry_run:
         with manifest_path.open("w", encoding="utf-8", newline="") as f:
-            w = csv.writer(f); w.writerow(["RelativePath","Bytes","SHA256"]); w.writerows(manifest)
+            w = csv.writer(f)
+            w.writerow(["RelativePath", "Bytes", "SHA256"])
+            w.writerows(manifest)
         zpath = out_root / f"Housing_Complaint_Bundle_{ts}.zip"
         with zipfile.ZipFile(zpath.as_posix(), "w", compression=zipfile.ZIP_DEFLATED) as zf:
             for root, _, files in os.walk(bundle_dir.as_posix()):
@@ -894,6 +1091,7 @@ def main():
     if args.no_dry_run:
         logging.info(f"ZIP: {out_root / f'Housing_Complaint_Bundle_{ts}.zip'}")
     logging.info("All gates passed. Housing-only bundle is READY for filing workflows.")
+
 
 if __name__ == "__main__":
     try:

@@ -1,18 +1,20 @@
 import json
 import os
-from docx import Document
 from datetime import datetime
+
+from docx import Document
 
 """Utilities for building a Warboard DOCX and SVG and optionally uploading
 results to Google Drive. Can be executed as a module or script."""
 
+from contradictions.contradiction_matrix import detect_contradictions
+from gdrive_sync import upload_to_drive
+
 # Import using an absolute path so execution as a script works as well
 from scanner.scan_engine import run_scan
 from timeline.builder import build_timeline
-from contradictions.contradiction_matrix import detect_contradictions
 from warboard.svg_builder import generate_svg_warboard
 from warboard.svg_motion_binder import bind_motion_links
-from gdrive_sync import upload_to_drive
 
 DOCX_EXPORT = os.path.join("warboard", "exports", "SHADY_OAKS_WARBOARD.docx")
 SVG_EXPORT = os.path.join("warboard", "exports", "SHADY_OAKS_WARBOARD.svg")

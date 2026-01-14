@@ -731,9 +731,7 @@ def install_deps(root: Path, offline: bool) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--root", required=True, help="Install root, e.g., F:\\LAWFORGE_SUPREMACY"
-    )
+    ap.add_argument("--root", required=True, help="Install root, e.g., F:\\LAWFORGE_SUPREMACY")
     ap.add_argument("--offline", action="store_true", help="Use local wheels only")
     args = ap.parse_args()
 
@@ -769,12 +767,8 @@ def main() -> None:
     print("1) Activate:    " + str(root / ".venv" / "Scripts" / "activate"))
     print("2) Backend:     run_backend.bat")
     print("3) Frontend:    frontend\\run_frontend.bat")
-    print(
-        "4) Models:      put GGUF at models\\llm\\model.gguf; set config.yaml -> llm.llama_cpp.model_path"
-    )
-    print(
-        "5) Evidence:    set config.yaml paths.MEEK1, paths.MEEK2; file events auto-index"
-    )
+    print("4) Models:      put GGUF at models\\llm\\model.gguf; set config.yaml -> llm.llama_cpp.model_path")
+    print("5) Evidence:    set config.yaml paths.MEEK1, paths.MEEK2; file events auto-index")
 
 
 if __name__ == "__main__":

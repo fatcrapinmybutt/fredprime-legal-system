@@ -21,11 +21,11 @@ import tempfile
 import threading
 import time
 import uuid
+import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
-import zipfile
 
 # ---------------------------------------------------------------------------
 # Constants & Configuration
@@ -77,6 +77,7 @@ class FileRecord:
 # ---------------------------------------------------------------------------
 # Utility Functions
 # ---------------------------------------------------------------------------
+
 
 def generate_token(provided: Optional[str] = None) -> str:
     if provided:
@@ -131,7 +132,7 @@ def open_with_retries(path: Path, mode: str) -> Tuple[object, os.stat_result]:
             last_exc = exc
             if attempt == RETRY_ATTEMPTS:
                 raise
-            time.sleep(RETRY_BACKOFF ** attempt)
+            time.sleep(RETRY_BACKOFF**attempt)
     raise last_exc  # type: ignore[misc]
 
 
@@ -210,9 +211,7 @@ def estimated_required_space(total_bytes: int) -> int:
 def check_free_space(path: Path, required: int) -> None:
     usage = shutil.disk_usage(path)
     if usage.free < required:
-        raise RuntimeError(
-            f"Insufficient free space on {path}: required {required:,} bytes, available {usage.free:,}"
-        )
+        raise RuntimeError(f"Insufficient free space on {path}: required {required:,} bytes, available {usage.free:,}")
 
 
 def detect_secrets(path: Path, logger: logging.Logger) -> List[Dict[str, str]]:
@@ -234,7 +233,7 @@ def detect_secrets(path: Path, logger: logging.Logger) -> List[Dict[str, str]]:
     patterns = {
         "AWS Key": r"AKIA[0-9A-Z]{16}",
         "Slack Token": r"xox[baprs]-[0-9A-Za-z-]+",
-        "Generic Secret": r"(?i)(api_key|secret|password)\s*[:=]\s*[\'\"]?[A-Za-z0-9\-_/]{8,}"
+        "Generic Secret": r"(?i)(api_key|secret|password)\s*[:=]\s*[\'\"]?[A-Za-z0-9\-_/]{8,}",
     }
     import re
 
@@ -243,10 +242,12 @@ def detect_secrets(path: Path, logger: logging.Logger) -> List[Dict[str, str]]:
             start = max(match.start() - 8, 0)
             end = min(match.end() + 8, len(text))
             snippet = text[start:end]
-            findings.append({
-                "type": label,
-                "match": snippet[:4] + "***REDACTED***" + snippet[-4:],
-            })
+            findings.append(
+                {
+                    "type": label,
+                    "match": snippet[:4] + "***REDACTED***" + snippet[-4:],
+                }
+            )
     if findings:
         logger.warning("Potential secrets detected in %s", path)
     return findings
@@ -319,6 +320,7 @@ def setup_logging(logs_root: Path, token: str) -> logging.Logger:
 # ---------------------------------------------------------------------------
 # Scanning Logic
 # ---------------------------------------------------------------------------
+
 
 def gather_candidates(
     roots: Sequence[Path],
@@ -442,6 +444,7 @@ def process_candidates(
 # ---------------------------------------------------------------------------
 # Output Writers
 # ---------------------------------------------------------------------------
+
 
 def write_manifests(
     manifest_rows: Sequence[Dict[str, object]],
@@ -599,6 +602,7 @@ def summarize(entries: Sequence[FileRecord], secrets: Dict[str, List[Dict[str, s
 # ---------------------------------------------------------------------------
 # Main Execution
 # ---------------------------------------------------------------------------
+
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(

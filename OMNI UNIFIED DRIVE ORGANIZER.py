@@ -30,17 +30,17 @@ Dry-run vs execute:
 
 import argparse
 import csv
+import ctypes
 import os
+import platform
+import re
 import shutil
 import sys
-import platform
-import ctypes
 import tempfile
 import time
-import re
-from pathlib import Path
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Set, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 CHUNK = 8 * 1024 * 1024
 MAX_SAMPLE_BYTES = 200_000
@@ -123,11 +123,41 @@ MANIFEST_FILENAME = "manifest.csv"
 
 # Optional large/media/system skip set for Stage 1
 SKIP_EXTS_DEFAULT: Set[str] = {
-    ".jpg", ".jpeg", ".png", ".heic", ".heif", ".gif", ".bmp", ".webp", ".tif", ".tiff",
-    ".mp4", ".mkv", ".mov", ".avi", ".wmv", ".webm", ".m4v",
-    ".mp3", ".m4a", ".aac", ".ogg", ".oga", ".wav", ".flac",
-    ".apk", ".obb", ".dex", ".so", ".oat", ".vdex",
-    ".tmp", ".temp", ".cache", ".thumb", ".nomedia",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".heic",
+    ".heif",
+    ".gif",
+    ".bmp",
+    ".webp",
+    ".tif",
+    ".tiff",
+    ".mp4",
+    ".mkv",
+    ".mov",
+    ".avi",
+    ".wmv",
+    ".webm",
+    ".m4v",
+    ".mp3",
+    ".m4a",
+    ".aac",
+    ".ogg",
+    ".oga",
+    ".wav",
+    ".flac",
+    ".apk",
+    ".obb",
+    ".dex",
+    ".so",
+    ".oat",
+    ".vdex",
+    ".tmp",
+    ".temp",
+    ".cache",
+    ".thumb",
+    ".nomedia",
 }
 
 # Unified schema for per-root manifests and global index
@@ -193,17 +223,29 @@ TIMELINE_HEADER: List[str] = [
 
 # MI-style case number detection
 CASE_RE_LIST = [
-    re.compile(r"\b\d{2,4}-\d{4,}-[A-Z]{2}\b"),            # 24-01507-DC
-    re.compile(r"\b\d{4}-\d{7}-[A-Z]{2}\b"),               # 2024-001507-DC
+    re.compile(r"\b\d{2,4}-\d{4,}-[A-Z]{2}\b"),  # 24-01507-DC
+    re.compile(r"\b\d{4}-\d{7}-[A-Z]{2}\b"),  # 2024-001507-DC
     re.compile(r"(?:Case\s+No\.?|No\.)\s*([0-9]{2,4}-[0-9]{4,}-[A-Za-z]{2})", re.I),
 ]
 
 TEXT_EXTS: Set[str] = {
-    "txt", "md", "json", "csv", "tsv", "log", "html", "htm", "xml",
+    "txt",
+    "md",
+    "json",
+    "csv",
+    "tsv",
+    "log",
+    "html",
+    "htm",
+    "xml",
 }
 
 DOC_LIKE_EXTS: Set[str] = {
-    "pdf", "docx", "doc", "rtf", "odt",
+    "pdf",
+    "docx",
+    "doc",
+    "rtf",
+    "odt",
 }
 
 MEDIA_BUCKET_TYPES: Dict[str, str] = {
@@ -215,6 +257,7 @@ MEDIA_BUCKET_TYPES: Dict[str, str] = {
 # ---------------------------------------------------------------------------
 # SHARED UTILS
 # ---------------------------------------------------------------------------
+
 
 def ensure_dir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
@@ -297,11 +340,7 @@ def _write_manifest_atomic(rows: List[List[Any]], manifest_path: Path) -> None:
             writer.writerow(r)
     if manifest_path.exists():
         bak = manifest_path.with_name(
-            manifest_path.stem
-            + "."
-            + datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-            + manifest_path.suffix
-            + ".bak"
+            manifest_path.stem + "." + datetime.utcnow().strftime("%Y%m%dT%H%M%SZ") + manifest_path.suffix + ".bak"
         )
         try:
             os.replace(str(manifest_path), str(bak))
@@ -373,9 +412,7 @@ def print_progress(processed: int, total: int, start_time: float, current_file: 
     cur = current_file
     if len(cur) > 60:
         cur = "..." + cur[-57:]
-    sys.stdout.write(
-        f"\r[{bar}] {percent*100:5.1f}% {processed}/{total} {rate:5.1f} f/s ETA: {eta_str} {cur}"
-    )
+    sys.stdout.write(f"\r[{bar}] {percent*100:5.1f}% {processed}/{total} {rate:5.1f} f/s ETA: {eta_str} {cur}")
     sys.stdout.flush()
 
 
@@ -415,6 +452,7 @@ def delete_empty_dirs(root: Path, buckets_root: Path) -> None:
                 p.rmdir()
             except Exception:
                 pass
+
 
 # ---------------------------------------------------------------------------
 # STAGE 1: ORGANIZER (BUCKET + DUPLICATES + GLOBAL INDEX)
@@ -653,8 +691,16 @@ def read_index(index_path: Path, roots_filter: Optional[Set[str]] = None) -> Lis
     with index_path.open("r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         required = {
-            "run_id", "root", "dest_path", "bucket", "ext",
-            "size_bytes", "mtime_utc", "action", "original_path", "rel_path",
+            "run_id",
+            "root",
+            "dest_path",
+            "bucket",
+            "ext",
+            "size_bytes",
+            "mtime_utc",
+            "action",
+            "original_path",
+            "rel_path",
         }
         if reader.fieldnames is None:
             raise ValueError("Index file has no header row")
@@ -700,6 +746,7 @@ def extract_text_snippet(path: Path, ext: str) -> str:
         if ext == "pdf":
             try:
                 from pypdf import PdfReader  # type: ignore
+
                 text_parts: List[str] = []
                 with path.open("rb") as f:
                     reader = PdfReader(f)
@@ -712,7 +759,9 @@ def extract_text_snippet(path: Path, ext: str) -> str:
             except Exception:
                 try:
                     from io import StringIO  # type: ignore
+
                     from pdfminer.high_level import extract_text_to_fp  # type: ignore
+
                     output = StringIO()
                     with path.open("rb") as f:
                         extract_text_to_fp(f, output, maxpages=5)
@@ -723,6 +772,7 @@ def extract_text_snippet(path: Path, ext: str) -> str:
         if ext == "docx":
             try:
                 import docx  # type: ignore
+
                 doc = docx.Document(str(path))
                 full_text: List[str] = []
                 for p in doc.paragraphs[:200]:
@@ -787,7 +837,7 @@ def seed_label(row: Dict[str, Any], path: Path, text: str, case_numbers: List[st
     bucket = (row.get("bucket") or "").upper()
     ext = (row.get("ext") or "").lower()
     name_lower = path.name.lower()
-    haystack = (name_lower + "\n" + text.lower())
+    haystack = name_lower + "\n" + text.lower()
     has_v = (" v. " in haystack) or (" vs " in haystack)
 
     if case_numbers:
@@ -1227,16 +1277,12 @@ def main() -> None:
     ap.add_argument(
         "--doit",
         action="store_true",
-        help=(
-            "Perform moves in Stage 1. Default is dry-run (no moves, but manifests and index still written)."
-        ),
+        help=("Perform moves in Stage 1. Default is dry-run (no moves, but manifests and index still written)."),
     )
     ap.add_argument(
         "--skip-hidden",
         action="store_true",
-        help=(
-            "Stage 1: skip hidden files. On Unix this checks dotfiles. On Windows this checks hidden attribute."
-        ),
+        help=("Stage 1: skip hidden files. On Unix this checks dotfiles. On Windows this checks hidden attribute."),
     )
     ap.add_argument(
         "--include-media",
@@ -1250,10 +1296,7 @@ def main() -> None:
     )
     ap.add_argument(
         "--global-index",
-        help=(
-            "Stage 1: path to a global CSV index file. "
-            "Default: ./drive_index_<UTC timestamp>.csv"
-        ),
+        help=("Stage 1: path to a global CSV index file. " "Default: ./drive_index_<UTC timestamp>.csv"),
     )
 
     # Stage 2+3 arguments

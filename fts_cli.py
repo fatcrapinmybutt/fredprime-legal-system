@@ -12,9 +12,7 @@ def get_connection():
 def init_db():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY, description TEXT)"
-    )
+    cur.execute("CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY, description TEXT)")
     cur.execute(
         "CREATE VIRTUAL TABLE IF NOT EXISTS records_fts USING fts5(description, content='records', content_rowid='id')"
     )
@@ -43,9 +41,7 @@ def add_record(description: str):
 def search_records(query: str):
     conn = get_connection()
     cur = conn.cursor()
-    for rowid, desc in cur.execute(
-        "SELECT rowid, description FROM records_fts WHERE records_fts MATCH ?", (query,)
-    ):
+    for rowid, desc in cur.execute("SELECT rowid, description FROM records_fts WHERE records_fts MATCH ?", (query,)):
         print(f"{rowid}: {desc}")
     conn.close()
 

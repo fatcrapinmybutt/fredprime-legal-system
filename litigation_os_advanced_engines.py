@@ -1,4 +1,7 @@
-import os, zipfile, datetime, textwrap
+import datetime
+import os
+import textwrap
+import zipfile
 
 root = "/mnt/data/LitigationOS_Diamond_9999+++_Core_D"
 os.makedirs(root, exist_ok=True)
@@ -2281,12 +2284,14 @@ with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
 
 zip_path
 
-import os, zipfile, datetime
+import datetime
+import os
+import zipfile
 
 root = "/mnt/data/LitigationOS_Diamond_D_Patch"
 os.makedirs(root, exist_ok=True)
 
-launcher_code = r'''#!/usr/bin/env python3
+launcher_code = r"""#!/usr/bin/env python3
 import argparse
 import os
 import sys
@@ -2338,9 +2343,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-'''
+"""
 
-nodes_code = r'''#!/usr/bin/env python3
+nodes_code = r"""#!/usr/bin/env python3
 import argparse
 import json
 import os
@@ -2469,9 +2474,9 @@ if __name__ == "__main__":
     args = parse_args()
     conv, skip = compile_nodes(args.source_root, args.out_root)
     print(f"[NODES] Conversion complete. Converted={conv}, skipped={skip}")
-'''
+"""
 
-master_code = r'''#!/usr/bin/env python3
+master_code = r"""#!/usr/bin/env python3
 from litigation_os_nodes_compiler import compile_nodes, DEFAULT_SOURCE_ROOT, DEFAULT_OUT_ROOT
 import litigation_os_launcher as launcher
 from litigation_os_orchestrator import run_full_pipeline
@@ -2516,7 +2521,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-'''
+"""
 
 readme_patch = """Litigation OS • Diamond 9999+++ • D: drive patch
 ==============================================

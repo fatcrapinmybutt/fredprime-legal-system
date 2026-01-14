@@ -1,12 +1,11 @@
 import os
+
 from docx import Document
 
 BASE_DIR = os.getenv("LEGAL_RESULTS_DIR", os.path.join("F:/", "LegalResults"))
 OUTPUT_DIR = os.path.join(BASE_DIR, "PUBLIC_RELEASE")
 
-SUMMARY = (
-    "Trailer Park Shell Game: Family's Home Destroyed After Eviction by Fraudulent LLCs"
-)
+SUMMARY = "Trailer Park Shell Game: Family's Home Destroyed After Eviction by Fraudulent LLCs"
 
 BODY = [
     "Entity bait-and-switch between Cricklewood and Shady Oaks Park MHP LLC.",

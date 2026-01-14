@@ -10,11 +10,7 @@ BANNED_KEYWORDS = ["TODO", "WIP", "temp_var", "placeholder"]
 
 
 def get_current_branch() -> str:
-    return (
-        subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
-        .decode()
-        .strip()
-    )
+    return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
 
 
 def get_last_commit_message() -> str:

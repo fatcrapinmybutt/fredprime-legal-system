@@ -15,9 +15,7 @@ FILES_TO_INCLUDE = [
 ]
 
 
-def build_zip_bundle(
-    export_dir: str = EXPORT_DIR, files: list[str] | None = None
-) -> str:
+def build_zip_bundle(export_dir: str = EXPORT_DIR, files: list[str] | None = None) -> str:
     """Create a ZIP bundle of warboard and data files.
 
     Parameters
