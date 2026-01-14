@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document provides the complete blueprint for organizing the FRED Supreme Litigation OS repository according to best practices, with clear sequencing of modules, execution flow, and deployment guidelines.
+This document provides the complete blueprint for organizing the FRED Supreme Litigation OS repository according to
+best practices, with clear sequencing of modules, execution flow, and deployment guidelines.
 
 ---
 
@@ -154,7 +155,7 @@ fredprime-legal-system/                 # Root
 
 ### Phase 1: System Boot (Startup)
 
-**Load configuration and prepare environment**
+#### Load configuration and prepare environment
 
 ```
 1. config/settings.py
@@ -169,7 +170,7 @@ fredprime-legal-system/                 # Root
 
 ### Phase 2: Foundation Layer (Setup)
 
-**Initialize core dependencies**
+#### Initialize core dependencies
 
 ```
 4. ai/evidence_llm_analyzer.py
@@ -196,7 +197,7 @@ fredprime-legal-system/                 # Root
 
 ### Phase 3: Integration Layer (Bridges)
 
-**Connect components together**
+#### Connect components together
 
 ```
 11. bridges/ai_integration_bridge.py
@@ -210,7 +211,7 @@ fredprime-legal-system/                 # Root
 
 ### Phase 4: Workflows (Business Logic)
 
-**Setup case processing workflows**
+#### Setup case processing workflows
 
 ```
 13. workflows/case_intake_workflow.py
@@ -232,7 +233,7 @@ fredprime-legal-system/                 # Root
 
 ### Phase 5: Application (Execution)
 
-**Run application**
+#### Run application
 
 ```
 17. main.py

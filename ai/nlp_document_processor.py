@@ -6,17 +6,17 @@ and relationship extraction for legal documents.
 
 import logging
 import json
-from typing import List, Dict, Any, Optional, Tuple, Set
+from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 from collections import defaultdict
 import re
 
 try:
-    from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
-    HAS_TRANSFORMERS = True
+    from transformers import pipeline
+    transformers_available = True
 except ImportError:
-    HAS_TRANSFORMERS = False
+    transformers_available = False
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +113,8 @@ class NLPDocumentProcessor:
             r'\b(?:Third Circuit|Fourth Circuit|Federal Court)'
         ],
         'DATE': [
-            r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}',
+            r'\b(?:January|February|March|April|May|June|July|August|'
+            r'September|October|November|December)\s+\d{1,2},?\s+\d{4}',
             r'\d{1,2}/\d{1,2}/\d{4}'
         ],
         'LEGAL_CONCEPT': [
@@ -148,9 +149,9 @@ class NLPDocumentProcessor:
 
     def __init__(self):
         """Initialize the NLP document processor"""
-        self.transformers_available = HAS_TRANSFORMERS
-        self.sentiment_pipeline = None
-        self.ner_pipeline = None
+        self.transformers_available = transformers_available
+        self.sentiment_pipeline: Optional[Any] = None
+        self.ner_pipeline: Optional[Any] = None
 
         if self.transformers_available:
             try:
@@ -268,23 +269,26 @@ class NLPDocumentProcessor:
 
     def _extract_entities(self, content: str) -> List[EntityInfo]:
         """Extract named entities from content"""
-        entities = []
+        entities: List[EntityInfo] = []
 
         if self.transformers_available and self.ner_pipeline:
             try:
                 # Use transformer NER
                 ner_results = self.ner_pipeline(content[:512])
                 for result in ner_results:
+                    start_pos = int(result.get('start', 0))
+                    end_pos = int(result.get('end', len(result['word'])))
+                    confidence = float(result.get('score', 0.8))
                     entities.append(
                         EntityInfo(
                             text=result['word'],
                             entity_type=result['entity_group'],
-                            start_pos=result.get('start', 0),
-                            end_pos=result.get('end', len(result['word'])),
-                            confidence=result.get('score', 0.8),
+                            start_pos=start_pos,
+                            end_pos=end_pos,
+                            confidence=confidence,
                             context=content[
-                                max(0, result.get('start', 0) - 50):
-                                min(len(content), result.get('end', 0) + 50)
+                                max(0, start_pos - 50):
+                                min(len(content), end_pos + 50)
                             ]
                         )
                     )
@@ -298,7 +302,7 @@ class NLPDocumentProcessor:
 
     def _extract_entities_patterns(self, content: str) -> List[EntityInfo]:
         """Extract entities using regex patterns"""
-        entities = []
+        entities: List[EntityInfo] = []
 
         for entity_type, patterns in self.LEGAL_PATTERNS.items():
             for pattern in patterns:
@@ -321,7 +325,7 @@ class NLPDocumentProcessor:
 
     def _extract_parties(self, content: str, entities: List[EntityInfo]) -> List[str]:
         """Extract involved parties (plaintiff, defendant, etc.)"""
-        parties = []
+        parties: List[str] = []
 
         # Look for explicit party mentions
         party_patterns = [
@@ -412,7 +416,7 @@ class NLPDocumentProcessor:
         content: str
     ) -> List[Relationship]:
         """Extract relationships between entities"""
-        relationships = []
+        relationships: List[Relationship] = []
 
         # Simple relationship detection
         for i, entity1 in enumerate(entities):
@@ -463,7 +467,7 @@ class NLPDocumentProcessor:
 
     def _extract_key_concepts(self, content: str) -> List[str]:
         """Extract key legal concepts"""
-        concepts = []
+        concepts: List[str] = []
 
         legal_terms = {
             'custody', 'parental', 'visitation', 'support', 'modification',
@@ -481,7 +485,7 @@ class NLPDocumentProcessor:
 
     def _extract_action_items(self, content: str) -> List[str]:
         """Extract action items from document"""
-        items = []
+        items: List[str] = []
 
         action_patterns = [
             r'(?:must|shall|will|should)\s+([^.!?]+)',
@@ -499,7 +503,7 @@ class NLPDocumentProcessor:
 
     def _extract_deadlines(self, content: str) -> List[str]:
         """Extract deadlines and important dates"""
-        deadlines = []
+        deadlines: List[str] = []
 
         deadline_patterns = [
             r'(?:by|before|on or before)\s+(' +
