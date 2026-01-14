@@ -1,73 +1,74 @@
 """
 Observability utilities: structured logging, Prometheus metrics, and OpenTelemetry starter.
 
-Usage:
-    from src.observability import setup_logging, instrument_fastapi, start_metrics_server
-
-    settings = get_settings()
-    setup_logging(settings)
-    app = FastAPI()
-    instrument_fastapi(app)
-
-    # Optional: start external Prometheus metrics server
-    start_metrics_server(port=8000)
-
-This module avoids hard failures if optional dependencies are missing.
+This module provides safe fallbacks when optional packages are missing and exposes
+helpers for setting up logging, Prometheus metrics, and tracing.
 """
 
 import logging
 import os
-from typing import Optional
+from typing import Any, Callable, Optional
 
+jsonlogger: Optional[Any] = None
 try:
-    from pythonjsonlogger import jsonlogger
-except Exception:
-    jsonlogger = None
+    from pythonjsonlogger import jsonlogger as _jsonlogger
 
-# Prometheus
+    jsonlogger = _jsonlogger
+except Exception:
+    pass
+
+# Prometheus (optional)
+start_http_server: Optional[Callable[..., None]] = None
+Counter: Any = None
+Histogram: Any = None
+Summary: Any = None
+make_asgi_app: Optional[Callable[..., Any]] = None
 try:
-    from prometheus_client import start_http_server, Counter, Histogram, Summary
-    from prometheus_client import make_asgi_app
+    from prometheus_client import Counter as _Counter
+    from prometheus_client import Histogram as _Histogram
+    from prometheus_client import Summary as _Summary
+    from prometheus_client import make_asgi_app as _make_asgi_app
+    from prometheus_client import start_http_server as _start_http_server
+
+    start_http_server = _start_http_server
+    Counter = _Counter
+    Histogram = _Histogram
+    Summary = _Summary
+    make_asgi_app = _make_asgi_app
 except Exception:
-    start_http_server = None
-    Counter = None
-    Histogram = None
-    Summary = None
-    make_asgi_app = None
+    pass
 
 
-# Provide lightweight fallbacks to avoid import-time failures
 class _DummyMetric:
-    def __init__(self, *a, **k):
+    def __init__(self, *a: Any, **k: Any) -> None:
         pass
 
-    def inc(self, *a, **k):
+    def inc(self, *a: Any, **k: Any) -> None:
         pass
 
-    def observe(self, *a, **k):
+    def observe(self, *a: Any, **k: Any) -> None:
         pass
 
 
 if Counter is None:
     Counter = _DummyMetric
 
-
 if Histogram is None:
     Histogram = _DummyMetric
-
 
 if Summary is None:
     Summary = _DummyMetric
 
-# OpenTelemetry
+
+# OpenTelemetry (optional)
 try:
     from opentelemetry import trace
-    from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
     from opentelemetry.instrumentation.requests import RequestsInstrumentor
+    from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
 except Exception:
     trace = None
     TracerProvider = None
@@ -80,8 +81,8 @@ except Exception:
 DEFAULT_METRICS_PORT = int(os.getenv("METRICS_PORT", "9100"))
 
 # Default application-wide metrics (if prometheus_client available)
-request_counter = None
-request_latency = None
+request_counter: Optional[Any] = None
+request_latency: Optional[Any] = None
 
 
 def setup_logging(settings: Optional[object] = None) -> None:

@@ -7,12 +7,14 @@ you previously called remote APIs to opt into local models.
 """
 
 from __future__ import annotations
+
 import os
-from typing import Optional
+from typing import Any, Optional
 
 AI_BACKEND = os.getenv("AI_BACKEND", "local")
 LOCAL_MODEL = os.getenv("LOCAL_MODEL", "gpt2")
 
+_gen: Optional[Any]
 try:
     if AI_BACKEND == "local":
         from transformers import pipeline

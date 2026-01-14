@@ -1,8 +1,8 @@
 """Persistent store linking evidence, transcripts, and forms."""
 
+import hashlib
 import json
 import sqlite3
-import hashlib
 from pathlib import Path
 from typing import List
 
@@ -78,6 +78,8 @@ class KnowledgeStore:
         )
         self.conn.commit()
         evid_id = cur.lastrowid
+        if evid_id is None:
+            raise RuntimeError("Failed to insert evidence row")
         if auto_link and description:
             lower = description.lower()
             for word, form_id in KEYWORDS_TO_FORMS.items():
@@ -94,7 +96,10 @@ class KnowledgeStore:
             (str(path), description, date, digest),
         )
         self.conn.commit()
-        return cur.lastrowid
+        last = cur.lastrowid
+        if last is None:
+            raise RuntimeError("Failed to insert transcript row")
+        return int(last)
 
     def link_transcript(self, transcript_id: int, form_id: str, note: str = "") -> None:
         cur = self.conn.cursor()
@@ -180,7 +185,8 @@ class KnowledgeStore:
         row = cur.fetchone()
         if not row:
             return False
-        path, stored_hash = row
+        path = str(row[0])
+        stored_hash = str(row[1])
         try:
             data = Path(path).read_bytes()
         except FileNotFoundError:
@@ -193,7 +199,8 @@ class KnowledgeStore:
         row = cur.fetchone()
         if not row:
             return False
-        path, stored_hash = row
+        path = str(row[0])
+        stored_hash = str(row[1])
         try:
             data = Path(path).read_bytes()
         except FileNotFoundError:
