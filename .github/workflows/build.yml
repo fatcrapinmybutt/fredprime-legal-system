@@ -1,0 +1,122 @@
+name: Codex Build
+
+on:
+  push:
+    branches:
+      - main
+      - codex/**
+  pull_request:
+    branches:
+      - main
+      - codex/**
+
+jobs:
+  codex-check:
+    if: |
+      github.ref == 'refs/heads/main' ||
+      startsWith(github.ref, 'refs/heads/codex/')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect Changed Files
+        id: changes
+        run: |
+          git fetch --depth=2 origin main || true
+          before=${{ github.event.before }}
+          after=${{ github.sha }}
+
+          if [ -z "$before" ]; then before=$(git rev-parse HEAD^1); fi
+
+          diff=$(git diff --name-only $before $after || echo '')
+          echo "$diff" > changed_files.txt
+          echo "Changed files:"
+          cat changed_files.txt
+
+          run_tests=false
+          while read -r f; do
+            if [[ "$f" =~ \.py$|\.ts$|\.js$|\.json$ ]]; then
+              run_tests=true
+              break
+            fi
+          done <<< "$diff"
+
+          branch_name="${GITHUB_REF##*/}"
+          for key in core engine matrix patch hotfix echelon; do
+            if [[ "$branch_name" == *"$key"* ]]; then
+              run_tests=true
+              break
+            fi
+          done
+
+          echo "run_tests=$run_tests" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          pip install -r requirements.txt
+          pip install black flake8 mypy pytest safety
+
+      - name: Lint Code
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          black --check . || exit 1
+          mypy --strict || exit 1
+          flake8 || exit 1
+
+      - name: Security Audit
+        if: steps.changes.outputs.run_tests == 'true'
+        run: |
+          safety check --full-report || true
+
+      - name: Update Codex Manifest
+        if: steps.changes.outputs.run_tests == 'true'
+        run: python codex_brain.py
+
+      - name: Run Selftests (if exists)
+        if: steps.changes.outputs.run_tests == 'true'
+        continue-on-error: true
+        run: |
+          if [ -f codex_selftest.py ]; then
+            python codex_selftest.py
+          else
+            echo "No codex_selftest.py found"
+          fi
+
+      - name: Run Integration Tests (if present)
+        if: steps.changes.outputs.run_tests == 'true'
+        continue-on-error: false
+        run: |
+          if [ -d integration_tests ]; then
+            pytest integration_tests
+          else
+            echo "No integration_tests/ found"
+          fi
+
+      - name: Run Global Pytest Suite
+        if: steps.changes.outputs.run_tests == 'true'
+        run: pytest
+
+      - name: Upload Changed Files Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: changed-files
+          path: changed_files.txt

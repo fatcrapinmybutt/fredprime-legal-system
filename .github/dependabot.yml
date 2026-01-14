@@ -1,0 +1,90 @@
+version: 2
+
+# Optional: define private registries (npm/pip/etc.) and reference them from updates.
+# Requires Dependabot secrets in repo/org settings. :contentReference[oaicite:1]{index=1}
+registries:
+  # Example npm registry (GitHub Packages)
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    token: ${{secrets.DEPENDABOT_NPM_TOKEN}}
+
+  # Example Python registry
+  pypi-private:
+    type: python-index
+    url: https://pypi.example.com/simple
+    username: ${{secrets.DEPENDABOT_PYPI_USER}}
+    password: ${{secrets.DEPENDABOT_PYPI_TOKEN}}
+
+updates:
+  # 1) GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Detroit"
+    open-pull-requests-limit: 10
+    labels: ["deps", "github-actions"]
+    reviewers: ["YOUR_GH_USERNAME_OR_TEAM"]
+    assignees: ["YOUR_GH_USERNAME"]
+    commit-message:
+      prefix: "deps(actions)"
+      include: "scope"
+    # Use groups to reduce PR spam (one PR for many updates). :contentReference[oaicite:2]{index=2}
+    groups:
+      gha:
+        patterns: ["*"]
+
+  # 2) Node (npm/yarn/pnpm all configured as "npm") :contentReference[oaicite:3]{index=3}
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:10"
+      timezone: "America/Detroit"
+    open-pull-requests-limit: 10
+    labels: ["deps", "javascript"]
+    reviewers: ["YOUR_GH_USERNAME_OR_TEAM"]
+    assignees: ["YOUR_GH_USERNAME"]
+    commit-message:
+      prefix: "deps(js)"
+      include: "scope"
+    # If you use a private registry, add:
+    registries:
+      - "npm-github"
+    # Noise control: group by risk profile (patch/minor vs majors)
+    groups:
+      js-safe:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      js-majors:
+        patterns: ["*"]
+        update-types: ["major"]
+
+  # 3) Python (pip) :contentReference[oaicite:4]{index=4}
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:20"
+      timezone: "America/Detroit"
+    open-pull-requests-limit: 10
+    labels: ["deps", "python"]
+    reviewers: ["YOUR_GH_USERNAME_OR_TEAM"]
+    assignees: ["YOUR_GH_USERNAME"]
+    commit-message:
+      prefix: "deps(py)"
+      include: "scope"
+    registries:
+      - "pypi-private"
+    groups:
+      py-safe:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      py-majors:
+        patterns: ["*"]
+        update-types: ["major"]

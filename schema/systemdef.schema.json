@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FRED PRIME system definition",
+  "type": "object",
+  "required": [
+    "system",
+    "version",
+    "generated",
+    "os",
+    "user",
+    "base_path",
+    "output_path",
+    "log_path",
+    "config",
+    "modules",
+    "config_hash",
+    "audit"
+  ],
+  "properties": {
+    "system": { "type": "string" },
+    "version": { "type": "string" },
+    "generated": { "type": "string", "format": "date-time" },
+    "os": { "type": "string" },
+    "user": { "type": "string" },
+    "base_path": { "type": "string" },
+    "output_path": { "type": "string" },
+    "log_path": { "type": "string" },
+    "config": {
+      "type": "object",
+      "properties": {
+        "exhibit_labeling": { "type": "boolean" },
+        "motion_linking": { "type": "boolean" },
+        "signature_validation": { "type": "boolean" },
+        "judicial_audit": { "type": "boolean" },
+        "parenting_time_matrix": { "type": "boolean" },
+        "conspiracy_tracker": { "type": "boolean" }
+      }
+    },
+    "modules": { "type": "object" },
+    "execution_command": { "type": "string" },
+    "offline_capable": { "type": "boolean" },
+    "token_usage": { "type": "string" },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "missing_paths": { "type": "array", "items": { "type": "string" } },
+        "all_paths_exist": { "type": "boolean" }
+      }
+    },
+    "config_hash": { "type": "string" },
+    "audit": {
+      "type": "object",
+      "properties": { "generator": { "type": "string" }, "timestamp": { "type": "string" } }
+    }
+  }
+}

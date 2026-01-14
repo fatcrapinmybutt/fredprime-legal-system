@@ -1,0 +1,52 @@
+[
+  {
+    "id": "MC-12",
+    "title": "Motion to Adjourn",
+    "filename": "MC-12_Motion_to_Adjourn.txt",
+    "rules": ["MCR 2.119", "MCR 2.501(C)"],
+    "benchbook": ["Civil Benchbook §2.10"]
+  },
+  {
+    "id": "MC-97",
+    "title": "Complaint for Injunctive Relief",
+    "filename": "MC-97_Complaint_for_Injunctive_Relief.txt",
+    "rules": ["MCR 3.301"],
+    "statutes": ["MCL 600.5701"]
+  },
+  {
+    "id": "FOC-65",
+    "title": "Motion Regarding Custody",
+    "filename": "FOC-65_Motion_Regarding_Custody.txt",
+    "rules": ["MCR 3.207", "MCR 3.210(C)", "MCR 3.211"],
+    "statutes": ["MCL 722.27"],
+    "benchbook": ["Family Benchbook §3.15"],
+    "constitution": ["US Const. amend. XIV"]
+  },
+  {
+    "id": "FOC-87",
+    "title": "Motion Regarding Parenting Time",
+    "filename": "FOC-87_Motion_Regarding_Parenting_Time.txt",
+    "rules": ["MCR 3.207", "MCR 3.210"],
+    "statutes": ["MCL 722.27a"],
+    "benchbook": ["Family Benchbook §3.21"],
+    "constitution": ["US Const. amend. XIV"]
+  },
+  {
+    "id": "FOC-88",
+    "title": "Objection to Referee Recommendation",
+    "filename": "FOC-88_Objection_to_Referee_Recommendation.txt",
+    "rules": ["MCR 3.215"],
+    "benchbook": ["Family Benchbook §4.1"],
+    "constitution": ["US Const. amend. XIV"]
+  },
+  {
+    "id": "DC-102c",
+    "title": "Complaint to Recover Possession of Property",
+    "filename": "DC-102c_Complaint_to_Recover_Possession.txt",
+    "rules": ["MCR 4.201"],
+    "statutes": ["MCL 600.5714"],
+    "benchbook": ["Landlord-Tenant Benchbook §5.3"],
+    "constitution": [],
+    "federal": []
+  }
+]
