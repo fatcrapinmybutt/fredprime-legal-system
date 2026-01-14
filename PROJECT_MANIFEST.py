@@ -6,7 +6,9 @@ Generated: March 2024
 Status: ✅ PRODUCTION READY
 """
 
-PROJECT_MANIFEST = {
+from typing import Dict, Any
+
+PROJECT_MANIFEST: Dict[str, Any] = {
     "project_name": "FRED Supreme Litigation OS - AI/ML Enhancement",
     "version": "1.0.0",
     "status": "PRODUCTION READY",
@@ -459,8 +461,9 @@ def print_manifest():
     print(f"  Argument Analysis: {perf['argument_analysis_seconds']} second")
     print(f"  Full Pipeline: {perf['full_pipeline_seconds']} seconds")
 
-    print("\n📁 Total Files: " + str(len(PROJECT_MANIFEST['files_manifest']['python_modules']) +
-                                      len(PROJECT_MANIFEST['files_manifest']['documentation'])))
+    print("\n📁 Total Files: " + str(
+        len(PROJECT_MANIFEST['files_manifest']['python_modules']) +
+        len(PROJECT_MANIFEST['files_manifest']['documentation'])))
 
     print("\n" + "="*80)
     print("✅ PROJECT STATUS: PRODUCTION READY")

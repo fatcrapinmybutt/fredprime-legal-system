@@ -9,10 +9,6 @@ for comprehensive litigation case analysis.
 import asyncio
 import sys
 from pathlib import Path
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from ai.ai_pipeline_orchestrator import AIPipelineOrchestrator
 from ai.evidence_llm_analyzer import EvidenceLLMAnalyzer
 from ai.nlp_document_processor import NLPDocumentProcessor
@@ -21,11 +17,13 @@ from ai.argument_reasoning import (
     ArgumentType,
     RelationType
 )
-from integrations.github_integration import GitHubAPIClient
 from src.ai_integration_bridge import AIIntegrationBridge, AIIntegrationConfig
 
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent))
 
-def example_1_basic_evidence_analysis():
+
+def example_1_basic_evidence_analysis() -> None:
     """Example 1: Analyze evidence using LLM"""
     print("\n" + "="*70)
     print("EXAMPLE 1: Basic Evidence Analysis")
@@ -56,15 +54,16 @@ def example_1_basic_evidence_analysis():
         case_type="custody"
     )
 
-    print(f"\nEvidence Type: {result.evidence_type.value}")
+    print(f"Evidence Type: {result.evidence_type.value}")
     print(f"Confidence: {result.confidence:.0%}")
-    print(f"\nScores:")
-    print(f"  Relevance: {result.scores.relevance_score:.0%}")
-    print(f"  Reliability: {result.scores.reliability_score:.0%}")
-    print(f"  Impact: {result.scores.impact_score:.0%}")
-    print(f"  Overall Strength: {result.scores.overall_strength:.0%}")
-    print(f"  Credibility: {result.scores.credibility_level.value}")
-    print(f"\nSemantic Summary: {result.semantic_summary}")
+    print("Scores:")
+    if result.scores:
+        print(f"  Relevance: {result.scores.relevance_score:.0%}")
+        print(f"  Reliability: {result.scores.reliability_score:.0%}")
+        print(f"  Impact: {result.scores.impact_score:.0%}")
+        print(f"  Overall Strength: {result.scores.overall_strength:.0%}")
+        print(f"  Credibility: {result.scores.credibility_level.value}")
+    print(f"Semantic Summary: {result.semantic_summary}")
     print(f"Key Phrases: {', '.join(result.key_phrases)}")
     print(f"Legal Implications: {', '.join(result.legal_implications)}")
 
@@ -201,12 +200,12 @@ def example_3_argument_reasoning():
         edges=list(arg_system.edges.values())
     )
 
-    print(f"\nOverall Argument Strength: {analysis.overall_strength.value}")
+    print(f"Overall Argument Strength: {analysis.overall_strength.value}")
     print(f"Overall Score: {analysis.overall_score:.0%}")
     print(f"Supporting Arguments: {len(analysis.supporting_arguments)}")
     print(f"Vulnerabilities: {len(analysis.vulnerabilities)}")
     print(f"Recommendations: {len(analysis.recommendations)}")
-    print(f"\nKey Recommendations:")
+    print("Key Recommendations:")
     for i, rec in enumerate(analysis.recommendations[:3], 1):
         print(f"  {i}. {rec}")
 
@@ -267,15 +266,15 @@ async def example_4_full_case_analysis():
         case_type="custody"
     )
 
-    print(f"\n✓ Analysis Complete")
+    print("✓ Analysis Complete")
     print(f"  Overall Confidence: {report.confidence_score:.0%}")
     print(f"  Processing Time: {report.processing_time_seconds:.2f} seconds")
     print(f"  Pipeline Status: {report.pipeline_status.value}")
 
-    print(f"\nEvidence Analyzed: {len(report.evidence_analyses)}")
+    print(f"Evidence Analyzed: {len(report.evidence_analyses)}")
     print(f"Documents Processed: {len(report.document_analyses)}")
 
-    print(f"\nKey Findings ({len(report.key_findings)}):")
+    print(f"Key Findings ({len(report.key_findings)}):")
     for i, finding in enumerate(report.key_findings[:5], 1):
         print(f"  {i}. {finding}")
 
@@ -321,11 +320,11 @@ async def example_5_ai_integration_bridge():
 
     if report:
         summary = bridge.get_analysis_summary(report)
-        print(f"\nAnalysis Summary:")
+        print("Analysis Summary:")
         for key, value in summary.items():
             print(f"  {key}: {value}")
 
-        print(f"\nBriefing Memo Preview:")
+        print("Briefing Memo Preview:")
         memo = bridge.generate_briefing_memo(report)
         print(memo[:500] + "...")
 

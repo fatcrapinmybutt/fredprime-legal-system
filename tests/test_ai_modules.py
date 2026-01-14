@@ -5,14 +5,11 @@ Tests for LLM, NLP, ARG systems and AI pipeline orchestrator
 
 import pytest
 import json
-from pathlib import Path
-from typing import List, Tuple
 
 # Import AI modules
 from ai.evidence_llm_analyzer import (
     EvidenceLLMAnalyzer,
     EvidenceType,
-    CredibilityLevel,
     AnalyzedEvidence
 )
 from ai.nlp_document_processor import (
@@ -24,8 +21,7 @@ from ai.nlp_document_processor import (
 from ai.argument_reasoning import (
     ArgumentReasoningGraph,
     ArgumentType,
-    RelationType,
-    ArgumentStrength
+    RelationType
 )
 from ai.ai_pipeline_orchestrator import (
     AIPipelineOrchestrator,
@@ -43,15 +39,15 @@ class TestEvidenceLLMAnalyzer:
     """Test evidence LLM analyzer"""
 
     @pytest.fixture
-    def analyzer(self):
+    def analyzer(self) -> EvidenceLLMAnalyzer:
         return EvidenceLLMAnalyzer()
 
-    def test_initialization(self, analyzer):
+    def test_initialization(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test analyzer initialization"""
         assert analyzer is not None
         assert analyzer.model_name == "distilbert-base-uncased-finetuned-sst-2-english"
 
-    def test_evidence_type_classification(self, analyzer):
+    def test_evidence_type_classification(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test evidence type classification"""
         # Documentary evidence
         result = analyzer.analyze_evidence(
@@ -67,21 +63,21 @@ class TestEvidenceLLMAnalyzer:
         )
         assert result.evidence_type == EvidenceType.TESTIMONIAL
 
-    def test_semantic_summary_extraction(self, analyzer):
+    def test_semantic_summary_extraction(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test semantic summary extraction"""
         content = "This is the first sentence. This is the second sentence. More content here."
         result = analyzer.analyze_evidence("ev001", content)
         assert result.semantic_summary is not None
         assert len(result.semantic_summary) > 0
 
-    def test_key_phrase_extraction(self, analyzer):
+    def test_key_phrase_extraction(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test key phrase extraction"""
         content = "custody modification motion regarding parental fitness and child welfare"
         result = analyzer.analyze_evidence("ev001", content)
         assert result.key_phrases is not None
         assert len(result.key_phrases) > 0
 
-    def test_entity_extraction(self, analyzer):
+    def test_entity_extraction(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test entity extraction"""
         content = "Judge Smith ordered that Mr. John Doe appear in Michigan Court on January 15, 2024"
         result = analyzer.analyze_evidence("ev001", content)
@@ -90,7 +86,7 @@ class TestEvidenceLLMAnalyzer:
         person_entities = [e for e in result.extracted_entities if e.entity_type == 'PERSON']
         assert len(person_entities) > 0
 
-    def test_evidence_scoring(self, analyzer):
+    def test_evidence_scoring(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test evidence scoring"""
         content = "Credible witness testimony with detailed evidence"
         result = analyzer.analyze_evidence("ev001", content, case_type="custody")
@@ -99,7 +95,7 @@ class TestEvidenceLLMAnalyzer:
         assert 0 <= result.scores.reliability_score <= 1
         assert 0 <= result.scores.overall_strength <= 1
 
-    def test_batch_analysis(self, analyzer):
+    def test_batch_analysis(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test batch evidence analysis"""
         evidence_list = [
             ("ev001", "First piece of evidence"),
@@ -110,7 +106,7 @@ class TestEvidenceLLMAnalyzer:
         assert len(results) == 3
         assert all(isinstance(r, AnalyzedEvidence) for r in results)
 
-    def test_evidence_comparison(self, analyzer):
+    def test_evidence_comparison(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test evidence comparison"""
         ev1 = analyzer.analyze_evidence("ev001", "Testimony supporting the claim")
         ev2 = analyzer.analyze_evidence("ev002", "Documentation confirming the testimony")
@@ -120,7 +116,7 @@ class TestEvidenceLLMAnalyzer:
         assert "evidence2_id" in comparison
         assert "recommendation" in comparison
 
-    def test_export_json(self, analyzer):
+    def test_export_json(self, analyzer: EvidenceLLMAnalyzer) -> None:
         """Test JSON export"""
         evidence_list = [
             analyzer.analyze_evidence("ev001", "Test evidence"),
@@ -136,14 +132,14 @@ class TestNLPDocumentProcessor:
     """Test NLP document processor"""
 
     @pytest.fixture
-    def processor(self):
+    def processor(self) -> NLPDocumentProcessor:
         return NLPDocumentProcessor()
 
-    def test_initialization(self, processor):
+    def test_initialization(self, processor: NLPDocumentProcessor) -> None:
         """Test processor initialization"""
         assert processor is not None
 
-    def test_document_type_classification(self, processor):
+    def test_document_type_classification(self, processor: NLPDocumentProcessor) -> None:
         """Test document type classification"""
         # Motion
         motion_text = "MOTION FOR MODIFICATION OF CUSTODY\n\nPlaintiff moves that the court modify..."
@@ -155,19 +151,19 @@ class TestNLPDocumentProcessor:
         result = processor.process_document(affidavit_text, "Affidavit1")
         assert result.document_type == DocumentType.AFFIDAVIT
 
-    def test_entity_extraction(self, processor):
+    def test_entity_extraction(self, processor: NLPDocumentProcessor) -> None:
         """Test entity extraction from documents"""
         content = "Judge Smith ordered on January 15, 2024 that the defendant, John Doe, appear in court"
         result = processor.process_document(content, "Doc1")
         assert len(result.entities) > 0
 
-    def test_party_extraction(self, processor):
+    def test_party_extraction(self, processor: NLPDocumentProcessor) -> None:
         """Test party extraction"""
         content = "Plaintiff: Jane Smith v. Defendant: John Doe"
         result = processor.process_document(content, "Doc1")
         assert len(result.parties_involved) > 0
 
-    def test_sentiment_analysis(self, processor):
+    def test_sentiment_analysis(self, processor: NLPDocumentProcessor) -> None:
         """Test sentiment analysis"""
         # Positive document
         positive_text = "The defendant demonstrated excellent compliance with the court order"
@@ -179,26 +175,26 @@ class TestNLPDocumentProcessor:
         result = processor.process_document(negative_text, "Doc2")
         assert result.sentiment in [SentimentType.NEGATIVE, SentimentType.HIGHLY_NEGATIVE]
 
-    def test_key_concept_extraction(self, processor):
+    def test_key_concept_extraction(self, processor: NLPDocumentProcessor) -> None:
         """Test key concept extraction"""
         content = "Custody modification motion regarding visitation and child support"
         result = processor.process_document(content, "Doc1")
         assert len(result.key_concepts) > 0
         assert any('custody' in c for c in result.key_concepts)
 
-    def test_action_item_extraction(self, processor):
+    def test_action_item_extraction(self, processor: NLPDocumentProcessor) -> None:
         """Test action item extraction"""
         content = "The defendant shall appear in court by January 15, 2024. The defendant must comply with visitation."
         result = processor.process_document(content, "Doc1")
         assert len(result.action_items) > 0
 
-    def test_deadline_extraction(self, processor):
+    def test_deadline_extraction(self, processor: NLPDocumentProcessor) -> None:
         """Test deadline extraction"""
         content = "The defendant must file a response by January 15, 2024, or within 21 days of service."
         result = processor.process_document(content, "Doc1")
         assert len(result.deadlines) > 0
 
-    def test_batch_processing(self, processor):
+    def test_batch_processing(self, processor: NLPDocumentProcessor) -> None:
         """Test batch document processing"""
         documents = [
             ("doc1", "MOTION FOR MODIFICATION\n\nPlaintiff seeks to modify..."),
@@ -209,7 +205,7 @@ class TestNLPDocumentProcessor:
         assert len(results) == 3
         assert all(isinstance(r, DocumentMetadata) for r in results)
 
-    def test_summary_report(self, processor):
+    def test_summary_report(self, processor: NLPDocumentProcessor) -> None:
         """Test summary report generation"""
         documents = [
             ("doc1", "MOTION FOR MODIFICATION"),
@@ -227,16 +223,16 @@ class TestArgumentReasoningGraph:
     """Test Argument Reasoning Graph system"""
 
     @pytest.fixture
-    def arg_system(self):
+    def arg_system(self) -> ArgumentReasoningGraph:
         return ArgumentReasoningGraph()
 
-    def test_initialization(self, arg_system):
+    def test_initialization(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test ARG system initialization"""
         assert arg_system is not None
         assert len(arg_system.nodes) == 0
         assert len(arg_system.edges) == 0
 
-    def test_node_creation(self, arg_system):
+    def test_node_creation(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test argument node creation"""
         node = arg_system.create_node(
             text="The defendant violated the custody order",
@@ -249,7 +245,7 @@ class TestArgumentReasoningGraph:
         assert node.arg_type == ArgumentType.CLAIM
         assert node.confidence == 0.85
 
-    def test_edge_creation(self, arg_system):
+    def test_edge_creation(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test argument edge creation"""
         node1 = arg_system.create_node("Evidence 1", ArgumentType.EVIDENCE, "source1", 0.8)
         node2 = arg_system.create_node("Claim 1", ArgumentType.CLAIM, "source2", 0.9)
@@ -264,7 +260,7 @@ class TestArgumentReasoningGraph:
         assert edge is not None
         assert edge.relation_type == RelationType.SUPPORTS
 
-    def test_case_analysis(self, arg_system):
+    def test_case_analysis(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test case analysis"""
         # Create nodes
         main_claim = arg_system.create_node(
@@ -301,7 +297,7 @@ class TestArgumentReasoningGraph:
         assert analysis.main_claim is not None
         assert len(analysis.supporting_arguments) >= 0
 
-    def test_vulnerability_identification(self, arg_system):
+    def test_vulnerability_identification(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test vulnerability identification"""
         # Create weak main claim
         weak_claim = arg_system.create_node(
@@ -321,7 +317,7 @@ class TestArgumentReasoningGraph:
 
         assert len(analysis.vulnerabilities) > 0
 
-    def test_export_text_format(self, arg_system):
+    def test_export_text_format(self, arg_system: ArgumentReasoningGraph) -> None:
         """Test text format export"""
         claim = arg_system.create_node("Test claim", ArgumentType.CLAIM, "source", 0.8)
 
@@ -342,17 +338,17 @@ class TestAIPipelineOrchestrator:
     """Test AI Pipeline Orchestrator"""
 
     @pytest.fixture
-    def orchestrator(self):
+    def orchestrator(self) -> AIPipelineOrchestrator:
         return AIPipelineOrchestrator()
 
-    def test_initialization(self, orchestrator):
+    def test_initialization(self, orchestrator: AIPipelineOrchestrator) -> None:
         """Test orchestrator initialization"""
         assert orchestrator is not None
         assert orchestrator.evidence_analyzer is not None
         assert orchestrator.document_processor is not None
         assert orchestrator.arg_system is not None
 
-    def test_case_processing(self, orchestrator):
+    def test_case_processing(self, orchestrator: AIPipelineOrchestrator) -> None:
         """Test complete case processing"""
         evidence = [
             ("ev001", "Witness testimony about custody violation"),
@@ -378,7 +374,7 @@ class TestAIPipelineOrchestrator:
         assert len(report.document_analyses) > 0
         assert len(report.key_findings) > 0
 
-    def test_stage_results(self, orchestrator):
+    def test_stage_results(self, orchestrator: AIPipelineOrchestrator) -> None:
         """Test that all stages produce results"""
         evidence = [("ev001", "Test evidence")]
         documents = [("doc001", "Test document")]
@@ -395,7 +391,7 @@ class TestAIPipelineOrchestrator:
         assert ProcessingStage.EVIDENCE_ANALYSIS in stages_found
         assert ProcessingStage.DOCUMENT_PROCESSING in stages_found
 
-    def test_export_json(self, orchestrator):
+    def test_export_json(self, orchestrator: AIPipelineOrchestrator) -> None:
         """Test JSON export"""
         evidence = [("ev001", "Test evidence")]
         documents = [("doc001", "Test document")]
@@ -412,7 +408,7 @@ class TestAIPipelineOrchestrator:
         data = json.loads(json_output)
         assert data["case_id"] == "case_001"
 
-    def test_export_text(self, orchestrator):
+    def test_export_text(self, orchestrator: AIPipelineOrchestrator) -> None:
         """Test text export"""
         evidence = [("ev001", "Test evidence")]
         documents = [("doc001", "Test document")]
@@ -433,22 +429,22 @@ class TestGitHubIntegration:
     """Test GitHub integration"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> GitHubAPIClient:
         # Note: This will use unauthenticated client if no token
         return GitHubAPIClient(owner="test", repo="test-repo")
 
-    def test_initialization(self, client):
+    def test_initialization(self, client: GitHubAPIClient) -> None:
         """Test client initialization"""
         assert client is not None
         assert client.owner == "test"
         assert client.repo == "test-repo"
 
-    def test_issue_state_enum(self):
+    def test_issue_state_enum(self) -> None:
         """Test issue state enum"""
         assert IssueState.OPEN.value == "open"
         assert IssueState.CLOSED.value == "closed"
 
-    def test_pr_state_enum(self):
+    def test_pr_state_enum(self) -> None:
         """Test PR state enum"""
         assert PRState.OPEN.value == "open"
         assert PRState.CLOSED.value == "closed"

@@ -8,7 +8,6 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from pathlib import Path
 import asyncio
-import json
 
 from ai.ai_pipeline_orchestrator import AIPipelineOrchestrator, AIAnalysisReport
 from ai.evidence_llm_analyzer import EvidenceLLMAnalyzer
@@ -27,9 +26,9 @@ class AIIntegrationConfig:
     enable_arg_reasoning: bool = True
     max_workers: int = 4
     case_type: str = "general"
-    export_formats: List[str] = None
+    export_formats: Optional[List[str]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.export_formats is None:
             self.export_formats = ["json", "text"]
 
@@ -144,7 +143,7 @@ class AIIntegrationBridge:
         evidence_items: List[Tuple[str, str]],
         documents: List[Tuple[str, str]],
         case_context: Optional[Dict[str, Any]] = None
-    ) -> AIAnalysisReport:
+    ) -> Optional[AIAnalysisReport]:
         """
         Perform complete case analysis through entire AI pipeline.
 
@@ -156,7 +155,7 @@ class AIIntegrationBridge:
             case_context: Additional context
 
         Returns:
-            Complete analysis report
+            Complete analysis report or None if orchestrator not enabled
         """
         if not self.orchestrator:
             logger.warning("AI orchestrator not enabled")
@@ -200,9 +199,9 @@ class AIIntegrationBridge:
         if not self.orchestrator or not report:
             return {}
 
-        formats = formats or self.config.export_formats
+        formats = formats or self.config.export_formats or ["json", "text"]
         output_dir.mkdir(parents=True, exist_ok=True)
-        outputs = {}
+        outputs: Dict[str, str] = {}
 
         for fmt in formats:
             try:
@@ -338,15 +337,15 @@ class AIIntegrationBridge:
             memo += f"\n{i}. {rec}"
 
         if report.argument_analysis:
-            memo += f"\n\nARGUMENT STRENGTH ASSESSMENT\n"
-            memo += f"---------------------------\n"
+            memo += "\n\nARGUMENT STRENGTH ASSESSMENT\n"
+            memo += "---------------------------\n"
             memo += f"Overall Strength: {report.argument_analysis.overall_strength.value}\n"
             memo += f"Supporting Arguments: {len(report.argument_analysis.supporting_arguments)}\n"
             memo += f"Counter-Arguments Identified: {len(report.argument_analysis.counter_arguments)}\n"
             memo += f"Vulnerabilities: {len(report.argument_analysis.vulnerabilities)}\n"
 
-        memo += f"\n\nPROCESSING DETAILS\n"
-        memo += f"------------------\n"
+        memo += "\n\nPROCESSING DETAILS\n"
+        memo += "------------------\n"
         memo += f"Processing Time: {report.processing_time_seconds:.2f} seconds\n"
         memo += f"Evidence Items: {len(report.evidence_analyses)}\n"
         memo += f"Documents: {len(report.document_analyses)}\n"
