@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document defines the optimal organization and sequencing of the FRED Supreme Litigation OS repository structure, with emphasis on AI/ML integration and code scalability.
+This document defines the optimal organization and sequencing of the FRED Supreme
+Litigation OS repository structure, with emphasis on AI/ML integration and code scalability.
 
 ## Directory Structure (Recommended)
 

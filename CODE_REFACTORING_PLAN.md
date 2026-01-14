@@ -2,7 +2,9 @@
 
 ## Executive Summary
 
-This document outlines the refactoring and optimization strategy for the FRED Supreme Litigation OS, establishing a scalable, maintainable repository structure with proper separation of concerns and optimized execution flows.
+This document outlines the refactoring and optimization strategy for the FRED Supreme
+Litigation OS, establishing a scalable, maintainable repository structure with proper
+separation of concerns and optimized execution flows.
 
 ---
 
