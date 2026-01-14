@@ -439,8 +439,8 @@ class AIPipelineOrchestrator:
         """Validate the overall analysis"""
         logger.info("Validating analysis")
         start_time = datetime.now()
-        errors = []
-        warnings = []
+        errors: List[str] = []
+        warnings: List[str] = []
 
         # Validation checks
         if not evidence:
@@ -543,12 +543,18 @@ class AIPipelineOrchestrator:
 
         # Weight evidence analysis
         if report.evidence_analyses:
-            avg_ev_confidence = sum(e.confidence for e in report.evidence_analyses) / len(report.evidence_analyses)
+            avg_ev_confidence = (
+                sum(e.confidence for e in report.evidence_analyses)
+                / len(report.evidence_analyses)
+            )
             confidence += avg_ev_confidence * 0.3
 
         # Weight document analysis
         if report.document_analyses:
-            avg_doc_confidence = sum(d.confidence_score for d in report.document_analyses) / len(report.document_analyses)
+            avg_doc_confidence = (
+                sum(d.confidence_score for d in report.document_analyses)
+                / len(report.document_analyses)
+            )
             confidence += avg_doc_confidence * 0.2
 
         # Weight argument analysis

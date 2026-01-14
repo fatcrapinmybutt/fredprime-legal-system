@@ -28,7 +28,7 @@ except ImportError:
     pass
 
 try:
-    from .argument_reasoning import ArgumentAnalyzer
+    from .argument_reasoning import ArgumentReasoningGraph, ArgumentAnalysis, ArgumentType, RelationType
 except ImportError:
     pass
 
@@ -49,6 +49,9 @@ __all__ = [
     "EvidenceType",
     "CredibilityLevel",
     "EvidenceScore",
-    "ArgumentAnalyzer",
+    "ArgumentReasoningGraph",
+    "ArgumentAnalysis",
+    "ArgumentType",
+    "RelationType",
     "AIPipelineOrchestrator",
 ]

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 import json
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, DefaultDict
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 from collections import defaultdict
@@ -636,28 +636,28 @@ class NLPDocumentProcessor:
 
     def _count_document_types(self, documents: List[DocumentMetadata]) -> Dict[str, int]:
         """Count document types"""
-        counts = defaultdict(int)
+        counts: DefaultDict[str, int] = defaultdict(int)
         for doc in documents:
             counts[doc.document_type.value] += 1
         return dict(counts)
 
     def _get_sentiment_distribution(self, documents: List[DocumentMetadata]) -> Dict[str, int]:
         """Get sentiment distribution"""
-        distribution = defaultdict(int)
+        distribution: DefaultDict[str, int] = defaultdict(int)
         for doc in documents:
             distribution[doc.sentiment.value] += 1
         return dict(distribution)
 
     def _aggregate_parties(self, documents: List[DocumentMetadata]) -> List[str]:
         """Aggregate all parties across documents"""
-        parties = set()
+        parties: set[str] = set()
         for doc in documents:
             parties.update(doc.parties_involved)
         return list(parties)
 
     def _aggregate_jurisdictions(self, documents: List[DocumentMetadata]) -> List[str]:
         """Aggregate jurisdictions"""
-        jurisdictions = set()
+        jurisdictions: set[str] = set()
         for doc in documents:
             if doc.jurisdiction:
                 jurisdictions.add(doc.jurisdiction)

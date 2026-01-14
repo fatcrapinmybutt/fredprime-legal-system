@@ -4,6 +4,8 @@ Uses Hugging Face transformers for legal document understanding and evidence sco
 Provides semantic analysis, relevance assessment, and credibility evaluation.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 from typing import List, Dict, Any, Optional, Tuple
@@ -104,18 +106,25 @@ class EvidenceLLMAnalyzer:
         if self.transformers_available:
             try:
                 # Load sentiment analysis pipeline
-                self.sentiment_pipeline = pipeline(
-                    "sentiment-analysis",
-                    model=model_name,
-                    device=-1  # CPU by default
+                from typing import Any, cast
+                self.sentiment_pipeline = cast(
+                    Any,
+                    pipeline(
+                        "sentiment-analysis",
+                        model=model_name,
+                        device=-1,  # CPU by default
+                    ),
                 )
                 logger.info(f"Loaded sentiment analysis model: {model_name}")
 
                 # Load zero-shot classification for evidence relevance
-                self.relevance_pipeline = pipeline(
-                    "zero-shot-classification",
-                    model="facebook/bart-large-mnli",
-                    device=-1
+                self.relevance_pipeline = cast(
+                    Any,
+                    pipeline(
+                        "zero-shot-classification",
+                        model="facebook/bart-large-mnli",
+                        device=-1,
+                    ),
                 )
                 logger.info("Loaded relevance classification model")
 
