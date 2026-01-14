@@ -12,6 +12,8 @@ from dataclasses import dataclass, asdict, field
 from enum import Enum
 from collections import defaultdict
 import re
+import threading
+import os
 
 # Check transformers availability at runtime
 try:
@@ -186,18 +188,70 @@ class NLPDocumentProcessor:
         self,
         content: str,
         document_title: str = "Untitled",
-        case_context: Optional[Dict[str, Any]] = None
+        case_context: Optional[Dict[str, Any]] = None,
+        delegate_to_background: bool = False
     ) -> DocumentMetadata:
         """
         Process a legal document with comprehensive NLP analysis.
 
-        Args:
-            content: Document content
-            document_title: Title of the document
-            case_context: Additional context about the case
+        If delegate_to_background is True, delegate heavy processing to a background
+        thread and return a lightweight placeholder metadata object immediately.
+        """
+        case_context = case_context or {}
 
-        Returns:
-            DocumentMetadata with extracted information
+        if delegate_to_background:
+            # Quick classification and summary, then delegate full processing
+            doc_type = self._classify_document_type(content)
+            summary = self._generate_summary(content)
+            extracted_date = self._extract_date(content)
+
+            placeholder = DocumentMetadata(
+                title=document_title,
+                document_type=doc_type,
+                extracted_date=extracted_date,
+                parties_involved=[],
+                jurisdiction=None,
+                summary=f"Processing delegated to background agent: {summary}",
+                entities=[],
+                relationships=[],
+                sentiment=SentimentType.NEUTRAL,
+                sentiment_score=0.0,
+                key_concepts=[],
+                action_items=[],
+                deadlines=[],
+                confidence_score=0.0
+            )
+
+            def _bg_worker():
+                try:
+                    result = self._process_document_internal(content, document_title, case_context)
+                    # Ensure output directory exists and write result for retrieval
+                    out_dir = os.path.join(os.getcwd(), 'output')
+                    os.makedirs(out_dir, exist_ok=True)
+                    safe_title = re.sub(r"[^a-zA-Z0-9_\-]", "_", document_title)[:200]
+                    out_path = os.path.join(out_dir, f"bg_result_{safe_title}.json")
+                    with open(out_path, 'w', encoding='utf-8') as fh:
+                        json.dump(result.to_dict(), fh, ensure_ascii=False, indent=2)
+                    logger.info(f"Background processing completed, wrote: {out_path}")
+                except Exception as e:
+                    logger.exception(f"Background processing failed for {document_title}: {e}")
+
+            thread = threading.Thread(target=_bg_worker, daemon=True)
+            thread.start()
+
+            return placeholder
+
+        # Default synchronous processing
+        return self._process_document_internal(content, document_title, case_context)
+
+    def _process_document_internal(
+        self,
+        content: str,
+        document_title: str = "Untitled",
+        case_context: Optional[Dict[str, Any]] = None
+    ) -> DocumentMetadata:
+        """
+        Internal synchronous processing implementation extracted from process_document.
         """
         case_context = case_context or {}
 
