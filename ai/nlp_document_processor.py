@@ -1,8 +1,9 @@
-"""
-NLP-Based Document Processor Module
+"""NLP-Based Document Processor Module
 Performs entity extraction, sentiment analysis, document classification,
 and relationship extraction for legal documents.
 """
+
+from __future__ import annotations
 
 import logging
 import json
@@ -13,9 +14,9 @@ from collections import defaultdict
 import re
 
 try:
-    from transformers import pipeline
+    # Importing transformers is optional; guard usage at runtime.
     transformers_available = True
-except ImportError:
+except Exception:
     transformers_available = False
 
 logger = logging.getLogger(__name__)
@@ -155,27 +156,29 @@ class NLPDocumentProcessor:
 
         if self.transformers_available:
             try:
-                self.sentiment_pipeline = pipeline(
+                # Import pipeline locally to keep static analysis simple
+                from transformers import pipeline as _pipeline  # type: ignore
+
+                self.sentiment_pipeline = _pipeline(
                     "sentiment-analysis",
                     model="distilbert-base-uncased-finetuned-sst-2-english",
-                    device=-1
+                    device=-1,
                 )
                 logger.info("Loaded sentiment analysis pipeline")
 
-                # Try to load NER pipeline
                 try:
-                    self.ner_pipeline = pipeline(
+                    self.ner_pipeline = _pipeline(
                         "token-classification",
                         model="dslim/bert-base-NER",
                         aggregation_strategy="simple",
-                        device=-1
+                        device=-1,
                     )
                     logger.info("Loaded NER pipeline")
                 except Exception as e:
-                    logger.warning(f"NER pipeline failed: {e}")
+                    logger.warning("NER pipeline failed: %s", e)
 
             except Exception as e:
-                logger.warning(f"Failed to load pipelines: {e}")
+                logger.warning("Failed to load pipelines: %s", e)
                 self.transformers_available = False
 
     def process_document(

@@ -6,7 +6,7 @@ Enables reasoning about evidence strength, contradictions, and argument coherenc
 
 import logging
 import json
-from typing import List, Dict, Any, Optional, Set, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 from datetime import datetime
@@ -607,7 +607,7 @@ class ArgumentReasoningGraph:
             for vuln in analysis.vulnerabilities:
                 text += f"\n- [{vuln.get('severity', 'unknown').upper()}] {vuln.get('description', '')}"
 
-            text += f"\n\nRECOMMENDATIONS\n"
+            text += "\n\nRECOMMENDATIONS\n"
             text += "---------------\n"
             for rec in analysis.recommendations:
                 text += f"\n- {rec}"

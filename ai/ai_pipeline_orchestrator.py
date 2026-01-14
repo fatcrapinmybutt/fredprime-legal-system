@@ -11,11 +11,10 @@ from dataclasses import dataclass, asdict, field
 from enum import Enum
 from datetime import datetime
 import concurrent.futures
-from pathlib import Path
 
 from ai.evidence_llm_analyzer import EvidenceLLMAnalyzer, AnalyzedEvidence
 from ai.nlp_document_processor import NLPDocumentProcessor, DocumentMetadata
-from ai.argument_reasoning import ArgumentReasoningGraph, ArgumentAnalysis, ArgumentNode, ArgumentType, ArgumentEdge, RelationType
+from ai.argument_reasoning import ArgumentReasoningGraph, ArgumentAnalysis, ArgumentType, RelationType
 
 logger = logging.getLogger(__name__)
 
@@ -616,7 +615,7 @@ class AIPipelineOrchestrator:
             if ev.scores:
                 text += f" (Strength: {ev.scores.overall_strength:.0%})"
 
-        text += f"\n\nDOCUMENT ANALYSIS\n"
+        text += "\n\nDOCUMENT ANALYSIS\n"
         text += "-----------------\n"
         text += f"Documents Processed: {len(report.document_analyses)}\n"
 
@@ -624,17 +623,17 @@ class AIPipelineOrchestrator:
         for doc in report.document_analyses[:5]:
             text += f"\n- {doc.document_type.value.upper()}: {doc.summary[:100]}"
 
-        text += f"\n\nKEY FINDINGS\n"
+        text += "\n\nKEY FINDINGS\n"
         text += "------------\n"
         for finding in report.key_findings:
             text += f"\n- {finding}"
 
-        text += f"\n\nCRITICAL ISSUES\n"
+        text += "\n\nCRITICAL ISSUES\n"
         text += "---------------\n"
         for issue in report.critical_issues:
             text += f"\n- [{issue.get('severity', 'unknown').upper()}] {issue.get('description', '')}"
 
-        text += f"\n\nRECOMMENDATIONS\n"
+        text += "\n\nRECOMMENDATIONS\n"
         text += "---------------\n"
         for rec in report.recommendations:
             text += f"\n- {rec}"

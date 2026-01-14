@@ -9,7 +9,6 @@ import logging
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict, field
 from enum import Enum
-import hashlib
 from datetime import datetime
 
 try:
@@ -525,9 +524,9 @@ class EvidenceLLMAnalyzer:
         if abs(score1 - score2) < 0.1:
             return "Evidence pieces are of similar strength; use together for corroboration"
         elif score1 > score2:
-            return f"Evidence 1 is stronger; prioritize in presentation"
+            return "Evidence 1 is stronger; prioritize in presentation"
         else:
-            return f"Evidence 2 is stronger; prioritize in presentation"
+            return "Evidence 2 is stronger; prioritize in presentation"
 
     def batch_analyze_evidence(
         self,
