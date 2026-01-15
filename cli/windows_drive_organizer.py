@@ -394,6 +394,7 @@ class EvidenceOrganizer:
         self._setup_logging()
         self.manifest_entries: List[dict] = []
         self.secret_findings: List[dict] = []
+        self._registry_lock = threading.Lock()
         self.stats = {
             "scanned": 0,
             "copied": 0,
@@ -741,6 +742,15 @@ class EvidenceOrganizer:
         tmp_csv.replace(csv_path)
         return json_path, csv_path
 
+    def append_registry_entry(self, payload: dict) -> Path:
+        registry_path = self.output_root / "REGISTRY.jsonl"
+        ensure_dir(registry_path.parent)
+        line = json.dumps(payload, ensure_ascii=False)
+        with self._registry_lock:
+            with registry_path.open("a", encoding="utf-8") as fh:
+                fh.write(line + "\n")
+        return registry_path
+
     def write_checksums(self) -> Optional[Path]:
         if self.args.dry_run:
             return None
@@ -873,6 +883,23 @@ class EvidenceOrganizer:
             bundle_path = self.build_zip()
             mifile_bundle = self.build_mifile_package(json_manifest, csv_manifest, checksum_path, bundle_path)
             findings_path = self.write_findings()
+            registry_path = self.append_registry_entry(
+                {
+                    "run_id": self.run_id,
+                    "token": self.token,
+                    "timestamp": self.timestamp,
+                    "generated": utc_now().isoformat(),
+                    "summary": self.stats,
+                    "outputs": {
+                        "manifest_json": str(json_manifest),
+                        "manifest_csv": str(csv_manifest),
+                        "checksums": str(checksum_path) if checksum_path else None,
+                        "bundle": str(bundle_path) if bundle_path else None,
+                        "mifile_bundle": str(mifile_bundle) if mifile_bundle else None,
+                        "findings": str(findings_path) if findings_path else None,
+                    },
+                }
+            )
             elapsed = time.time() - start
             summary = {
                 "manifest_json": str(json_manifest),
@@ -881,6 +908,7 @@ class EvidenceOrganizer:
                 "bundle": str(bundle_path) if bundle_path else "n/a",
                 "mifile_bundle": str(mifile_bundle) if mifile_bundle else "n/a",
                 "findings": str(findings_path) if findings_path else "none",
+                "registry": str(registry_path),
                 "elapsed_seconds": round(elapsed, 2),
             }
             logging.info("Run summary: %s", summary)

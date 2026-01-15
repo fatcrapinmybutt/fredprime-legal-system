@@ -68,6 +68,7 @@ Artifacts land under the output root you supply (default base `Z:/LitigationOS/R
 * `manifest_<timestamp>_<token>.json` and `.csv` — manifests capturing branch labels, Bates IDs, hashes, and statuses.
 * `checksums_<timestamp>_<token>.sha256` — sorted SHA-256 list.
 * `bundle_<timestamp>_<token>.zip` — deterministic archive of collected files.
+* `REGISTRY.jsonl` — append-only registry entries for each run (run id, outputs, summary).
 * Optional: `mifile_<timestamp>_<token>.zip`, SQLite index, and secret findings reports.
 
 Review the manifests for summary counts (scanned/copied/errors/branches) and confirm exit codes (0 for success, >0 for warnings/errors).
