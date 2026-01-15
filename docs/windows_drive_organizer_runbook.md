@@ -82,3 +82,8 @@ Review the manifests for summary counts (scanned/copied/errors/branches) and con
 
 * The scanner skips common system directories by default (e.g., `Windows`, `Program Files`, `.git`, `node_modules`).
 * To override or extend the denylist, use `--deny-dirs`.
+
+## 7. Network policy + assets registry
+
+* Use `--network-policy docs/network_policy_template.json` to enforce deny-by-default networking and kill-switch rules.
+* Use `--assets-registry docs/assets_registry_template.json` to validate external model weights before enabling LLM features.

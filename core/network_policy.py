@@ -20,6 +20,19 @@ class AllowListEntry:
     enabled: bool
 
 
+@dataclass(frozen=True)
+class NetworkLogging:
+    enabled: bool
+    path: Optional[Path]
+    max_mb: int
+
+
+@dataclass(frozen=True)
+class KillSwitch:
+    enabled: bool
+    flag_file: Optional[Path]
+
+
 class NetworkPolicy:
     def __init__(
         self,
@@ -27,11 +40,15 @@ class NetworkPolicy:
         online_update_mode: bool,
         default: str,
         allowlist: Dict[str, AllowListEntry],
+        logging: NetworkLogging,
+        kill_switch: KillSwitch,
     ) -> None:
         self.path = path
         self.online_update_mode = online_update_mode
         self.default = default
         self.allowlist = allowlist
+        self.logging = logging
+        self.kill_switch = kill_switch
 
     @classmethod
     def from_path(cls, path: Path) -> "NetworkPolicy":
@@ -67,10 +84,28 @@ class NetworkPolicy:
                 module=module,
                 enabled=enabled,
             )
-        return cls(path, online_update_mode, default, allowlist_entries)
+        logging_payload = payload.get("logging") or {}
+        logging_path = logging_payload.get("path")
+        logging_cfg = NetworkLogging(
+            enabled=bool(logging_payload.get("enabled", True)),
+            path=Path(logging_path) if logging_path else None,
+            max_mb=int(logging_payload.get("max_mb", 50)),
+        )
+        kill_payload = payload.get("killSwitch") or payload.get("kill_switch") or {}
+        kill_flag = kill_payload.get("flagFile") or kill_payload.get("flag_file")
+        kill_switch = KillSwitch(
+            enabled=bool(kill_payload.get("enabled", True)),
+            flag_file=Path(kill_flag) if kill_flag else None,
+        )
+        return cls(path, online_update_mode, default, allowlist_entries, logging_cfg, kill_switch)
 
     def is_offline(self) -> bool:
         return not self.online_update_mode and self.default == "deny"
+
+    def kill_switch_active(self) -> bool:
+        if not self.kill_switch.enabled or not self.kill_switch.flag_file:
+            return False
+        return self.kill_switch.flag_file.exists()
 
     def allow_request(self, target: str, port: int, module: str) -> bool:
         for entry in self.allowlist.values():

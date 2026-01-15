@@ -31,6 +31,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from core.assets_registry import AssetsRegistry, AssetsRegistryError
+from core.network_broker import NetworkBroker
 from core.network_policy import NetworkPolicy, NetworkPolicyError
 
 
@@ -387,6 +388,7 @@ class EvidenceOrganizer:
         self.secret_scanner = SecretScanner()
         self.sqlite_index = SQLiteIndex(self.logs_dir / "evidence.db") if args.sqlite_index else None
         self.network_policy = self._load_network_policy()
+        self.network_broker = NetworkBroker(self.network_policy) if self.network_policy else None
         self.assets_registry = self._load_assets_registry()
         self.bates_counter = max(1, int(args.bates_start))
         self._bates_lock = threading.Lock()
@@ -821,6 +823,9 @@ class EvidenceOrganizer:
         if self.network_policy:
             if not self.network_policy.is_offline():
                 logging.warning("Network policy permits outbound calls; ensure broker enforcement.")
+            if self.network_policy.kill_switch_active():
+                logging.error("Network kill switch is active; refusing to run.")
+                return 2
         if self.assets_registry:
             report = self.assets_registry.validate()
             if report["missing"] or report["hash_mismatch"]:
