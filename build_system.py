@@ -39,6 +39,7 @@ def build_json(path: Path) -> Path:
     """Write the system definition to *path* and return the path."""
     logger.info("Writing system definition to %s", path)
     try:
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(litigation_system_definition, indent=4))
     except Exception as exc:
         logger.error("Failed to write JSON: %s", exc)
