@@ -1,0 +1,15 @@
+{
+  "assets": [
+    {
+      "asset_id": "ollama_llm",
+      "kind": "model",
+      "local_paths": [
+        "Z:/LitigationOS/ASSETS_EXTERNAL/models/ollama/llama3.gguf"
+      ],
+      "expected_bytes": null,
+      "sha256": null,
+      "source_url": null,
+      "notes": "Example local model path; keep weights external."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "OnlineUpdateMode": false,
+  "default": "deny",
+  "requireNetworkBroker": true,
+  "logging": {
+    "enabled": true,
+    "path": "Z:/LitigationOS/Runs/network.log",
+    "max_mb": 50
+  },
+  "killSwitch": {
+    "enabled": true,
+    "flagFile": "Z:/LitigationOS/CONFIG/network_off.flag"
+  },
+  "allowlist": [
+    {
+      "id": "rclone_drive",
+      "enabled": false,
+      "target": "www.googleapis.com",
+      "ports": [443],
+      "purpose": "rclone Google Drive sync",
+      "module": "storage.rclone"
+    }
+  ]
+}
