@@ -35,11 +35,27 @@ logging.Formatter.converter = time.gmtime
 
 
 TOOL_NAME = "drive_organizer"
-DEFAULT_DRIVES = [Path(r"F:/"), Path(r"D:/"), Path(r"Z:/"), Path(r"R:/")]
+REQUIRED_DRIVE_LETTERS = {"Q", "D", "Z"}
+DEFAULT_DRIVES = [Path(r"Q:/"), Path(r"D:/"), Path(r"Z:/")]
 DEFAULT_EXTENSIONS = [".py", ".ps1", ".json", ".html"]
 DEFAULT_SECRET_EXTENSIONS = {".py", ".ps1", ".json", ".txt", ".cfg", ".ini"}
+DEFAULT_DENY_DIRS = {
+    "windows",
+    "program files",
+    "program files (x86)",
+    "$recycle.bin",
+    "system volume information",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    "venv",
+    "dist",
+    "build",
+}
 LOG_BYTES = 5 * 1024 * 1024
 JSONL_LOG_NAME = f"{TOOL_NAME}.jsonl"
+DEFAULT_OUTPUT_ROOT_BASE = Path(r"Z:/LitigationOS/Runs")
+DEFAULT_TEMP_ROOT = Path(r"Z:/LitigationOS/_TMP")
 
 
 def utc_now() -> datetime:
@@ -66,7 +82,7 @@ def long_path(path: Path) -> Path:
 
 def normalize_extension(ext: str) -> str:
     ext = ext.strip().lower()
-    if not ext.startswith('.'):
+    if not ext.startswith("."):
         ext = f".{ext}"
     return ext
 
@@ -119,6 +135,41 @@ def atomic_write_text(path: Path, text: str) -> None:
         fh.flush()
         os.fsync(fh.fileno())
     tmp.replace(path)
+
+
+def _drive_letter(path: Path) -> str:
+    drive = path.drive or path.anchor
+    return drive.strip(":\\/").upper()
+
+
+def _is_c_drive(path: Path) -> bool:
+    return _drive_letter(path) == "C"
+
+
+def ensure_roots(drives: Iterable[Path]) -> None:
+    base_roots = [
+        Path("LitigationOS/Runs"),
+        Path("LitigationOS/State"),
+        Path("LitigationOS/Logs"),
+        Path("LitigationOS/Quarantine"),
+        Path("LitigationOS/_TMP"),
+    ]
+    specialized_roots = [
+        (Path("Q:/"), Path("LitigationOS/Evidence/Originals")),
+        (Path("Q:/"), Path("LitigationOS/Evidence/Intake")),
+        (Path("Q:/"), Path("LitigationOS/Evidence/Media")),
+        (Path("Z:/"), Path("LitigationOS/Vault")),
+        (Path("Z:/"), Path("LitigationOS/Graph/Neo4j")),
+        (Path("Z:/"), Path("LitigationOS/Authority")),
+        (Path("D:/"), Path("LitigationOS/Revenue")),
+        (Path("D:/"), Path("LitigationOS/Builds")),
+        (Path("D:/"), Path("LitigationOS/Releases")),
+    ]
+    for drive in drives:
+        for root in base_roots:
+            ensure_dir(drive / root)
+    for drive, root in specialized_roots:
+        ensure_dir(drive / root)
 
 
 class JsonlLogHandler(logging.Handler):
@@ -285,16 +336,18 @@ class EvidenceOrganizer:
         self.args.extensions = [normalize_extension(ext) for ext in self.args.extensions]
         self.args.secret_exts = {normalize_extension(ext) for ext in self.args.secret_exts}
         self.args.drives = [Path(str(d)) for d in self.args.drives]
+        self.args.deny_dirs = [d.lower() for d in self.args.deny_dirs]
         self.args.max_workers = max(1, int(self.args.max_workers))
         self.token = args.token or uuid.uuid4().hex[:10]
         self.timestamp = utc_timestamp()
-        self.output_root = Path(args.output_root).resolve()
+        self.run_id = f"RUN_{self.timestamp}_{self.token}"
+        output_root_input = Path(args.output_root)
+        if output_root_input == DEFAULT_OUTPUT_ROOT_BASE:
+            output_root_input = DEFAULT_OUTPUT_ROOT_BASE / self.run_id
+        self.output_root = output_root_input.resolve()
         self.logs_dir = self.output_root / "LOGS"
-        temp_root = (self.output_root / "TEMP").resolve()
+        temp_root = Path(args.temp_root).resolve()
         self.temp_dir = temp_root / f"{TOOL_NAME}_{self.token}"
-        if self.temp_dir.exists():
-            shutil.rmtree(self.temp_dir, ignore_errors=True)
-        self.temp_dir.mkdir(parents=True, exist_ok=True)
         self.collect_dir = self.output_root / "COLLECTED"
         self.state_tracker = StateTracker(self.logs_dir / "run_state.jsonl")
         self.dedupe_index = DedupeIndex(self.output_root / "dedupe_index.json")
@@ -317,6 +370,10 @@ class EvidenceOrganizer:
             "bates_assigned": 0,
             "branch_sources": len(self.branch_roots),
         }
+        self._validate_paths()
+        if self.temp_dir.exists():
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
+        self.temp_dir.mkdir(parents=True, exist_ok=True)
 
     def _setup_logging(self) -> None:
         ensure_dir(self.logs_dir)
@@ -336,6 +393,30 @@ class EvidenceOrganizer:
         logging.info("Run token: %s", self.token)
         self.log_path = log_path
         self.jsonl_log_path = jsonl_path
+
+    def _guard_non_c_drive(self, path: Path, label: str) -> None:
+        if self.args.allow_c_drive:
+            return
+        if _is_c_drive(path):
+            raise RuntimeError(f"{label} is on C: which is disallowed by policy: {path}")
+
+    def _validate_drives(self) -> None:
+        if os.name != "nt":
+            return
+        drive_letters = {_drive_letter(path) for path in self.args.drives}
+        if "C" in drive_letters and not self.args.allow_c_drive:
+            raise RuntimeError("C: is disallowed by policy for drive roots.")
+        missing = REQUIRED_DRIVE_LETTERS - drive_letters
+        if missing:
+            raise RuntimeError(f"Missing required drives: {', '.join(sorted(missing))}")
+        for drive in self.args.drives:
+            if not drive.exists():
+                raise RuntimeError(f"Required drive root is unavailable: {drive}")
+
+    def _validate_paths(self) -> None:
+        self._guard_non_c_drive(self.output_root, "Output root")
+        self._guard_non_c_drive(self.temp_dir, "Temp root")
+        self._validate_drives()
 
     def _finalize_run(self) -> None:
         if self.sqlite_index:
@@ -417,6 +498,7 @@ class EvidenceOrganizer:
                 current_root = Path(root)
                 if not self.args.include_hidden:
                     dirs[:] = [d for d in dirs if not is_hidden(current_root / d)]
+                dirs[:] = [d for d in dirs if d.lower() not in self.args.deny_dirs]
                 for name in files:
                     candidate = current_root / name
                     if not self.args.include_hidden and is_hidden(candidate):
@@ -565,9 +647,11 @@ class EvidenceOrganizer:
         manifest = {
             "tool": TOOL_NAME,
             "token": self.token,
+            "run_id": self.run_id,
             "generated": utc_now().isoformat(),
             "summary": self.stats,
             "run": {
+                "run_id": self.run_id,
                 "token": self.token,
                 "timestamp": self.timestamp,
                 "arguments": self._serializable_args(),
@@ -674,6 +758,12 @@ class EvidenceOrganizer:
         start = time.time()
         ensure_dir(self.output_root)
         ensure_dir(self.collect_dir)
+        if os.name == "nt":
+            try:
+                ensure_roots([Path(f"{letter}:/") for letter in sorted(REQUIRED_DRIVE_LETTERS)])
+            except Exception as exc:
+                logging.error("Failed to ensure required roots: %s", exc)
+                return 2
         tasks = self.discover_files()
         total_bytes = 0
         for task in tasks:
@@ -745,15 +835,23 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     )
     parser.add_argument("--drives", nargs="*", default=[str(p) for p in DEFAULT_DRIVES], help="Drive roots to scan (use Windows-style paths).")
     parser.add_argument("--extensions", nargs="*", default=DEFAULT_EXTENSIONS, help="Extensions to include (lowercase, with dots).")
-    parser.add_argument("--output-root", default="OUTPUT", help="Root folder for OUTPUT artifacts.")
+    parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT_BASE), help="Root folder for OUTPUT artifacts.")
+    parser.add_argument("--temp-root", default=str(DEFAULT_TEMP_ROOT), help="Root folder for temporary staging files.")
     parser.add_argument("--max-workers", type=int, default=4, help="Thread pool size.")
     parser.add_argument("--dry-run", action="store_true", help="Log actions without copying.")
     parser.add_argument("--force", action="store_true", help="Force operations despite warnings.")
     parser.add_argument("--include-hidden", action="store_true", help="Include hidden and system items.")
+    parser.add_argument("--allow-c-drive", action="store_true", help="Allow C: drive usage despite policy warnings.")
     parser.add_argument("--token", help="Optional idempotency token.")
     parser.add_argument("--sqlite-index", action="store_true", help="Persist evidence records to SQLite.")
     parser.add_argument("--secret-scan-limit", type=int, default=1024 * 1024, help="Max bytes for secret scanning per file.")
     parser.add_argument("--secret-exts", nargs="*", default=sorted(DEFAULT_SECRET_EXTENSIONS), help="Extensions to scan for secrets.")
+    parser.add_argument(
+        "--deny-dirs",
+        nargs="*",
+        default=sorted(DEFAULT_DENY_DIRS),
+        help="Directory names to skip during discovery (case-insensitive).",
+    )
     parser.add_argument(
         "--branch",
         action="append",

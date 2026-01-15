@@ -20,7 +20,8 @@ The organizer uses only standard-library modules by default, but these commands 
 
 ## 2. Prepare branches and drives
 
-* Default drive roots: `F:/`, `D:/`, `Z:/`, and `R:/`.
+* Required drive roots: `Q:/`, `D:/`, and `Z:/` on Windows (the organizer fails closed if any are missing).
+* C: is disallowed by default for both scan roots and output/temp paths (use `--allow-c-drive` only if you must override policy).
 * To add dedicated branch folders (for case-specific review trees), use either `--branch LABEL=PATH` or a JSON file via `--branches-file`.
 * Example JSON file:
 
@@ -38,14 +39,14 @@ The organizer uses only standard-library modules by default, but these commands 
 py -3 cli\windows_drive_organizer.py \
     --dry-run \
     --branch CASE_ALPHA=R:/CaseAlpha \
-    --output-root OUTPUT
+    --output-root Z:/LitigationOS/Runs
 
 # Live run with SQLite indexing, MiFILE packaging, and branch config file
 py -3 cli\windows_drive_organizer.py \
     --sqlite-index \
     --mifile-ready \
     --branches-file C:\cases\branches.json \
-    --output-root F:/Evidence_OUTPUT
+    --output-root Z:/LitigationOS/Runs
 ```
 
 ```bash
@@ -58,7 +59,7 @@ python cli/windows_drive_organizer.py \
 
 ## 4. Outputs
 
-Artifacts land under `OUTPUT/` by default:
+Artifacts land under the output root you supply (default base `Z:/LitigationOS/Runs/<RUN_ID>`):
 
 * `COLLECTED/<extension>/...` — evidence copies, including `BRANCHES/<label>/...` folders when branch expansions are used.
 * `LOGS/drive_organizer*.log` and `LOGS/drive_organizer.jsonl` — rotating UTC text logs and structured JSONL entries.
@@ -68,3 +69,14 @@ Artifacts land under `OUTPUT/` by default:
 * Optional: `mifile_<timestamp>_<token>.zip`, SQLite index, and secret findings reports.
 
 Review the manifests for summary counts (scanned/copied/errors/branches) and confirm exit codes (0 for success, >0 for warnings/errors).
+
+## 5. Output and temp root policy
+
+* The default output root base is `Z:/LitigationOS/Runs`, with a run-specific subfolder created automatically.
+* Temp staging defaults to `Z:/LitigationOS/_TMP` and is cleaned after each run.
+* To override temp staging, use `--temp-root` (avoid C: unless `--allow-c-drive` is set).
+
+## 6. Denylisted directories
+
+* The scanner skips common system directories by default (e.g., `Windows`, `Program Files`, `.git`, `node_modules`).
+* To override or extend the denylist, use `--deny-dirs`.
