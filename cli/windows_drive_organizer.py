@@ -30,6 +30,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+from core.assets_registry import AssetsRegistry, AssetsRegistryError
+from core.network_policy import NetworkPolicy, NetworkPolicyError
+
 
 logging.Formatter.converter = time.gmtime
 
@@ -37,6 +40,7 @@ logging.Formatter.converter = time.gmtime
 TOOL_NAME = "drive_organizer"
 REQUIRED_DRIVE_LETTERS = {"Q", "D", "Z"}
 DEFAULT_DRIVES = [Path(r"Q:/"), Path(r"D:/"), Path(r"Z:/")]
+DEFAULT_DRIVE_SCAN_ORDER = ["F", "D", "Z", "Q", "E"]
 DEFAULT_EXTENSIONS = [".py", ".ps1", ".json", ".html"]
 DEFAULT_SECRET_EXTENSIONS = {".py", ".ps1", ".json", ".txt", ".cfg", ".ini"}
 DEFAULT_DENY_DIRS = {
@@ -144,6 +148,30 @@ def _drive_letter(path: Path) -> str:
 
 def _is_c_drive(path: Path) -> bool:
     return _drive_letter(path) == "C"
+
+
+def discover_eligible_drives(
+    scan_order: Sequence[str] = DEFAULT_DRIVE_SCAN_ORDER,
+    exclude: Iterable[str] = ("C",),
+) -> List[Path]:
+    if os.name != "nt":
+        return []
+    excluded = {letter.upper() for letter in exclude}
+    candidates: List[Path] = []
+    for letter in scan_order:
+        upper = letter.upper()
+        if upper in excluded:
+            continue
+        root = Path(f"{upper}:/")
+        if root.exists():
+            candidates.append(root)
+    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        if letter in excluded or letter in scan_order:
+            continue
+        root = Path(f"{letter}:/")
+        if root.exists():
+            candidates.append(root)
+    return candidates
 
 
 def ensure_roots(drives: Iterable[Path]) -> None:
@@ -335,6 +363,11 @@ class EvidenceOrganizer:
         self.args = args
         self.args.extensions = [normalize_extension(ext) for ext in self.args.extensions]
         self.args.secret_exts = {normalize_extension(ext) for ext in self.args.secret_exts}
+        if self.args.auto_drives and os.name == "nt":
+            discovered = discover_eligible_drives()
+            if not discovered:
+                raise RuntimeError("No eligible drives discovered for auto-drive mode.")
+            self.args.drives = [str(path) for path in discovered]
         self.args.drives = [Path(str(d)) for d in self.args.drives]
         self.args.deny_dirs = [d.lower() for d in self.args.deny_dirs]
         self.args.max_workers = max(1, int(self.args.max_workers))
@@ -353,6 +386,8 @@ class EvidenceOrganizer:
         self.dedupe_index = DedupeIndex(self.output_root / "dedupe_index.json")
         self.secret_scanner = SecretScanner()
         self.sqlite_index = SQLiteIndex(self.logs_dir / "evidence.db") if args.sqlite_index else None
+        self.network_policy = self._load_network_policy()
+        self.assets_registry = self._load_assets_registry()
         self.bates_counter = max(1, int(args.bates_start))
         self._bates_lock = threading.Lock()
         self.branch_roots = self._load_branch_roots()
@@ -417,6 +452,25 @@ class EvidenceOrganizer:
         self._guard_non_c_drive(self.output_root, "Output root")
         self._guard_non_c_drive(self.temp_dir, "Temp root")
         self._validate_drives()
+
+    def _load_network_policy(self) -> Optional[NetworkPolicy]:
+        if not self.args.network_policy:
+            return None
+        try:
+            policy = NetworkPolicy.from_path(Path(self.args.network_policy))
+            logging.info("Loaded network policy from %s", policy.path)
+            return policy
+        except NetworkPolicyError as exc:
+            raise RuntimeError(f"Network policy error: {exc}") from exc
+
+    def _load_assets_registry(self) -> Optional[AssetsRegistry]:
+        if not self.args.assets_registry:
+            return None
+        try:
+            registry = AssetsRegistry.from_path(Path(self.args.assets_registry))
+            return registry
+        except AssetsRegistryError as exc:
+            raise RuntimeError(f"Assets registry error: {exc}") from exc
 
     def _finalize_run(self) -> None:
         if self.sqlite_index:
@@ -764,6 +818,15 @@ class EvidenceOrganizer:
             except Exception as exc:
                 logging.error("Failed to ensure required roots: %s", exc)
                 return 2
+        if self.network_policy:
+            if not self.network_policy.is_offline():
+                logging.warning("Network policy permits outbound calls; ensure broker enforcement.")
+        if self.assets_registry:
+            report = self.assets_registry.validate()
+            if report["missing"] or report["hash_mismatch"]:
+                logging.error("Assets registry validation failed: %s", report)
+                return 2
+            logging.info("Assets registry validated: %s", report)
         tasks = self.discover_files()
         total_bytes = 0
         for task in tasks:
@@ -834,6 +897,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--drives", nargs="*", default=[str(p) for p in DEFAULT_DRIVES], help="Drive roots to scan (use Windows-style paths).")
+    parser.add_argument("--auto-drives", action="store_true", help="Auto-discover eligible drives (Windows only).")
     parser.add_argument("--extensions", nargs="*", default=DEFAULT_EXTENSIONS, help="Extensions to include (lowercase, with dots).")
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT_BASE), help="Root folder for OUTPUT artifacts.")
     parser.add_argument("--temp-root", default=str(DEFAULT_TEMP_ROOT), help="Root folder for temporary staging files.")
@@ -844,6 +908,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--allow-c-drive", action="store_true", help="Allow C: drive usage despite policy warnings.")
     parser.add_argument("--token", help="Optional idempotency token.")
     parser.add_argument("--sqlite-index", action="store_true", help="Persist evidence records to SQLite.")
+    parser.add_argument("--network-policy", help="Path to network_policy.json for broker enforcement.")
+    parser.add_argument("--assets-registry", help="Path to external assets registry json.")
     parser.add_argument("--secret-scan-limit", type=int, default=1024 * 1024, help="Max bytes for secret scanning per file.")
     parser.add_argument("--secret-exts", nargs="*", default=sorted(DEFAULT_SECRET_EXTENSIONS), help="Extensions to scan for secrets.")
     parser.add_argument(

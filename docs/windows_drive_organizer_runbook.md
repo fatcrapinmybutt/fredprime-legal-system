@@ -22,6 +22,7 @@ The organizer uses only standard-library modules by default, but these commands 
 
 * Required drive roots: `Q:/`, `D:/`, and `Z:/` on Windows (the organizer fails closed if any are missing).
 * C: is disallowed by default for both scan roots and output/temp paths (use `--allow-c-drive` only if you must override policy).
+* Auto-drive discovery (`--auto-drives`) scans in priority order F:, D:, Z:, Q:, E: then other letters except C:.
 * To add dedicated branch folders (for case-specific review trees), use either `--branch LABEL=PATH` or a JSON file via `--branches-file`.
 * Example JSON file:
 
@@ -45,6 +46,7 @@ py -3 cli\windows_drive_organizer.py \
 py -3 cli\windows_drive_organizer.py \
     --sqlite-index \
     --mifile-ready \
+    --auto-drives \
     --branches-file C:\cases\branches.json \
     --output-root Z:/LitigationOS/Runs
 ```
