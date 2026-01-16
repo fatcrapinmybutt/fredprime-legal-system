@@ -32,15 +32,20 @@ Be respectful, inclusive, and professional. Harassment or abuse will not be tole
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/fredprime-legal-system.git
    cd fredprime-legal-system
    ```
+
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/fatcrapinmybutt/fredprime-legal-system.git
    ```
+
 4. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -48,6 +53,7 @@ Be respectful, inclusive, and professional. Harassment or abuse will not be tole
 ## Development Setup
 
 ### Prerequisites
+
 - Python 3.10+
 - Git
 - pip or conda
@@ -185,23 +191,27 @@ Fixes #456
 ### Before Submitting
 
 1. **Update from upstream**:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
    ```
 
 2. **Run all checks**:
+
    ```bash
    make check              # Runs lint, type-check, security-check, and test
    make test-coverage      # Verify coverage requirements
    ```
 
 3. **Ensure pre-commit passes**:
+
    ```bash
    pre-commit run --all-files
    ```
 
 4. **Optional: Simulate full CI pipeline**:
+
    ```bash
    make ci                 # Full CI simulation: clean, install-all, check, test-coverage
    ```
@@ -209,6 +219,7 @@ Fixes #456
 ### Submitting a PR
 
 1. **Push your branch**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -220,6 +231,7 @@ Fixes #456
    - Include any breaking changes
 
 3. **PR Template**:
+
    ```markdown
    ## Description
    Brief description of changes
@@ -384,6 +396,7 @@ def process_document(
 ```
 
 **Type Hint Best Practices:**
+
 - Use `Optional[T]` for values that can be `None`
 - Use `Union[A, B]` for multiple possible types
 - Use `List[T]`, `Dict[K, V]`, `Tuple[T, ...]` for collections
@@ -461,6 +474,7 @@ def calculate_deadline(
 ```
 
 **Docstring Requirements:**
+
 - **One-line summary**: Brief description (imperative mood)
 - **Extended description**: Detailed explanation of functionality
 - **Args**: Document all parameters with types and constraints
@@ -570,6 +584,7 @@ class TestCourtDocumentGeneration:
 ```
 
 **Testing Best Practices:**
+
 - Test both success and failure cases
 - Use descriptive test names explaining what is tested
 - Mark slow tests with `@pytest.mark.slow`
@@ -608,6 +623,7 @@ fredprime-legal-system/
 ```
 
 **Key Design Patterns:**
+
 - Plugin architecture for module hot-swapping
 - Builder pattern for document generation
 - Chain-of-custody pattern for evidence tracking
@@ -655,6 +671,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 ### Review Criteria
 
 **Code Quality:**
+
 - [ ] Follows PEP 8 and repository style guidelines
 - [ ] Uses appropriate design patterns
 - [ ] No code duplication (DRY principle)
@@ -662,18 +679,21 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 - [ ] Appropriate error handling
 
 **Testing:**
+
 - [ ] New code has corresponding tests
 - [ ] Tests cover success and failure cases
 - [ ] Tests include edge cases
 - [ ] Coverage requirements met (>70% for new code)
 
 **Legal Compliance:**
+
 - [ ] Court document generation follows MCR rules
 - [ ] Evidence handling preserves chain-of-custody
 - [ ] No confidential data in code or tests
 - [ ] Security vulnerabilities addressed
 
 **Documentation:**
+
 - [ ] Public APIs have docstrings
 - [ ] Complex logic is commented
 - [ ] README or docs updated if needed
@@ -692,6 +712,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 ### General Development
 
 ✅ **DO:**
+
 - Write clear, self-documenting code
 - Keep functions small and focused (single responsibility)
 - Use meaningful variable and function names
@@ -702,6 +723,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 - Run `make check` before pushing
 
 ❌ **DON'T:**
+
 - Commit commented-out code (use git history instead)
 - Hard-code configuration values
 - Ignore linting or type errors
@@ -713,6 +735,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 ### Legal System Development
 
 ✅ **DO:**
+
 - Validate all court document templates against official forms
 - Test deadline calculations thoroughly (calendar vs business days)
 - Maintain audit trails for evidence operations
@@ -721,6 +744,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 - Review MCR rules when modifying court document generation
 
 ❌ **DON'T:**
+
 - Modify evidence chain-of-custody without preserving integrity
 - Skip validation for court document generation
 - Hard-code court forms or legal text
@@ -730,6 +754,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 ### Security Guidelines
 
 ✅ **DO:**
+
 - Validate and sanitize all user inputs
 - Use parameterized queries for database operations
 - Keep dependencies updated (review Dependabot PRs)
@@ -738,6 +763,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 - Review code for injection vulnerabilities
 
 ❌ **DON'T:**
+
 - Log sensitive information (credentials, PII, case details)
 - Trust user input without validation
 - Use `eval()` or `exec()` on user data
@@ -747,6 +773,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 ### Performance Considerations
 
 ✅ **DO:**
+
 - Profile code before optimizing
 - Use appropriate data structures
 - Mark slow tests with `@pytest.mark.slow`
@@ -754,6 +781,7 @@ See `COPILOT_AGENT.md` section 13.3 for detailed architecture patterns.
 - Consider scalability for batch operations
 
 ❌ **DON'T:**
+
 - Premature optimization
 - Load large files entirely into memory
 - Block on synchronous I/O unnecessarily
@@ -775,6 +803,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 make install-all
 ```
+
 </details>
 
 <details>
@@ -790,6 +819,7 @@ pre-commit run --all-files
 # If hooks are not installed
 make git-hooks
 ```
+
 </details>
 
 <details>
@@ -806,6 +836,7 @@ pytest tests/test_module.py::test_name -vv
 make clean-cache
 make test
 ```
+
 </details>
 
 <details>
@@ -818,6 +849,7 @@ make test
 # - Check mypy configuration in pyproject.toml
 make type-check
 ```
+
 </details>
 
 ### Support Channels
@@ -831,6 +863,7 @@ make type-check
 ## Resources
 
 ### External Documentation
+
 - [Conventional Commits](https://www.conventionalcommits.org/) - Commit message standards
 - [PEP 8 Style Guide](https://www.python.org/dev/peps/pep-0008/) - Python style guide
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html) - Docstring format
@@ -840,6 +873,7 @@ make type-check
 - [Type Hints (PEP 484)](https://www.python.org/dev/peps/pep-0484/) - Python typing
 
 ### Repository-Specific Documentation
+
 - [COPILOT_AGENT.md](COPILOT_AGENT.md) - AI agent instructions and repository standards
 - [.github/copilot-instructions.md](.github/copilot-instructions.md) - GitHub Copilot integration guide
 - [docs/COPILOT_USAGE.md](docs/COPILOT_USAGE.md) - How to use Copilot in this repository
@@ -849,11 +883,13 @@ make type-check
 - [CHANGELOG.md](CHANGELOG.md) - Version history and release notes
 
 ### Legal and Court Resources
+
 - [Michigan Court Rules](https://courts.michigan.gov/rules) - MCR reference
 - [Michigan Court Forms](https://courts.michigan.gov/forms) - Official court forms
 - [MiFILE Information](https://mifile.courts.michigan.gov/) - Electronic filing system
 
 ### Development Tools
+
 - [Python Packaging Guide](https://packaging.python.org/) - Python packaging
 - [GitHub Flow](https://guides.github.com/introduction/flow/) - GitHub workflow
 - [Semantic Versioning](https://semver.org/) - Version numbering scheme
