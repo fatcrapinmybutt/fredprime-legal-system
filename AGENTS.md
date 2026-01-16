@@ -33,7 +33,7 @@ Build a Windows x64 Litigation Operating System with a polished GUI, a Bloom-sty
 - Neo4j: local Neo4j Community managed by the app (Docker optional). Provide migrations, constraints, and seed data.
 - Extraction: Apache Tika (local server or embedded) for PDFs/DOCX/HTML/text.
 - Storage/mirroring: rclone for Google Drive and local drive synchronization (operator-controlled).
-- LLM: Ollama for local inference (GGUF); optional Hugging Face local models (no hosted calls). Weights are external assets and must not be bundled inside FULL zips.
+- LLM: Ollama for local inference (GGUF model format for local inference); optional Hugging Face local models (no hosted calls). Weights are external assets and must not be bundled inside FULL zips.
 
 ### UI surface areas (must exist)
 1) Intake/Harvest dashboard: queue, progress, errors, deterministic output roots.
@@ -58,8 +58,8 @@ Court, Jurisdiction, Judge, Form, Vehicle, Authority, AuthorityChunk, Propositio
 GOVERNS(Form/Vehicle->Authority/Proposition), REQUIRES(Vehicle->ProofObligation), SATISFIED_BY(ProofObligation->QuotePin/Exhibit/AuthorityChunk), ISSUED_BY(Order->Court/Judge), FILED_IN(Filing->Court), SUPPORTS(Exhibit/QuotePin->Proposition), CONFLICTS_WITH(QuotePin<->QuotePin), TRIGGERS(Event->Vehicle/Deadline), DERIVES_FROM(Artifact->Source).
 
 ### Pinpoint object (must be standardized)
-EvidencePinpoint = {source_path, page_or_timecode, bates_or_hash_optional, captured_at, note}.
-LawPinpoint = {authority_id, section/subsection, effective_date, chunk_pointer}.
+EvidencePinpoint = {source_path: string, page_or_timecode: int|string, bates_or_hash_optional: string|null, captured_at: datetime, note: string}.
+LawPinpoint = {authority_id: string, section/subsection: string, effective_date: date, chunk_pointer: string}.
 
 ## 5) Agent responsibilities and rules of engagement
 ### Roles

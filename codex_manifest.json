@@ -83,7 +83,7 @@
   {
     "module": "agents_build_charter",
     "path": "AGENTS.md",
-    "hash": "f3c80a254885e303358118236795574af23c9524867ed3a34138b32332bf41fc",
+    "hash": "60316607ce21fb1ffa1b40dcae37c72896d0e3eefa7fb4c54130c58b6bb0fbe8",
     "legal_function": "define LitigationOS build charter requirements for Windows x64 delivery",
     "dependencies": []
   }
