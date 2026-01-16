@@ -98,11 +98,27 @@ When Copilot generates code with these instructions active:
 
 Copilot understands:
 
-- Michigan Court Rules (MCR) requirements
-- Court form structure and validation
-- Evidence handling protocols
-- Chain-of-custody requirements
-- FOIA request formats
+- **Michigan Court Rules (MCR)** requirements and compliance
+- **Court form structure** and validation for all SCAO forms
+- **Evidence handling** protocols and chain-of-custody
+- **FOIA request** formats and procedures
+
+**Specific Court Authorities:**
+
+- **MCR (Michigan Court Rules)**: MCR 1.109(D)(3), MCR 2.003(C), MCR 2.114(E), MCR 2.115(B), MCR 2.119 series, MCR 2.602(B)
+- **MCL (Michigan Compiled Laws)**: Substantive state law
+- **MRE (Michigan Rules of Evidence)**: Evidentiary standards
+- **SCAO Forms**: Official State Court Administrative Office forms
+- **Federal Authorities**: USC, FRCP, FRE
+
+**Known Court Forms:**
+
+- **Family Division (FOC)**: FOC-65 (Custody), FOC-87 (Parenting Time), FOC-88 (Objection to Referee)
+- **Civil Forms (MC)**: MC-12 (Motion to Adjourn), MC-97 (Injunctive Relief), MC-303 (Proof of Service), MC-304 (Certificate of Mailing)
+- **District Court (DC)**: DC-102c (Recover Possession)
+
+**Motion Types:**
+- Motion to Strike, Brief in Support, Affidavit of Harm, Proposed Order, Motion for Leave, Motion to Shorten Time, Response to Sanctions, Judicial Disqualification
 
 ### Build System Integration
 
