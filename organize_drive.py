@@ -105,7 +105,7 @@ def validate_drive_path(path: Path, required_drives: list[str] = None) -> tuple[
     
     # Check if it's one of the required drives
     if drive_letter not in required_drives:
-        return False, f"Drive {drive_letter}: is not one of the required drives: {', '.join(required_drives)}:"
+        return False, f"Drive {drive_letter}: is not one of the required drives: {', '.join(required_drives)}"
     
     return True, ""
 
@@ -230,10 +230,6 @@ def main():
     if not all_present:
         print(f"Warning: Missing required drives: {', '.join(missing)}")
         # Note: We continue anyway as the target drive is valid
-    
-    if not target_path.exists():
-        print(f"Path {target_path} does not exist.")
-        return 1
     
     output_path = Path(args.output).resolve() if args.output else None
     organize_drive(target_path, output_path)
