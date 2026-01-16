@@ -19,7 +19,7 @@ DEFAULT_DENY_DIRS = {
 
 
 def _normalize_names(names: Iterable[str]) -> Set[str]:
-    return {name.strip().lower() for name in names if name.strip()}
+    return {name.strip().casefold() for name in names if name.strip()}
 
 
 def _parse_deny_dirs(values: List[str]) -> List[str]:
@@ -34,7 +34,7 @@ def discover_files(root: Path, deny_dirs: Iterable[str]) -> List[Path]:
     candidates: List[Path] = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [
-            name for name in dirnames if name.strip().lower() not in deny_names
+            name for name in dirnames if name.strip().casefold() not in deny_names
         ]
         for filename in filenames:
             candidates.append(Path(dirpath) / filename)
@@ -66,8 +66,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     extras = _parse_deny_dirs(args.deny_dirs)
-    if any(value.lower() == "none" for value in extras):
-        deny_dirs = [value for value in extras if value.lower() != "none"]
+    if any(value.casefold() == "none" for value in extras):
+        deny_dirs = [value for value in extras if value.casefold() != "none"]
     else:
         deny_dirs = list(DEFAULT_DENY_DIRS) + extras
     root = Path(args.path)
