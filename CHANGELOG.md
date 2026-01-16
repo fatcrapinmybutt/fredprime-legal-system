@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced configuration system with Pydantic v2
 - Observability and monitoring with Prometheus and OpenTelemetry
 - Health check endpoints
+- Append-only registry template documentation for evidence and authority tracking
 
 ### Changed
 
