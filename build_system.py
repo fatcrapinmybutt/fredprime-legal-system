@@ -39,6 +39,8 @@ def build_json(path: Path) -> Path:
     """Write the system definition to *path* and return the path."""
     logger.info("Writing system definition to %s", path)
     try:
+        # Ensure parent directory exists
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(litigation_system_definition, indent=4))
     except Exception as exc:
         logger.error("Failed to write JSON: %s", exc)
@@ -54,7 +56,7 @@ def parse_args() -> argparse.Namespace:
         "-o",
         "--output",
         type=Path,
-        default=Path("/mnt/data/fredprime_litigation_system.json"),
+        default=Path("./output/fredprime_litigation_system.json"),
         help="Path of the generated JSON file",
     )
     parser.add_argument(
