@@ -235,6 +235,17 @@ Fixes #456
 
 ## Code Style
 
+### GitHub Copilot Instructions
+
+If you're using GitHub Copilot, our repository includes production-grade agent instructions that enforce:
+
+- Production-quality code (no stubs, TODOs, or placeholders)
+- Fail-closed engineering with explicit error handling
+- Security-first design with legal compliance requirements
+- Deterministic and reproducible solutions
+
+See `.github/copilot-instructions.md` or `COPILOT_AGENT.md` for complete details.
+
 ### Python Style
 
 We follow [PEP 8](https://www.python.org/dev/peps/pep-0008/) with these tools:
@@ -411,6 +422,7 @@ class TestFunctionality:
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
 - [pytest Documentation](https://docs.pytest.org/)
 - [Pre-commit Framework](https://pre-commit.com/)
+- [GitHub Copilot Agent Instructions](.github/copilot-instructions.md) - Repository-specific AI coding standards
 
 ## License
 
