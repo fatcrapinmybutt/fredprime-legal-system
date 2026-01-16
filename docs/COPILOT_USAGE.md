@@ -274,7 +274,7 @@ make format  # if markdown formatting is configured
 
 - [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
 - [Contributing Guidelines](../CONTRIBUTING.md)
-- [Main Instructions](.github/copilot-instructions.md)
+- [Main Instructions](../.github/copilot-instructions.md)
 - [Repository README](../README.md)
 
 ## Support

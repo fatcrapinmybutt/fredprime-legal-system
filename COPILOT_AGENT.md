@@ -497,24 +497,42 @@ make ci              # Full CI pipeline simulation
 **Common Patterns:**
 
 ```python
-# Error handling
-from typing import Optional, Result
+# Error handling with proper Python patterns
+from typing import Optional, Union, Tuple
+from dataclasses import dataclass
 import logging
 
 logger = logging.getLogger(__name__)
 
-def process_document(path: Path) -> Result[Document, DocumentError]:
-    """Process legal document with full error handling."""
+@dataclass
+class DocumentError:
+    """Document processing error."""
+    code: str
+    message: str
+
+def process_document(path: Path) -> Union[Document, DocumentError]:
+    """Process legal document with full error handling.
+    
+    Args:
+        path: Path to the document file
+        
+    Returns:
+        Document object on success, DocumentError on failure
+        
+    Raises:
+        ValueError: If path is invalid
+    """
     try:
         if not path.exists():
-            logger.error(f"Document not found: {path}")
-            return Err(DocumentError.NOT_FOUND)
+            error = DocumentError("NOT_FOUND", f"Document not found: {path}")
+            logger.error(error.message)
+            return error
         
         # Implementation...
-        return Ok(document)
+        return Document(path=path, content=content)
     except Exception as e:
         logger.exception(f"Failed to process {path}")
-        return Err(DocumentError.PROCESSING_FAILED)
+        return DocumentError("PROCESSING_FAILED", str(e))
 ```
 
 **Testing Patterns:**
