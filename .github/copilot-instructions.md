@@ -303,6 +303,54 @@ This repository implements a **production legal system automation platform** wit
 - Evidence handling must maintain chain-of-custody integrity
 - All automated documents must be reviewable by counsel
 
+**Michigan Court Authorities & Rules:**
+
+- **MCR (Michigan Court Rules)**: Primary procedural rules
+  - MCR 1.109(D)(3) - Signature block requirements
+  - MCR 2.003(C) - Judicial disqualification
+  - MCR 2.114(E) - Sanctions procedures
+  - MCR 2.115(B) - Motion to strike
+  - MCR 2.119 - Motion practice (general)
+  - MCR 2.119(A) - Motion requirements
+  - MCR 2.119(B)(1)(c) - Affidavit requirements
+  - MCR 2.119(C) - Motions for leave/shortened time
+  - MCR 2.602(B) - Proposed order requirements
+
+- **MCL (Michigan Compiled Laws)**: Substantive state law
+- **MRE (Michigan Rules of Evidence)**: Evidentiary standards
+- **SCAO (State Court Administrative Office)**: Official court forms
+
+**Michigan Court Forms (SCAO):**
+
+**Family Division (FOC Series):**
+- FOC 65 - Motion Regarding Custody
+- FOC 87 - Motion Regarding Parenting Time
+- FOC 88 - Objection to Referee Recommendation
+
+**Civil Forms (MC Series):**
+- MC-12 - Motion to Adjourn
+- MC-97 - Complaint for Injunctive Relief
+- MC-303 - Proof of Service
+- MC-304 - Certificate of Mailing
+
+**District Court (DC Series):**
+- DC-102c - Complaint to Recover Possession
+
+**Common Motion Types:**
+- Motion to Strike (MCR 2.115(B))
+- Brief in Support (MCR 2.119)
+- Affidavit of Harm (MCR 2.119(B)(1)(c))
+- Proposed Order (MCR 2.602(B))
+- Motion for Leave (MCR 2.119(C))
+- Motion to Shorten Time (MCR 2.119(C))
+- Response to Motion for Sanctions (MCR 2.114(E))
+- Judicial Disqualification Motion (MCR 2.003(C))
+
+**Federal Authorities (for federal matters):**
+- USC (United States Code)
+- FRCP (Federal Rules of Civil Procedure)
+- FRE (Federal Rules of Evidence)
+
 ---
 
 ### 13.2 Build & Test Infrastructure
