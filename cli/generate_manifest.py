@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """CLI entrypoint for generating a manifest."""
+
 import sys
 from pathlib import Path
 
