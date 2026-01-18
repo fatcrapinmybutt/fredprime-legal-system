@@ -4,9 +4,9 @@ import argparse
 from pathlib import Path
 from typing import List
 
+from constants import KEYWORDS_TO_FORMS
 from form_db import FormDatabase
 from knowledge_store import KnowledgeStore
-from constants import KEYWORDS_TO_FORMS
 
 
 def suggest_forms(descriptions: List[str]) -> List[str]:

@@ -2,10 +2,10 @@ import json
 import re
 from pathlib import Path
 from typing import List
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 BASE_URL = "https://courts.michigan.gov/Administration/SCAO/Forms/Pages/default.aspx"
 

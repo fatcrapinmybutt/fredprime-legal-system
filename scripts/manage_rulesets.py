@@ -9,7 +9,7 @@ Requires: gh CLI with authentication, admin access to the repository
 import json
 import subprocess
 import sys
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 
 class GitHubRulesetManager:

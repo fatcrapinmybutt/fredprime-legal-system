@@ -1,8 +1,8 @@
 """Persistent store linking evidence, transcripts, and forms."""
 
+import hashlib
 import json
 import sqlite3
-import hashlib
 from pathlib import Path
 from typing import List
 

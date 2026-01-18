@@ -3,35 +3,43 @@
 This project requires the following components beyond the provided scripts. Install them before running `golden_god_mode_bootstrap.py`.
 
 ## 1. Runtime
+
 - Windows 10 or 11 x64
 - Python 3.10+ with `pip`
 - Offline builds: supply a `.wheels/` wheelhouse matching `requirements.txt`
 
 ## 2. Models
+
 - Local GGUF model at `models/llm/model.gguf` or enable Ollama in `config.yaml`
 - SBERT embeddings at `models/emb/sentence-transformers/all-MiniLM-L6-v2`
 
 ## 3. External Binaries
+
 - Tesseract OCR for PNG/JPG/TIFF processing
 - Ghostscript and qpdf if PDF/A conversion or OCR pipelines are enabled
 
 ## 4. Service Wrapper
+
 - NSSM or similar to run the backend as a Windows service instead of using `.bat` files
 
 ## 5. Optional Vector/ANN Extras
+
 - `faiss-cpu` or `hnswlib` for accelerated search
 - `sentence-transformers` for SBERT embeddings
 
 ## 6. Packaging & Ops
+
 - `pyinstaller` and a `constraints.txt` file with hashed pins for reproducible one-file builds
 - `minisign` or `cosign` to sign `evidence_manifest.json`
 
 ## 7. GPU Acceleration (Optional)
+
 - Install the matching CUDA runtime and use a CUDA-built `llama.cpp` binary when GPU support is desired
 
 ---
 
 ## Single-Pass Setup Commands
+
 Run these commands in PowerShell, adjusting the `F:\LAWFORGE_SUPREMACY` path if needed.
 
 ```powershell

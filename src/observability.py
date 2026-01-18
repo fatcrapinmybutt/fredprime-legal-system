@@ -26,8 +26,7 @@ except Exception:
 
 # Prometheus
 try:
-    from prometheus_client import start_http_server, Counter, Histogram, Summary
-    from prometheus_client import make_asgi_app
+    from prometheus_client import Counter, Histogram, Summary, make_asgi_app, start_http_server
 except Exception:
     start_http_server = None
     Counter = None
@@ -62,12 +61,12 @@ if Summary is None:
 # OpenTelemetry
 try:
     from opentelemetry import trace
-    from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
     from opentelemetry.instrumentation.requests import RequestsInstrumentor
+    from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
 except Exception:
     trace = None
     TracerProvider = None

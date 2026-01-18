@@ -47,6 +47,7 @@ fredprime-legal-system/
 ### Creating a New Module
 
 1. **Create module directory**:
+
    ```
    modules/my_feature/
    ├── __init__.py
@@ -58,6 +59,7 @@ fredprime-legal-system/
    ```
 
 2. **Add module docstring** (core.py):
+
    ```python
    """My Feature Module
    
@@ -75,6 +77,7 @@ fredprime-legal-system/
    ```
 
 3. **Implement with type hints**:
+
    ```python
    from typing import Optional, List, Dict
    from dataclasses import dataclass
@@ -98,6 +101,7 @@ fredprime-legal-system/
    ```
 
 4. **Add comprehensive tests**:
+
    ```python
    import pytest
    from modules.my_feature import MyFeature, FeatureConfig
@@ -112,7 +116,8 @@ fredprime-legal-system/
            assert feature.config == config
    ```
 
-5. **Update __init__.py**:
+5. **Update `__init__.py`**:
+
    ```python
    """My Feature Module"""
    from .core import MyFeature, FeatureConfig
@@ -150,6 +155,7 @@ tests/
 ### Writing Tests
 
 #### Unit Tests (Fast, Isolated)
+
 ```python
 import pytest
 from modules.core import process_document
@@ -167,6 +173,7 @@ def test_process_invalid_document():
 ```
 
 #### Integration Tests (Medium Speed)
+
 ```python
 @pytest.mark.integration
 def test_document_pipeline():
@@ -178,6 +185,7 @@ def test_document_pipeline():
 ```
 
 #### E2E Tests (Slower)
+
 ```python
 @pytest.mark.slow
 def test_end_to_end_litigation_workflow():
@@ -245,6 +253,7 @@ print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
 ### Optimization Tips
 
 1. **Use generators for large datasets**:
+
    ```python
    # Bad: Loads all in memory
    documents = [load_document(f) for f in files]
@@ -256,6 +265,7 @@ print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
    ```
 
 2. **Cache expensive operations**:
+
    ```python
    from functools import lru_cache
    
@@ -265,6 +275,7 @@ print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
    ```
 
 3. **Use type hints for better performance**:
+
    ```python
    # Type hints help Python optimize
    def process(data: List[Dict[str, str]]) -> int:
@@ -313,6 +324,7 @@ def complex_function(data):
 ### Version Numbering
 
 We use [Semantic Versioning](https://semver.org/):
+
 - MAJOR.MINOR.PATCH (e.g., 1.2.3)
 - MAJOR: Breaking changes
 - MINOR: New features (backward compatible)
@@ -321,12 +333,14 @@ We use [Semantic Versioning](https://semver.org/):
 ### Release Process
 
 1. **Update version**:
+
    ```bash
    # In pyproject.toml and setup.cfg
    version = "1.2.3"
    ```
 
 2. **Update CHANGELOG.md**:
+
    ```markdown
    ## [1.2.3] - 2026-01-20
    ### Added
@@ -336,6 +350,7 @@ We use [Semantic Versioning](https://semver.org/):
    ```
 
 3. **Commit and tag**:
+
    ```bash
    git add .
    git commit -m "chore: release v1.2.3"
@@ -345,11 +360,13 @@ We use [Semantic Versioning](https://semver.org/):
    ```
 
 4. **Build distribution**:
+
    ```bash
    make build
    ```
 
 5. **Upload (if publishing)**:
+
    ```bash
    make upload  # Requires PyPI credentials
    ```
@@ -416,6 +433,7 @@ bandit -r . -f json > security-report.json
 ---
 
 For more information, see:
+
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/OPEN_SOURCE_RULESETS.md](docs/OPEN_SOURCE_RULESETS.md)
 - Project README for quick start

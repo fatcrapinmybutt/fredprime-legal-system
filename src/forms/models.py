@@ -1,5 +1,5 @@
+from sqlalchemy import Column, Integer, MetaData, String
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, MetaData
 
 metadata = MetaData(schema="forms")
 Base = declarative_base(metadata=metadata)
