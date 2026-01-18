@@ -49,7 +49,7 @@ Configured in [.pre-commit-config.yaml](.pre-commit-config.yaml), includes:
 | **Bandit**         | Security scanning      | <https://github.com/PyCQA/bandit>            |
 | **Detect Secrets** | Secrets detection      | <https://github.com/Yelp/detect-secrets>    |
 | **Markdownlint**   | Markdown validation    | <https://github.com/igorshubovych/markdownlint-cli> |
-| **Actionlint**     | GitHub Actions valid   | <https://github.com/rhysd/actionlint>       |
+| **Actionlint**     | GitHub Actions validation | <https://github.com/rhysd/actionlint>       |
 
 ### Custom Enforcement Script
 
@@ -178,11 +178,11 @@ pre-commit run --all-files --verbose
 | Feature             | GitHub API           | Open Source Tools |
 | ------------------- | -------------------- | ------------------- |
 | Cost                | Free                 | Free              |
-| Setup               | Admin access req     | No special access |
+| Setup               | Admin access required | No special access |
 | Availability        | GitHub only          | Works anywhere    |
 | Local enforcement   | No                   | Yes (pre-commit)  |
-| Auto-fix capability | Limited              | Yes (most)        |
-| Customization       | Limited              | Highly custom     |
+| Auto-fix capability | Limited              | Yes (most tools)  |
+| Customization       | Limited              | Highly customizable |
 | CI/CD integration   | Built-in             | Via workflows     |
 | Offline support     | No                   | Yes               |
 
