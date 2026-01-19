@@ -1,0 +1,35 @@
+{
+  "description": "Media production and creative workflow preset",
+  "buckets": {
+    "Raw_Footage": [".mp4", ".mov", ".avi", ".mts", ".m2ts"],
+    "Edited_Videos": [".mp4", ".mov", ".avi"],
+    "Project_Files": [".prproj", ".aep", ".fcpx", ".blend"],
+    "Audio_Files": [".wav", ".mp3", ".aac", ".flac", ".aif"],
+    "Music_Tracks": [".mp3", ".wav", ".flac", ".aac"],
+    "Images_Photos": [".jpg", ".jpeg", ".png", ".raw", ".cr2", ".nef", ".dng"],
+    "Graphics_Design": [".psd", ".ai", ".indd", ".svg", ".eps"],
+    "3D_Models": [".obj", ".fbx", ".blend", ".max", ".ma"],
+    "Exports": [".mp4", ".mov", ".mp3"],
+    "Assets": [".png", ".jpg", ".svg", ".ai"],
+    "Scripts_Storyboards": [".pdf", ".doc", ".docx", ".txt"],
+    "Stock_Media": [],
+    "Archives": [".zip", ".rar", ".7z"],
+    "Miscellaneous": []
+  },
+  "sub_buckets": [
+    "Project_Alpha",
+    "Project_Beta",
+    "Client_Work",
+    "Personal_Projects",
+    "Stock_Footage",
+    "Backup"
+  ],
+  "keyword_mappings": {
+    "Project_Alpha": ["alpha", "project1", "prj1"],
+    "Project_Beta": ["beta", "project2", "prj2"],
+    "Client_Work": ["client", "commercial", "paid"],
+    "Personal_Projects": ["personal", "hobby", "test"],
+    "Stock_Footage": ["stock", "library", "generic"],
+    "Backup": ["backup", "old", "archive"]
+  }
+}
