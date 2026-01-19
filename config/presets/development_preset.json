@@ -1,0 +1,35 @@
+{
+  "description": "Software development and coding workflow preset",
+  "buckets": {
+    "Source_Code": [".py", ".js", ".ts", ".java", ".c", ".cpp", ".cs", ".go", ".rs", ".rb", ".php"],
+    "Web_Files": [".html", ".htm", ".css", ".scss", ".sass", ".jsx", ".tsx", ".vue"],
+    "Config_Files": [".json", ".yaml", ".yml", ".toml", ".ini", ".env", ".config"],
+    "Documentation": [".md", ".rst", ".txt", ".pdf", ".doc", ".docx"],
+    "Scripts": [".sh", ".bash", ".ps1", ".bat", ".cmd"],
+    "Databases": [".db", ".sqlite", ".sql", ".mdb"],
+    "Compiled_Output": [".exe", ".dll", ".so", ".class", ".o", ".pyc"],
+    "Package_Files": [".whl", ".egg", ".jar", ".war", ".deb", ".rpm"],
+    "Images_Assets": [".png", ".jpg", ".svg", ".ico", ".gif"],
+    "Tests": [".test.js", ".spec.js", ".test.py", "_test.go"],
+    "Libraries": [],
+    "Build_Output": [],
+    "Archives": [".zip", ".tar", ".gz", ".7z"],
+    "Miscellaneous": []
+  },
+  "sub_buckets": [
+    "Active_Projects",
+    "Dependencies",
+    "Tests",
+    "Documentation",
+    "Archived_Projects",
+    "Learning"
+  ],
+  "keyword_mappings": {
+    "Active_Projects": ["src", "main", "app", "project"],
+    "Dependencies": ["node_modules", "vendor", "lib", "packages"],
+    "Tests": ["test", "spec", "__test__", "tests"],
+    "Documentation": ["docs", "readme", "guide", "wiki"],
+    "Archived_Projects": ["old", "deprecated", "archive", "backup"],
+    "Learning": ["tutorial", "example", "demo", "practice"]
+  }
+}

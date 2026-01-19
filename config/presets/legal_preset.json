@@ -1,0 +1,35 @@
+{
+  "description": "Legal workflow preset for law offices and litigation",
+  "buckets": {
+    "Court_Documents": [".pdf", ".doc", ".docx"],
+    "Evidence": [".pdf", ".jpg", ".jpeg", ".png", ".mp4", ".mp3"],
+    "Briefs_Motions": [".doc", ".docx", ".pdf"],
+    "Discovery": [".pdf", ".doc", ".docx", ".xls", ".xlsx"],
+    "Client_Files": [".pdf", ".doc", ".docx", ".eml", ".msg"],
+    "Exhibits": [".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx"],
+    "Correspondence": [".eml", ".msg", ".pdf"],
+    "Research": [".pdf", ".doc", ".docx", ".txt"],
+    "Archived_Cases": [],
+    "Templates": [".doc", ".docx", ".dotx"],
+    "Spreadsheets": [".xls", ".xlsx", ".csv"],
+    "Audio_Video": [".mp3", ".mp4", ".wav", ".avi"],
+    "Scanned_Documents": [".pdf", ".tiff", ".jpg"],
+    "Miscellaneous": []
+  },
+  "sub_buckets": [
+    "Active_Cases",
+    "Discovery_Materials",
+    "Court_Filings",
+    "Client_Communications",
+    "Archived",
+    "Reference_Materials"
+  ],
+  "keyword_mappings": {
+    "Active_Cases": ["case", "v.", "vs", "complaint", "answer"],
+    "Discovery_Materials": ["discovery", "interrogatories", "deposition", "requests"],
+    "Court_Filings": ["motion", "brief", "order", "filing"],
+    "Client_Communications": ["client", "email", "correspondence"],
+    "Archived": ["closed", "archived", "old"],
+    "Reference_Materials": ["research", "statute", "precedent", "authority"]
+  }
+}
