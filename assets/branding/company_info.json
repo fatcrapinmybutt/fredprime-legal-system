@@ -1,0 +1,29 @@
+{
+  "company": {
+    "name": "MBP LLC",
+    "full_name": "Maximum Business Performance, LLC",
+    "tagline": "Powered by Pork™",
+    "copyright": "© 2026 MBP LLC. All rights reserved.",
+    "website": "https://mbpllc.example",
+    "contact": "contact@mbpllc.example"
+  },
+  "product": {
+    "name": "DriveOrganizerPro",
+    "version": "1.0.0",
+    "edition": "Level 9999 Edition",
+    "description": "Professional drive organization system with advanced file management capabilities"
+  },
+  "branding": {
+    "colors": {
+      "primary": "#1e1e1e",
+      "secondary": "#2d2d2d",
+      "accent_green": "#00ff00",
+      "accent_gold": "#ffd700",
+      "text_primary": "#ffffff",
+      "text_secondary": "#888888",
+      "error_red": "#ff0000",
+      "warning_orange": "#ffaa00"
+    },
+    "mascot": "Badass Professional Pig"
+  }
+}

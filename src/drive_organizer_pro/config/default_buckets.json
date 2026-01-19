@@ -1,0 +1,17 @@
+{
+  "Documents": [".pdf", ".doc", ".docx", ".txt", ".rtf", ".odt"],
+  "Spreadsheets": [".xls", ".xlsx", ".csv", ".ods"],
+  "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp", ".tiff", ".heic"],
+  "Videos": [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm"],
+  "Audio": [".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a", ".wma"],
+  "Archives": [".zip", ".rar", ".7z", ".tar", ".gz", ".tgz", ".bz2", ".iso"],
+  "Code": [".py", ".js", ".html", ".css", ".cpp", ".java", ".c", ".cs", ".php", ".rb", ".go", ".ts", ".json", ".xml", ".yaml", ".yml"],
+  "Databases": [".db", ".sqlite", ".mdb", ".sql"],
+  "Executables": [".exe", ".msi", ".bat", ".ps1", ".sh", ".cmd"],
+  "Legal_Court": [],
+  "Neo4j_Data": [".cypher", ".cql", ".graphml"],
+  "Presentations": [".ppt", ".pptx", ".key", ".odp"],
+  "Books_PDFs": [".epub", ".mobi", ".azw"],
+  "Email": [".eml", ".msg", ".pst"],
+  "Miscellaneous": []
+}

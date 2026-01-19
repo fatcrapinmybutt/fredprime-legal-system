@@ -1,0 +1,80 @@
+{
+  "sub_buckets": [
+    "Meek1_Housing_ShadyOaks",
+    "Meek2_Custody",
+    "Meek3_PPO",
+    "Meek4_Court_Violations",
+    "LitigationOS",
+    "Neo4j_Graphs",
+    "Michigan_Court_Authorities",
+    "Studying_Materials"
+  ],
+  "keyword_mappings": {
+    "Meek1_Housing_ShadyOaks": [
+      "meek1",
+      "housing",
+      "shady oaks",
+      "shadyoaks",
+      "eviction",
+      "landlord",
+      "tenant"
+    ],
+    "Meek2_Custody": [
+      "meek2",
+      "custody",
+      "parenting",
+      "parenting time",
+      "visitation",
+      "child support"
+    ],
+    "Meek3_PPO": [
+      "meek3",
+      "ppo",
+      "protective order",
+      "restraining",
+      "domestic"
+    ],
+    "Meek4_Court_Violations": [
+      "meek4",
+      "jtc",
+      "mcneil",
+      "cannon",
+      "harms",
+      "violation",
+      "contempt",
+      "judicial"
+    ],
+    "LitigationOS": [
+      "litigation",
+      "litigationos",
+      "supreme",
+      "fred",
+      "motion",
+      "brief"
+    ],
+    "Neo4j_Graphs": [
+      "neo4j",
+      "graph",
+      "cypher",
+      "node",
+      "relationship",
+      "database"
+    ],
+    "Michigan_Court_Authorities": [
+      "michigan",
+      "mcr",
+      "court rule",
+      "benchbook",
+      "statute",
+      "case law"
+    ],
+    "Studying_Materials": [
+      "study",
+      "studying",
+      "notes",
+      "research",
+      "learning",
+      "tutorial"
+    ]
+  }
+}
