@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrated from PyPDF2 to pypdf for better PDF handling
 - Upgraded dependencies to latest versions
 - Code formatted with Black for consistency
+- Formatting and documentation fixes: applied isort, black, ruff, and markdownlint across multiple files to resolve CI failures (See PR #113)
 
 ### Fixed
 
