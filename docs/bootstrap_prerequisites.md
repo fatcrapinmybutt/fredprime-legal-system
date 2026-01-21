@@ -1,13 +1,16 @@
 # Bootstrap Environment Requirements
 
-This project requires the following components beyond the provided scripts. Install them before running `golden_god_mode_bootstrap.py`.
+This project requires the following components beyond the provided scripts. Install them before running
+`golden_god_mode_bootstrap.py`.
 
 ## 1. Runtime
+
 - Windows 10 or 11 x64
 - Python 3.10+ with `pip`
 - Offline builds: supply a `.wheels/` wheelhouse matching `requirements.txt`
 
 ## 2. Models
+
 - Local GGUF model at `models/llm/model.gguf` or enable Ollama in `config.yaml`
 - SBERT embeddings at `models/emb/sentence-transformers/all-MiniLM-L6-v2`
 
@@ -37,6 +40,7 @@ This project requires the following components beyond the provided scripts. Inst
 ---
 
 ## Single-Pass Setup Commands
+
 Run these commands in PowerShell, adjusting the `F:\LAWFORGE_SUPREMACY` path if needed.
 
 ```powershell
