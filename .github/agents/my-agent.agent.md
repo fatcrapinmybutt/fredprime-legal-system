@@ -129,7 +129,7 @@ Create `.github/agents/orchestrator-engineer.agent.md`:
 ```md
 ---
 name: orchestrator-engineer
-description: Implements deterministic CLI pipelines, manifests, self-tests, and CI wiring; favors append-only outputs
+description: Implements deterministic CLI pipelines, manifests, self-tests, and CI wiring; favors append-only outputs (outputs that only add new entries without modifying or removing previous data, such as logs or ledgers)
 tools: ["read","search","edit"]
 target: github-copilot
 ---
