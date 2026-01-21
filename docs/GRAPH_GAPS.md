@@ -1,4 +1,4 @@
-# Graphic Gap Checklist (LitigationOS Graph)
+# Graph Gap Checklist (LitigationOS Graph)
 
 ## Missing or Under-specified Components (Relative to Full Spec)
 - **SemanticEdge layer** for typed graph relationships (ENFORCES, INTERPRETS, SUPERSEDES, LIMITS, IMPLEMENTS, GUIDES, CONFLICTS).  
