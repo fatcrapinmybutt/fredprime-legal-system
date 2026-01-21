@@ -18,6 +18,7 @@ Install extras as available:
   # Optional add-ons:
   pip install pillow-heif faster-whisper openai-whisper ocrmypdf
 """
+
 import os, re, time, json, hashlib, pathlib, mimetypes, shutil, tempfile, subprocess
 from typing import List, Dict, Optional, Tuple
 

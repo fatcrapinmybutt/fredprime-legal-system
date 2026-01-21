@@ -113,6 +113,7 @@ git push origin feature/your-feature
 ### Automated Checks
 
 Checks run automatically:
+
 - **Pre-commit hooks** - On every commit
 - **GitHub Actions** - On every push/PR
 - **Enforcement script** - Can run manually
@@ -217,12 +218,14 @@ python -c "import modules"
 ## Resources
 
 ### Documentation
+
 - [README.md](README.md) - Project overview
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [ADVANCED_DEVELOPMENT.md](docs/ADVANCED_DEVELOPMENT.md) - Technical guide
 - [OPEN_SOURCE_RULESETS.md](docs/OPEN_SOURCE_RULESETS.md) - Ruleset documentation
 
 ### Tools Documentation
+
 - [Pre-commit Framework](https://pre-commit.com/)
 - [pytest Documentation](https://docs.pytest.org/)
 - [Black Code Formatter](https://black.readthedocs.io/)
@@ -231,6 +234,7 @@ python -c "import modules"
 - [Bandit Security Tool](https://bandit.readthedocs.io/)
 
 ### Conventions
+
 - [Semantic Versioning](https://semver.org/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [PEP 8 Style Guide](https://www.python.org/dev/peps/pep-0008/)

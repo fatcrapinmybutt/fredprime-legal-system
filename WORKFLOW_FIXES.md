@@ -2,7 +2,8 @@
 
 ## Summary
 
-Fixed critical YAML syntax errors and deprecated function calls in the GitHub Actions CI/CD workflows and Python scripts. All tests now pass successfully.
+Fixed critical YAML syntax errors and deprecated function calls in the GitHub Actions CI/CD workflows and Python
+scripts. All tests now pass successfully.
 
 ## Changes Made
 
