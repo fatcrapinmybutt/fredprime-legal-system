@@ -7,7 +7,6 @@ import logging
 from datetime import datetime
 from pathlib import Path, PureWindowsPath
 
-
 DEFAULT_OUTPUT_ROOT_TEMPLATE = "Z:/LitigationOS/Runs/{run_id}"
 
 
@@ -24,8 +23,7 @@ class EvidenceOrganizer:
         pure_windows_path = PureWindowsPath(str(self.output_root))
         if pure_windows_path.drive.lower() == "c:" and not self.allow_c_drive:
             raise ValueError(
-                "Output root on C: is blocked by default. "
-                "Use a Z: path or pass --allow-c-drive to override."
+                "Output root on C: is blocked by default. " "Use a Z: path or pass --allow-c-drive to override."
             )
 
     def _ensure_directories(self) -> None:
@@ -43,10 +41,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-root",
         default=None,
-        help=(
-            "Output root directory. Defaults to "
-            f"{DEFAULT_OUTPUT_ROOT_TEMPLATE}."
-        ),
+        help=("Output root directory. Defaults to " f"{DEFAULT_OUTPUT_ROOT_TEMPLATE}."),
     )
     parser.add_argument(
         "--run-id",

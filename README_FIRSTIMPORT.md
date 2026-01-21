@@ -18,7 +18,8 @@ python firstimport.py --base /path/to/project --out /path/to/out.json
 
 Validation
 
-- If `jsonschema` is installed and `schema/systemdef.schema.json` exists in the base path, the script will validate the generated JSON before writing. Add `jsonschema` to `requirements.txt` to enable validation.
+- If `jsonschema` is installed and `schema/systemdef.schema.json` exists in the base path, the script will
+  validate the generated JSON before writing. Add `jsonschema` to `requirements.txt` to enable validation.
 
 Environment variables
 

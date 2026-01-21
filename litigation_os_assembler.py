@@ -4,6 +4,7 @@
 This script consolidates legal system artifacts into a unified, market-ready
 bundle with manifests, checksums, resumability, and robust logging.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -526,8 +527,7 @@ def write_sqlite_index(manifest_rows: Sequence[Dict[str, object]], output_dir: P
     connection = sqlite3.connect(temp_db)
     try:
         cursor = connection.cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS files (
                 id TEXT PRIMARY KEY,
                 root TEXT,
@@ -541,8 +541,7 @@ def write_sqlite_index(manifest_rows: Sequence[Dict[str, object]], output_dir: P
                 evidence_stamp TEXT,
                 mifile_ready INTEGER
             )
-            """
-        )
+            """)
         cursor.executemany(
             """
             INSERT OR REPLACE INTO files (

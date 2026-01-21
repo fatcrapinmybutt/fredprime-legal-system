@@ -49,6 +49,7 @@ Delete {root}, re-run this script. Idempotent file writes are guarded.
 
 Author: Strictly synthetic. No opinions. Pure utility.
 """
+
 from __future__ import annotations
 
 import argparse

@@ -12,21 +12,26 @@ This project requires the following components beyond the provided scripts. Inst
 - SBERT embeddings at `models/emb/sentence-transformers/all-MiniLM-L6-v2`
 
 ## 3. External Binaries
+
 - Tesseract OCR for PNG/JPG/TIFF processing
 - Ghostscript and qpdf if PDF/A conversion or OCR pipelines are enabled
 
 ## 4. Service Wrapper
+
 - NSSM or similar to run the backend as a Windows service instead of using `.bat` files
 
 ## 5. Optional Vector/ANN Extras
+
 - `faiss-cpu` or `hnswlib` for accelerated search
 - `sentence-transformers` for SBERT embeddings
 
 ## 6. Packaging & Ops
+
 - `pyinstaller` and a `constraints.txt` file with hashed pins for reproducible one-file builds
 - `minisign` or `cosign` to sign `evidence_manifest.json`
 
 ## 7. GPU Acceleration (Optional)
+
 - Install the matching CUDA runtime and use a CUDA-built `llama.cpp` binary when GPU support is desired
 
 ---
