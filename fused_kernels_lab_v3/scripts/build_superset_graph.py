@@ -50,6 +50,8 @@ def build() -> Dict[str, Any]:
     add_node("S_BENCH_SM", "bench_softmax", "script", "scripts/bench_softmax.py")
     add_node("S_BENCH_GEMM", "bench_gemm_epilogue", "script", "scripts/bench_gemm_epilogue.py")
     add_node("S_BUILD_GRAPH", "build_superset_graph", "script", "scripts/build_superset_graph.py")
+    add_node("S_SMOKE", "smoke_test", "script", "scripts/smoke_test.py")
+    add_node("S_GOLDEN", "golden_correctness", "script", "scripts/golden_correctness.py")
 
     add_edge("S_BENCH_BG", "K_BIAS_GELU_TANH", "benchmarks")
     add_edge("S_BENCH_BG", "K_BIAS_GELU_EXACT", "benchmarks")
@@ -61,6 +63,16 @@ def build() -> Dict[str, Any]:
     add_edge("S_BUILD_GRAPH", "S_BENCH_LN", "documents")
     add_edge("S_BUILD_GRAPH", "S_BENCH_SM", "documents")
     add_edge("S_BUILD_GRAPH", "S_BENCH_GEMM", "documents")
+    add_edge("S_SMOKE", "S_ENV", "runs")
+    add_edge("S_SMOKE", "K_BIAS_GELU_TANH", "smoke_checks")
+    add_edge("S_SMOKE", "K_LAYERNORM", "smoke_checks")
+    add_edge("S_SMOKE", "K_MASKED_SOFTMAX", "smoke_checks")
+    add_edge("S_SMOKE", "K_GEMM_EPILOGUE", "smoke_checks")
+    add_edge("S_GOLDEN", "K_BIAS_GELU_TANH", "validates")
+    add_edge("S_GOLDEN", "K_BIAS_GELU_EXACT", "validates")
+    add_edge("S_GOLDEN", "K_LAYERNORM", "validates")
+    add_edge("S_GOLDEN", "K_MASKED_SOFTMAX", "validates")
+    add_edge("S_GOLDEN", "K_GEMM_EPILOGUE", "validates")
 
     # Tests
     add_node("T_BG", "test_bias_gelu", "test", "tests/test_bias_gelu.py")
@@ -84,6 +96,19 @@ def build() -> Dict[str, Any]:
     add_edge("D_SPEC", "K_GEMM_EPILOGUE", "specifies")
     add_edge("D_VENDOR", "K_GEMM_EPILOGUE", "extends")
     add_edge("D_MAP", "S_BUILD_GRAPH", "explains")
+
+    # Performance metadata
+    add_node("M_HARDWARE", "hardware_profile", "metadata", "graphs/metadata/hardware.json")
+    add_node("M_BENCHMARKS", "benchmark_results", "metadata", "graphs/metadata/benchmarks.json")
+    add_node("M_GOLDEN", "golden_correctness", "metadata", "graphs/metadata/golden.json")
+    add_edge("S_ENV", "M_HARDWARE", "emits")
+    add_edge("S_BENCH_BG", "M_BENCHMARKS", "emits")
+    add_edge("S_BENCH_LN", "M_BENCHMARKS", "emits")
+    add_edge("S_BENCH_SM", "M_BENCHMARKS", "emits")
+    add_edge("S_BENCH_GEMM", "M_BENCHMARKS", "emits")
+    add_edge("S_GOLDEN", "M_GOLDEN", "emits")
+    add_edge("M_HARDWARE", "M_BENCHMARKS", "context_for")
+    add_edge("M_GOLDEN", "M_HARDWARE", "recorded_on")
 
     return {
         "nodes": [n.__dict__ for n in nodes],
@@ -176,6 +201,7 @@ def emit_html(out_dir: Path) -> None:
     <span class=\"pill\">test</span>
     <span class=\"pill\">doc</span>
     <span class=\"pill\">module</span>
+    <span class=\"pill\">metadata</span>
   </div>
 </div>
 <canvas id=\"canvas\"></canvas>
@@ -206,6 +232,7 @@ const kindRadius = {{
   test: 12,
   doc: 12,
   module: 10,
+  metadata: 10,
 }};
 
 const kindColor = {{
@@ -214,6 +241,7 @@ const kindColor = {{
   test: '#59a14f',
   doc: '#9c755f',
   module: '#bab0ac',
+  metadata: '#edc949',
 }};
 
 const id2node = new Map(nodes.map(n => [n.id, n]));

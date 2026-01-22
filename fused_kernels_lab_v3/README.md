@@ -19,8 +19,14 @@ pip install -r requirements.txt
 ### Env check
 python -m scripts.env_check
 
+### Smoke test
+python -m scripts.smoke_test
+
 ### Correctness
 pytest -q
+
+### Golden correctness (with confidence score)
+python -m scripts.golden_correctness --out graphs/metadata/golden.json
 
 ### Benchmarks
 python -m scripts.bench_bias_gelu --dtype bf16 --m 65536 --n 4096 --gelu tanh
