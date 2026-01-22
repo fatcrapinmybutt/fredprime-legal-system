@@ -142,7 +142,7 @@ def fused_bias_gelu_exact(
         M, N = x.shape
 
         def grid(meta):
-            return (M, __import__("triton").cdiv(N, meta["BLOCK_N"]))
+            return (M, triton.cdiv(N, meta["BLOCK_N"]))
 
         if residual is None:
             _bias_gelu_exact_kernel[grid](x, bias, x, y, M=M, N=N, HAS_RESIDUAL=False)

@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 
 import torch
 
-from kernels._common import KernelRunResult, GeluApprox, has_cuda, triton_available, ensure_contiguous, check_2d, check_1d, dtype_supported
+from kernels._common import KernelRunResult, has_cuda, triton_available, ensure_contiguous, check_2d, check_1d, dtype_supported
 
 try:
     import triton

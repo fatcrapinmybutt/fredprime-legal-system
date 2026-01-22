@@ -46,29 +46,8 @@ def _masked_softmax_kernel(
     BLOCK_N: tl.constexpr,
 ):
     pid_m = tl.program_id(axis=0)
-    pid_nb = tl.program_id(axis=1)
-
-    offs = pid_nb * BLOCK_N + tl.arange(0, BLOCK_N)
-    base = pid_m * N + offs
-    mask = (pid_m < M) & (offs < N)
-
-    x = tl.load(X_ptr + base, mask=mask, other=-float("inf")).to(tl.float32)
-
-    if HAS_MASK:
-        m = tl.load(M_ptr + base, mask=mask, other=0).to(tl.int1)
-        # If mask is False, set to -inf so exp becomes 0
-        x = tl.where(m, x, -float("inf"))
-
     # softmax over the full row requires max/sum across all blocks.
-    # We do a two-pass blockwise approach: compute row-max and row-sum by scanning blocks.
-    # First compute max for this block, then reduce across blocks using atomic max? not available.
-    # Instead: implement row-wise softmax per-row in a single program by requiring N <= BLOCK_N (not acceptable),
-    # OR use a scan over blocks inside a single program (works, but then axis=1 grid not needed).
-    #
-    # For correctness for all N: we use a single program per row and scan blocks inside the program.
-    # Therefore: this kernel is specialized to pid_nb==0 only; we keep 2D grid for autotune keying but guard.
-    if pid_nb != 0:
-        return
+    # We use a single program per row and scan blocks inside the program.
 
     # Row-wise scan over blocks
     row_max = tl.full([1], -float("inf"), tl.float32)
@@ -153,8 +132,7 @@ def fused_masked_softmax(
         M, N = x.shape
 
         def grid(meta):
-            # 2D grid for autotune keying; kernel uses pid_nb==0 and scans blocks.
-            return (M, 1)
+            return (M,)
 
         if mask is None:
             _masked_softmax_kernel[grid](x, x, y, M=M, N=N, HAS_MASK=False)
