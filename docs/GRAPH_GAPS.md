@@ -411,3 +411,63 @@ These indices must be represented in the graphic as **deliverables** with lineag
 ### Z3) Post‑Merge Validation
 - Rebuild master indices and compare completeness scores.  
 - Emit ValidationReport_master.md with diff summary.  
+
+---
+
+## AA) Data Contracts + Schema Governance
+### AA1) Contract Registry
+- Central registry for all JSON schemas and CSV headers.  
+- Each contract version tagged with effective date and supersession rules.  
+
+### AA2) Schema Validation
+- All outputs must validate against their contract before merge.  
+- Invalid outputs must fail the run and generate FixList entries.  
+
+### AA3) Backward Compatibility
+- Migration rules for schema version bumps.  
+- Deprecation window tracking per contract.  
+
+---
+
+## AB) Neo4j / Graph Storage Constraints
+### AB1) Uniqueness Constraints
+- Unique IDs for Authority, EvidenceAtom, Fact, Vehicle, ProofObligation, Run.  
+- Prevent duplicate AuthorityPinpoints within a snapshot.  
+
+### AB2) Relationship Constraints
+- Enforce required edge types for claims, standards, and evidence.  
+- Disallow dangling nodes without authority or evidence lineage.  
+
+### AB3) Indexing Strategy
+- Composite indices for `case_id + run_id`.  
+- Full‑text indices for authority and evidence text.  
+
+---
+
+## AC) Evidence Forensics + Authenticity
+### AC1) Authenticity Checks
+- Hash‑verified provenance for each EvidenceItem.  
+- Chain verification before atomization.  
+
+### AC2) Media Forensics
+- EXIF/metadata capture for images/audio/video.  
+- Timestamp consistency checks across artifacts.  
+
+### AC3) Integrity Exceptions
+- Exception log for missing hashes or mismatch.  
+- Exception triggers FixList and blocks release.  
+
+---
+
+## AD) Service & Notice Compliance
+### AD1) Notice Rules
+- Notice requirements mapped to authority pins.  
+- Notice deadlines tied to procedural path.  
+
+### AD2) Service Defect Remediation
+- Remediation path per service method.  
+- Record of attempted cures and outcomes.  
+
+### AD3) Service Proof Packaging
+- Proof artifacts linked to ServicePlan and Release.  
+- Proof metadata included in Packet manifest.  
