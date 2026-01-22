@@ -77,7 +77,7 @@ def build() -> Dict[str, Any]:
     # Docs
     add_node("D_SPEC", "SPEC", "doc", "docs/SPEC.md")
     add_node("D_VENDOR", "VENDOR_EPILOGUE_TRACK", "doc", "docs/VENDOR_EPILOGUE_TRACK.md")
-    add_node("D_MAP", "SUPSET_MAP_GUIDE", "doc", "docs/SUPERSET_MAP_GUIDE.md")
+    add_node("D_MAP", "SUPSET_MAP_GUIDE", "doc", "docs/SPEC.md")
     add_edge("D_SPEC", "K_BIAS_GELU_TANH", "specifies")
     add_edge("D_SPEC", "K_LAYERNORM", "specifies")
     add_edge("D_SPEC", "K_MASKED_SOFTMAX", "specifies")
