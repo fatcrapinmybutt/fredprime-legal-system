@@ -1,0 +1,868 @@
+v2026-01-25.2
+$ErrorActionPreference="Stop"
+Set-Location -Path $PSScriptRoot
+$container="litigationos_dev"
+
+if (Test-Path ".\START_LITIGATIONOS_DEV.cmd") {
+  $names = docker ps --format "{{.Names}}"
+  if ($names -notmatch $container) {
+    Write-Host "[INFO] Container '$container' not running. Attempting to start stack..."
+    & ".\START_LITIGATIONOS_DEV.cmd"
+  }
+}
+
+$names = docker ps --format "{{.Names}}"
+if ($names -notmatch $container) {
+  Write-Host "[ERROR] Container '$container' not running. Start it, then rerun."
+  exit 1
+}
+
+Write-Host "[RUN] Executing hypervisor runner in $container ..."
+docker exec -it $container bash -lc "python3 tools/explode_hypervisor.py --cmd-file EXPLODE_SUPERPIN.command.txt --workspace /workspace"
+@echo off
+setlocal enableextensions enabledelayedexpansion
+cd /d "%~dp0"
+
+set CONTAINER=litigationos_dev
+
+REM If a start script exists in this folder, attempt to start the dev stack automatically.
+if not "%1"=="/nostart" (
+  if exist START_LITIGATIONOS_DEV.cmd (
+    docker ps --format "{{.Names}}" | findstr /i "%CONTAINER%" >nul
+    if errorlevel 1 (
+      echo [INFO] Container "%CONTAINER%" not running. Attempting to start stack...
+      call START_LITIGATIONOS_DEV.cmd
+    )
+  )
+)
+
+docker ps --format "{{.Names}}" | findstr /i "%CONTAINER%" >nul
+if errorlevel 1 (
+  echo [ERROR] Container "%CONTAINER%" not running.
+  echo         Start it (or place START_LITIGATIONOS_DEV.cmd next to this file), then run again.
+  exit /b 1
+)
+
+echo [RUN] Executing hypervisor runner in %CONTAINER% ...
+docker exec -it %CONTAINER% bash -lc "python3 tools/explode_hypervisor.py --cmd-file EXPLODE_SUPERPIN.command.txt --workspace /workspace"
+exit /b %ERRORLEVEL%
+# EXPLODE_SUPERPIN Hypervisor Runner — Addon Pack (v2026-01-25.2)
+
+This pack makes your one-liner command executable (deterministic chained cycles) inside the LitigationOS dev container.
+
+## What you get
+
+- `tools/explode_hypervisor.py` — hypervisor runner (append-only + resume)
+- `schemas/invocation.v1.json` — invocation schema
+- `EXPLODE_SUPERPIN.command.txt` — your command (edit params here)
+- `RUN_EXPLODE_HYPERVISOR.cmd` / `.ps1` — one-click run inside the running dev container
+- `README.md` — this file
+
+## Key fixes vs your draft
+
+- **Append-only truly enforced**: resumes from `state/state.json`; never overwrites existing cycles.
+- **Neo4j Cypher import fixed**: all nodes have `id`, edges match by `id`, relationships are real types (`CONTAINS`, `IS_KIND`, `HAS_TERM`) without APOC.
+- **Deterministic run multiplexing**: optional `RUN_SALT=` parameter yields a different `run_id` without changing the command semantics.
+- **Safer counter/delta logic**: `stable_hits` resets on non-converged cycles; convergence gate is stable.
+
+## Run paths (inside container)
+
+- Runs: `/workspace/_runs/explode/run_<uuid>/`
+- Per-cycle: `/workspace/_runs/explode/run_<uuid>/cycles/cycle_0001/ ...`
+- Ledger: `/workspace/_runs/explode/run_<uuid>/run_ledger.jsonl`
+- Zip output: `/workspace/_runs/explode/run_<uuid>.zip` (if `OUT` includes `ZIP`)
+
+## Unbounded runs
+
+Your command uses `MAX_CYCLES=0` (unbounded). The runner honors this, but applies a safety ceiling:
+
+- `EXPLODE_HARD_MAX_CYCLES` (default: `500`)
+
+Disable ceiling (not recommended unless convergence is guaranteed):
+
+```bash
+export EXPLODE_HARD_MAX_CYCLES=0
+```
+MIT License
+
+Copyright (c) 2026
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+#!/usr/bin/env python3
+"""
+EXPLODE_SUPERPIN Hypervisor Runner — deterministic chained-cycle executor
+
+Command grammar:
+  TOKEN:SCOPE@TAG@TAG?K=V&K=V
+
+Key invariants:
+- Deterministic: stable ordering, stable IDs, deterministic run_id.
+- Append-only: never overwrites prior cycle outputs; supports resume.
+- Fail-closed: STRICT=true enforces safe defaults and blocks ambiguous states.
+- Offline-by-default: no network required.
+
+Cycle outputs (by default):
+- inventory.(json|csv)
+- graph.nodes.(json|csv)   (Workspace + Artifacts + Kind + Term)
+- graph.edges.(json|csv)   (CONTAINS, IS_KIND, HAS_TERM)
+- import.neo4j.cypher      (LOAD CSV import, no APOC required)
+- delta_summary.md
+- manifest.(json|csv)
+
+Run outputs:
+- invocation.json
+- config.run.json / config.stop.json
+- state/state.json         (carryforward + resume)
+- run_ledger.jsonl
+- stratum_metrics.json
+- VRpt.md
+- run_<uuid>.zip           (optional)
+
+Usage:
+  python3 tools/explode_hypervisor.py --cmd "EXPLODE_SUPERPIN:HYPERVISOR@GOVERN?... "
+  python3 tools/explode_hypervisor.py --cmd-file EXPLODE_SUPERPIN.command.txt
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import os
+import re
+import time
+import uuid
+import zlib
+from dataclasses import dataclass, asdict
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Tuple, Optional
+
+# TOKEN:SCOPE@TAG@TAG?K=V&K=V
+CMD_RE = re.compile(
+    r"^(?P<token>[A-Z0-9_]+)"
+    r"(:(?P<scope>[A-Z0-9_]+))?"
+    r"(?P<tags>(@[A-Z0-9_]+)*)?"
+    r"(?:\?(?P<qs>.*))?$"
+)
+
+DENY_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+def safe_int(v: Any, default: int) -> int:
+    try:
+        return int(str(v).strip())
+    except Exception:
+        return default
+
+def safe_float(v: Any, default: float) -> float:
+    try:
+        return float(str(v).strip())
+    except Exception:
+        return default
+
+def safe_bool(v: Any, default: bool) -> bool:
+    if v is None:
+        return default
+    s = str(v).strip().lower()
+    if s in ("1", "true", "yes", "y", "on"):
+        return True
+    if s in ("0", "false", "no", "n", "off"):
+        return False
+    return default
+
+def parse_qs(qs: str) -> Dict[str, str]:
+    out: Dict[str, str] = {}
+    if not qs:
+        return out
+    for part in qs.split("&"):
+        if not part:
+            continue
+        if "=" in part:
+            k, v = part.split("=", 1)
+        else:
+            k, v = part, "true"
+        out[k] = v
+    return out
+
+@dataclass(frozen=True)
+class Invocation:
+    token: str
+    scope: str
+    tags: List[str]
+    params: Dict[str, Any]
+    raw: str
+    parsed_at: str
+    schema_version: str = "invocation.v1"
+
+def parse_command(raw: str) -> Invocation:
+    raw = raw.strip()
+    m = CMD_RE.match(raw)
+    if not m:
+        raise ValueError(f"Command does not match TOKEN:SCOPE@TAG?K=V grammar: {raw}")
+    token = m.group("token")
+    scope = m.group("scope") or ""
+    tags_raw = m.group("tags") or ""
+    tags = [t for t in tags_raw.split("@") if t]
+    qs = m.group("qs") or ""
+    params = parse_qs(qs)
+    return Invocation(
+        token=token,
+        scope=scope,
+        tags=tags,
+        params=params,
+        raw=raw,
+        parsed_at=utc_now_iso(),
+    )
+
+@dataclass
+class StopConfig:
+    stop: str
+    eps: float
+    stable_n: int
+    max_cycles: int  # 0 = unbounded
+    hard_max_cycles: int  # safety ceiling if stop never triggers
+
+@dataclass
+class RunConfig:
+    schema: str
+    schema_first: bool
+    strict: bool
+    fail_closed: bool
+    append_only: bool
+    tranche: str
+    iter_mode: str
+    learn_mode: str
+    refine: str
+    backpressure: str
+    window: str
+    delta_keys: List[str]
+    emit: List[str]
+    out: List[str]
+    torus: str
+    shard: str
+    run_salt: str
+
+@dataclass
+class CycleMetrics:
+    cycle: int
+    started_at: str
+    ended_at: str
+    duration_sec: float
+    counts: Dict[str, int]
+    delta: Dict[str, float]
+    converged: bool
+    stable_hits: int
+    notes: List[str]
+
+def ensure_dir(p: Path) -> None:
+    p.mkdir(parents=True, exist_ok=True)
+
+def crc32_sid(s: str) -> str:
+    # fast stable ID derived from path+size fingerprint; NOT chain-of-custody hashing
+    c = zlib.crc32(s.encode("utf-8")) & 0xFFFFFFFF
+    return f"sid_{c:08x}"
+
+def list_workspace_files(root: Path, max_files: int = 25000) -> List[Path]:
+    out: List[Path] = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted([d for d in dirnames if d not in DENY_DIRS])
+        filenames = sorted([f for f in filenames if f not in (".DS_Store",)])
+        for fn in filenames:
+            out.append(Path(dirpath) / fn)
+            if len(out) >= max_files:
+                return out
+    return out
+
+def classify_artifact(path: Path) -> str:
+    ext = path.suffix.lower()
+    if ext in (".pdf", ".doc", ".docx", ".txt", ".md", ".rtf", ".html", ".htm"):
+        return "document"
+    if ext in (".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"):
+        return "image"
+    if ext in (".mp3", ".wav", ".m4a", ".mp4", ".mov", ".mkv"):
+        return "audio_video"
+    if ext in (".json", ".csv", ".yaml", ".yml", ".xml"):
+        return "data"
+    if ext in (".py", ".js", ".ts", ".tsx", ".jsx", ".ps1", ".cmd", ".bat", ".sh", ".go", ".rs", ".java"):
+        return "code"
+    return "other"
+
+def build_inventory(root: Path) -> Tuple[List[Dict[str, Any]], Dict[str, int], List[str]]:
+    files = list_workspace_files(root)
+    rows: List[Dict[str, Any]] = []
+    counts = {"files": 0, "documents": 0, "images": 0, "audio_video": 0, "data": 0, "code": 0, "other": 0}
+    terms: Dict[str, int] = {}
+
+    for p in files:
+        try:
+            rel = p.relative_to(root).as_posix()
+        except Exception:
+            rel = str(p)
+        try:
+            size = int(p.stat().st_size)
+        except Exception:
+            size = -1
+
+        kind = classify_artifact(p)
+        counts["files"] += 1
+        if kind == "document":
+            counts["documents"] += 1
+        elif kind == "image":
+            counts["images"] += 1
+        elif kind == "audio_video":
+            counts["audio_video"] += 1
+        elif kind == "data":
+            counts["data"] += 1
+        elif kind == "code":
+            counts["code"] += 1
+        else:
+            counts["other"] += 1
+
+        sid = crc32_sid(f"{rel}|{size}")
+        rows.append({
+            "stable_id": sid,
+            "relpath": rel,
+            "size_bytes": size,
+            "kind": kind,
+        })
+
+        # lightweight term extraction from filename
+        base = Path(rel).name
+        for t in re.split(r"[^A-Za-z0-9]+", base):
+            t = t.lower().strip()
+            if len(t) < 3:
+                continue
+            terms[t] = terms.get(t, 0) + 1
+
+    top_terms = [k for k, _ in sorted(terms.items(), key=lambda kv: (-kv[1], kv[0]))[:500]]
+    return rows, {k: int(v) for k, v in counts.items()}, top_terms
+
+def torus_xy(node_id: str, torus: str) -> Tuple[int, int, int, int]:
+    m = re.match(r"^(?P<w>\d+)x(?P<h>\d+)$", torus.strip())
+    if not m:
+        return (0, 0, 0, 0)
+    w = int(m.group("w"))
+    h = int(m.group("h"))
+    c = zlib.crc32(node_id.encode("utf-8")) & 0xFFFFFFFF
+    x = c % w
+    y = (c // w) % h
+    return x, y, w, h
+
+def write_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: List[str]) -> None:
+    ensure_dir(path.parent)
+    with path.open("w", encoding="utf-8", newline="") as f:
+        wr = csv.DictWriter(f, fieldnames=fieldnames)
+        wr.writeheader()
+        for r in rows:
+            wr.writerow({k: r.get(k, "") for k in fieldnames})
+
+def write_json(path: Path, obj: Any) -> None:
+    ensure_dir(path.parent)
+    path.write_text(json.dumps(obj, indent=2, sort_keys=True), encoding="utf-8", newline="\n")
+
+def write_md(path: Path, text: str) -> None:
+    ensure_dir(path.parent)
+    path.write_text(text, encoding="utf-8", newline="\n")
+
+def compute_delta(prev_counts: Dict[str, int], cur_counts: Dict[str, int], keys: List[str]) -> Dict[str, float]:
+    mapping = {
+        "nodes": "nodes",
+        "edges": "edges",
+        "terms": "terms",
+        "artifacts": "files",
+        "files": "files",
+        "documents": "documents",
+    }
+    out: Dict[str, float] = {}
+    for k in keys:
+        ck = mapping.get(k, k)
+        prev = float(prev_counts.get(ck, 0))
+        cur = float(cur_counts.get(ck, 0))
+        denom = max(prev, 1.0)
+        out[k] = abs(cur - prev) / denom
+    return out
+
+def is_converged(delta: Dict[str, float], eps: float) -> bool:
+    return all(v <= eps for v in delta.values()) if delta else False
+
+def emit_vrpt(inv: Invocation, run_cfg: RunConfig, stop_cfg: StopConfig, final: CycleMetrics) -> str:
+    lines: List[str] = []
+    lines.append("# Validation Report (VRpt)")
+    lines.append("")
+    lines.append("## Invocation")
+    lines.append("```text")
+    lines.append(inv.raw)
+    lines.append("```")
+    lines.append("")
+    lines.append("## Policy flags")
+    lines.append(f"- strict: `{run_cfg.strict}`")
+    lines.append(f"- fail_closed: `{run_cfg.fail_closed}`")
+    lines.append(f"- append_only: `{run_cfg.append_only}`")
+    lines.append(f"- schema_first: `{run_cfg.schema_first}` (schema `{run_cfg.schema}`)")
+    lines.append("")
+    lines.append("## Stop condition")
+    lines.append(f"- STOP: `{stop_cfg.stop}`")
+    lines.append(f"- EPS: `{stop_cfg.eps}`")
+    lines.append(f"- STABLE_N: `{stop_cfg.stable_n}`")
+    lines.append(f"- MAX_CYCLES: `{stop_cfg.max_cycles}` (0 means unbounded)")
+    lines.append(f"- HARD_MAX_CYCLES: `{stop_cfg.hard_max_cycles}`")
+    lines.append("")
+    lines.append("## Final status")
+    lines.append(f"- cycles_run: `{final.cycle}`")
+    lines.append(f"- converged: `{final.converged}`")
+    lines.append(f"- stable_hits: `{final.stable_hits}`")
+    lines.append(f"- last_delta: `{json.dumps(final.delta, sort_keys=True)}`")
+    lines.append("")
+    lines.append("## Notes")
+    lines.append("- Deterministic, offline-by-default cycle runner.")
+    lines.append("- Emits CSV/Cypher suitable for Neo4j LOAD CSV workflows (no APOC required).")
+    return "\n".join(lines)
+
+def default_config_from_inv(inv: Invocation) -> Tuple[RunConfig, StopConfig]:
+    p = inv.params
+
+    run_cfg = RunConfig(
+        schema=str(p.get("SCHEMA", "invocation.v1")),
+        schema_first=safe_bool(p.get("SCHEMA_FIRST", "true"), True),
+        strict=safe_bool(p.get("STRICT", "true"), True),
+        fail_closed=safe_bool(p.get("FAIL_CLOSED", "true"), True),
+        append_only=safe_bool(p.get("APPEND_ONLY", "true"), True),
+        tranche=str(p.get("TRANCHE", "auto")),
+        iter_mode=str(p.get("ITER", "auto")),
+        learn_mode=str(p.get("LEARN_MODE", "carryforward")),
+        refine=str(p.get("REFINE", "expand+compress")),
+        backpressure=str(p.get("BACKPRESSURE", "adaptive")),
+        window=str(p.get("WINDOW", "bloom")),
+        delta_keys=str(p.get("DELTA_KEYS", "nodes+edges+terms+artifacts")).split("+"),
+        emit=str(p.get("EMIT", "RunLedger+Manifest+DeltaSummary+StratumMetrics+VRpt")).split("+"),
+        out=str(p.get("OUT", "ZIP+MD+JSON+CSV+CYPHER")).split("+"),
+        torus=str(p.get("TORUS", "64x64")),
+        shard=str(p.get("SHARD", "stable_id")),
+        run_salt=str(p.get("RUN_SALT", "")),
+    )
+
+    stop_cfg = StopConfig(
+        stop=str(p.get("STOP", "CONVERGENCE")),
+        eps=safe_float(p.get("EPS", 0.0005), 0.0005),
+        stable_n=safe_int(p.get("STABLE_N", 3), 3),
+        max_cycles=safe_int(p.get("MAX_CYCLES", 0), 0),
+        hard_max_cycles=safe_int(os.environ.get("EXPLODE_HARD_MAX_CYCLES", "500"), 500),
+    )
+    return run_cfg, stop_cfg
+
+def strict_guard(inv: Invocation, run_cfg: RunConfig, stop_cfg: StopConfig) -> List[str]:
+    notes: List[str] = []
+    if run_cfg.strict:
+        if not inv.scope:
+            raise ValueError("STRICT=true requires an explicit SCOPE after ':' (e.g., HYPERVISOR)")
+        if stop_cfg.stop.upper() not in ("CONVERGENCE", "MAX_CYCLES"):
+            raise ValueError(f"Unsupported STOP={stop_cfg.stop} (supported: CONVERGENCE, MAX_CYCLES)")
+        if stop_cfg.max_cycles < 0:
+            raise ValueError("MAX_CYCLES must be >= 0")
+        if stop_cfg.eps <= 0:
+            raise ValueError("EPS must be > 0")
+        if stop_cfg.stable_n < 1:
+            raise ValueError("STABLE_N must be >= 1")
+        if run_cfg.learn_mode not in ("carryforward",):
+            raise ValueError("Only LEARN_MODE=carryforward is supported in invocation.v1")
+        if run_cfg.refine not in ("expand+compress", "expand", "compress"):
+            raise ValueError("REFINE must be one of: expand+compress, expand, compress")
+        if run_cfg.append_only is not True:
+            raise ValueError("APPEND_ONLY must be true under STRICT mode")
+
+    # Unbounded runs are allowed but capped by HARD_MAX_CYCLES unless explicitly disabled
+    if stop_cfg.max_cycles == 0 and stop_cfg.hard_max_cycles > 0:
+        notes.append(f"MAX_CYCLES=0 interpreted as unbounded, but HARD_MAX_CYCLES={stop_cfg.hard_max_cycles} safety ceiling applies.")
+    return notes
+
+def load_state(state_path: Path) -> Dict[str, Any]:
+    if state_path.exists():
+        return json.loads(state_path.read_text(encoding="utf-8"))
+    return {"version": 1, "created_at": utc_now_iso(), "last_cycle": 0, "stable_hits": 0, "last_counts": {}, "last_delta": {}}
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="EXPLODE_SUPERPIN Hypervisor Runner")
+    ap.add_argument("--cmd", default="", help="Raw one-liner command")
+    ap.add_argument("--cmd-file", default="", help="Path to file containing one-liner command")
+    ap.add_argument("--workspace", default="/workspace", help="Workspace root")
+    ap.add_argument("--out-root", default="", help="Override output root (default: /workspace/_runs/explode)")
+    args = ap.parse_args()
+
+    raw = args.cmd.strip()
+    if not raw and args.cmd_file:
+        raw = Path(args.cmd_file).read_text(encoding="utf-8").strip()
+    if not raw:
+        raise SystemExit("No command provided. Use --cmd or --cmd-file.")
+
+    inv = parse_command(raw)
+    run_cfg, stop_cfg = default_config_from_inv(inv)
+    notes = strict_guard(inv, run_cfg, stop_cfg)
+
+    ws = Path(args.workspace).resolve()
+    out_root = Path(args.out_root).resolve() if args.out_root else (ws / "_runs" / "explode")
+    ensure_dir(out_root)
+
+    # Deterministic run_id: UUIDv5 from invocation + workspace + optional salt
+    run_ns = uuid.UUID("12345678-1234-5678-1234-567812345678")
+    run_id = str(uuid.uuid5(run_ns, f"{inv.raw}|{ws.as_posix()}|{run_cfg.run_salt}"))
+    run_dir = out_root / f"run_{run_id}"
+    ensure_dir(run_dir)
+
+    # Persist invocation/config
+    write_json(run_dir / "invocation.json", asdict(inv))
+    write_json(run_dir / "config.run.json", asdict(run_cfg))
+    write_json(run_dir / "config.stop.json", asdict(stop_cfg))
+
+    ledger_path = run_dir / "run_ledger.jsonl"
+    if not (run_cfg.append_only and ledger_path.exists()):
+        ledger_path.write_text("", encoding="utf-8", newline="\n")
+
+    # Resumeable state
+    state_dir = run_dir / "state"
+    ensure_dir(state_dir)
+    state_path = state_dir / "state.json"
+    state = load_state(state_path)
+    # Merge initial notes
+    state.setdefault("notes", [])
+    if notes and (notes not in state["notes"]):
+        for n in notes:
+            if n not in state["notes"]:
+                state["notes"].append(n)
+
+    last_cycle = int(state.get("last_cycle", 0) or 0)
+    stable_hits = int(state.get("stable_hits", 0) or 0)
+    prev_counts: Dict[str, int] = state.get("last_counts", {}) or {"nodes": 0, "edges": 0, "terms": 0, "files": 0, "documents": 0}
+
+    cycle = last_cycle
+    while True:
+        cycle += 1
+        started_ts = time.time()
+        started_at = utc_now_iso()
+
+        cycle_dir = run_dir / "cycles" / f"cycle_{cycle:04d}"
+        # Append-only guarantee: refuse to overwrite an existing cycle directory
+        if run_cfg.append_only and cycle_dir.exists():
+            raise SystemExit(f"Append-only violation: {cycle_dir} already exists. (Run salt or change command.)")
+        ensure_dir(cycle_dir)
+
+        cycle_notes: List[str] = []
+        if cycle == 1 and notes:
+            cycle_notes.extend(notes)
+
+        # ===== EXPAND (deterministic) =====
+        inv_rows, inv_counts, top_terms = build_inventory(ws)
+
+        # Nodes
+        nodes: List[Dict[str, Any]] = []
+        edges: List[Dict[str, Any]] = []
+
+        # Workspace root node (id fixed)
+        nodes.append({"id": "workspace_root", "label": "workspace_root", "kind": "workspace"})
+
+        # Kind bucket nodes
+        kinds = sorted({r["kind"] for r in inv_rows})
+        for k in kinds:
+            nodes.append({"id": f"kind_{k}", "label": k, "kind": "kind"})
+
+        # Artifact nodes + edges
+        for r in sorted(inv_rows, key=lambda x: (x["stable_id"], x["relpath"])):
+            nid = r["stable_id"]
+            nodes.append({"id": nid, "label": r["relpath"], "kind": r["kind"], "size_bytes": r["size_bytes"]})
+            edges.append({"src": "workspace_root", "dst": nid, "type": "CONTAINS"})
+            edges.append({"src": nid, "dst": f"kind_{r['kind']}", "type": "IS_KIND"})
+
+        # Term nodes (top N)
+        term_nodes: List[Dict[str, Any]] = []
+        for t in top_terms[:200]:
+            tid = crc32_sid(f"term|{t}")
+            term_nodes.append({"id": tid, "label": t, "kind": "term"})
+        nodes.extend(term_nodes)
+
+        # Connect term to artifact if substring appears in filename
+        term_lookup = [(tn["label"], tn["id"]) for tn in sorted(term_nodes, key=lambda x: x["label"])]
+        for r in sorted(inv_rows, key=lambda x: x["stable_id"]):
+            fname = Path(r["relpath"]).name.lower()
+            for t, tid in term_lookup:
+                if t in fname:
+                    edges.append({"src": r["stable_id"], "dst": tid, "type": "HAS_TERM"})
+
+        counts = {
+            "nodes": len(nodes),
+            "edges": len(edges),
+            "terms": len(term_nodes),
+            "files": inv_counts.get("files", 0),
+            "documents": inv_counts.get("documents", 0),
+        }
+
+        # Torus placement for visualization seeds
+        torus_rows = []
+        for n in nodes:
+            x, y, w, h = torus_xy(str(n["id"]), run_cfg.torus)
+            torus_rows.append({"id": n["id"], "x": x, "y": y, "torus_w": w, "torus_h": h})
+
+        # ===== COMPRESS (distill/backpressure) =====
+        if run_cfg.backpressure == "adaptive" and len(edges) > 250000:
+            cycle_notes.append(f"Backpressure: edges={len(edges)} pruned to 250000 for stability.")
+            edges = edges[:250000]
+            counts["edges"] = len(edges)
+
+        # ===== EMIT =====
+        manifest = {
+            "run_id": run_id,
+            "cycle": cycle,
+            "created_at": utc_now_iso(),
+            "counts": counts,
+            "outputs": [],
+        }
+
+        if "JSON" in run_cfg.out:
+            write_json(cycle_dir / "inventory.json", inv_rows)
+            write_json(cycle_dir / "graph.nodes.json", nodes)
+            write_json(cycle_dir / "graph.edges.json", edges)
+            write_json(cycle_dir / "terms.top.json", top_terms[:500])
+            write_json(cycle_dir / "bloom.torus.json", {"torus": run_cfg.torus, "window": run_cfg.window})
+            manifest["outputs"].extend(["inventory.json","graph.nodes.json","graph.edges.json","terms.top.json","bloom.torus.json"])
+
+        if "CSV" in run_cfg.out:
+            write_csv(cycle_dir / "inventory.csv", inv_rows, ["stable_id","relpath","size_bytes","kind"])
+            node_fields = sorted({k for n in nodes for k in n.keys()})
+            write_csv(cycle_dir / "graph.nodes.csv", nodes, node_fields)
+            write_csv(cycle_dir / "graph.edges.csv", edges, ["src","dst","type"])
+            write_csv(cycle_dir / "bloom.torus_positions.csv", torus_rows, ["id","x","y","torus_w","torus_h"])
+            manifest["outputs"].extend(["inventory.csv","graph.nodes.csv","graph.edges.csv","bloom.torus_positions.csv"])
+
+        if "CYPHER" in run_cfg.out:
+            cypher = "\n".join([
+                "// Neo4j import template (LOAD CSV) — no APOC required",
+                "// Copy *.csv into Neo4j import directory, then run this file in Neo4j Browser.",
+                "",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Workspace) REQUIRE n.id IS UNIQUE;",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Artifact)  REQUIRE n.id IS UNIQUE;",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Kind)      REQUIRE n.id IS UNIQUE;",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Term)      REQUIRE n.id IS UNIQUE;",
+                "",
+                "// Nodes",
+                "LOAD CSV WITH HEADERS FROM 'file:///graph.nodes.csv' AS row",
+                "WITH row, coalesce(row.kind,'other') AS k",
+                "CALL {",
+                "  WITH row,k",
+                "  FOREACH (_ IN CASE WHEN k='workspace' THEN [1] ELSE [] END |",
+                "    MERGE (:Workspace {id: row.id})",
+                "    SET  _.name = row.label",
+                "  )",
+                "  FOREACH (_ IN CASE WHEN k='kind' THEN [1] ELSE [] END |",
+                "    MERGE (:Kind {id: row.id})",
+                "    SET  _.name = row.label",
+                "  )",
+                "  FOREACH (_ IN CASE WHEN k='term' THEN [1] ELSE [] END |",
+                "    MERGE (:Term {id: row.id})",
+                "    SET  _.value = row.label",
+                "  )",
+                "  FOREACH (_ IN CASE WHEN k<>'workspace' AND k<>'kind' AND k<>'term' THEN [1] ELSE [] END |",
+                "    MERGE (:Artifact {id: row.id})",
+                "    SET  _.label=row.label, _.kind=row.kind, _.size_bytes=toInteger(coalesce(row.size_bytes,'0'))",
+                "  )",
+                "} IN TRANSACTIONS OF 10000 ROWS;",
+                "",
+                "// Relationships",
+                "LOAD CSV WITH HEADERS FROM 'file:///graph.edges.csv' AS row",
+                "WITH row",
+                "MATCH (s {id: row.src})",
+                "MATCH (t {id: row.dst})",
+                "CALL {",
+                "  WITH s,t,row",
+                "  FOREACH (_ IN CASE WHEN row.type='CONTAINS' THEN [1] ELSE [] END | MERGE (s)-[:CONTAINS]->(t))",
+                "  FOREACH (_ IN CASE WHEN row.type='IS_KIND'  THEN [1] ELSE [] END | MERGE (s)-[:IS_KIND]->(t))",
+                "  FOREACH (_ IN CASE WHEN row.type='HAS_TERM' THEN [1] ELSE [] END | MERGE (s)-[:HAS_TERM]->(t))",
+                "} IN TRANSACTIONS OF 50000 ROWS;",
+            ])
+            write_md(cycle_dir / "import.neo4j.cypher", cypher)
+            manifest["outputs"].append("import.neo4j.cypher")
+
+        write_json(cycle_dir / "manifest.json", manifest)
+
+        if "CSV" in run_cfg.out:
+            flat = [{"key": k, "value": json.dumps(v) if not isinstance(v, (str, int, float, bool)) else v} for k, v in manifest.items()]
+            write_csv(cycle_dir / "manifest.csv", flat, ["key", "value"])
+            manifest["outputs"].append("manifest.csv")
+
+        # Delta + convergence
+        delta = compute_delta(prev_counts, counts, run_cfg.delta_keys)
+        converged = is_converged(delta, stop_cfg.eps)
+        stable_hits = stable_hits + 1 if converged else 0
+
+        ended_at = utc_now_iso()
+        duration_sec = round(time.time() - started_ts, 6)
+
+        cm = CycleMetrics(
+            cycle=cycle,
+            started_at=started_at,
+            ended_at=ended_at,
+            duration_sec=duration_sec,
+            counts=counts,
+            delta=delta,
+            converged=converged,
+            stable_hits=stable_hits,
+            notes=cycle_notes,
+        )
+
+        # Append ledger
+        with ledger_path.open("a", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps(asdict(cm), sort_keys=True) + "\n")
+
+        # DeltaSummary MD
+        if "MD" in run_cfg.out:
+            md = []
+            md.append(f"# Cycle {cycle:04d} — DeltaSummary")
+            md.append("")
+            md.append(f"- started_at: `{started_at}`")
+            md.append(f"- ended_at: `{ended_at}`")
+            md.append(f"- duration_sec: `{duration_sec}`")
+            md.append("")
+            md.append("## Counts")
+            for k in sorted(counts.keys()):
+                md.append(f"- {k}: `{counts[k]}`")
+            md.append("")
+            md.append("## Delta")
+            for k in sorted(delta.keys()):
+                md.append(f"- {k}: `{delta[k]:.8f}`")
+            md.append("")
+            md.append("## Convergence")
+            md.append(f"- eps: `{stop_cfg.eps}`")
+            md.append(f"- converged_this_cycle: `{converged}`")
+            md.append(f"- stable_hits: `{stable_hits}` / `{stop_cfg.stable_n}`")
+            if cycle_notes:
+                md.append("")
+                md.append("## Notes")
+                for n in cycle_notes:
+                    md.append(f"- {n}")
+            write_md(cycle_dir / "delta_summary.md", "\n".join(md))
+
+        # Carryforward state
+        state["last_cycle"] = cycle
+        state["stable_hits"] = stable_hits
+        state["last_counts"] = counts
+        state["last_delta"] = delta
+        state["updated_at"] = utc_now_iso()
+        write_json(state_path, state)
+
+        # Stop checks
+        if stop_cfg.max_cycles > 0 and cycle >= stop_cfg.max_cycles:
+            break
+        if stop_cfg.stop.upper() == "CONVERGENCE" and stable_hits >= stop_cfg.stable_n:
+            break
+        if stop_cfg.hard_max_cycles > 0 and cycle >= stop_cfg.hard_max_cycles:
+            break
+
+        prev_counts = counts
+
+    # Run-level metrics
+    write_json(run_dir / "stratum_metrics.json", {
+        "run_id": run_id,
+        "cycles_run": cycle,
+        "final_counts": state.get("last_counts", {}),
+        "final_delta": state.get("last_delta", {}),
+        "converged": bool(converged),
+        "stable_hits": stable_hits,
+        "updated_at": utc_now_iso(),
+    })
+
+    write_md(run_dir / "VRpt.md", emit_vrpt(inv, run_cfg, stop_cfg, cm))
+
+    # Zip packaging
+    if "ZIP" in run_cfg.out:
+        import zipfile
+        out_zip = run_dir.parent / f"run_{run_id}.zip"
+        if out_zip.exists():
+            out_zip.unlink()
+        with zipfile.ZipFile(out_zip, "w", compression=zipfile.ZIP_DEFLATED) as z:
+            for dirpath, _, filenames in os.walk(run_dir):
+                for fn in sorted(filenames):
+                    full = Path(dirpath) / fn
+                    rel = full.relative_to(run_dir.parent).as_posix()
+                    z.write(full, rel)
+
+    print(f"[OK] run_id={run_id}")
+    print(f"[OK] run_dir={run_dir}")
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+{
+  "$id": "invocation.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "params": {
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "null"
+        ]
+      },
+      "description": "Key/value parameters declared after '?'.",
+      "type": "object"
+    },
+    "parsed_at": {
+      "description": "ISO timestamp in UTC.",
+      "type": "string"
+    },
+    "raw": {
+      "description": "Original raw command line.",
+      "type": "string"
+    },
+    "schema_version": {
+      "description": "Schema version id for forward compatibility.",
+      "type": "string"
+    },
+    "scope": {
+      "description": "Scope after ':' e.g., HYPERVISOR",
+      "minLength": 1,
+      "type": "string"
+    },
+    "tags": {
+      "description": "Tags declared with @TAG syntax in order.",
+      "items": {
+        "pattern": "^[A-Z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "token": {
+      "description": "Primary command token, e.g., EXPLODE_SUPERPIN",
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "token",
+    "scope",
+    "tags",
+    "params",
+    "raw",
+    "parsed_at"
+  ],
+  "title": "EXPLODE_SUPERPIN Invocation Schema v1",
+  "type": "object"
+}
