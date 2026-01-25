@@ -14,6 +14,7 @@ pre-commit install
 ### 2. Run Rulesets
 
 #### Automatically (on each commit)
+
 ```bash
 # Pre-commit hooks run automatically before each commit
 # To test all files:
@@ -21,11 +22,13 @@ pre-commit run --all-files
 ```
 
 #### Manually (anytime)
+
 ```bash
 bash scripts/enforce_rulesets.sh
 ```
 
 #### Strict Mode (fails on errors)
+
 ```bash
 ENFORCE_STRICT=1 bash scripts/enforce_rulesets.sh
 ```
