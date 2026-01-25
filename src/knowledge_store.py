@@ -1,8 +1,8 @@
 """Persistent store linking evidence, transcripts, and forms."""
 
+import hashlib
 import json
 import sqlite3
-import hashlib
 from pathlib import Path
 from typing import List
 
@@ -23,18 +23,15 @@ class KnowledgeStore:
 
     def _create_tables(self) -> None:
         cur = self.conn.cursor()
-        cur.execute(
-            """
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS evidence (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 path TEXT,
                 description TEXT,
                 hash TEXT
             )
-            """
-        )
-        cur.execute(
-            """
+            """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS transcripts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 path TEXT,
@@ -42,30 +39,25 @@ class KnowledgeStore:
                 date TEXT,
                 hash TEXT
             )
-            """
-        )
+            """)
         self._ensure_column(cur, "evidence", "hash", "TEXT")
         self._ensure_column(cur, "transcripts", "hash", "TEXT")
-        cur.execute(
-            """
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS links (
                 evidence_id INTEGER,
                 form_id TEXT,
                 note TEXT,
                 FOREIGN KEY(evidence_id) REFERENCES evidence(id)
             )
-            """
-        )
-        cur.execute(
-            """
+            """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS transcript_links (
                 transcript_id INTEGER,
                 form_id TEXT,
                 note TEXT,
                 FOREIGN KEY(transcript_id) REFERENCES transcripts(id)
             )
-            """
-        )
+            """)
         self.conn.commit()
 
     def add_evidence(self, path: Path, description: str = "", auto_link: bool = False) -> int:
