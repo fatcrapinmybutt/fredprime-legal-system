@@ -22,15 +22,20 @@ Be respectful, inclusive, and professional. Harassment or abuse will not be tole
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/fredprime-legal-system.git
    cd fredprime-legal-system
    ```
+
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/fatcrapinmybutt/fredprime-legal-system.git
    ```
+
 4. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -38,6 +43,7 @@ Be respectful, inclusive, and professional. Harassment or abuse will not be tole
 ## Development Setup
 
 ### Prerequisites
+
 - Python 3.10+
 - Git
 - pip or conda
@@ -169,18 +175,21 @@ Fixes #456
 ### Before Submitting
 
 1. **Update from upstream**:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
    ```
 
 2. **Run all checks**:
+
    ```bash
    make check
    make test-coverage
    ```
 
 3. **Ensure pre-commit passes**:
+
    ```bash
    pre-commit run --all-files
    ```
@@ -188,6 +197,7 @@ Fixes #456
 ### Submitting a PR
 
 1. **Push your branch**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -199,8 +209,10 @@ Fixes #456
    - Include any breaking changes
 
 3. **PR Template**:
+
    ```markdown
    ## Description
+
    Brief description of changes
 
    ## Type of Change

@@ -4,7 +4,8 @@ readme_content = """
 
 # 🧠 FRED PRIME Litigation Deployment System
 
-This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
+This repo enables **offline, token-free litigation automation** for the FRED PRIME system
+using PowerShell and a JSON-configurable engine.
 
 ---
 

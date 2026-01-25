@@ -11,11 +11,11 @@ Provides:
 
 import importlib
 import inspect
+import logging
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type, Protocol
-import logging
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 

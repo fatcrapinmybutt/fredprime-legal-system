@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrated from PyPDF2 to pypdf for better PDF handling
 - Upgraded dependencies to latest versions
 - Code formatted with Black for consistency
-- Formatting and documentation fixes: applied isort, black, ruff, and markdownlint across multiple files to resolve CI failures (See PR #113)
+- Formatting and documentation fixes: applied isort, black, ruff, and
+  markdownlint across multiple files to resolve CI failures (See PR #113)
 
 ### Fixed
 
@@ -56,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-01-14
 
 ### Added
+
 - Initial release of FRED Supreme Litigation OS
 - Core litigation automation framework
 - Document management and form generation
@@ -64,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full documentation
 
 ### Features
+
 - Automated legal document processing
 - Court form handling
 - Timeline and evidence management
@@ -77,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 When adding new entries:
 
 ### Format Sections
+
 - **Added** for new features
 - **Changed** for changes in existing functionality
 - **Deprecated** for soon-to-be removed features
@@ -85,6 +89,7 @@ When adding new entries:
 - **Security** for security fixes/improvements
 
 ### Guidelines
+
 1. Keep sections in order (Added, Changed, Deprecated, Removed, Fixed, Security)
 2. Include version numbers and dates
 3. Use links to compare versions
@@ -92,6 +97,7 @@ When adding new entries:
 5. Reference related issues/PRs
 
 ### Example Entry
+
 ```markdown
 ## [1.0.1] - 2026-01-20
 
@@ -106,6 +112,7 @@ When adding new entries:
 ```
 
 ### Release Process
+
 1. Update version in pyproject.toml
 2. Add [Unreleased] section
 3. Move changes from [Unreleased] to new version
