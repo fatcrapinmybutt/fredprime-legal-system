@@ -17,9 +17,10 @@ This guide covers advanced development topics and best practices for the FRED Su
 The FRED Supreme Litigation OS follows a modular architecture:
 
 ```
+
 fredprime-legal-system/
 ├── src/                    # Core library code
-│   ├── __init__.py
+│   ├── **init**.py
 │   └── litigation_cli.py
 ├── modules/                # Feature modules
 │   ├── affidavit_builder.py
@@ -31,6 +32,7 @@ fredprime-legal-system/
 ├── tests/                  # Test suite
 ├── docs/                   # Documentation
 └── config/                 # Configuration files
+
 ```
 
 ### Design Principles
@@ -47,17 +49,21 @@ fredprime-legal-system/
 ### Creating a New Module
 
 1. **Create module directory**:
+
    ```
+
    modules/my_feature/
-   ├── __init__.py
+   ├── **init**.py
    ├── core.py
    ├── utils.py
    ├── exceptions.py
    └── tests/
        └── test_core.py
+
    ```
 
 2. **Add module docstring** (core.py):
+
    ```python
    """My Feature Module
    
@@ -72,9 +78,11 @@ fredprime-legal-system/
    Exceptions:
        MyFeatureError: Custom exception
    """
+
    ```
 
 3. **Implement with type hints**:
+
    ```python
    from typing import Optional, List, Dict
    from dataclasses import dataclass
@@ -88,16 +96,18 @@ fredprime-legal-system/
    class MyFeature:
        """Main feature class."""
        
-       def __init__(self, config: FeatureConfig) -> None:
+       def **init**(self, config: FeatureConfig) -> None:
            """Initialize feature."""
            self.config = config
        
        def process(self, data: Dict[str, Any]) -> Optional[str]:
            """Process data."""
            pass
+
    ```
 
 4. **Add comprehensive tests**:
+
    ```python
    import pytest
    from modules.my_feature import MyFeature, FeatureConfig
@@ -110,14 +120,17 @@ fredprime-legal-system/
        def test_initialization(self, config):
            feature = MyFeature(config)
            assert feature.config == config
+
    ```
 
-5. **Update __init__.py**:
+5. **Update **init**.py**:
+
    ```python
    """My Feature Module"""
    from .core import MyFeature, FeatureConfig
    
-   __all__ = ["MyFeature", "FeatureConfig"]
+   **all** = ["MyFeature", "FeatureConfig"]
+
    ```
 
 ## Testing Strategy
@@ -125,16 +138,19 @@ fredprime-legal-system/
 ### Test Pyramid
 
 ```
+
         Unit Tests (70%)
       /                  \
     Integration Tests (20%)
     /                      \
    E2E Tests (10%)
+
 ```
 
 ### Test Organization
 
 ```
+
 tests/
 ├── unit/                      # Unit tests
 │   ├── test_module_a.py
@@ -145,11 +161,13 @@ tests/
 │   └── test_full_process.py
 └── fixtures/                  # Test data
     └── sample_documents/
+
 ```
 
 ### Writing Tests
 
 #### Unit Tests (Fast, Isolated)
+
 ```python
 import pytest
 from modules.core import process_document
@@ -164,9 +182,11 @@ def test_process_invalid_document():
     """Test processing invalid document."""
     with pytest.raises(ValueError):
         process_document(invalid_doc)
+
 ```
 
 #### Integration Tests (Medium Speed)
+
 ```python
 @pytest.mark.integration
 def test_document_pipeline():
@@ -175,9 +195,11 @@ def test_document_pipeline():
     manager = DocumentManager()
     result = manager.process_and_validate(doc)
     assert result.is_valid()
+
 ```
 
 #### E2E Tests (Slower)
+
 ```python
 @pytest.mark.slow
 def test_end_to_end_litigation_workflow():
@@ -189,11 +211,13 @@ def test_end_to_end_litigation_workflow():
     # Generate forms
     forms = case.generate_court_forms()
     assert len(forms) > 0
+
 ```
 
 ### Test Coverage
 
 ```bash
+
 # Generate coverage report
 make test-coverage
 
@@ -223,6 +247,7 @@ def profile_function():
     ps = pstats.Stats(pr)
     ps.sort_stats('cumulative')
     ps.print_stats(10)
+
 ```
 
 ### Benchmarking
@@ -240,11 +265,13 @@ print(f"Elapsed: {elapsed:.4f}s")
 time1 = timeit.timeit(approach1, number=1000)
 time2 = timeit.timeit(approach2, number=1000)
 print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
+
 ```
 
 ### Optimization Tips
 
 1. **Use generators for large datasets**:
+
    ```python
    # Bad: Loads all in memory
    documents = [load_document(f) for f in files]
@@ -253,22 +280,27 @@ print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
    def load_documents(files):
        for f in files:
            yield load_document(f)
+
    ```
 
 2. **Cache expensive operations**:
+
    ```python
    from functools import lru_cache
    
    @lru_cache(maxsize=128)
    def expensive_calculation(param):
        return result
+
    ```
 
 3. **Use type hints for better performance**:
+
    ```python
    # Type hints help Python optimize
    def process(data: List[Dict[str, str]]) -> int:
        pass
+
    ```
 
 ## Debugging and Profiling
@@ -278,11 +310,12 @@ print(f"Improvement: {(time1/time2 - 1) * 100:.1f}%")
 ```python
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(**name**)
 logger.debug("Debug message")
 
 # Enable debug
 logging.basicConfig(level=logging.DEBUG)
+
 ```
 
 ### Using pdb (Python Debugger)
@@ -294,11 +327,13 @@ def complex_function(data):
     pdb.set_trace()  # Breakpoint here
     result = do_something(data)
     return result
+
 ```
 
 ### Common Debugging Commands
 
 ```
+
 (Pdb) n         # Next line
 (Pdb) s         # Step into
 (Pdb) c         # Continue
@@ -306,6 +341,7 @@ def complex_function(data):
 (Pdb) p var     # Print variable
 (Pdb) pp dict   # Pretty print
 (Pdb) h         # Help
+
 ```
 
 ## Release Management
@@ -313,6 +349,7 @@ def complex_function(data):
 ### Version Numbering
 
 We use [Semantic Versioning](https://semver.org/):
+
 - MAJOR.MINOR.PATCH (e.g., 1.2.3)
 - MAJOR: Breaking changes
 - MINOR: New features (backward compatible)
@@ -321,37 +358,48 @@ We use [Semantic Versioning](https://semver.org/):
 ### Release Process
 
 1. **Update version**:
+
    ```bash
    # In pyproject.toml and setup.cfg
    version = "1.2.3"
+
    ```
 
 2. **Update CHANGELOG.md**:
+
    ```markdown
    ## [1.2.3] - 2026-01-20
    ### Added
+
    - New features
    ### Fixed
+
    - Bug fixes
    ```
 
 3. **Commit and tag**:
+
    ```bash
    git add .
    git commit -m "chore: release v1.2.3"
    git tag -a v1.2.3 -m "Release v1.2.3"
    git push origin main
    git push origin v1.2.3
+
    ```
 
 4. **Build distribution**:
+
    ```bash
    make build
+
    ```
 
 5. **Upload (if publishing)**:
+
    ```bash
    make upload  # Requires PyPI credentials
+
    ```
 
 ## Troubleshooting
@@ -394,8 +442,9 @@ We use [Semantic Versioning](https://semver.org/):
 ### Useful Commands
 
 ```bash
+
 # Check project structure
-tree -I '__pycache__|*.pyc|.git|venv' -L 2
+tree -I '**pycache**|*.pyc|.git|venv' -L 2
 
 # Find Python syntax errors
 python -m py_compile src/**/*.py
@@ -411,11 +460,13 @@ pipreqs . --force
 
 # Check for security issues
 bandit -r . -f json > security-report.json
+
 ```
 
 ---
 
 For more information, see:
+
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/OPEN_SOURCE_RULESETS.md](docs/OPEN_SOURCE_RULESETS.md)
 - Project README for quick start
