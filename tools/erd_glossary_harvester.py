@@ -1,3 +1,5 @@
+"""Harvest ERD/graph glossary artifacts into an appended blueprint package."""
+
 import argparse
 import csv
 import datetime as _dt
@@ -17,6 +19,7 @@ from typing import Dict, Iterator, List, Optional, Sequence, Tuple
 APP_NAME = "LITIGATIONOS_ERD_GLOSSARY_HARVESTER"
 APP_VERSION = "v2026-01-26.1"
 DEFAULT_ROOTS = ["C:", "E:", "H:", "J:", "F:"]
+DEFAULT_OUT_ROOT = Path.cwd() / "OUT_ERD_GLOSSARY_HARVEST"
 CANDIDATE_EXTS = {
     ".csv", ".tsv", ".psv",
     ".json", ".jsonl", ".ndjson",
@@ -944,7 +947,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     )
     p.add_argument("--max-files", type=int, default=0, help="Stop after indexing this many candidates (0 = no limit).")
     p.add_argument("--follow-symlinks", action="store_true", help="Follow symlinks in traversal.")
-    p.add_argument("--out-root", default=str(Path.cwd() / "OUT_ERD_GLOSSARY_HARVEST"), help="Output root folder.")
+    p.add_argument("--out-root", default=str(DEFAULT_OUT_ROOT), help="Output root folder.")
     p.add_argument("--blueprint", required=True, help="Existing blueprint pack path (.zip or folder). Script creates an appended copy.")
     p.add_argument("--seed-zip", nargs="*", default=[], help="Seed zip bundles to unpack into blueprint APPENDS/SEEDS/ (optional).")
     p.add_argument("--copy-mode", choices=["copy", "hardlink", "symlink"], default="copy", help="How to materialize uniques in blueprint.")
