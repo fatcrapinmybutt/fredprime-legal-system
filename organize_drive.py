@@ -712,6 +712,11 @@ def run_self_test() -> None:
         self_test=False,
         catalog_db=None,
         mermaid_path=None,
+        erd_path=None,
+        esd_path=None,
+        forensic_path=None,
+        stratus_path=None,
+        graph_output_dir=None,
         logs_dir=dst / "__LOGS",
     )
     state = RunState()
