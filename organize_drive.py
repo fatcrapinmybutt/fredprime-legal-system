@@ -28,6 +28,8 @@ class Config:
     compute_sha256: bool
     exclude_roots: list[Path]
     self_test: bool
+    self_test_runs: int
+    self_test_only: bool
     catalog_db: Path | None
     mermaid_path: Path | None
     erd_path: Path | None
@@ -92,8 +94,12 @@ def is_excluded(path: Path, exclude_roots: Iterable[Path]) -> bool:
     except OSError:
         resolved = path
     for root in exclude_roots:
-        if str(resolved).lower().startswith(str(root).lower()):
-            return True
+        try:
+            if resolved == root or root in resolved.parents:
+                return True
+        except RuntimeError:
+            if str(resolved).lower().startswith(str(root).lower()):
+                return True
     return False
 
 
@@ -135,7 +141,7 @@ def get_files_safe(
     root: Path, skip_reparse: bool, exclude_roots: Iterable[Path]
 ) -> Iterator[Path]:
     if is_excluded(root, exclude_roots):
-        return iter(())
+        return
     stack = [root]
     while stack:
         current = stack.pop()
@@ -230,13 +236,16 @@ def record_event(row: dict[str, object], state: RunState, catalog_db: Path | Non
 def generate_mermaid(path: Path, config: Config, state: RunState) -> None:
     contents = [
         "flowchart TD",
-        "  A[Harvest: Scan Files] --> B[Deduplicate]",
+        "  A[Harvest: Scan Files] --> B[Deduplicate + Hash]",
         "  B --> C[Bucket by Extension]",
         "  C --> D[Copy/Move]",
         "  D --> E[Index + Logs]",
         "  E --> F[Catalog (SQLite ACID)]",
-        f"  F --> G[Summary: copied={state.counts.copied} moved={state.counts.moved}]",
-        f"  G --> H[Destination: {config.dest_root.as_posix()}]",
+        "  E --> G[Duplicate Quarantine]",
+        f"  F --> H[Summary: copied={state.counts.copied} moved={state.counts.moved}]",
+        f"  H --> I[Destination: {config.dest_root.as_posix()}]",
+        f"  I --> J[Mode: {'MOVE' if config.move_mode else 'COPY'}]",
+        f"  J --> K[Dedupe: {config.dedupe_action if config.dedupe else 'OFF'}]",
     ]
     write_atomic(path, "\n".join(contents) + "\n")
 
@@ -245,12 +254,20 @@ def generate_erd_blueprint(path: Path) -> None:
     contents = [
         "erDiagram",
         "  RUN ||--o{ CATALOG_EVENT : records",
+        "  RUN ||--o{ EXT_BUCKET : aggregates",
+        "  RUN ||--o{ RUN_LOG : logs",
         "  RUN {",
         "    string time_utc",
         "    string dest_root",
         "    string logs_dir",
         "    string mode_react",
         "    string mode_reflexion",
+        "  }",
+        "  RUN_LOG {",
+        "    string time_utc",
+        "    string csv_log",
+        "    string jsonl_log",
+        "    string index_csv",
         "  }",
         "  CATALOG_EVENT {",
         "    string time_utc",
@@ -264,6 +281,12 @@ def generate_erd_blueprint(path: Path) -> None:
         "    string note",
         "    string error",
         "  }",
+        "  EXT_BUCKET {",
+        "    string ext_bucket",
+        "    int file_count",
+        "    int total_bytes",
+        "    string folder",
+        "  }",
     ]
     write_atomic(path, "\n".join(contents) + "\n")
 
@@ -271,7 +294,7 @@ def generate_erd_blueprint(path: Path) -> None:
 def generate_esd_blueprint(path: Path) -> None:
     contents = [
         "flowchart TD",
-        "  ROOT[ESD Blueprint: Unified Attachments]",
+        "  ROOT[ESD Blueprint: Unified Attachments + Evidence]",
         "  ROOT --> L0[Blueprint Stack]",
         "  ROOT --> ERD[Core ERD / Spine]",
         "  ROOT --> AUTH[Authority ERD]",
@@ -299,6 +322,9 @@ def generate_esd_blueprint(path: Path) -> None:
         "  INTEROP --> INT2[OpenLineageRun + OTEL Span/Metric]",
         "  INTEROP --> INT3[Provenance Entity/Relation]",
         "  INTEROP --> INT4[SLSA Provenance]",
+        "  INTEROP --> INT5[Catalog Events + Log Index]",
+        "  EVID --> EVID3[Duplicate Quarantine Store]",
+        "  EVID --> EVID4[Extension Buckets]",
     ]
     write_atomic(path, "\n".join(contents) + "\n")
 
@@ -368,6 +394,71 @@ def build_graph_payload(index_rows: list[dict[str, str]], config: Config) -> dic
         }
     )
 
+    logs_id = "run_logs"
+    nodes.append(
+        {
+            "data": {
+                "id": logs_id,
+                "label": "Logs + Index",
+                "type": "log",
+            }
+        }
+    )
+    edges.append(
+        {
+            "data": {
+                "id": f"edge::{root_id}::{logs_id}",
+                "source": root_id,
+                "target": logs_id,
+                "label": "emits",
+            }
+        }
+    )
+
+    if config.dedupe and config.dedupe_action == "Quarantine":
+        dup_id = "dup_quarantine"
+        nodes.append(
+            {
+                "data": {
+                    "id": dup_id,
+                    "label": "Duplicates Quarantine",
+                    "type": "duplicate",
+                }
+            }
+        )
+        edges.append(
+            {
+                "data": {
+                    "id": f"edge::{root_id}::{dup_id}",
+                    "source": root_id,
+                    "target": dup_id,
+                    "label": "quarantines",
+                }
+            }
+        )
+
+    if config.catalog_db:
+        catalog_id = "catalog_db"
+        nodes.append(
+            {
+                "data": {
+                    "id": catalog_id,
+                    "label": "SQLite Catalog",
+                    "type": "catalog",
+                }
+            }
+        )
+        edges.append(
+            {
+                "data": {
+                    "id": f"edge::{root_id}::{catalog_id}",
+                    "source": root_id,
+                    "target": catalog_id,
+                    "label": "records",
+                }
+            }
+        )
+
     for row in index_rows:
         ext_bucket = row.get("ext_bucket", "_unknown")
         node_id = f"ext::{ext_bucket}"
@@ -434,7 +525,10 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
         style: [
           {{ selector: "node", style: {{ "label": "data(label)", "background-color": "#4b8bbe", "color": "#111", "text-outline-width": 1, "text-outline-color": "#fff" }} }},
           {{ selector: "edge", style: {{ "width": 1.5, "line-color": "#999", "target-arrow-shape": "triangle", "target-arrow-color": "#999" }} }},
-          {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }}
+          {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }},
+          {{ selector: "node[type = 'log']", style: {{ "background-color": "#00b894", "shape": "diamond" }} }},
+          {{ selector: "node[type = 'duplicate']", style: {{ "background-color": "#fdcb6e", "shape": "hexagon" }} }},
+          {{ selector: "node[type = 'catalog']", style: {{ "background-color": "#e17055", "shape": "ellipse" }} }}
         ]
       }});
     </script>
@@ -710,6 +804,8 @@ def run_self_test() -> None:
         compute_sha256=True,
         exclude_roots=[],
         self_test=False,
+        self_test_runs=1,
+        self_test_only=False,
         catalog_db=None,
         mermaid_path=None,
         erd_path=None,
@@ -773,6 +869,17 @@ def parse_args() -> argparse.Namespace:
         help="Run self-test before processing sources",
     )
     parser.add_argument(
+        "--self-test-runs",
+        type=int,
+        default=1,
+        help="Number of self-test runs (default: 1)",
+    )
+    parser.add_argument(
+        "--self-test-only",
+        action="store_true",
+        help="Exit after completing self-test runs",
+    )
+    parser.add_argument(
         "--catalog-db",
         default=None,
         help="Optional SQLite catalog path (ACID)",
@@ -831,6 +938,8 @@ def build_config(args: argparse.Namespace) -> Config:
         compute_sha256=not args.no_sha256,
         exclude_roots=build_exclude_list(exclude_roots),
         self_test=args.self_test,
+        self_test_runs=args.self_test_runs,
+        self_test_only=args.self_test_only,
         catalog_db=Path(args.catalog_db).expanduser() if args.catalog_db else None,
         mermaid_path=Path(args.mermaid).expanduser() if args.mermaid else None,
         erd_path=Path(args.erd_blueprint).expanduser()
@@ -855,6 +964,8 @@ def build_config(args: argparse.Namespace) -> Config:
 def validate_config(config: Config) -> None:
     if config.dedupe_action not in {"Quarantine", "Skip", "KeepAll"}:
         raise ValueError("Invalid dedupe action")
+    if config.self_test_runs < 1:
+        raise ValueError("self_test_runs must be >= 1")
 
 
 def main() -> int:
@@ -862,7 +973,10 @@ def main() -> int:
     config = build_config(args)
     validate_config(config)
     if config.self_test:
-        run_self_test()
+        for _ in range(config.self_test_runs):
+            run_self_test()
+        if config.self_test_only:
+            return 0
 
     state = RunState()
     organize_by_extension(config, state)
