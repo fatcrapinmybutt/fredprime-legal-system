@@ -34,6 +34,7 @@ class Config:
     esd_path: Path | None
     forensic_path: Path | None
     stratus_path: Path | None
+    graph_output_dir: Path | None
     logs_dir: Path
 
 
@@ -342,6 +343,137 @@ def generate_stratus_overview(path: Path) -> None:
         "  LATTICE --> L3[Torus Tranche Overlay]",
     ]
     write_atomic(path, "\n".join(contents) + "\n")
+
+
+def load_index_rows(index_csv: Path | None) -> list[dict[str, str]]:
+    if not index_csv or not index_csv.exists():
+        return []
+    with index_csv.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        return [row for row in reader]
+
+
+def build_graph_payload(index_rows: list[dict[str, str]], config: Config) -> dict[str, object]:
+    nodes: list[dict[str, object]] = []
+    edges: list[dict[str, object]] = []
+
+    root_id = "run_root"
+    nodes.append(
+        {
+            "data": {
+                "id": root_id,
+                "label": f"Run: {config.dest_root}",
+                "type": "run",
+            }
+        }
+    )
+
+    for row in index_rows:
+        ext_bucket = row.get("ext_bucket", "_unknown")
+        node_id = f"ext::{ext_bucket}"
+        nodes.append(
+            {
+                "data": {
+                    "id": node_id,
+                    "label": f"{ext_bucket} ({row.get('file_count', '0')})",
+                    "type": "extension",
+                    "file_count": row.get("file_count", "0"),
+                    "total_bytes": row.get("total_bytes", "0"),
+                    "folder": row.get("folder", ""),
+                }
+            }
+        )
+        edges.append(
+            {
+                "data": {
+                    "id": f"edge::{root_id}::{node_id}",
+                    "source": root_id,
+                    "target": node_id,
+                    "label": "contains",
+                }
+            }
+        )
+
+    return {"nodes": nodes, "edges": edges}
+
+
+def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
+    ensure_dir(output_dir)
+    graph_json = json.dumps(payload, indent=2)
+    write_atomic(output_dir / "graph.json", graph_json + "\n")
+
+    nodes = payload.get("nodes", [])
+    edges = payload.get("edges", [])
+    html = f"""<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Executive Suite Graph</title>
+    <style>
+      body {{ margin: 0; font-family: Arial, sans-serif; }}
+      #cy {{ width: 100vw; height: 100vh; }}
+      .panel {{
+        position: absolute; top: 12px; left: 12px; z-index: 10;
+        background: rgba(255,255,255,0.9); padding: 10px; border-radius: 6px;
+      }}
+    </style>
+    <script src="https://unpkg.com/cytoscape@3.27.0/dist/cytoscape.min.js"></script>
+  </head>
+  <body>
+    <div class="panel">
+      <strong>Executive Suite Graph</strong>
+      <div>Interactive nodes + zoom + pan</div>
+    </div>
+    <div id="cy"></div>
+    <script>
+      const elements = {{"nodes": {json.dumps(nodes)}, "edges": {json.dumps(edges)}}};
+      const cy = cytoscape({{
+        container: document.getElementById("cy"),
+        elements,
+        layout: {{ name: "cose" }},
+        style: [
+          {{ selector: "node", style: {{ "label": "data(label)", "background-color": "#4b8bbe", "color": "#111", "text-outline-width": 1, "text-outline-color": "#fff" }} }},
+          {{ selector: "edge", style: {{ "width": 1.5, "line-color": "#999", "target-arrow-shape": "triangle", "target-arrow-color": "#999" }} }},
+          {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }}
+        ]
+      }});
+    </script>
+  </body>
+</html>
+"""
+    write_atomic(output_dir / "graph.html", html)
+
+    node_rows = ["id,label,type,file_count,total_bytes,folder"]
+    for node in nodes:
+        data = node.get("data", {})
+        node_rows.append(
+            ",".join(
+                [
+                    str(data.get("id", "")),
+                    str(data.get("label", "")),
+                    str(data.get("type", "")),
+                    str(data.get("file_count", "")),
+                    str(data.get("total_bytes", "")),
+                    str(data.get("folder", "")),
+                ]
+            )
+        )
+    write_atomic(output_dir / "neo4j_nodes.csv", "\n".join(node_rows) + "\n")
+
+    edge_rows = ["id,source,target,label"]
+    for edge in edges:
+        data = edge.get("data", {})
+        edge_rows.append(
+            ",".join(
+                [
+                    str(data.get("id", "")),
+                    str(data.get("source", "")),
+                    str(data.get("target", "")),
+                    str(data.get("label", "")),
+                ]
+            )
+        )
+    write_atomic(output_dir / "neo4j_edges.csv", "\n".join(edge_rows) + "\n")
 
 
 def index_by_extension(dest_root: Path, logs_dir: Path) -> Path:
@@ -666,6 +798,11 @@ def parse_args() -> argparse.Namespace:
         help="Optional path to write stratus overview mermaid",
     )
     parser.add_argument(
+        "--graph-output-dir",
+        default=None,
+        help="Optional directory to write graph artifacts (json/html/csv)",
+    )
+    parser.add_argument(
         "--logs-dir",
         default="__LOGS",
         help="Directory name for logs (inside dest root)",
@@ -703,6 +840,9 @@ def build_config(args: argparse.Namespace) -> Config:
         stratus_path=Path(args.stratus_overview).expanduser()
         if args.stratus_overview
         else None,
+        graph_output_dir=Path(args.graph_output_dir).expanduser()
+        if args.graph_output_dir
+        else None,
         logs_dir=logs_dir,
     )
 
@@ -732,6 +872,10 @@ def main() -> int:
         generate_forensic_inventory(config.forensic_path, state)
     if config.stratus_path:
         generate_stratus_overview(config.stratus_path)
+    if config.graph_output_dir:
+        index_rows = load_index_rows(state.logs.index_csv if state.logs else None)
+        graph_payload = build_graph_payload(index_rows, config)
+        write_graph_exports(config.graph_output_dir, graph_payload)
 
     summary = {
         "time_utc": utc_now_iso(),
