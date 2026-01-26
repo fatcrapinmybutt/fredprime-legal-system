@@ -159,6 +159,13 @@ def compute_sha256(path: Path, logger: logging.Logger) -> Tuple[str, int, float]
     return digest.hexdigest(), stat_result.st_size, stat_result.st_mtime
 
 
+def quick_fingerprint(path: Path, stat_result: Optional[os.stat_result] = None) -> str:
+    if stat_result is None:
+        stat_result = path.stat()
+    payload = f"{path}|{stat_result.st_size}|{stat_result.st_mtime}".encode("utf-8", errors="replace")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def save_json_atomic(data: object, target_path: Path, temp_root: Path) -> None:
     ensure_directory(target_path.parent)
     temp_path = temp_root / f"{target_path.name}.tmp"
@@ -358,35 +365,94 @@ def process_candidates(
     state: Dict[str, object],
     state_path: Path,
     temp_root: Path,
-) -> Tuple[int, Dict[str, List[Dict[str, str]]], int]:
+) -> Tuple[int, Dict[str, List[Dict[str, str]]], int, int]:
     processed: Dict[str, Dict[str, object]] = state.setdefault("processed", {})  # type: ignore[assignment]
     duplicates: Dict[str, str] = state.setdefault("duplicates", {})  # type: ignore[assignment]
     secrets_report: Dict[str, List[Dict[str, str]]] = state.setdefault("secrets", {})  # type: ignore[assignment]
     hash_to_id: Dict[str, str] = state.setdefault("hash_to_id", {})  # type: ignore[assignment]
+    hash_errors: Dict[str, Dict[str, object]] = state.setdefault("hash_errors", {})  # type: ignore[assignment]
     new_entries = 0
     skipped_existing = 0
+    hash_error_count = 0
     counter = len(processed)
     bates_counter = state.setdefault("bates_counter", 1)  # type: ignore[assignment]
     lock = threading.Lock()
 
-    def worker(item: Tuple[Path, Path, str]) -> Optional[str]:
+    def worker(item: Tuple[Path, Path, str]) -> Tuple[str, Optional[str]]:
         nonlocal counter, bates_counter, new_entries
         path, relative_path, root_label = item
         key = str(path)
         if key in processed:
-            return None
+            return "skipped", None
         try:
-            sha256, size, mtime = compute_sha256(path, logger)
+            full_hash, size, mtime = compute_sha256(path, logger)
         except Exception as exc:  # pylint: disable=broad-except
+            stat_result = None
+            try:
+                stat_result = path.stat()
+            except OSError as stat_exc:
+                logger.warning("Failed to stat %s after hash error: %s", path, stat_exc)
+            fallback_hash = None
+            if stat_result is not None:
+                try:
+                    fallback_hash = quick_fingerprint(path, stat_result)
+                except OSError as fingerprint_exc:
+                    logger.warning("Failed to fingerprint %s: %s", path, fingerprint_exc)
+            error_entry = {
+                "root": root_label,
+                "relative_path": relative_path.as_posix(),
+                "absolute_path": str(path),
+                "size_bytes": stat_result.st_size if stat_result else None,
+                "mtime_utc": isoformat(
+                    dt.datetime.utcfromtimestamp(stat_result.st_mtime).replace(tzinfo=dt.timezone.utc)
+                )
+                if stat_result
+                else None,
+                "hash_error": True,
+                "error": str(exc),
+                "fallback_hash": fallback_hash,
+            }
+            with lock:
+                hash_errors[key] = error_entry
             logger.error("Failed to hash %s: %s", path, exc)
-            return None
-        duplicate_of = hash_to_id.get(sha256)
+            return "hash_error", key
+        if not full_hash:
+            stat_result = None
+            try:
+                stat_result = path.stat()
+            except OSError as stat_exc:
+                logger.warning("Failed to stat %s after empty hash: %s", path, stat_exc)
+            fallback_hash = None
+            if stat_result is not None:
+                try:
+                    fallback_hash = quick_fingerprint(path, stat_result)
+                except OSError as fingerprint_exc:
+                    logger.warning("Failed to fingerprint %s: %s", path, fingerprint_exc)
+            error_entry = {
+                "root": root_label,
+                "relative_path": relative_path.as_posix(),
+                "absolute_path": str(path),
+                "size_bytes": stat_result.st_size if stat_result else None,
+                "mtime_utc": isoformat(
+                    dt.datetime.utcfromtimestamp(stat_result.st_mtime).replace(tzinfo=dt.timezone.utc)
+                )
+                if stat_result
+                else None,
+                "hash_error": True,
+                "error": "empty_hash",
+                "fallback_hash": fallback_hash,
+            }
+            with lock:
+                hash_errors[key] = error_entry
+            logger.error("Failed to hash %s: empty hash", path)
+            return "hash_error", key
+        duplicate_of = hash_to_id.get(full_hash)
         bates_number: Optional[str] = None
         with lock:
             counter += 1
             identifier = f"DOC-{counter:06d}"
             if duplicate_of is None:
-                hash_to_id[sha256] = identifier
+                hash_to_id[full_hash] = identifier
             else:
                 duplicates[key] = duplicate_of
             if args.bates_prefix:
@@ -400,7 +466,7 @@ def process_candidates(
             relative_path=relative_path,
             size=size,
             mtime_utc=isoformat(dt.datetime.utcfromtimestamp(mtime).replace(tzinfo=dt.timezone.utc)),
-            sha256=sha256,
+            sha256=full_hash,
             duplicate_of=duplicate_of,
             bates_number=bates_number,
             evidence_stamp=evidence_stamp,
@@ -409,6 +475,7 @@ def process_candidates(
         entry_dict = record.manifest_dict(identifier)
         with lock:
             processed[key] = entry_dict
+            hash_errors.pop(key, None)
             new_entries += 1
             if duplicate_of is None:
                 total = state.setdefault("total_bytes", 0)  # type: ignore[assignment]
@@ -420,15 +487,18 @@ def process_candidates(
             findings = detect_secrets(path, logger)
             if findings:
                 secrets_report[key] = findings
-        return key
+        return "processed", key
 
     with ThreadPoolExecutor(max_workers=args.max_workers) as executor:
         future_map = {executor.submit(worker, item): item for item in candidates}
         processed_since_save = 0
         for future in as_completed(future_map):
-            result = future.result()
-            if result is None:
+            status, result = future.result()
+            if status == "skipped":
                 skipped_existing += 1
+                continue
+            if status == "hash_error":
+                hash_error_count += 1
                 continue
             processed_since_save += 1
             if processed_since_save >= STATE_SAVE_INTERVAL:
@@ -438,7 +508,7 @@ def process_candidates(
         if processed_since_save:
             with lock:
                 save_state(state, state_path, temp_root)
-    return new_entries, secrets_report, skipped_existing
+    return new_entries, secrets_report, skipped_existing, hash_error_count
 
 
 # ---------------------------------------------------------------------------
@@ -694,7 +764,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         logger.warning("No files discovered. Exiting.")
         return 0
 
-    new_entries, secrets_report, skipped_existing = process_candidates(
+    new_entries, secrets_report, skipped_existing, hash_error_count = process_candidates(
         candidates, args, logger, state, state_path, temp_root
     )
 
@@ -725,7 +795,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     state["summary"] = state_summary
     save_state(state, state_path, temp_root)
 
-    logger.info("Processed %s new files (%s previously processed)", new_entries, skipped_existing)
+    logger.info(
+        "Processed %s new files (%s previously processed, %s hash errors)",
+        new_entries,
+        skipped_existing,
+        hash_error_count,
+    )
     logger.info("Total bytes captured: %s", sum(entry.size for entry in all_records))
 
     if args.dry_run:
