@@ -30,6 +30,7 @@ class Config:
     self_test: bool
     self_test_runs: int
     self_test_only: bool
+    remove_empty_dirs: bool
     catalog_db: Path | None
     mermaid_path: Path | None
     erd_path: Path | None
@@ -507,6 +508,11 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
         position: absolute; top: 12px; left: 12px; z-index: 10;
         background: rgba(255,255,255,0.9); padding: 10px; border-radius: 6px;
       }}
+      #fallback {{
+        position: absolute; top: 80px; left: 12px; z-index: 10;
+        background: rgba(255,255,255,0.95); padding: 10px; border-radius: 6px;
+        max-width: 420px; display: none;
+      }}
     </style>
     <script src="https://unpkg.com/cytoscape@3.27.0/dist/cytoscape.min.js"></script>
   </head>
@@ -515,22 +521,34 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
       <strong>Executive Suite Graph</strong>
       <div>Interactive nodes + zoom + pan</div>
     </div>
+    <div id="fallback">
+      <strong>Offline fallback</strong>
+      <div>Cytoscape CDN unavailable. See graph.json for full data.</div>
+      <pre id="fallback-json"></pre>
+    </div>
     <div id="cy"></div>
     <script>
       const elements = {{"nodes": {json.dumps(nodes)}, "edges": {json.dumps(edges)}}};
-      const cy = cytoscape({{
-        container: document.getElementById("cy"),
-        elements,
-        layout: {{ name: "cose" }},
-        style: [
-          {{ selector: "node", style: {{ "label": "data(label)", "background-color": "#4b8bbe", "color": "#111", "text-outline-width": 1, "text-outline-color": "#fff" }} }},
-          {{ selector: "edge", style: {{ "width": 1.5, "line-color": "#999", "target-arrow-shape": "triangle", "target-arrow-color": "#999" }} }},
-          {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }},
-          {{ selector: "node[type = 'log']", style: {{ "background-color": "#00b894", "shape": "diamond" }} }},
-          {{ selector: "node[type = 'duplicate']", style: {{ "background-color": "#fdcb6e", "shape": "hexagon" }} }},
-          {{ selector: "node[type = 'catalog']", style: {{ "background-color": "#e17055", "shape": "ellipse" }} }}
-        ]
-      }});
+      if (typeof cytoscape === "function") {{
+        const cy = cytoscape({{
+          container: document.getElementById("cy"),
+          elements,
+          layout: {{ name: "cose" }},
+          style: [
+            {{ selector: "node", style: {{ "label": "data(label)", "background-color": "#4b8bbe", "color": "#111", "text-outline-width": 1, "text-outline-color": "#fff" }} }},
+            {{ selector: "edge", style: {{ "width": 1.5, "line-color": "#999", "target-arrow-shape": "triangle", "target-arrow-color": "#999" }} }},
+            {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }},
+            {{ selector: "node[type = 'log']", style: {{ "background-color": "#00b894", "shape": "diamond" }} }},
+            {{ selector: "node[type = 'duplicate']", style: {{ "background-color": "#fdcb6e", "shape": "hexagon" }} }},
+            {{ selector: "node[type = 'catalog']", style: {{ "background-color": "#e17055", "shape": "ellipse" }} }}
+          ]
+        }});
+      }} else {{
+        const fallback = document.getElementById("fallback");
+        const fallbackJson = document.getElementById("fallback-json");
+        fallback.style.display = "block";
+        fallbackJson.textContent = JSON.stringify(elements, null, 2);
+      }}
     </script>
   </body>
 </html>
@@ -794,6 +812,14 @@ def run_self_test() -> None:
     (src1 / "nested" / "e.jpg").write_text("img", encoding="utf-8")
     (src2 / "nested" / "f.jpg").write_text("img2", encoding="utf-8")
 
+    mermaid_path = base / "mermaid.mmd"
+    erd_path = base / "erd.mmd"
+    esd_path = base / "esd.mmd"
+    forensic_path = base / "forensic.json"
+    stratus_path = base / "stratus.mmd"
+    catalog_db = base / "catalog.sqlite"
+    graph_output_dir = base / "graph"
+
     config = Config(
         sources=[src1, src2],
         dest_root=dst,
@@ -806,23 +832,40 @@ def run_self_test() -> None:
         self_test=False,
         self_test_runs=1,
         self_test_only=False,
-        catalog_db=None,
-        mermaid_path=None,
-        erd_path=None,
-        esd_path=None,
-        forensic_path=None,
-        stratus_path=None,
-        graph_output_dir=None,
+        remove_empty_dirs=False,
+        catalog_db=catalog_db,
+        mermaid_path=mermaid_path,
+        erd_path=erd_path,
+        esd_path=esd_path,
+        forensic_path=forensic_path,
+        stratus_path=stratus_path,
+        graph_output_dir=graph_output_dir,
         logs_dir=dst / "__LOGS",
     )
     state = RunState()
     organize_by_extension(config, state)
+    generate_mermaid(config.mermaid_path, config, state)
+    generate_erd_blueprint(config.erd_path)
+    generate_esd_blueprint(config.esd_path)
+    generate_forensic_inventory(config.forensic_path, state)
+    generate_stratus_overview(config.stratus_path)
+    if config.graph_output_dir:
+        index_rows = load_index_rows(state.logs.index_csv if state.logs else None)
+        graph_payload = build_graph_payload(index_rows, config)
+        write_graph_exports(config.graph_output_dir, graph_payload)
 
     assert (dst / "txt").exists(), "SelfTest: missing txt folder"
     assert (dst / "pdf").exists(), "SelfTest: missing pdf folder"
     assert (dst / "jpg").exists(), "SelfTest: missing jpg folder"
     assert (dst / "_no_extension").exists(), "SelfTest: missing _no_extension folder"
     assert (dst / "__DUPLICATES" / "txt").exists(), "SelfTest: missing dup quarantine txt folder"
+    assert mermaid_path.exists(), "SelfTest: missing mermaid output"
+    assert erd_path.exists(), "SelfTest: missing ERD output"
+    assert esd_path.exists(), "SelfTest: missing ESD output"
+    assert forensic_path.exists(), "SelfTest: missing forensic output"
+    assert stratus_path.exists(), "SelfTest: missing stratus output"
+    assert graph_output_dir.joinpath("graph.json").exists(), "SelfTest: missing graph.json"
+    assert graph_output_dir.joinpath("graph.html").exists(), "SelfTest: missing graph.html"
     primary_txt = list((dst / "txt").glob("*"))
     dup_txt = list((dst / "__DUPLICATES" / "txt").glob("*"))
     assert len(primary_txt) == 1, "SelfTest: expected 1 primary txt file"
@@ -878,6 +921,11 @@ def parse_args() -> argparse.Namespace:
         "--self-test-only",
         action="store_true",
         help="Exit after completing self-test runs",
+    )
+    parser.add_argument(
+        "--remove-empty-dirs",
+        action="store_true",
+        help="Remove empty source folders after move mode",
     )
     parser.add_argument(
         "--catalog-db",
@@ -940,6 +988,7 @@ def build_config(args: argparse.Namespace) -> Config:
         self_test=args.self_test,
         self_test_runs=args.self_test_runs,
         self_test_only=args.self_test_only,
+        remove_empty_dirs=args.remove_empty_dirs,
         catalog_db=Path(args.catalog_db).expanduser() if args.catalog_db else None,
         mermaid_path=Path(args.mermaid).expanduser() if args.mermaid else None,
         erd_path=Path(args.erd_blueprint).expanduser()
@@ -966,6 +1015,8 @@ def validate_config(config: Config) -> None:
         raise ValueError("Invalid dedupe action")
     if config.self_test_runs < 1:
         raise ValueError("self_test_runs must be >= 1")
+    if config.remove_empty_dirs and not config.move_mode:
+        raise ValueError("remove_empty_dirs requires --move")
 
 
 def main() -> int:
@@ -980,6 +1031,8 @@ def main() -> int:
 
     state = RunState()
     organize_by_extension(config, state)
+    if config.remove_empty_dirs:
+        remove_empty_dirs(config.sources, config.exclude_roots)
 
     if config.mermaid_path:
         generate_mermaid(config.mermaid_path, config, state)

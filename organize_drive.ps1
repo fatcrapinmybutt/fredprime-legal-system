@@ -20,6 +20,7 @@
     $ComputeSHA256 = $true                # required for dedupe
     $RunSelfTest = $true                  # validates logic in a sandbox before touching your data
     $SelfTestRuns = 10                    # repeat self-test N times for confidence
+    $SelfTestOnly = $false                # if true, exit after self-test without organizing
 
     # Exclusions inside your canonical folder (safe defaults)
     $ExcludeRoots = @(
@@ -450,6 +451,10 @@
             }
             Write-Host "Self-test: PASS ($SelfTestRuns runs)"
             Write-Host ""
+            if ($SelfTestOnly) {
+                Write-Host "Self-test-only mode enabled. Exiting."
+                return
+            }
         }
 
         Ensure-Dir $DestinationRoot
