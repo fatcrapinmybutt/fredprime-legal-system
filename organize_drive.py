@@ -415,6 +415,12 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
       .panel {{
         position: absolute; top: 12px; left: 12px; z-index: 10;
         background: rgba(255,255,255,0.9); padding: 10px; border-radius: 6px;
+        max-width: 360px;
+      }}
+      #details {{
+        margin-top: 8px;
+        font-size: 12px;
+        white-space: pre-wrap;
       }}
     </style>
     <script src="https://unpkg.com/cytoscape@3.27.0/dist/cytoscape.min.js"></script>
@@ -423,6 +429,7 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
     <div class="panel">
       <strong>Executive Suite Graph</strong>
       <div>Interactive nodes + zoom + pan</div>
+      <div id="details">Select a node to view details.</div>
     </div>
     <div id="cy"></div>
     <script>
@@ -437,43 +444,56 @@ def write_graph_exports(output_dir: Path, payload: dict[str, object]) -> None:
           {{ selector: "node[type = 'run']", style: {{ "background-color": "#6c5ce7", "shape": "round-rectangle" }} }}
         ]
       }});
+      const details = document.getElementById("details");
+      cy.on("tap", "node", (evt) => {{
+        const data = evt.target.data();
+        const lines = Object.entries(data).map(([key, value]) => `${{key}}: ${{value}}`);
+        details.textContent = lines.join("\\n");
+      }});
+      cy.on("tap", (evt) => {{
+        if (evt.target === cy) {{
+          details.textContent = "Select a node to view details.";
+        }}
+      }});
     </script>
   </body>
 </html>
 """
     write_atomic(output_dir / "graph.html", html)
 
-    node_rows = ["id,label,type,file_count,total_bytes,folder"]
-    for node in nodes:
-        data = node.get("data", {})
-        node_rows.append(
-            ",".join(
-                [
-                    str(data.get("id", "")),
-                    str(data.get("label", "")),
-                    str(data.get("type", "")),
-                    str(data.get("file_count", "")),
-                    str(data.get("total_bytes", "")),
-                    str(data.get("folder", "")),
-                ]
-            )
+    nodes_path = output_dir / "neo4j_nodes.csv"
+    edges_path = output_dir / "neo4j_edges.csv"
+    ensure_dir(output_dir)
+    with nodes_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle, fieldnames=["id", "label", "type", "file_count", "total_bytes", "folder"]
         )
-    write_atomic(output_dir / "neo4j_nodes.csv", "\n".join(node_rows) + "\n")
-
-    edge_rows = ["id,source,target,label"]
-    for edge in edges:
-        data = edge.get("data", {})
-        edge_rows.append(
-            ",".join(
-                [
-                    str(data.get("id", "")),
-                    str(data.get("source", "")),
-                    str(data.get("target", "")),
-                    str(data.get("label", "")),
-                ]
+        writer.writeheader()
+        for node in nodes:
+            data = node.get("data", {})
+            writer.writerow(
+                {
+                    "id": data.get("id", ""),
+                    "label": data.get("label", ""),
+                    "type": data.get("type", ""),
+                    "file_count": data.get("file_count", ""),
+                    "total_bytes": data.get("total_bytes", ""),
+                    "folder": data.get("folder", ""),
+                }
             )
-        )
-    write_atomic(output_dir / "neo4j_edges.csv", "\n".join(edge_rows) + "\n")
+    with edges_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["id", "source", "target", "label"])
+        writer.writeheader()
+        for edge in edges:
+            data = edge.get("data", {})
+            writer.writerow(
+                {
+                    "id": data.get("id", ""),
+                    "source": data.get("source", ""),
+                    "target": data.get("target", ""),
+                    "label": data.get("label", ""),
+                }
+            )
 
 
 def index_by_extension(dest_root: Path, logs_dir: Path) -> Path:
