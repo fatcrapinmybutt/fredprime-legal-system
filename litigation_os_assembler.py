@@ -698,11 +698,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     state["token"] = token
     state.setdefault("started", isoformat(utc_now()))
     processed_state: Dict[str, Dict[str, object]] = state.get("processed", {})  # type: ignore[assignment]
-    existing_content_hash_idx = {
-        str(row.get("sha256")): str(row.get("id"))
-        for row in processed_state.values()
-        if row.get("sha256") and row.get("id")
-    }
+    existing_content_hash_idx = {}
+    for row in processed_state.values():
+        sha256 = row.get("sha256")
+        if not sha256:
+            continue
+        duplicate_of = row.get("duplicate_of")
+        record_id = duplicate_of or row.get("id")
+        if record_id:
+            existing_content_hash_idx[str(sha256)] = str(record_id)
     hash_to_id = state.setdefault("hash_to_id", {})  # type: ignore[assignment]
     for content_hash, entry_id in existing_content_hash_idx.items():
         hash_to_id.setdefault(content_hash, entry_id)
