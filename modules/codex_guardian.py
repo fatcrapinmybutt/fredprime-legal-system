@@ -47,7 +47,12 @@ def verify_branch_name(branch: str) -> bool:
         "hotfix",
         "merge",
     ]
-    return any(key in branch for key in triggers)
+    if not any(key in branch for key in triggers):
+        raise ValueError(
+            "Branch name must include a trigger keyword: "
+            f"{', '.join(triggers)}"
+        )
+    return True
 
 
 def verify_manifest_hashes() -> None:
