@@ -166,6 +166,29 @@ def quick_fingerprint(path: Path, stat_result: Optional[os.stat_result] = None) 
     return hashlib.sha256(payload).hexdigest()
 
 
+def build_hash_error_entry(
+    path: Path,
+    relative_path: Path,
+    root_label: str,
+    stat_result: Optional[os.stat_result],
+    error: str,
+    fallback_hash: Optional[str],
+) -> Dict[str, object]:
+    return {
+        "root": root_label,
+        "relative_path": relative_path.as_posix(),
+        "absolute_path": str(path),
+        "size_bytes": stat_result.st_size if stat_result else None,
+        "mtime_utc": isoformat(dt.datetime.utcfromtimestamp(stat_result.st_mtime).replace(tzinfo=dt.timezone.utc))
+        if stat_result
+        else None,
+        "hash_error": True,
+        "dedup_skipped": True,
+        "error": error,
+        "fallback_hash": fallback_hash,
+    }
+
+
 def save_json_atomic(data: object, target_path: Path, temp_root: Path) -> None:
     ensure_directory(target_path.parent)
     temp_path = temp_root / f"{target_path.name}.tmp"
@@ -398,20 +421,14 @@ def process_candidates(
                     fallback_hash = quick_fingerprint(path, stat_result)
                 except OSError as fingerprint_exc:
                     logger.warning("Failed to fingerprint %s: %s", path, fingerprint_exc)
-            error_entry = {
-                "root": root_label,
-                "relative_path": relative_path.as_posix(),
-                "absolute_path": str(path),
-                "size_bytes": stat_result.st_size if stat_result else None,
-                "mtime_utc": isoformat(
-                    dt.datetime.utcfromtimestamp(stat_result.st_mtime).replace(tzinfo=dt.timezone.utc)
-                )
-                if stat_result
-                else None,
-                "hash_error": True,
-                "error": str(exc),
-                "fallback_hash": fallback_hash,
-            }
+            error_entry = build_hash_error_entry(
+                path=path,
+                relative_path=relative_path,
+                root_label=root_label,
+                stat_result=stat_result,
+                error=str(exc),
+                fallback_hash=fallback_hash,
+            )
             with lock:
                 hash_errors[key] = error_entry
             logger.error("Failed to hash %s: %s", path, exc)
@@ -428,20 +445,14 @@ def process_candidates(
                     fallback_hash = quick_fingerprint(path, stat_result)
                 except OSError as fingerprint_exc:
                     logger.warning("Failed to fingerprint %s: %s", path, fingerprint_exc)
-            error_entry = {
-                "root": root_label,
-                "relative_path": relative_path.as_posix(),
-                "absolute_path": str(path),
-                "size_bytes": stat_result.st_size if stat_result else None,
-                "mtime_utc": isoformat(
-                    dt.datetime.utcfromtimestamp(stat_result.st_mtime).replace(tzinfo=dt.timezone.utc)
-                )
-                if stat_result
-                else None,
-                "hash_error": True,
-                "error": "empty_hash",
-                "fallback_hash": fallback_hash,
-            }
+            error_entry = build_hash_error_entry(
+                path=path,
+                relative_path=relative_path,
+                root_label=root_label,
+                stat_result=stat_result,
+                error="empty_hash",
+                fallback_hash=fallback_hash,
+            )
             with lock:
                 hash_errors[key] = error_entry
             logger.error("Failed to hash %s: empty hash", path)
