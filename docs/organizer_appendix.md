@@ -37,3 +37,12 @@ This appendix captures user-specified execution patterns and output expectations
 | Super Set Generation Rules | Emit the same artifact sets defined per option, plus append-only run manifests and logs for each tranche batch. |
 | Add-On Modes | @HYPERSCALE @AUTONOMY_MAX @BACKPRESSURE @REPLAYABLE_RUN @STRICT |
 | Enterprise/SPEC Pattern | @mode=hyperscale+docs/organizer_appendix.md |
+
+## Option 5 — Extreme proliferation in all directions
+
+| Field | Plane Table Entry |
+| --- | --- |
+| Next Best Action | Execute maximal procedural-path expansion across parallel tracks with denial-aware counters and rapid tranche fan-out. |
+| Super Set Generation Rules | Every cycle emits ParallelTracks.csv, DenialCounters.json, PathExplosion.md, plus the same artifact sets defined per option; append-only manifests with tranche lineage. |
+| Add-On Modes | @PROLIFERATION_MAX @PARALLEL_TRACKS @DENIAL_AWARE @BITEMPORAL_TIMELINES @APPEND_ONLY @STRICT |
+| Enterprise/SPEC Pattern | EXPLODE_SUPERPIN:FORMS @PROLIFERATION_MAX @PARALLEL_TRACKS @DENIAL_AWARE @STRICT ?OUT=ZIP+MD+CSV+JSON&ITER=auto&STRICT=true |
