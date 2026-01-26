@@ -40,6 +40,8 @@ class Config:
     graph_output_dir: Path | None
     logs_dir: Path
     run_manifest_path: Path | None
+    plan_preset: str | None
+    plan_output_path: Path | None
 
 
 @dataclass
@@ -361,6 +363,8 @@ def generate_run_manifest(path: Path, config: Config, state: RunState) -> None:
         "dedupe_action": config.dedupe_action if config.dedupe else "OFF",
         "remove_empty_dirs": config.remove_empty_dirs,
         "exclude_roots": [str(root) for root in config.exclude_roots],
+        "plan_preset": config.plan_preset,
+        "plan_output": str(config.plan_output_path) if config.plan_output_path else None,
         "logs": {
             "csv": str(state.logs.csv_log) if state.logs else None,
             "jsonl": str(state.logs.jsonl_log) if state.logs else None,
@@ -376,6 +380,106 @@ def generate_run_manifest(path: Path, config: Config, state: RunState) -> None:
         },
     }
     write_atomic(path, json.dumps(manifest, indent=2) + "\n")
+
+
+def build_plan_markdown(preset: str) -> str:
+    presets = {
+        "hypervisor": {
+            "title": "Option 1 — Hypervisor: full-plane tranche convergence",
+            "next_best_action": (
+                "Turn on the hypervisor and execute tranche families across all planes "
+                "until convergence, enforcing NONCORE → CORE promotion when risk crosses threshold."
+            ),
+            "rules": (
+                "Every cycle emits RUN_LEDGER.jsonl, MANIFEST.json, DELTA_SUMMARY.md, "
+                "STRATUM_METRICS.csv, VRpt.md, TRANCHE_RUNS.csv, PARALLEL_TRACK_STATUS.json. "
+                "Stop only when Δ(new_nodes,new_edges,new_terms) < EPS for N cycles and VRpt PASS for the same streak."
+            ),
+            "modes": (
+                "@HYPERVISOR_ON @AUTONOMY_MAX @SHARD_BY_DOC @BACKPRESSURE "
+                "@MULTIMODAL_POOLS @PROMOTE_NONCORE_TO_CORE @STRICT @REPLAYABLE_RUN "
+                "@CONVERGENCE_EPS @VRPT_PASS_STREAK @TOROIDAL_SHARDING"
+            ),
+            "pattern": (
+                "EXPLODE_SUPERPIN:HYPERVISOR @HYPERVISOR_ON @AUTONOMY_MAX "
+                "@TOROIDAL_SHARDING @BACKPRESSURE @PROMOTE_NONCORE_TO_CORE @STRICT "
+                "?EPS=0.005&N=3&OUT=ZIP+MD+CSV+JSON&ITER=auto&STRICT=true"
+            ),
+        },
+        "neo4j": {
+            "title": "Option 2 — Neo4j nucleus: schema contract + constraints-first + deterministic import + offline viewer",
+            "next_best_action": (
+                "Generate the Neo4j nucleus stack, then iterate until nucleus membership stabilizes "
+                "for N cycles with VRpt PASS stability, focusing strata AUTHORITY, DECISIONS, ENFORCEMENT, "
+                "with toroidal sharding tranche routing."
+            ),
+            "rules": (
+                "Every cycle emits schema_contract.json, constraints.cypher, import.cypher, "
+                "split nodes.csv/edges.csv, nucleus/seeds.json, viewer/index.html, plus "
+                "RUN_LEDGER.jsonl, MANIFEST.json, DELTA_SUMMARY.md, STRATUM_METRICS.csv, VRpt.md. "
+                "Stop only when nucleus membership stable N cycles and VRpt PASS N cycles."
+            ),
+            "modes": (
+                "@NEO4J_NUCLEUS @SCHEMA_LOCK @CONSTRAINTS_FIRST @DETERMINISTIC_IMPORT "
+                "@NUCLEUS_SEED @STRATUM_FOCUS=AUTHORITY,DECISIONS,ENFORCEMENT @VIEWER_OFFLINE "
+                "@MANIFEST_VERIFY @SELFTEST @STRICT @TOROIDAL_SHARDING"
+            ),
+            "pattern": (
+                "EXPLODE_SUPERPIN:GRAPH @NEO4J_NUCLEUS @SCHEMA_LOCK @CONSTRAINTS_FIRST "
+                "@DETERMINISTIC_IMPORT @NUCLEUS_SEED @STRATUM_FOCUS=AUTHORITY,DECISIONS,ENFORCEMENT "
+                "@VIEWER_OFFLINE @MANIFEST_VERIFY @SELFTEST @STRICT "
+                "?OUT=ZIP+CSV+JSON+HTML+MD&ITER=auto&STRICT=true"
+            ),
+        },
+        "forms": {
+            "title": "Option 3 — Forms-first Vehicle Router: Relief → Form → Standard → Elements → POs → Deadlines → Service → Exhibits",
+            "next_best_action": (
+                "Execute Forms-First Vehicle Router end-to-end with PO promotion logic enabled, "
+                "fail-closed if any CORE obligations, deadlines, service, or VRpt are uncertain."
+            ),
+            "rules": (
+                "Every cycle emits VehicleMap.md, PO_DB.csv, Deadlines.csv, ServicePlan.md, "
+                "ExhibitMatrix.csv, plus RUN_LEDGER.jsonl, MANIFEST.json, DELTA_SUMMARY.md, "
+                "STRATUM_METRICS.csv, VRpt.md. Packaging blocked if any CORE PO is OPEN or PARTIAL."
+            ),
+            "modes": (
+                "@PCW @FORMSFIRST @VEHICLE_MAP @PO_DB_BUILD @DEADLINE_ENGINE @SERVICE_CHAIN "
+                "@EXHIBIT_MATRIX @QUOTELOCK @PROMOTE_NONCORE_TO_CORE @FAIL_CLOSED @STRICT"
+            ),
+            "pattern": (
+                "EXPLODE_SUPERPIN:FORMS @PCW @FORMSFIRST @VEHICLE_MAP @PO_DB_BUILD "
+                "@DEADLINE_ENGINE @SERVICE_CHAIN @EXHIBIT_MATRIX @PROMOTE_NONCORE_TO_CORE "
+                "@FAIL_CLOSED @STRICT ?PIPE=RELIEF>FORM>STANDARD>ELEMENTS>PO>DEADLINES>SERVICE>EXHIBITS"
+                "&OUT=ZIP+MD+CSV+JSON&ITER=auto&STRICT=true"
+            ),
+        },
+    }
+    if preset not in presets:
+        raise ValueError(f"Unknown plan preset: {preset}")
+    spec = presets[preset]
+    return "\n".join(
+        [
+            f"# {spec['title']}",
+            "",
+            "## Next Best Action",
+            spec["next_best_action"],
+            "",
+            "## Super Set Generation Rules",
+            spec["rules"],
+            "",
+            "## Add-On Modes",
+            spec["modes"],
+            "",
+            "## Enterprise/SPEC Pattern",
+            spec["pattern"],
+            "",
+        ]
+    )
+
+
+def write_plan_output(path: Path, preset: str) -> None:
+    content = build_plan_markdown(preset)
+    write_atomic(path, content)
 
 
 def generate_stratus_overview(path: Path) -> None:
@@ -848,6 +952,7 @@ def run_self_test() -> None:
     catalog_db = base / "catalog.sqlite"
     graph_output_dir = base / "graph"
     run_manifest_path = base / "run_manifest.json"
+    plan_output_path = base / "plan.md"
 
     config = Config(
         sources=[src1, src2],
@@ -871,6 +976,8 @@ def run_self_test() -> None:
         graph_output_dir=graph_output_dir,
         logs_dir=dst / "__LOGS",
         run_manifest_path=run_manifest_path,
+        plan_preset="neo4j",
+        plan_output_path=plan_output_path,
     )
     state = RunState()
     organize_by_extension(config, state)
@@ -880,6 +987,7 @@ def run_self_test() -> None:
     generate_forensic_inventory(config.forensic_path, state)
     generate_stratus_overview(config.stratus_path)
     generate_run_manifest(config.run_manifest_path, config, state)
+    write_plan_output(config.plan_output_path, config.plan_preset)
     if config.graph_output_dir:
         index_rows = load_index_rows(state.logs.index_csv if state.logs else None)
         graph_payload = build_graph_payload(index_rows, config)
@@ -898,6 +1006,7 @@ def run_self_test() -> None:
     assert graph_output_dir.joinpath("graph.json").exists(), "SelfTest: missing graph.json"
     assert graph_output_dir.joinpath("graph.html").exists(), "SelfTest: missing graph.html"
     assert run_manifest_path.exists(), "SelfTest: missing run manifest"
+    assert plan_output_path.exists(), "SelfTest: missing plan output"
     primary_txt = list((dst / "txt").glob("*"))
     dup_txt = list((dst / "__DUPLICATES" / "txt").glob("*"))
     assert len(primary_txt) == 1, "SelfTest: expected 1 primary txt file"
@@ -1004,6 +1113,17 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional path to write run manifest JSON",
     )
+    parser.add_argument(
+        "--plan-preset",
+        choices=["hypervisor", "neo4j", "forms"],
+        default=None,
+        help="Optional plan preset to emit",
+    )
+    parser.add_argument(
+        "--plan-output",
+        default=None,
+        help="Optional path to write plan markdown",
+    )
     parser.add_argument("--version", action="version", version=VERSION)
     return parser.parse_args()
 
@@ -1047,6 +1167,10 @@ def build_config(args: argparse.Namespace) -> Config:
         run_manifest_path=Path(args.run_manifest).expanduser()
         if args.run_manifest
         else None,
+        plan_preset=args.plan_preset,
+        plan_output_path=Path(args.plan_output).expanduser()
+        if args.plan_output
+        else None,
     )
 
 
@@ -1057,6 +1181,10 @@ def validate_config(config: Config) -> None:
         raise ValueError("self_test_runs must be >= 1")
     if config.remove_empty_dirs and not config.move_mode:
         raise ValueError("remove_empty_dirs requires --move")
+    if config.plan_preset and not config.plan_output_path:
+        raise ValueError("plan_output_path required when plan_preset is set")
+    if config.plan_output_path and not config.plan_preset:
+        raise ValueError("plan_preset required when plan_output_path is set")
 
 
 def main() -> int:
@@ -1090,6 +1218,8 @@ def main() -> int:
         write_graph_exports(config.graph_output_dir, graph_payload)
     if config.run_manifest_path:
         generate_run_manifest(config.run_manifest_path, config, state)
+    if config.plan_output_path and config.plan_preset:
+        write_plan_output(config.plan_output_path, config.plan_preset)
 
     summary = {
         "time_utc": utc_now_iso(),
