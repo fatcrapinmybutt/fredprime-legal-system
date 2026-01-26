@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -60,7 +60,7 @@ jobs:
           fi
 
       - name: Upload system output/logs/artifacts (audit-proof)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: output
           path: |
@@ -71,14 +71,14 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload live dashboard artifact (HTML)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dashboard
           path: output/dashboard.html
           if-no-files-found: ignore
 
       - name: Upload audit summary (legal proof)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: audit
           path: output/supreme_audit.json
