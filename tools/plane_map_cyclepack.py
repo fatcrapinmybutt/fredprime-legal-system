@@ -68,6 +68,7 @@ TERM_RE = re.compile(r"\b[A-Z][A-Z0-9_]{2,}\b")
 TOKEN_GRAMMAR_RE = re.compile(r"\b[A-Z][A-Z0-9_]{2,}\:[A-Z0-9_\/\-\.\$]+\b")
 
 MAX_TEXT_BYTES = 1_000_000
+# Maximum file size (in bytes) for which a SHA256 hash will be computed.
 MAX_SHA256_EXTRACTED = 10_000_000
 
 
