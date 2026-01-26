@@ -39,6 +39,7 @@ class Config:
     stratus_path: Path | None
     graph_output_dir: Path | None
     logs_dir: Path
+    run_manifest_path: Path | None
 
 
 @dataclass
@@ -348,6 +349,33 @@ def generate_forensic_inventory(path: Path, state: RunState) -> None:
         },
     }
     write_atomic(path, json.dumps(inventory, indent=2) + "\n")
+
+
+def generate_run_manifest(path: Path, config: Config, state: RunState) -> None:
+    manifest = {
+        "generated_utc": utc_now_iso(),
+        "sources": [str(src) for src in config.sources],
+        "destination": str(config.dest_root),
+        "move_mode": config.move_mode,
+        "dedupe": config.dedupe,
+        "dedupe_action": config.dedupe_action if config.dedupe else "OFF",
+        "remove_empty_dirs": config.remove_empty_dirs,
+        "exclude_roots": [str(root) for root in config.exclude_roots],
+        "logs": {
+            "csv": str(state.logs.csv_log) if state.logs else None,
+            "jsonl": str(state.logs.jsonl_log) if state.logs else None,
+            "index": str(state.logs.index_csv) if state.logs else None,
+        },
+        "counts": {
+            "copied": state.counts.copied,
+            "moved": state.counts.moved,
+            "dup_skipped": state.counts.dup_skipped,
+            "dup_quarantined": state.counts.dup_quarantined,
+            "failed": state.counts.failed,
+            "source_missing": state.counts.source_missing,
+        },
+    }
+    write_atomic(path, json.dumps(manifest, indent=2) + "\n")
 
 
 def generate_stratus_overview(path: Path) -> None:
@@ -819,6 +847,7 @@ def run_self_test() -> None:
     stratus_path = base / "stratus.mmd"
     catalog_db = base / "catalog.sqlite"
     graph_output_dir = base / "graph"
+    run_manifest_path = base / "run_manifest.json"
 
     config = Config(
         sources=[src1, src2],
@@ -841,6 +870,7 @@ def run_self_test() -> None:
         stratus_path=stratus_path,
         graph_output_dir=graph_output_dir,
         logs_dir=dst / "__LOGS",
+        run_manifest_path=run_manifest_path,
     )
     state = RunState()
     organize_by_extension(config, state)
@@ -849,6 +879,7 @@ def run_self_test() -> None:
     generate_esd_blueprint(config.esd_path)
     generate_forensic_inventory(config.forensic_path, state)
     generate_stratus_overview(config.stratus_path)
+    generate_run_manifest(config.run_manifest_path, config, state)
     if config.graph_output_dir:
         index_rows = load_index_rows(state.logs.index_csv if state.logs else None)
         graph_payload = build_graph_payload(index_rows, config)
@@ -866,6 +897,7 @@ def run_self_test() -> None:
     assert stratus_path.exists(), "SelfTest: missing stratus output"
     assert graph_output_dir.joinpath("graph.json").exists(), "SelfTest: missing graph.json"
     assert graph_output_dir.joinpath("graph.html").exists(), "SelfTest: missing graph.html"
+    assert run_manifest_path.exists(), "SelfTest: missing run manifest"
     primary_txt = list((dst / "txt").glob("*"))
     dup_txt = list((dst / "__DUPLICATES" / "txt").glob("*"))
     assert len(primary_txt) == 1, "SelfTest: expected 1 primary txt file"
@@ -967,6 +999,11 @@ def parse_args() -> argparse.Namespace:
         default="__LOGS",
         help="Directory name for logs (inside dest root)",
     )
+    parser.add_argument(
+        "--run-manifest",
+        default=None,
+        help="Optional path to write run manifest JSON",
+    )
     parser.add_argument("--version", action="version", version=VERSION)
     return parser.parse_args()
 
@@ -1007,6 +1044,9 @@ def build_config(args: argparse.Namespace) -> Config:
         if args.graph_output_dir
         else None,
         logs_dir=logs_dir,
+        run_manifest_path=Path(args.run_manifest).expanduser()
+        if args.run_manifest
+        else None,
     )
 
 
@@ -1048,6 +1088,8 @@ def main() -> int:
         index_rows = load_index_rows(state.logs.index_csv if state.logs else None)
         graph_payload = build_graph_payload(index_rows, config)
         write_graph_exports(config.graph_output_dir, graph_payload)
+    if config.run_manifest_path:
+        generate_run_manifest(config.run_manifest_path, config, state)
 
     summary = {
         "time_utc": utc_now_iso(),

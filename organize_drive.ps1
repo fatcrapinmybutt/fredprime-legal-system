@@ -21,6 +21,7 @@
     $RunSelfTest = $true                  # validates logic in a sandbox before touching your data
     $SelfTestRuns = 10                    # repeat self-test N times for confidence
     $SelfTestOnly = $false                # if true, exit after self-test without organizing
+    $RunManifestPath = ''                 # optional path to write a run manifest JSON
 
     # Exclusions inside your canonical folder (safe defaults)
     $ExcludeRoots = @(
@@ -472,6 +473,26 @@
         if ($DoMove -and $RemoveEmptySourceFolders) {
             Write-Host "Removing empty folders under source roots (excluding protected roots)..."
             Remove-EmptyDirs -Roots $SourceRoots -ExcludeNorm $excludeNorm
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($RunManifestPath)) {
+            $manifest = [pscustomobject]@{
+                generated_utc     = (Get-Date).ToUniversalTime().ToString('o')
+                sources           = $SourceRoots
+                destination       = $DestinationRoot
+                move_mode         = $DoMove
+                dedupe            = $Dedupe
+                dedupe_action     = if ($Dedupe) { $DedupeAction } else { 'OFF' }
+                remove_empty_dirs = $RemoveEmptySourceFolders
+                exclude_roots     = $excludeNorm
+                logs              = [pscustomobject]@{
+                    csv_log   = $result.CsvLog
+                    jsonl_log = $result.JsonlLog
+                    index_csv = $result.IndexByExt
+                }
+                counts            = $result.Counts
+            }
+            $manifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $RunManifestPath -Encoding UTF8
         }
 
         Write-Host ""
