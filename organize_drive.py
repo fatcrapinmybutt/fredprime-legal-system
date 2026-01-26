@@ -32,6 +32,8 @@ class Config:
     mermaid_path: Path | None
     erd_path: Path | None
     esd_path: Path | None
+    forensic_path: Path | None
+    stratus_path: Path | None
     logs_dir: Path
 
 
@@ -296,6 +298,48 @@ def generate_esd_blueprint(path: Path) -> None:
         "  INTEROP --> INT2[OpenLineageRun + OTEL Span/Metric]",
         "  INTEROP --> INT3[Provenance Entity/Relation]",
         "  INTEROP --> INT4[SLSA Provenance]",
+    ]
+    write_atomic(path, "\n".join(contents) + "\n")
+
+
+def generate_forensic_inventory(path: Path, state: RunState) -> None:
+    inventory = {
+        "generated_utc": utc_now_iso(),
+        "counts": {
+            "copied": state.counts.copied,
+            "moved": state.counts.moved,
+            "dup_skipped": state.counts.dup_skipped,
+            "dup_quarantined": state.counts.dup_quarantined,
+            "failed": state.counts.failed,
+            "source_missing": state.counts.source_missing,
+        },
+        "logs": {
+            "csv": str(state.logs.csv_log) if state.logs else None,
+            "jsonl": str(state.logs.jsonl_log) if state.logs else None,
+            "index": str(state.logs.index_csv) if state.logs else None,
+        },
+    }
+    write_atomic(path, json.dumps(inventory, indent=2) + "\n")
+
+
+def generate_stratus_overview(path: Path) -> None:
+    contents = [
+        "flowchart TD",
+        "  STRATUS[Stratus Overview]",
+        "  STRATUS --> CELL[Per-Cell Tranche Inventory]",
+        "  STRATUS --> LATTICE[Kosahedron Plane Lattice Torus Overlay]",
+        "  CELL --> C1[Cell: L0 Storage]",
+        "  CELL --> C2[Cell: L1 Intake]",
+        "  CELL --> C3[Cell: L2 EvidenceAtoms]",
+        "  CELL --> C4[Cell: L3 Chrono/Quote]",
+        "  CELL --> C5[Cell: L4 Authority/Vehicles]",
+        "  CELL --> C6[Cell: L5 Contracts]",
+        "  CELL --> C7[Cell: L6 Scoring/Gates]",
+        "  CELL --> C8[Cell: L7 Actions]",
+        "  CELL --> C9[Cell: L8 Packaging]",
+        "  LATTICE --> L1[Kosahedron Plane]",
+        "  LATTICE --> L2[Lattice Mesh]",
+        "  LATTICE --> L3[Torus Tranche Overlay]",
     ]
     write_atomic(path, "\n".join(contents) + "\n")
 
@@ -612,6 +656,16 @@ def parse_args() -> argparse.Namespace:
         help="Optional path to write unified ESD-style blueprint",
     )
     parser.add_argument(
+        "--forensic-inventory",
+        default=None,
+        help="Optional path to write forensic inventory JSON",
+    )
+    parser.add_argument(
+        "--stratus-overview",
+        default=None,
+        help="Optional path to write stratus overview mermaid",
+    )
+    parser.add_argument(
         "--logs-dir",
         default="__LOGS",
         help="Directory name for logs (inside dest root)",
@@ -643,6 +697,12 @@ def build_config(args: argparse.Namespace) -> Config:
         esd_path=Path(args.esd_blueprint).expanduser()
         if args.esd_blueprint
         else None,
+        forensic_path=Path(args.forensic_inventory).expanduser()
+        if args.forensic_inventory
+        else None,
+        stratus_path=Path(args.stratus_overview).expanduser()
+        if args.stratus_overview
+        else None,
         logs_dir=logs_dir,
     )
 
@@ -668,6 +728,10 @@ def main() -> int:
         generate_erd_blueprint(config.erd_path)
     if config.esd_path:
         generate_esd_blueprint(config.esd_path)
+    if config.forensic_path:
+        generate_forensic_inventory(config.forensic_path, state)
+    if config.stratus_path:
+        generate_stratus_overview(config.stratus_path)
 
     summary = {
         "time_utc": utc_now_iso(),
