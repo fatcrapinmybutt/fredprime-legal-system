@@ -1,0 +1,22 @@
+{
+  "version": "v1",
+  "generated_utc": "2026-01-26T00:00:00Z",
+  "buckets_max": 15,
+  "buckets": [
+    {"bucket":"B01_TEXT","ext":[".txt",".md",".log"],"extractor":"text"},
+    {"bucket":"B02_STRUCTURED","ext":[".json",".jsonl",".csv",".tsv",".xml",".yaml",".yml"],"extractor":"structured"},
+    {"bucket":"B03_HTML","ext":[".html",".htm"],"extractor":"html_text"},
+    {"bucket":"B04_DOCX","ext":[".docx"],"extractor":"docx_optional"},
+    {"bucket":"B05_RTF","ext":[".rtf"],"extractor":"rtf_optional"},
+    {"bucket":"B06_PDF_TEXT","ext":[".pdf"],"extractor":"pdf_optional"},
+    {"bucket":"B07_IMAGES","ext":[".jpg",".jpeg",".png",".webp",".tif",".tiff"],"extractor":"none"},
+    {"bucket":"B08_AUDIO","ext":[".mp3",".wav",".m4a",".aac",".flac"],"extractor":"none"},
+    {"bucket":"B09_VIDEO","ext":[".mp4",".mov",".mkv",".avi"],"extractor":"none"},
+    {"bucket":"B10_ARCHIVE","ext":[".zip",".7z",".rar"],"extractor":"archive_optional"},
+    {"bucket":"B11_CODE","ext":[".py",".ps1",".bat",".cmd",".js",".ts",".tsx",".jsx",".java",".cs",".cpp",".c",".rs",".go"],"extractor":"code_text"},
+    {"bucket":"B12_OFFICE_OTHER","ext":[".doc",".xls",".xlsx",".ppt",".pptx"],"extractor":"optional"},
+    {"bucket":"B13_EMAIL","ext":[".eml",".msg"],"extractor":"optional"},
+    {"bucket":"B14_DATABASE","ext":[".db",".sqlite",".edb"],"extractor":"none"},
+    {"bucket":"B15_OTHER","ext":["*"],"extractor":"none"}
+  ]
+}
