@@ -1,0 +1,48 @@
+{
+  "version": "bucket_rules.v1",
+  "max_buckets": 15,
+  "buckets": [
+    {"bucket": "B01_TEXT", "ext": [".txt", ".md", ".log"]},
+    {"bucket": "B02_PDF", "ext": [".pdf"]},
+    {"bucket": "B03_DOCX", "ext": [".docx"]},
+    {"bucket": "B04_RTF", "ext": [".rtf"]},
+    {"bucket": "B05_HTML", "ext": [".html", ".htm"]},
+    {"bucket": "B06_JSON", "ext": [".json", ".jsonl"]},
+    {"bucket": "B07_CSV", "ext": [".csv", ".tsv"]},
+    {"bucket": "B08_IMAGES", "ext": [".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff", ".bmp", ".gif"]},
+    {"bucket": "B09_AUDIO", "ext": [".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg"]},
+    {"bucket": "B10_VIDEO", "ext": [".mp4", ".mov", ".mkv", ".avi", ".webm"]},
+    {
+      "bucket": "B11_ARCHIVES",
+      "ext": [".zip", ".7z", ".rar", ".tar", ".gz", ".bz2", ".xz"]
+    },
+    {
+      "bucket": "B12_CODE",
+      "ext": [
+        ".py",
+        ".ps1",
+        ".js",
+        ".ts",
+        ".tsx",
+        ".java",
+        ".cs",
+        ".cpp",
+        ".c",
+        ".h",
+        ".rs",
+        ".go",
+        ".sql",
+        ".yml",
+        ".yaml",
+        ".toml",
+        ".ini",
+        ".cfg",
+        ".bat",
+        ".sh"
+      ]
+    },
+    {"bucket": "B13_OFFICE_MISC", "ext": [".ppt", ".pptx", ".xls", ".xlsx"]},
+    {"bucket": "B14_EMAIL", "ext": [".eml", ".msg"]},
+    {"bucket": "B15_OTHER", "ext": ["*"]}
+  ]
+}

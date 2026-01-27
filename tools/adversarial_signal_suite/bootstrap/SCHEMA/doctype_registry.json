@@ -1,0 +1,17 @@
+{
+  ".txt": {"doctype": "TEXT", "parser": "read_text", "content": "plain"},
+  ".md": {"doctype": "MARKDOWN", "parser": "read_text", "content": "plain"},
+  ".log": {"doctype": "LOG", "parser": "read_text", "content": "plain"},
+  ".json": {"doctype": "JSON", "parser": "read_json_strings", "content": "structured"},
+  ".jsonl": {"doctype": "JSONL", "parser": "read_jsonl_strings", "content": "structured"},
+  ".csv": {"doctype": "CSV", "parser": "read_csv_strings", "content": "structured"},
+  ".tsv": {"doctype": "TSV", "parser": "read_csv_strings", "content": "structured"},
+  ".pdf": {"doctype": "PDF", "parser": "read_pdf_text", "content": "paged"},
+  ".docx": {"doctype": "DOCX", "parser": "read_docx_text", "content": "paragraphs"},
+  ".rtf": {"doctype": "RTF", "parser": "read_rtf_text", "content": "plain"},
+  ".html": {"doctype": "HTML", "parser": "read_html_text", "content": "dom"},
+  ".htm": {"doctype": "HTML", "parser": "read_html_text", "content": "dom"},
+  ".zip": {"doctype": "ZIP", "parser": "inventory_zip", "content": "archive"},
+  ".7z": {"doctype": "7Z", "parser": "deferred_archive", "content": "archive"},
+  ".rar": {"doctype": "RAR", "parser": "deferred_archive", "content": "archive"}
+}
