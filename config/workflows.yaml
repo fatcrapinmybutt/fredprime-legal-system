@@ -1,0 +1,337 @@
+workflows:
+  # ========================================================================
+  # CUSTODY MODIFICATION WORKFLOW
+  # ========================================================================
+
+  custody_modification:
+    name: 'Custody Modification Workflow'
+    description: 'Comprehensive custody/parenting time modification with full motion package'
+    case_types:
+      - CUSTODY
+      - CHILD_SUPPORT
+    version: '1.0'
+
+    stages:
+      - name: 'intake_evidence'
+        type: 'intake'
+        description: 'Scan and ingest evidence files from multiple directories'
+        enabled: true
+        config:
+          extensions: ['.pdf', '.docx', '.xlsx', '.jpg', '.png', '.msg']
+          ocr_enabled: true
+          threads: 4
+
+      - name: 'deduplicate_evidence'
+        type: 'analysis'
+        description: 'Remove duplicate files based on content hash'
+        dependencies: ['intake_evidence']
+        enabled: true
+        config:
+          hash_algorithm: 'sha256'
+          delete_duplicates: false
+
+      - name: 'organize_exhibits'
+        type: 'organization'
+        description: 'Label exhibits A-Z, organize by relevance and chronology'
+        dependencies: ['deduplicate_evidence']
+        enabled: true
+        config:
+          label_scheme: 'alphabetic'
+          organization_method: 'chronological_then_category'
+          max_exhibits: 26
+
+      - name: 'analyze_timeline'
+        type: 'analysis'
+        description: 'Extract dates, build chronological timeline of key events'
+        dependencies: ['organize_exhibits']
+        enabled: true
+        config:
+          extract_dates: true
+          date_formats:
+            - 'MM/DD/YYYY'
+            - 'MM-DD-YYYY'
+            - 'MMMM DD, YYYY'
+          build_timeline: true
+
+      - name: 'identify_custody_interference'
+        type: 'analysis'
+        description: 'Identify parenting time violations and interference patterns'
+        dependencies: ['analyze_timeline']
+        enabled: true
+        config:
+          look_for_patterns:
+            - 'denied_parenting_time'
+            - 'schedule_violations'
+            - 'communication_interference'
+            - 'defamation'
+          severity_scoring: true
+
+      - name: 'link_motions_to_exhibits'
+        type: 'analysis'
+        description: 'Map exhibits to motion sections and legal arguments'
+        dependencies: ['organize_exhibits', 'identify_custody_interference']
+        enabled: true
+        config:
+          auto_linking: true
+          create_exhibit_index: true
+
+      - name: 'generate_motion_custody'
+        type: 'generation'
+        description: 'Generate Motion for Modification of Custody/Parenting Time'
+        dependencies: ['identify_custody_interference', 'link_motions_to_exhibits']
+        enabled: true
+        config:
+          template: 'motion_modify_custody.docx'
+          include_exhibits_list: true
+          mcr_compliant: true
+          benchbook_compliant: true
+
+      - name: 'generate_supporting_affidavits'
+        type: 'generation'
+        description: 'Generate supporting affidavits (if applicable)'
+        dependencies: ['generate_motion_custody']
+        enabled: true
+        config:
+          auto_generate: true
+          include_timeline: true
+          include_impact_statement: true
+
+      - name: 'build_custody_warboard'
+        type: 'warboarding'
+        description: 'Create visual timeline of custody interference and harm'
+        dependencies: ['analyze_timeline', 'identify_custody_interference']
+        enabled: true
+        config:
+          visualization_type: 'custody_interference_map'
+          include_timeline: true
+          include_harms: true
+          svg_export: true
+          docx_export: true
+
+      - name: 'validate_mcr_compliance'
+        type: 'validation'
+        description: 'Verify MCR 2.119 and MCL compliance'
+        dependencies: ['generate_motion_custody', 'generate_supporting_affidavits']
+        enabled: true
+        config:
+          check_signature_block: true
+          check_mcr_2119: true
+          check_formatting: true
+          check_page_limits: true
+
+      - name: 'validate_exhibits'
+        type: 'validation'
+        description: 'Verify exhibits are properly labeled and referenced'
+        dependencies: ['organize_exhibits', 'link_motions_to_exhibits']
+        enabled: true
+        config:
+          check_labels: true
+          check_references: true
+          check_readability: true
+
+      - name: 'generate_exhibit_binder'
+        type: 'generation'
+        description: 'Create organized exhibit binder with tabs and index'
+        dependencies: ['organize_exhibits', 'validate_exhibits']
+        enabled: true
+        config:
+          format: 'pdf'
+          include_tabs: true
+          include_index: true
+          include_toc: true
+
+      - name: 'prepare_mifile_bundle'
+        type: 'filing'
+        description: 'Prepare complete MiFile electronic filing package'
+        dependencies: ['validate_mcr_compliance', 'validate_exhibits', 'generate_exhibit_binder']
+        enabled: true
+        config:
+          mifile_format: true
+          include_manifest: true
+          include_checksums: true
+          compress_for_upload: true
+
+  # ========================================================================
+  # EMERGENCY HOUSING WORKFLOW
+  # ========================================================================
+
+  housing_emergency:
+    name: 'Emergency Housing Intervention Workflow'
+    description: 'Rapid response to housing emergency with injunction motion'
+    case_types:
+      - HOUSING
+    version: '1.0'
+
+    stages:
+      - name: 'rapid_intake'
+        type: 'intake'
+        description: 'Quickly ingest evidence of imminent harm'
+        enabled: true
+        config:
+          extensions: ['.pdf', '.docx', '.jpg', '.png', '.msg']
+          quick_scan: true
+          threads: 8
+
+      - name: 'assess_harm'
+        type: 'analysis'
+        description: 'Evaluate harm, danger, and irreparability'
+        dependencies: ['rapid_intake']
+        enabled: true
+        config:
+          assess_irreparable_harm: true
+          assess_imminent_danger: true
+          assess_children_involved: true
+          assess_disability_involved: true
+
+      - name: 'organize_evidence'
+        type: 'organization'
+        description: 'Quick organize evidence by harm category'
+        dependencies: ['assess_harm']
+        enabled: true
+        config:
+          organization_method: 'harm_category'
+          priority_exhibits: true
+
+      - name: 'generate_injunction_motion'
+        type: 'generation'
+        description: 'Generate Emergency Motion for Preliminary Injunction'
+        dependencies: ['assess_harm', 'organize_evidence']
+        enabled: true
+        config:
+          template: 'motion_emergency_injunction.docx'
+          four_factor_test: true
+          mcr_compliant: true
+          expedited_format: true
+
+      - name: 'generate_affidavit'
+        type: 'generation'
+        description: 'Generate supporting affidavit for emergency relief'
+        dependencies: ['generate_injunction_motion']
+        enabled: true
+        config:
+          include_harm_description: true
+          include_timeline: true
+          include_relief_sought: true
+
+      - name: 'validate_emergency_compliance'
+        type: 'validation'
+        description: 'Verify emergency filing requirements'
+        dependencies: ['generate_injunction_motion', 'generate_affidavit']
+        enabled: true
+        config:
+          check_emergency_format: true
+          check_mcr_expedited: true
+          check_required_declarations: true
+
+      - name: 'prepare_emergency_filing'
+        type: 'filing'
+        description: 'Prepare for immediate court filing'
+        dependencies: ['validate_emergency_compliance']
+        enabled: true
+        config:
+          include_notice: true
+          include_proposed_order: true
+          include_affidavit: true
+          emergency_delivery_ready: true
+
+  # ========================================================================
+  # PPO DEFENSE WORKFLOW
+  # ========================================================================
+
+  ppo_defense:
+    name: 'Personal Protection Order (PPO) Defense Workflow'
+    description: 'Comprehensive PPO defense with evidence and refutation'
+    case_types:
+      - PPO
+    version: '1.0'
+
+    stages:
+      - name: 'intake_defense_evidence'
+        type: 'intake'
+        description: 'Ingest evidence supporting defense'
+        enabled: true
+        config:
+          extensions: ['.pdf', '.docx', '.xlsx', '.jpg', '.png', '.msg', '.txt']
+          threads: 4
+
+      - name: 'organize_defense_evidence'
+        type: 'organization'
+        description: 'Organize evidence by allegation category'
+        dependencies: ['intake_defense_evidence']
+        enabled: true
+        config:
+          organization_method: 'allegation_refutation'
+          cross_reference_allegations: true
+
+      - name: 'analyze_allegations'
+        type: 'analysis'
+        description: 'Analyze allegations and identify refutations'
+        dependencies: ['organize_defense_evidence']
+        enabled: true
+        config:
+          identify_false_allegations: true
+          identify_defamation: true
+          identify_abuse_of_process: true
+          build_refutation_matrix: true
+
+      - name: 'detect_ppo_misuse_pattern'
+        type: 'analysis'
+        description: 'Identify pattern of PPO misuse or harassment'
+        dependencies: ['analyze_allegations']
+        enabled: true
+        config:
+          check_prior_ppos: true
+          check_prior_false_allegations: true
+          check_retaliation_pattern: true
+
+      - name: 'build_ppo_interference_warboard'
+        type: 'warboarding'
+        description: 'Create visualization of PPO interference and false allegations'
+        dependencies: ['analyze_allegations', 'detect_ppo_misuse_pattern']
+        enabled: true
+        config:
+          visualization_type: 'ppo_interference_map'
+          include_allegations_timeline: true
+          include_refutations: true
+          include_impact: true
+
+      - name: 'generate_ppo_response'
+        type: 'generation'
+        description: 'Generate comprehensive PPO response motion'
+        dependencies: ['analyze_allegations', 'build_ppo_interference_warboard']
+        enabled: true
+        config:
+          template: 'motion_ppo_response.docx'
+          include_factual_refutations: true
+          include_legal_arguments: true
+          mcr_compliant: true
+
+      - name: 'generate_supporting_docs'
+        type: 'generation'
+        description: 'Generate affidavits and supporting documents'
+        dependencies: ['generate_ppo_response']
+        enabled: true
+        config:
+          generate_affidavits: true
+          include_evidence_list: true
+          include_witness_list: true
+
+      - name: 'validate_ppo_compliance'
+        type: 'validation'
+        description: 'Verify MCR/MCL compliance for PPO response'
+        dependencies: ['generate_ppo_response', 'generate_supporting_docs']
+        enabled: true
+        config:
+          check_response_deadline: true
+          check_formatting: true
+          check_allegations_addressed: true
+
+      - name: 'prepare_ppo_filing'
+        type: 'filing'
+        description: 'Prepare PPO response filing package'
+        dependencies: ['validate_ppo_compliance']
+        enabled: true
+        config:
+          include_notice: true
+          include_evidence_index: true
+          include_affidavits: true

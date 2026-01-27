@@ -1,8 +1,11 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, MetaData
+from sqlalchemy import Column, Integer, MetaData, String
+from sqlalchemy.orm import DeclarativeBase
 
 metadata = MetaData(schema="knowledge")
-Base = declarative_base(metadata=metadata)
+
+
+class Base(DeclarativeBase):
+    metadata = metadata
 
 
 class Fact(Base):

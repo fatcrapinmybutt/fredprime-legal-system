@@ -13,7 +13,7 @@ authors = [
     {name = "FatCrapInMyButt", email = "fatcrapinmybutt1@gmail.com"}
 ]
 keywords = [
-    "legal", "litigation", "automation", "document-management", 
+    "legal", "litigation", "automation", "document-management",
     "court-forms", "legal-tech", "python"
 ]
 classifiers = [
@@ -89,6 +89,14 @@ line_length = 120
 skip_gitignore = true
 known_first_party = ["src", "modules", "cli", "scripts"]
 
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+ignore = []
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
@@ -101,6 +109,7 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
 strict_equality = true
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

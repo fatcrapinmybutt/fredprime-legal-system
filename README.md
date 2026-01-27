@@ -1,22 +1,38 @@
-# Build a README with full instructions for using the JSON-defined system locally or through GitHub
+# FRED Supreme Litigation OS
 
-readme_content = """
+FRED Supreme Litigation OS is an integrated toolkit for legal document processing,
+case workflows, and AI-assisted evidence analysis. It includes modules for NLP-based
+entity extraction, sentiment analysis, document classification, evidence verification,
+and pipeline orchestration intended for litigation support and automation.
 
-# 🧠 FRED PRIME Litigation Deployment System
+## Quickstart
 
-This repo enables **offline, token-free litigation automation** for the FRED PRIME system using PowerShell and a JSON-configurable engine.
+1. Create a Python virtual environment and activate it:
 
----
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-## ✅ What This System Does
+2. Install dependencies:
 
-- 🔖 Auto-labels exhibits (Exhibit A–Z)
-- 🔗 Links motions to matching exhibits
-- 🧾 Validates MCR 1.109(D)(3) signature block compliance
-- 📅 Builds parenting time violation matrix from AppClose logs (Exhibit Y)
-- 🛑 Tracks false police reports and PPO misuse (Exhibit S)
-- ⚖️ Logs judicial irregularities (Exhibit U)
+```bash
+pip install -r requirements.txt
+```
 
----
+3. Run a quick module example:
 
-## 🗂 Structure
+```bash
+python -m ai.nlp_document_processor
+```
+
+## Contributing
+
+- Follow PEP8 and add type hints (PEP 484).
+- Run tests in `tests/` before opening a PR.
+- Open issues or PRs to `main` branch and include a clear description.
+
+## License
+
+See the `LICENSE` file in the repository root.
+

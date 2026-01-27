@@ -11,19 +11,20 @@ Run locally:
     uvicorn src.health:app --reload
 """
 
+import logging
+import os
+from typing import Any, Dict, Optional
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import os
-import logging
-from typing import Optional
 
 from .observability import instrument_fastapi, start_metrics_server
 
 
-def _default_checks() -> dict:
+def _default_checks() -> Dict[str, Any]:
     """Run quick local health checks. Non-blocking and inexpensive."""
     # Add more checks as needed (disk space, DB connection, caches, etc.)
-    checks = {
+    checks: Dict[str, Any] = {
         "disk_ok": True,
         "env": True,
     }
