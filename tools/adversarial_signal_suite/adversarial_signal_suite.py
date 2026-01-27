@@ -28,6 +28,7 @@ Typical runs
 from __future__ import annotations
 
 import argparse
+import bisect
 import csv
 import datetime as _dt
 import hashlib
@@ -47,6 +48,9 @@ _HAS_FITZ = False
 _HAS_PDFPLUMBER = False
 _HAS_DOCX = False
 _HAS_BS4 = False
+
+SEGMENT_SIZE = 800
+SEGMENT_OVERLAP = 200
 
 if importlib.util.find_spec("fitz"):
     fitz = importlib.import_module("fitz")  # type: ignore[assignment]
@@ -192,6 +196,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.8,
             "regex": r"\b(asymmetric|one[-\s]?sided|favor(?:ed|itism)|double\s+standard|outcome[-\s]?driven)\b",
             "flags": ["I"],
+            "mv_ids": ["MV01"],
+            "notes": "",
         },
         {
             "id": "bias_credibility_pref",
@@ -199,6 +205,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.7,
             "regex": r"\b(credible\s+testimony|not\s+credible|credibility\s+determination|the\s+court\s+finds\s+.*credible)\b",
             "flags": ["I"],
+            "mv_ids": ["MV01"],
+            "notes": "",
         },
         {
             "id": "exparte_terms",
@@ -206,6 +214,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.9,
             "regex": r"\b(ex\s+parte|without\s+notice|irreparable\s+injury|immediate\s+danger|emergency\s+order)\b",
             "flags": ["I"],
+            "mv_ids": ["MV04", "MV02"],
+            "notes": "",
         },
         {
             "id": "notice_defect",
@@ -213,6 +223,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.9,
             "regex": r"\b(no\s+notice|lack\s+of\s+notice|insufficient\s+notice|was\s+not\s+served|service\s+was\s+defective|not\s+properly\s+noticed)\b",
             "flags": ["I"],
+            "mv_ids": ["MV04"],
+            "notes": "",
         },
         {
             "id": "evidence_blocked",
@@ -220,6 +232,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.95,
             "regex": r"\b(not\s+allowed\s+to\s+present|refused\s+to\s+admit|excluded\s+evidence|would\s+not\s+hear|prevented\s+from\s+introducing|proffer\s+denied)\b",
             "flags": ["I"],
+            "mv_ids": ["MV05", "MV01"],
+            "notes": "",
         },
         {
             "id": "hearsay_reliance",
@@ -227,6 +241,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.6,
             "regex": r"\b(hearsay|unnamed\s+friend|told\s+me\s+that|someone\s+said|alleged\s+that)\b",
             "flags": ["I"],
+            "mv_ids": ["MV05"],
+            "notes": "",
         },
         {
             "id": "ppo_weaponization_terms",
@@ -234,6 +250,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.9,
             "regex": r"\b(PPO|personal\s+protection\s+order|stalking|harassment|no\s+contact|violation\s+of\s+PPO)\b",
             "flags": ["I"],
+            "mv_ids": ["MV02"],
+            "notes": "",
         },
         {
             "id": "contempt_retaliation",
@@ -241,6 +259,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.8,
             "regex": r"\b(retaliat(?:e|ion)|punish(?:ed|ment)|contempt\s+for\s+filing|sanction(?:ed|s)|jail|incarcerat(?:ed|ion))\b",
             "flags": ["I"],
+            "mv_ids": ["MV03", "MV06"],
+            "notes": "",
         },
         {
             "id": "fee_bond_barrier",
@@ -248,6 +268,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.8,
             "regex": r"\b(filing\s+fee|bond\s+requirement|cash\s+bond|security\s+for\s+costs|paywall|unable\s+to\s+file)\b",
             "flags": ["I"],
+            "mv_ids": ["MV06"],
+            "notes": "",
         },
         {
             "id": "substance_allegation",
@@ -255,6 +277,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.9,
             "regex": r"\b(meth|amphetamine|cocaine|heroin|opioid|drug\s+use|under\s+the\s+influence|intoxicated|drug\s+screen|urinalysis)\b",
             "flags": ["I"],
+            "mv_ids": ["MV08"],
+            "notes": "",
         },
         {
             "id": "mental_health_allegation",
@@ -262,6 +286,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.95,
             "regex": r"\b(delusional|psychosis|paranoid|bipolar|schizo|mental\s+health\s+eval|assessment\s+required|diagnos(?:is|ed)|rule\s+out\s+delusional)\b",
             "flags": ["I"],
+            "mv_ids": ["MV07", "MV08"],
+            "notes": "",
         },
         {
             "id": "unfit_parent_language",
@@ -269,6 +295,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.7,
             "regex": r"\b(unfit\s+parent|unsafe\s+for\s+child|danger\s+to\s+child|supervised\s+visitation|parenting\s+time\s+suspend(?:ed|)|withhold(?:ing)?\s+parenting\s+time)\b",
             "flags": ["I"],
+            "mv_ids": ["MV09", "MV08"],
+            "notes": "",
         },
         {
             "id": "negative_emotion_language",
@@ -276,6 +304,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.4,
             "regex": r"\b(crazy|insane|unstable|manipulative|liar|lying|dangerous|abusive|toxic|threat(?:en|ening))\b",
             "flags": ["I"],
+            "mv_ids": ["MV08"],
+            "notes": "",
         },
         {
             "id": "credibility_attack",
@@ -283,6 +313,8 @@ DEFAULT_ADVERSARIAL_CONFIG: Dict[str, Any] = {
             "weight": 0.6,
             "regex": r"\b(not\s+credible|fabricat(?:ed|ion)|exaggerat(?:ed|ion)|false\s+report|made\s+up|misrepresent(?:ed|ation)|perjur(?:y|ed))\b",
             "flags": ["I"],
+            "mv_ids": ["MV08", "MV01"],
+            "notes": "",
         },
     ],
     "synonyms": {
@@ -335,6 +367,64 @@ def stable_event_id(path: str, locator: str, pattern_id: str, match_span: Tuple[
 
 def stable_eaid(path: str, locator: str, snippet: str) -> str:
     return "EA_" + sha256_hex(f"{path}|{locator}|{snippet}")[:32]
+
+
+def build_line_index(text: str) -> List[int]:
+    line_starts = [0]
+    for idx, ch in enumerate(text):
+        if ch == "\n":
+            line_starts.append(idx + 1)
+    return line_starts
+
+
+def line_for_offset(line_starts: List[int], offset: int) -> int:
+    if not line_starts:
+        return 1
+    return max(1, bisect.bisect_right(line_starts, offset) - 1 + 1)
+
+
+def chunk_text_with_lines(text: str, base_locator: Optional[str] = None) -> List[Segment]:
+    if not text:
+        locator = "line:0-0" if not base_locator else f"{base_locator}|line:0-0|char:0-0"
+        return [Segment(locator=locator, text="", extra={"line_start": 0, "line_end": 0, "char_start": 0, "char_end": 0})]
+    line_starts = build_line_index(text)
+    segs: List[Segment] = []
+    step = max(1, SEGMENT_SIZE - SEGMENT_OVERLAP)
+    for start in range(0, len(text), step):
+        end = min(len(text), start + SEGMENT_SIZE)
+        chunk = text[start:end]
+        line_start = line_for_offset(line_starts, start)
+        line_end = line_for_offset(line_starts, max(start, end - 1))
+        locator = f"line:{line_start}-{line_end}|char:{start + 1}-{end}"
+        if base_locator:
+            locator = f"{base_locator}|{locator}"
+        segs.append(
+            Segment(
+                locator=locator,
+                text=chunk,
+                extra={"line_start": line_start, "line_end": line_end, "char_start": start + 1, "char_end": end},
+            )
+        )
+        if end >= len(text):
+            break
+    return segs
+
+
+def chunk_text_generic(text: str, base_locator: str, extra: Optional[Dict[str, Any]] = None) -> List[Segment]:
+    if not text:
+        return [Segment(locator=base_locator, text="", extra=extra or {})]
+    segs: List[Segment] = []
+    step = max(1, SEGMENT_SIZE - SEGMENT_OVERLAP)
+    chunk_index = 0
+    for start in range(0, len(text), step):
+        end = min(len(text), start + SEGMENT_SIZE)
+        chunk = text[start:end]
+        locator = f"{base_locator}|chunk:{chunk_index}|char:{start + 1}-{end}"
+        segs.append(Segment(locator=locator, text=chunk, extra=extra or {}))
+        chunk_index += 1
+        if end >= len(text):
+            break
+    return segs
 
 
 # -----------------------------
@@ -402,7 +492,7 @@ def read_text_file(p: Path, max_bytes: int = 8_000_000) -> FileParseResult:
             b = b[:max_bytes]
             errors.append(f"TRUNCATED:max_bytes={max_bytes}")
         text = b.decode("utf-8", errors="replace")
-        segs = split_into_line_segments(text, max_lines=80)
+        segs = chunk_text_with_lines(text)
         return FileParseResult(
             ok=True,
             doctype=DOCTYPE_REGISTRY[p.suffix.lower()]["doctype"],
@@ -418,20 +508,6 @@ def read_text_file(p: Path, max_bytes: int = 8_000_000) -> FileParseResult:
             errors=[f"READ_TEXT_ERROR:{type(exc).__name__}:{exc}"],
             ocr_needed=False,
         )
-
-
-def split_into_line_segments(text: str, max_lines: int = 80) -> List[Segment]:
-    lines = text.splitlines()
-    segs: List[Segment] = []
-    if not lines:
-        return [Segment(locator="line:0-0", text="", extra={})]
-    start = 0
-    while start < len(lines):
-        end = min(len(lines), start + max_lines)
-        chunk = "\n".join(lines[start:end])
-        segs.append(Segment(locator=f"line:{start + 1}-{end}", text=chunk, extra={"line_start": start + 1, "line_end": end}))
-        start = end
-    return segs
 
 
 def read_csv_strings(p: Path, delimiter: str, max_rows: int = 5000, max_cell: int = 4000) -> FileParseResult:
@@ -455,7 +531,8 @@ def read_csv_strings(p: Path, delimiter: str, max_rows: int = 5000, max_cell: in
                         cells.append(cell_str)
                 if not cells:
                     continue
-                segs.append(Segment(locator=f"row:{row_i}", text=" | ".join(cells), extra={"row": row_i}))
+                row_text = " | ".join(cells)
+                segs.extend(chunk_text_generic(row_text, f"row:{row_i}", extra={"row": row_i}))
         return FileParseResult(
             ok=True,
             doctype=DOCTYPE_REGISTRY[p.suffix.lower()]["doctype"],
@@ -513,14 +590,16 @@ def read_json_strings(p: Path) -> FileParseResult:
         for i, s in enumerate(strings):
             block.append(s)
             if len(block) >= 50:
-                segs.append(Segment(locator=f"jsonstr:{start_i}-{i}", text="\n".join(block), extra={"i0": start_i, "i1": i}))
+                block_text = "\n".join(block)
+                segs.extend(chunk_text_generic(block_text, f"jsonstr:{start_i}-{i}", extra={"i0": start_i, "i1": i}))
                 block = []
                 start_i = i + 1
         if block:
-            segs.append(
-                Segment(
-                    locator=f"jsonstr:{start_i}-{start_i + len(block) - 1}",
-                    text="\n".join(block),
+            block_text = "\n".join(block)
+            segs.extend(
+                chunk_text_generic(
+                    block_text,
+                    f"jsonstr:{start_i}-{start_i + len(block) - 1}",
                     extra={"i0": start_i, "i1": start_i + len(block) - 1},
                 )
             )
@@ -558,9 +637,15 @@ def read_jsonl_strings(p: Path, max_lines: int = 20000) -> FileParseResult:
                     strings: List[str] = []
                     _extract_json_strings(obj, strings, max_strings=2000)
                     if strings:
-                        segs.append(Segment(locator=f"jsonl:{i}", text="\n".join(strings[:200]), extra={"line": i}))
+                        segs.extend(
+                            chunk_text_generic(
+                                "\n".join(strings[:200]),
+                                f"jsonl:{i}",
+                                extra={"line": i},
+                            )
+                        )
                 except Exception:
-                    segs.append(Segment(locator=f"line:{i}", text=line[:4000], extra={"line": i}))
+                    segs.extend(chunk_text_generic(line[:4000], f"line:{i}", extra={"line": i}))
         return FileParseResult(
             ok=True,
             doctype=DOCTYPE_REGISTRY[p.suffix.lower()]["doctype"],
@@ -591,7 +676,7 @@ def read_rtf_text(p: Path, max_bytes: int = 8_000_000) -> FileParseResult:
         s = re.sub(r"\\[a-zA-Z]+\d*\s?", " ", s)
         s = s.replace("{", " ").replace("}", " ")
         s = re.sub(r"\s+", " ", s).strip()
-        segs = split_into_line_segments(s, max_lines=15)
+        segs = chunk_text_with_lines(s)
         return FileParseResult(
             ok=True,
             doctype=DOCTYPE_REGISTRY[p.suffix.lower()]["doctype"],
@@ -623,7 +708,7 @@ def read_html_text(p: Path, max_bytes: int = 8_000_000) -> FileParseResult:
         else:
             txt = re.sub(r"<[^>]+>", " ", html)
         txt = re.sub(r"\n{3,}", "\n\n", txt)
-        segs = split_into_line_segments(txt, max_lines=80)
+        segs = chunk_text_with_lines(txt)
         return FileParseResult(
             ok=True,
             doctype=DOCTYPE_REGISTRY[p.suffix.lower()]["doctype"],
@@ -651,7 +736,7 @@ def read_docx_text(p: Path) -> FileParseResult:
         for i, para in enumerate(doc.paragraphs, start=1):
             t = (para.text or "").strip()
             if t:
-                segs.append(Segment(locator=f"para:{i}", text=t, extra={"para": i}))
+                segs.extend(chunk_text_generic(t, f"para:{i}", extra={"para": i}))
         if not segs:
             segs.append(Segment(locator="para:0", text="", extra={}))
         return FileParseResult(ok=True, doctype="DOCX", segments=segs, errors=errors, ocr_needed=False)
@@ -681,7 +766,7 @@ def read_pdf_text(p: Path, max_pages: int = 400) -> FileParseResult:
                 txt = page.get_text("text") or ""
                 total_chars += len(txt)
                 if txt.strip():
-                    segs.append(Segment(locator=f"page:{i + 1}", text=txt, extra={"page": i + 1}))
+                    segs.extend(chunk_text_with_lines(txt, base_locator=f"page:{i + 1}"))
             doc.close()
             if total_chars < 50:
                 ocr_needed = True
@@ -700,7 +785,7 @@ def read_pdf_text(p: Path, max_pages: int = 400) -> FileParseResult:
                     txt = pdf.pages[i].extract_text() or ""
                     total_chars += len(txt)
                     if txt.strip():
-                        segs.append(Segment(locator=f"page:{i + 1}", text=txt, extra={"page": i + 1}))
+                        segs.extend(chunk_text_with_lines(txt, base_locator=f"page:{i + 1}"))
                 if total_chars < 50:
                     ocr_needed = True
                     errors.append("LOW_TEXT:OCR_UNKNOWN")
@@ -732,14 +817,14 @@ def inventory_zip(p: Path, max_entries: int = 50000) -> FileParseResult:
             for i, name in enumerate(names):
                 block.append(name)
                 if len(block) >= 200:
-                    segs.append(Segment(locator=f"zip:{start}-{i}", text="\n".join(block), extra={"i0": start, "i1": i}))
+                    segs.extend(chunk_text_generic("\n".join(block), f"zip:{start}-{i}", extra={"i0": start, "i1": i}))
                     block = []
                     start = i + 1
             if block:
-                segs.append(
-                    Segment(
-                        locator=f"zip:{start}-{start + len(block) - 1}",
-                        text="\n".join(block),
+                segs.extend(
+                    chunk_text_generic(
+                        "\n".join(block),
+                        f"zip:{start}-{start + len(block) - 1}",
                         extra={"i0": start, "i1": start + len(block) - 1},
                     )
                 )
@@ -1022,6 +1107,24 @@ def load_seen_event_ids(events_jsonl: Path, max_lines: int = 2_000_000) -> set:
     return seen
 
 
+def load_file_cache(path: Path) -> Dict[str, Dict[str, Any]]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8", errors="replace"))
+    except Exception:
+        return {}
+
+
+def save_file_cache(path: Path, cache: Dict[str, Dict[str, Any]]) -> None:
+    path.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def config_hash(cfg: Dict[str, Any]) -> str:
+    payload = json.dumps(cfg.get("patterns", []), ensure_ascii=False, sort_keys=True)
+    return sha256_hex(payload)
+
+
 # -----------------------------
 # Neo4j CSV emission
 # -----------------------------
@@ -1060,7 +1163,7 @@ def emit_neo4j_csv(out_neo: Path, events: List[Dict[str, Any]]) -> Dict[str, str
                 "actor_tags": "|".join(event.get("actor_tags", [])),
                 "ts_utc": event["ts_utc"],
             }
-        rel_e2e.append({"eaid:START_ID": eaid, "event_id:END_ID": evt_id, "type": "HAS_EVENT"})
+        rel_e2e.append({"eaid:START_ID": eaid, "event_id:END_ID": evt_id, "type": "EVIDENCE_HAS_EVENT"})
 
         for mv in event.get("mv", []):
             mv_id = mv.get("mv")
@@ -1097,6 +1200,58 @@ def emit_neo4j_csv(out_neo: Path, events: List[Dict[str, Any]]) -> Dict[str, str
     return paths
 
 
+def merge_graphs(graph_dir: Path, out_path: Path, run_ledger: Optional[Path] = None) -> Dict[str, Any]:
+    graph_files = sorted([p for p in graph_dir.glob("*.json") if p.is_file()])
+    nodes: Dict[str, Dict[str, Any]] = {}
+    edges: Dict[str, Dict[str, Any]] = {}
+
+    def node_key(node: Dict[str, Any]) -> str:
+        for key in ("id", "node_id", "uid"):
+            if key in node:
+                return str(node[key])
+        return sha256_hex(json.dumps(node, ensure_ascii=False, sort_keys=True))
+
+    def edge_key(edge: Dict[str, Any]) -> str:
+        src = edge.get("source") or edge.get("from") or edge.get("src")
+        dst = edge.get("target") or edge.get("to") or edge.get("dst")
+        rel = edge.get("type") or edge.get("label") or edge.get("rel")
+        return f"{src}|{dst}|{rel}"
+
+    for path in graph_files:
+        try:
+            obj = json.loads(path.read_text(encoding="utf-8", errors="replace"))
+        except Exception:
+            continue
+        for node in obj.get("nodes", []) or []:
+            key = node_key(node)
+            if key not in nodes:
+                nodes[key] = node
+        for edge in obj.get("edges", []) or []:
+            key = edge_key(edge)
+            if key not in edges:
+                edges[key] = edge
+
+    merged = {
+        "nodes": [nodes[k] for k in sorted(nodes.keys())],
+        "edges": [edges[k] for k in sorted(edges.keys())],
+        "sources": [str(p) for p in graph_files],
+        "ts_utc": utc_now_iso(),
+    }
+    write_json(out_path, merged)
+    report = {
+        "ts_utc": merged["ts_utc"],
+        "phase": "merge_graphs",
+        "graph_dir": str(graph_dir),
+        "out_path": str(out_path),
+        "files": len(graph_files),
+        "nodes": len(nodes),
+        "edges": len(edges),
+    }
+    if run_ledger:
+        append_jsonl(run_ledger, report)
+    return report
+
+
 # -----------------------------
 # Bootstrap bundle emission
 # -----------------------------
@@ -1107,7 +1262,7 @@ BUMPERS_CYPHER = r"""
 //  (:EvidenceAtom {eaid, path, doctype, bucket, locator, snippet, ocr_needed})
 //  (:SignalEvent {event_id, category, pattern_id, severity, weight, match_text, actor_tags, ts_utc})
 //  (:MisconductVector {mv_id, name})
-//  (ea)-[:HAS_EVENT]->(ev)
+//  (ea)-[:EVIDENCE_HAS_EVENT]->(ev)
 //  (ev)-[:MAPS_TO {w}]->(mv)
 
 // Q1: Top categories by count
@@ -1123,7 +1278,7 @@ ORDER BY ev.weight DESC, ev.ts_utc DESC
 LIMIT 50;
 
 // Q3: Find evidence that mentions ex parte or no notice
-MATCH (ea:EvidenceAtom)-[:HAS_EVENT]->(ev:SignalEvent)
+MATCH (ea:EvidenceAtom)-[:EVIDENCE_HAS_EVENT]->(ev:SignalEvent)
 WHERE ev.category IN ['EX_PARTE_OVERREACH','NOTICE_DEFECT']
 RETURN ea.path, ea.locator, ea.snippet, ev.category, ev.pattern_id, ev.match_text
 ORDER BY ea.path;
@@ -1156,7 +1311,7 @@ def emit_bootstrap_bundle(out_root: Path) -> Dict[str, str]:
         {
             "name": "BUMPER_QUERY_PACK",
             "version": "v1",
-            "requires": ["EvidenceAtom", "SignalEvent", "MisconductVector", "HAS_EVENT", "MAPS_TO"],
+            "requires": ["EvidenceAtom", "SignalEvent", "MisconductVector", "EVIDENCE_HAS_EVENT", "MAPS_TO"],
             "notes": ["These are analysis queries; they do not modify the graph."],
         },
     )
@@ -1205,13 +1360,19 @@ def scan_once(
 ) -> Dict[str, Any]:
     paths = ensure_dirs(out_root)
     events_path = paths["OUT"] / "adversarial_events.jsonl"
+    file_status_path = paths["OUT"] / "file_status.jsonl"
     seen = load_seen_event_ids(events_path)
+    cache_path = paths["RUN"] / "file_cache.json"
+    file_cache = load_file_cache(cache_path)
+    cfg_hash = config_hash(cfg)
+    cache_dirty = False
 
     all_events: List[Dict[str, Any]] = []
     file_stats: List[Dict[str, Any]] = []
 
     scanned_files = 0
     matched_files = 0
+    skipped_files = 0
     ocr_bucket = []
     deferred_archives = []
 
@@ -1220,6 +1381,41 @@ def scan_once(
         if allow_exts is not None and ext not in allow_exts:
             continue
         if ext not in DOCTYPE_REGISTRY:
+            continue
+
+        try:
+            stat_info = fp.stat()
+        except Exception as exc:
+            skipped_files += 1
+            status = {
+                "file": str(fp),
+                "doctype": DOCTYPE_REGISTRY.get(ext, {}).get("doctype", "UNKNOWN"),
+                "ocr_needed": False,
+                "errors": [f"STAT_ERROR:{type(exc).__name__}:{exc}"],
+                "events": 0,
+                "categories": {},
+                "skipped": True,
+                "skip_reason": "STAT_ERROR",
+            }
+            append_jsonl(file_status_path, status)
+            file_stats.append(status)
+            continue
+
+        cache_entry = file_cache.get(str(fp))
+        if cache_entry and cache_entry.get("mtime") == stat_info.st_mtime and cache_entry.get("size") == stat_info.st_size and cache_entry.get("cfg_hash") == cfg_hash:
+            skipped_files += 1
+            status = {
+                "file": str(fp),
+                "doctype": DOCTYPE_REGISTRY.get(ext, {}).get("doctype", "UNKNOWN"),
+                "ocr_needed": False,
+                "errors": [],
+                "events": 0,
+                "categories": {},
+                "skipped": True,
+                "skip_reason": "CACHE_HIT",
+            }
+            append_jsonl(file_status_path, status)
+            file_stats.append(status)
             continue
 
         parse = parse_file(fp)
@@ -1242,7 +1438,12 @@ def scan_once(
             all_events.append(event)
             new_count += 1
         st["new_events_appended"] = new_count
+        st["skipped"] = False
         file_stats.append(st)
+        append_jsonl(file_status_path, st)
+
+        file_cache[str(fp)] = {"mtime": stat_info.st_mtime, "size": stat_info.st_size, "cfg_hash": cfg_hash}
+        cache_dirty = True
 
         if scanned_files % 500 == 0:
             append_jsonl(
@@ -1260,6 +1461,7 @@ def scan_once(
         "ts_utc": utc_now_iso(),
         "scanned_files": scanned_files,
         "matched_files": matched_files,
+        "skipped_files": skipped_files,
         "new_events_appended": len(all_events),
         "ocr_needed_count": len(ocr_bucket),
         "deferred_archives_count": len(deferred_archives),
@@ -1271,6 +1473,9 @@ def scan_once(
         append_jsonl(paths["DEFER"] / "ocr_bucket.jsonl", {"ts_utc": utc_now_iso(), "files": ocr_bucket})
     if deferred_archives:
         append_jsonl(paths["DEFER"] / "archive_bucket.jsonl", {"ts_utc": utc_now_iso(), "files": deferred_archives})
+
+    if cache_dirty:
+        save_file_cache(cache_path, file_cache)
 
     provenance = {
         "ts_utc": utc_now_iso(),
@@ -1490,6 +1695,10 @@ def cmd_scan(a: argparse.Namespace) -> int:
         allow_exts=allow_exts,
         neo4j_csv=bool(a.neo4j_csv),
     )
+    if a.merge_graphs:
+        merge_out = Path(a.merge_graphs_out).resolve() if a.merge_graphs_out else (out_root / "OUT" / "merged_graph.json")
+        merge_report = merge_graphs(Path(a.merge_graphs), merge_out, out_root / "RUN" / "run_ledger.jsonl")
+        report["merge_graphs"] = merge_report
     print(json.dumps(report, indent=2))
     return 0
 
@@ -1529,6 +1738,8 @@ def build_argparser() -> argparse.ArgumentParser:
     p1.add_argument("--eps", type=float, default=0.0, help="Convergence EPS threshold")
     p1.add_argument("--stable-n", type=int, default=2, help="Stop after this many stable cycles")
     p1.add_argument("--neo4j-csv", action="store_true", help="Emit NEO4J_IMPORT CSVs for new events appended in this run")
+    p1.add_argument("--merge-graphs", help="Directory of JSON graph files to merge after scan")
+    p1.add_argument("--merge-graphs-out", help="Output path for merged graph JSON")
     p1.set_defaults(func=cmd_scan)
 
     p2 = sub.add_parser("watch", help="Polling watcher. On file changes, re-scan changed files and append new events")

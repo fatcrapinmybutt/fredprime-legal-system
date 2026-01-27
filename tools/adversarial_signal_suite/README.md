@@ -9,14 +9,17 @@ query packs in downstream systems.
 ```bash
 python tools/adversarial_signal_suite/adversarial_signal_suite.py bootstrap --out ./BOOTSTRAP_BUNDLE
 python tools/adversarial_signal_suite/adversarial_signal_suite.py scan --roots /data --out /data/harvest/ADV
+python tools/adversarial_signal_suite/adversarial_signal_suite.py scan --roots /data --out /data/harvest/ADV --merge-graphs /data/graphs
 ```
 
 ## Outputs
 - OUT/adversarial_events.jsonl: append-only match events
+- OUT/file_status.jsonl: append-only file processing status events
 - OUT/adversarial_summary.json: summary snapshot
 - RUN/run_ledger.jsonl: run progress ledger
 - RUN/provenance_index.json: run metadata
 - RUN/convergence_report.json: convergence history
+- RUN/file_cache.json: file cache keyed by path + config hash
 - NEO4J_IMPORT/*.csv: optional graph import files
 
 ## Bootstrap bundle

@@ -3,7 +3,7 @@
 //  (:EvidenceAtom {eaid, path, doctype, bucket, locator, snippet, ocr_needed})
 //  (:SignalEvent {event_id, category, pattern_id, severity, weight, match_text, actor_tags, ts_utc})
 //  (:MisconductVector {mv_id, name})
-//  (ea)-[:HAS_EVENT]->(ev)
+//  (ea)-[:EVIDENCE_HAS_EVENT]->(ev)
 //  (ev)-[:MAPS_TO {w}]->(mv)
 
 // Q1: Top categories by count
@@ -19,7 +19,7 @@ ORDER BY ev.weight DESC, ev.ts_utc DESC
 LIMIT 50;
 
 // Q3: Find evidence that mentions ex parte or no notice
-MATCH (ea:EvidenceAtom)-[:HAS_EVENT]->(ev:SignalEvent)
+MATCH (ea:EvidenceAtom)-[:EVIDENCE_HAS_EVENT]->(ev:SignalEvent)
 WHERE ev.category IN ['EX_PARTE_OVERREACH','NOTICE_DEFECT']
 RETURN ea.path, ea.locator, ea.snippet, ev.category, ev.pattern_id, ev.match_text
 ORDER BY ea.path;
