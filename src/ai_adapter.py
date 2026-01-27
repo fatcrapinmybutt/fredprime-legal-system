@@ -30,11 +30,19 @@ def supported_backends() -> list[str]:
 Message = Mapping[str, str]
 
 
-def _render_messages(messages: Sequence[Message]) -> str:
-    return "\n".join(
-        f"{message.get('role', 'user')}: {message.get('content', '')}".rstrip()
-        for message in messages
-    )
+def _format_role_content(message: Message) -> str:
+    return f"{message.get('role', 'user')}: {message.get('content', '')}".rstrip()
+
+
+def _render_messages(messages: Sequence[Message], gen: Any) -> str:
+    tokenizer = getattr(gen, "tokenizer", None)
+    if tokenizer and hasattr(tokenizer, "apply_chat_template"):
+        return tokenizer.apply_chat_template(
+            list(messages),
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+    return "\n".join(_format_role_content(message) for message in messages)
 
 
 def _extract_text(output: Any) -> str:
@@ -66,10 +74,8 @@ def generate(prompt: str | Sequence[Message], max_tokens: int = 128) -> str:
                 "Install `transformers` and a model (or set AI_BACKEND to another backend)."
             )
         if isinstance(prompt, (list, tuple)):
-            try:
-                out = _gen(prompt, max_new_tokens=max_tokens, do_sample=True)
-            except Exception:
-                out = _gen(_render_messages(prompt), max_new_tokens=max_tokens, do_sample=True)
+            rendered = _render_messages(prompt, _gen)
+            out = _gen(rendered, max_new_tokens=max_tokens, do_sample=True)
         else:
             out = _gen(prompt, max_new_tokens=max_tokens, do_sample=True)
         return _extract_text(out)
