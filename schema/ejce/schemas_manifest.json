@@ -1,0 +1,18 @@
+{
+  "bundle": "ejce-core",
+  "schema_version": "2.1.0",
+  "core_components": [
+    "EvidenceAtom.schema.json",
+    "EvidenceStateMachine.schema.json",
+    "JudicialActionNode.schema.json",
+    "OmissionScore.schema.json",
+    "MDPNode.schema.json",
+    "TrainingRule.schema.json",
+    "DeviationEdge.schema.json",
+    "DeviationGraph.schema.json",
+    "PatternConfidenceIndex.schema.json",
+    "RemedyEligibilityMap.schema.json",
+    "JTCEligibilityGate.schema.json",
+    "AppellateOutput.schema.json"
+  ]
+}

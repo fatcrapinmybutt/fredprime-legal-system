@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/OmissionScore.schema.json",
+  "title": "OmissionScore",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action_id", "score", "components"],
+  "properties": {
+    "action_id": {"type": "string"},
+    "score": {"type": "number", "minimum": 0},
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "missing_findings_count",
+        "ignored_evidence_count",
+        "benchbook_deviation_weight",
+        "reliance_without_admission_count",
+        "ignored_objection_count"
+      ],
+      "properties": {
+        "missing_findings_count": {"type": "integer", "minimum": 0},
+        "ignored_evidence_count": {"type": "integer", "minimum": 0},
+        "benchbook_deviation_weight": {"type": "number", "minimum": 0},
+        "reliance_without_admission_count": {"type": "integer", "minimum": 0},
+        "ignored_objection_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

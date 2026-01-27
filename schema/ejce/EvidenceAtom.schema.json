@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/EvidenceAtom.schema.json",
+  "title": "EvidenceAtom++",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "atom_id",
+    "atom_type",
+    "source_path",
+    "record_status"
+  ],
+  "properties": {
+    "atom_id": {"type": "string", "minLength": 3},
+    "atom_type": {
+      "type": "string",
+      "enum": ["order", "transcript", "exhibit", "docket", "notice", "motion", "brief", "correspondence", "other"]
+    },
+    "source_path": {"type": "string"},
+    "record_status": {
+      "type": "string",
+      "enum": ["unknown", "created", "filed", "offered", "admitted", "excluded", "considered", "ignored", "relied_without_admission"]
+    },
+    "authority_pinpoint": {"type": ["string", "null"], "description": "Law pinpoint (rule + subsection + effective date)"},
+    "fact_pinpoint": {"type": ["string", "null"], "description": "Fact pinpoint (path + page/line/Bates/timecode)"},
+    "cited_authorities": {"type": "array", "items": {"type": "string"}, "default": []},
+    "judicial_acknowledged": {"type": "boolean", "default": false},
+    "judicial_ruled_on": {"type": "boolean", "default": false},
+    "judicial_excluded": {"type": "boolean", "default": false},
+    "judicial_relied_upon": {"type": "boolean", "default": false}
+  }
+}

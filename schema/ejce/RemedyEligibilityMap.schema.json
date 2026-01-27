@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/RemedyEligibilityMap.schema.json",
+  "title": "RemedyEligibilityMap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eligible_remedies", "gate_trace"],
+  "properties": {
+    "eligible_remedies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Vacatur", "Remand", "Reassignment", "Superintending_Control", "Federal_Overlay", "Stay", "Clarification", "Reconsideration"]
+      }
+    },
+    "gate_trace": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

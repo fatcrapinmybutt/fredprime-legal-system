@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/EvidenceStateMachine.schema.json",
+  "title": "EvidenceStateMachine",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["atom_id", "state", "state_ts"],
+  "properties": {
+    "atom_id": {"type": "string"},
+    "state": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "FILED",
+        "OFFERED",
+        "ACCEPTED",
+        "EXCLUDED",
+        "IGNORED",
+        "RELIED_WITHOUT_ADMISSION",
+        "SEALED"
+      ]
+    },
+    "state_ts": {"type": "string", "format": "date-time"},
+    "note": {"type": ["string", "null"]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/TrainingRule.schema.json",
+  "title": "TrainingRule",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["training_rule_id", "source", "instruction", "presumption_level"],
+  "properties": {
+    "training_rule_id": {"type": "string"},
+    "source": {"type": "string"},
+    "instruction": {"type": "string"},
+    "presumption_level": {"type": "string", "enum": ["low", "medium", "high", "absolute"]},
+    "applies_to": {"type": "array", "items": {"type": "string"}, "default": []},
+    "authority_links": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}
