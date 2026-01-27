@@ -45,6 +45,21 @@ def _render_messages(messages: Sequence[Message], gen: Any) -> str:
     return "\n".join(_format_role_content(message) for message in messages)
 
 
+def _apply_stop_sequences(text: str, stop: Sequence[str] | None) -> str:
+    if not stop:
+        return text
+    earliest = None
+    for marker in stop:
+        if not marker:
+            continue
+        index = text.find(marker)
+        if index != -1 and (earliest is None or index < earliest):
+            earliest = index
+    if earliest is None:
+        return text
+    return text[:earliest]
+
+
 def _extract_text(output: Any) -> str:
     if isinstance(output, list) and output:
         first = output[0]
@@ -61,7 +76,38 @@ def _extract_text(output: Any) -> str:
     return str(output)
 
 
-def generate(prompt: str | Sequence[Message], max_tokens: int = 128) -> str:
+def _generation_kwargs(
+    *,
+    max_tokens: int,
+    temperature: float | None,
+    top_p: float | None,
+    do_sample: bool | None,
+    return_full_text: bool,
+) -> dict[str, Any]:
+    if do_sample is None:
+        do_sample = temperature is not None or top_p is not None
+    kwargs: dict[str, Any] = {
+        "max_new_tokens": max_tokens,
+        "do_sample": do_sample,
+        "return_full_text": return_full_text,
+    }
+    if temperature is not None:
+        kwargs["temperature"] = temperature
+    if top_p is not None:
+        kwargs["top_p"] = top_p
+    return kwargs
+
+
+def generate(
+    prompt: str | Sequence[Message],
+    max_tokens: int = 128,
+    *,
+    temperature: float | None = None,
+    top_p: float | None = None,
+    do_sample: bool | None = None,
+    stop: Sequence[str] | None = None,
+    return_full_text: bool = False,
+) -> str:
     """Generate a short text continuation from the chosen backend.
 
     - If `AI_BACKEND=local` and `transformers` is available, use it.
@@ -73,11 +119,18 @@ def generate(prompt: str | Sequence[Message], max_tokens: int = 128) -> str:
                 "Local backend requested but `transformers` pipeline not available.\n"
                 "Install `transformers` and a model (or set AI_BACKEND to another backend)."
             )
+        kwargs = _generation_kwargs(
+            max_tokens=max_tokens,
+            temperature=temperature,
+            top_p=top_p,
+            do_sample=do_sample,
+            return_full_text=return_full_text,
+        )
         if isinstance(prompt, (list, tuple)):
             rendered = _render_messages(prompt, _gen)
-            out = _gen(rendered, max_new_tokens=max_tokens, do_sample=True)
+            out = _gen(rendered, **kwargs)
         else:
-            out = _gen(prompt, max_new_tokens=max_tokens, do_sample=True)
-        return _extract_text(out)
+            out = _gen(prompt, **kwargs)
+        return _apply_stop_sequences(_extract_text(out), stop)
 
     raise RuntimeError(f"Unsupported AI_BACKEND: {AI_BACKEND}. Supported: {supported_backends()}")
