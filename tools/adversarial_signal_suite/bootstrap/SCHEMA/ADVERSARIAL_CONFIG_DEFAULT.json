@@ -1,0 +1,122 @@
+{
+  "version": "adversarial_config.v2_2",
+  "notes": [
+    "Patterns are detectors (text triggers), not findings.",
+    "Override defaults by placing ADVERSARIAL_CONFIG.json into the output root."
+  ],
+  "actors": {
+    "judge": ["McNeill", "Judge McNeill", "Jenny L. McNeill"],
+    "opponent": ["Emily Watson", "Emily Ann Watson", "Watson"],
+    "child": ["Lincoln"],
+    "agency": ["FOC", "Friend of the Court", "HealthWest", "Norton Shores", "Police", "CPS", "DHHS"]
+  },
+  "patterns": [
+    {
+      "id": "bias_asymmetric_ruling",
+      "category": "BIAS_OR_PARTIALITY",
+      "weight": 0.8,
+      "regex": "\\b(asymmetric|one[-\\s]?sided|favor(?:ed|itism)|double\\s+standard|outcome[-\\s]?driven)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "bias_credibility_pref",
+      "category": "BIAS_OR_PARTIALITY",
+      "weight": 0.7,
+      "regex": "\\b(credible\\s+testimony|not\\s+credible|credibility\\s+determination|the\\s+court\\s+finds\\s+.*credible)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "exparte_terms",
+      "category": "EX_PARTE_OVERREACH",
+      "weight": 0.9,
+      "regex": "\\b(ex\\s+parte|without\\s+notice|irreparable\\s+injury|immediate\\s+danger|emergency\\s+order)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "notice_defect",
+      "category": "NOTICE_DEFECT",
+      "weight": 0.9,
+      "regex": "\\b(no\\s+notice|lack\\s+of\\s+notice|insufficient\\s+notice|was\\s+not\\s+served|service\\s+was\\s+defective|not\\s+properly\\s+noticed)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "evidence_blocked",
+      "category": "EVIDENCE_BLOCKED",
+      "weight": 0.95,
+      "regex": "\\b(not\\s+allowed\\s+to\\s+present|refused\\s+to\\s+admit|excluded\\s+evidence|would\\s+not\\s+hear|prevented\\s+from\\s+introducing|proffer\\s+denied)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "hearsay_reliance",
+      "category": "HEARSAY_RELIANCE",
+      "weight": 0.6,
+      "regex": "\\b(hearsay|unnamed\\s+friend|told\\s+me\\s+that|someone\\s+said|alleged\\s+that)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "ppo_weaponization_terms",
+      "category": "PPO_WEAPONIZATION",
+      "weight": 0.9,
+      "regex": "\\b(PPO|personal\\s+protection\\s+order|stalking|harassment|no\\s+contact|violation\\s+of\\s+PPO)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "contempt_retaliation",
+      "category": "CONTEMPT_RETALIATION",
+      "weight": 0.8,
+      "regex": "\\b(retaliat(?:e|ion)|punish(?:ed|ment)|contempt\\s+for\\s+filing|sanction(?:ed|s)|jail|incarcerat(?:ed|ion))\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "fee_bond_barrier",
+      "category": "FEE_BOND_BARRIER",
+      "weight": 0.8,
+      "regex": "\\b(filing\\s+fee|bond\\s+requirement|cash\\s+bond|security\\s+for\\s+costs|paywall|unable\\s+to\\s+file)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "substance_allegation",
+      "category": "SUBSTANCE_ALLEGATION",
+      "weight": 0.9,
+      "regex": "\\b(meth|amphetamine|cocaine|heroin|opioid|drug\\s+use|under\\s+the\\s+influence|intoxicated|drug\\s+screen|urinalysis)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "mental_health_allegation",
+      "category": "MENTAL_HEALTH_ALLEGATION",
+      "weight": 0.95,
+      "regex": "\\b(delusional|psychosis|paranoid|bipolar|schizo|mental\\s+health\\s+eval|assessment\\s+required|diagnos(?:is|ed)|rule\\s+out\\s+delusional)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "unfit_parent_language",
+      "category": "UNFIT_PARENT_LANGUAGE",
+      "weight": 0.7,
+      "regex": "\\b(unfit\\s+parent|unsafe\\s+for\\s+child|danger\\s+to\\s+child|supervised\\s+visitation|parenting\\s+time\\s+suspend(?:ed|)|withhold(?:ing)?\\s+parenting\\s+time)\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "negative_emotion_language",
+      "category": "NEGATIVE_EMOTION_LANGUAGE",
+      "weight": 0.4,
+      "regex": "\\b(crazy|insane|unstable|manipulative|liar|lying|dangerous|abusive|toxic|threat(?:en|ening))\\b",
+      "flags": ["I"]
+    },
+    {
+      "id": "credibility_attack",
+      "category": "CREDIBILITY_ATTACK",
+      "weight": 0.6,
+      "regex": "\\b(not\\s+credible|fabricat(?:ed|ion)|exaggerat(?:ed|ion)|false\\s+report|made\\s+up|misrepresent(?:ed|ation)|perjur(?:y|ed))\\b",
+      "flags": ["I"]
+    }
+  ],
+  "synonyms": {
+    "liar": ["dishonest", "untruthful", "deceptive"],
+    "abusive": ["violent", "harassing", "controlling"],
+    "dangerous": ["unsafe", "risk", "threat"],
+    "withhold": ["deny", "block", "refuse"],
+    "excluded": ["barred", "precluded", "stricken"],
+    "notice": ["served", "service", "mailing"],
+    "bias": ["partial", "prejudice", "unfair"]
+  }
+}
