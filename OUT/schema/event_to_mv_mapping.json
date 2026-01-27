@@ -1,0 +1,33 @@
+{
+  "version": "v1",
+  "mv_taxonomy": {
+    "MV01": "Bias/Partiality",
+    "MV02": "Weaponized_PPO",
+    "MV03": "Retaliatory_Contempt",
+    "MV04": "DueProcess_Denial",
+    "MV05": "Evidentiary_Asymmetry",
+    "MV06": "ParentingTime_Interference",
+    "MV07": "Procedural_Barrier",
+    "MV08": "Record_Tampering_Omission",
+    "MV09": "False_Report_Pattern",
+    "MV10": "Coercive_Settlement_Threats"
+  },
+  "category_to_mv": {
+    "JUDICIAL_BIAS": "MV01",
+    "CREDIBILITY_ATTACK": "MV01",
+    "EX_PARTE_ABUSE": "MV04",
+    "DUE_PROCESS": "MV04",
+    "DENIAL_OF_EVIDENCE": "MV05",
+    "DENIAL_OF_WITNESS": "MV05",
+    "PPO_WEAPONIZATION": "MV02",
+    "CONTEMPT_ABUSE": "MV03",
+    "PARENTING_TIME_WITHHELD": "MV06",
+    "BOND_BARRIER": "MV07",
+    "NOTICE_DEFECT": "MV04",
+    "HEARSAY_RELIANCE": "MV05",
+    "FALSE_REPORT": "MV09",
+    "THREAT_OR_EXTORTION": "MV10",
+    "MENTAL_HEALTH_SMEAR": "MV01",
+    "SUBSTANCE_ABUSE_SMEAR": "MV01"
+  }
+}
