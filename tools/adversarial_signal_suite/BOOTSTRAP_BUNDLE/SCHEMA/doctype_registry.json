@@ -1,0 +1,22 @@
+{
+  ".txt": {
+    "doctype": "TEXT",
+    "parser": "read_text"
+  },
+  ".md": {
+    "doctype": "MARKDOWN",
+    "parser": "read_text"
+  },
+  ".log": {
+    "doctype": "LOG",
+    "parser": "read_text"
+  },
+  ".pdf": {
+    "doctype": "PDF",
+    "parser": "read_pdf"
+  },
+  ".docx": {
+    "doctype": "DOCX",
+    "parser": "read_docx"
+  }
+}
