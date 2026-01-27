@@ -53,7 +53,7 @@ from typing import Dict, Iterator, List, Optional, Set, Tuple
 
 SUITE_NAME = "MCL_PLANE_SUITE"
 SUITE_VERSION = "v3.0"
-UTCNOW = lambda: _dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+UTCNOW = lambda: _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 # ----------------------------
 # Optional deps (bumpers)
@@ -104,6 +104,17 @@ def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def stable_id(*parts: str) -> str:
     h = hashlib.sha256()
     for p in parts:
@@ -135,7 +146,7 @@ def append_jsonl(path: Path, obj: dict) -> None:
 
 
 def now_compact() -> str:
-    return _dt.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    return _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 def mk_run_id() -> str:
@@ -533,11 +544,91 @@ def write_bucket_inventory(files: List[Path], registry: Dict, roots: List[Path],
             bucket = bucket_for_ext(ext, registry)
             try:
                 st = p.stat()
-                mtime = _dt.datetime.utcfromtimestamp(st.st_mtime).replace(microsecond=0).isoformat() + "Z"
+                mtime = _dt.datetime.fromtimestamp(st.st_mtime, _dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
                 size = st.st_size
             except Exception:
                 mtime, size = "", ""
             w.writerow([bucket, ext, size, mtime, str(p)])
+
+
+def write_file_manifest(
+    files: List[Path],
+    registry: Dict,
+    roots: List[Path],
+    out_jsonl: Path,
+    out_csv: Path,
+    bumper: BumperLog,
+    hash_max_mb: int,
+) -> Dict:
+    ensure_dir(out_jsonl.parent)
+    max_bytes = max(0, int(hash_max_mb)) * 1024 * 1024
+    counts = {"total": 0, "hashed": 0, "hash_skipped_size": 0, "hash_failed": 0}
+    with out_jsonl.open("w", encoding="utf-8", newline="\n") as fj, \
+         out_csv.open("w", encoding="utf-8", newline="") as fc:
+        w = csv.writer(fc)
+        w.writerow(["path", "relpath", "bucket", "ext", "size_bytes", "mtime_utc", "sha256"])
+        for p in files:
+            counts["total"] += 1
+            ext = p.suffix.lower()
+            bucket = bucket_for_ext(ext, registry)
+            rel = ""
+            for r in roots:
+                if str(p).lower().startswith(str(r).lower()):
+                    rel = safe_relpath(p, r)
+                    break
+            try:
+                st = p.stat()
+                mtime = _dt.datetime.fromtimestamp(st.st_mtime, _dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+                size = st.st_size
+            except Exception:
+                mtime, size = "", ""
+            sha = ""
+            if max_bytes == 0 or (size and size <= max_bytes):
+                try:
+                    sha = sha256_file(p)
+                    counts["hashed"] += 1
+                except Exception as e:
+                    counts["hash_failed"] += 1
+                    bumper.add("HASH_FAIL", str(p), {"error": repr(e)})
+            else:
+                counts["hash_skipped_size"] += 1
+                bumper.add("HASH_SKIPPED_SIZE", str(p), {"max_mb": hash_max_mb})
+            row = {
+                "path": str(p),
+                "relpath": rel,
+                "bucket": bucket,
+                "ext": ext,
+                "size_bytes": size,
+                "mtime_utc": mtime,
+                "sha256": sha,
+            }
+            fj.write(json.dumps(row, ensure_ascii=False) + "\n")
+            w.writerow([row["path"], row["relpath"], row["bucket"], row["ext"], row["size_bytes"], row["mtime_utc"], row["sha256"]])
+    return counts
+
+
+def inventory_fingerprint(files: List[Path], roots: List[Path]) -> str:
+    h = hashlib.sha256()
+    for p in sorted(files, key=lambda x: str(x).lower()):
+        rel = ""
+        for r in roots:
+            if str(p).lower().startswith(str(r).lower()):
+                rel = safe_relpath(p, r)
+                break
+        try:
+            st = p.stat()
+            mtime = int(st.st_mtime)
+            size = st.st_size
+        except Exception:
+            mtime = 0
+            size = 0
+        h.update(rel.encode("utf-8", errors="replace"))
+        h.update(b"\x1f")
+        h.update(str(size).encode("utf-8"))
+        h.update(b"\x1f")
+        h.update(str(mtime).encode("utf-8"))
+        h.update(b"\n")
+    return h.hexdigest()
 
 
 # ----------------------------
@@ -967,6 +1058,7 @@ def adversarial_converge(files: List[Path], scan_roots: List[Path], run_root: Pa
     ensure_dir(consolidated_dir)
     con_jsonl = consolidated_dir / "findings.jsonl"
     con_csv = consolidated_dir / "findings.csv"
+    mv_csv = consolidated_dir / "findings_by_mv.csv"
     with con_jsonl.open("w", encoding="utf-8", newline="\n") as f:
         for fid in sorted(all_findings.keys()):
             f.write(json.dumps(dataclasses.asdict(all_findings[fid]), ensure_ascii=False) + "\n")
@@ -984,6 +1076,11 @@ def adversarial_converge(files: List[Path], scan_roots: List[Path], run_root: Pa
         if fnd.mv_code:
             summ["mv_codes"][fnd.mv_code] = summ["mv_codes"].get(fnd.mv_code, 0) + 1
     write_json(consolidated_dir / "summary.json", summ)
+    with mv_csv.open("w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["mv_code", "count"])
+        for mv, count in sorted(summ["mv_codes"].items(), key=lambda kv: (-kv[1], kv[0])):
+            w.writerow([mv, count])
     return summ
 
 
@@ -1010,7 +1107,7 @@ def neo4j_export(run_root: Path, files: List[Path], scan_roots: List[Path], adv_
             try:
                 st = p.stat()
                 size = st.st_size
-                mtime = _dt.datetime.utcfromtimestamp(st.st_mtime).replace(microsecond=0).isoformat() + "Z"
+                mtime = _dt.datetime.fromtimestamp(st.st_mtime, _dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
             except Exception:
                 size, mtime = "", ""
             rel = ""
@@ -1190,7 +1287,8 @@ def converge(run_root: Path, in_root: Path, out_root: Path, scan_roots: List[Pat
              doctype_registry: Dict, adv_cfg_path: Optional[Path], bumper: BumperLog,
              cycles: int, eps: int, stable_n: int, adversarial: bool,
              adv_cycles: int, adv_eps: int, adv_stable_n: int,
-             web_enabled: bool, max_files: int, excludes: List[str], max_fetch: int) -> Dict:
+             web_enabled: bool, max_files: int, excludes: List[str], max_fetch: int,
+             hash_max_mb: int, run_args: Dict) -> Dict:
     run_dir = run_root
     ensure_dir(run_dir)
 
@@ -1208,8 +1306,29 @@ def converge(run_root: Path, in_root: Path, out_root: Path, scan_roots: List[Pat
     seed_urls = load_seeds(seeds_dir, bumper)
 
     files = list(iter_files(scan_roots, bumper, excludes=excludes, max_files=max_files))
+    inv_fp = inventory_fingerprint(files, scan_roots)
     inv_csv = run_dir / "INVENTORY" / "doctype_bucket_inventory.csv"
     write_bucket_inventory(files, doctype_registry, scan_roots, inv_csv)
+    manifest_jsonl = run_dir / "INVENTORY" / "file_manifest.jsonl"
+    manifest_csv = run_dir / "INVENTORY" / "file_manifest.csv"
+    hash_stats = write_file_manifest(
+        files=files,
+        registry=doctype_registry,
+        roots=scan_roots,
+        out_jsonl=manifest_jsonl,
+        out_csv=manifest_csv,
+        bumper=bumper,
+        hash_max_mb=hash_max_mb,
+    )
+    write_json(run_dir / "RUN" / "run_manifest.json", {
+        "generated_utc": UTCNOW(),
+        "run_id": run_dir.name,
+        "scan_roots": [str(p) for p in scan_roots],
+        "inventory_fingerprint": inv_fp,
+        "hash_max_mb": hash_max_mb,
+        "hash_stats": hash_stats,
+        "args": run_args,
+    })
 
     last_metric = 0
     stable = 0
@@ -1257,6 +1376,7 @@ def converge(run_root: Path, in_root: Path, out_root: Path, scan_roots: List[Pat
             "delta": delta,
             "eps": eps,
             "stable_n": stable_n,
+            "inventory_fingerprint": inv_fp,
             "web": wh,
             "adversarial": adv_summary
         })
@@ -1272,7 +1392,8 @@ def converge(run_root: Path, in_root: Path, out_root: Path, scan_roots: List[Pat
                 "phase": "outer_converged",
                 "cycle": c,
                 "stable": stable,
-                "metric": metric
+                "metric": metric,
+                "inventory_fingerprint": inv_fp
             })
             break
 
@@ -1287,6 +1408,12 @@ def converge(run_root: Path, in_root: Path, out_root: Path, scan_roots: List[Pat
         "generated_utc": UTCNOW(),
         "scan_roots": [str(p) for p in scan_roots],
         "files_seen": len(files),
+        "inventory_fingerprint": inv_fp,
+        "hash_manifest": {
+            "jsonl": str(manifest_jsonl),
+            "csv": str(manifest_csv),
+            "hash_stats": hash_stats,
+        },
         "adversarial_enabled": bool(adversarial),
         "adversarial_summary": best_summary,
         "web_harvest_enabled": bool(web_enabled),
@@ -1345,6 +1472,27 @@ def watch_and_incremental(args, scan_roots: List[Path], doctype_registry: Dict, 
             return
         last["t"] = t
         try:
+            run_args = {
+                "in": str(Path(args.in_path)),
+                "out": str(Path(args.out_path)),
+                "mode": "watch",
+                "cycles": args.cycles,
+                "eps": args.eps,
+                "stable_n": args.stable_n,
+                "adversarial": boolish(args.adversarial),
+                "adversarial_config": args.adversarial_config,
+                "adv_cycles": args.adv_cycles,
+                "adv_eps": args.adv_eps,
+                "adv_stable_n": args.adv_stable_n,
+                "web": boolish(args.web),
+                "doctype_registry": args.doctype_registry,
+                "scan_roots": [str(p) for p in scan_roots],
+                "scan_all_drives": bool(args.scan_all_drives),
+                "max_files": args.max_files,
+                "exclude": args.exclude,
+                "max_fetch": args.max_fetch,
+                "hash_max_mb": args.hash_max_mb,
+            }
             converge(
                 run_root=run_root,
                 in_root=Path(args.in_path),
@@ -1363,7 +1511,9 @@ def watch_and_incremental(args, scan_roots: List[Path], doctype_registry: Dict, 
                 web_enabled=boolish(args.web),
                 max_files=args.max_files,
                 excludes=args.exclude,
-                max_fetch=args.max_fetch
+                max_fetch=args.max_fetch,
+                hash_max_mb=args.hash_max_mb,
+                run_args=run_args,
             )
         except Exception as e:
             bumper.add("WATCH_RUN_FAIL", "watch_cycle", {"error": repr(e)})
@@ -1405,6 +1555,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--max-files", type=int, default=200000, help="Max files to enumerate (0 = unlimited)")
     p.add_argument("--exclude", action="append", default=[], help="Regex exclude (repeatable)")
     p.add_argument("--max-fetch", type=int, default=40, help="Max URLs fetched per outer cycle")
+    p.add_argument("--hash-max-mb", type=int, default=25, help="Max file size in MB to SHA256 (0 = unlimited)")
     return p.parse_args(argv)
 
 
@@ -1473,6 +1624,28 @@ def main(argv: Optional[List[str]] = None) -> int:
     run_root = out_root / "RUNS" / run_id
     ensure_dir(run_root)
 
+    run_args = {
+        "in": str(in_root),
+        "out": str(out_root),
+        "mode": args.mode,
+        "cycles": args.cycles,
+        "eps": args.eps,
+        "stable_n": args.stable_n,
+        "adversarial": adversarial,
+        "adversarial_config": args.adversarial_config,
+        "adv_cycles": args.adv_cycles,
+        "adv_eps": args.adv_eps,
+        "adv_stable_n": args.adv_stable_n,
+        "web": boolish(args.web),
+        "doctype_registry": args.doctype_registry,
+        "scan_roots": [str(p) for p in scan_roots],
+        "scan_all_drives": bool(args.scan_all_drives),
+        "max_files": args.max_files,
+        "exclude": excludes,
+        "max_fetch": args.max_fetch,
+        "hash_max_mb": args.hash_max_mb,
+    }
+
     converge(
         run_root=run_root,
         in_root=in_root,
@@ -1492,6 +1665,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         max_files=int(args.max_files),
         excludes=excludes,
         max_fetch=int(args.max_fetch),
+        hash_max_mb=int(args.hash_max_mb),
+        run_args=run_args,
     )
     print(f"[OK] Run complete: {run_root}")
     return 0
