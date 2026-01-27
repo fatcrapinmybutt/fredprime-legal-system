@@ -1,22 +1,33 @@
-# Codex Instructions — EPOCH.2 + Branch Format v2 (Merged, Organized)
+# Codex Instructions — EPOCH.2 + Branch Format v2 (Merged, Hyper-Organized)
 
 > **Spec ID**: `LITIGATIONOS_GRAPH-LEGAL-BRAIN@EPOCH.2`  \
 > **TZ**: `America/Detroit`  \
 > **Language**: `en`  \
 > **Directive**: *Append-only, no omissions, no truncation, no placeholders*  \
-> **Style Target**: *Hypercondensed, min-space, sequenced, high-tech*  
+> **Style Target**: *Hypercondensed, min-space, sequenced, high-tech*  \
+> **Slots**: `PRIMARY_SPEC@EPOCH.2` + `BRANCH_FORMAT@v2`  \
+> **Records**: *No extra whitespace in records; tags supported `{feature}{date}{time}`*  
 
 ---
 
-## 0) Navigation Index (Single-Source-of-Truth)
-- [1) Primary Spec — EPOCH.2 (Canonical)](#1-primary-spec--epoch2-canonical)
-- [2) Branch Format v2 (Canonical)](#2-branch-format-v2-canonical)
-- [3) Reference Diagrams (Embedded Source Tags)](#3-reference-diagrams-embedded-source-tags)
+## 0) Executive Index (Single-Source-of-Truth)
+- [1) Canonical Payloads](#1-canonical-payloads)
+- [2) Primary Spec — EPOCH.2 (Verbatim)](#2-primary-spec--epoch2-verbatim)
+- [3) Branch Format v2 (Verbatim)](#3-branch-format-v2-verbatim)
+- [4) Reference Diagrams — Source Tags (Verbatim)](#4-reference-diagrams--source-tags-verbatim)
+- [5) Append-Only Expansion Protocol](#5-append-only-expansion-protocol)
 
 ---
 
-## 1) Primary Spec — EPOCH.2 (Canonical)
-> **Status**: *Verbatim canonical payload.*
+## 1) Canonical Payloads
+**PRIMARY** → `PRIMARY_SPEC@EPOCH.2`  \
+**SECONDARY** → `BRANCH_FORMAT@v2`  \
+**Guarantees** → *Verbatim preservation, no truncation, no omissions.*
+
+---
+
+## 2) Primary Spec — EPOCH.2 (Verbatim)
+> **Status**: *Canonical payload preserved; no edits.*
 
 ```text
 SPEC=LITIGATIONOS_GRAPH-LEGAL-BRAIN@EPOCH.2;TZ=America/Detroit;CHAT=EPHEMERAL;ARTIFACTS=PERSIST_APPEND_ONLY;STYLE=HYPERCONDENSED_MINSPACE_SEQUENCED;LANG=en;CONVERGE=Gen>Critique>Patch;STOP=Δ<ε&Stablex3|Limit;EMIT=FINAL+ChangeLog+RegressionEvals;
@@ -93,8 +104,8 @@ REDTEAM{DENIAL_SIM=ON;APPELLATE_LENS=[preservation,standard_of_review,finality,a
 
 ---
 
-## 2) Branch Format v2 (Canonical)
-> **Status**: *Verbatim canonical payload.*
+## 3) Branch Format v2 (Verbatim)
+> **Status**: *Canonical payload preserved; no edits.*
 
 ```text
 BRANCH_FORMAT@v2(MACHINE;TAGS={feature}{date}{time})
@@ -116,7 +127,7 @@ SELECT|winner=<B#>|why=<one_line>|next=<first_step>|pcg_required=<yes/no>|timeli
 
 ---
 
-## 3) Reference Diagrams (Embedded Source Tags)
+## 4) Reference Diagrams — Source Tags (Verbatim)
 > **Status**: *Provided inline by user; preserved verbatim as source tags.*
 
 ```text
@@ -133,7 +144,7 @@ SELECT|winner=<B#>|why=<one_line>|next=<first_step>|pcg_required=<yes/no>|timeli
 
 ---
 
-## 4) Append-Only Expansion Protocol
+## 5) Append-Only Expansion Protocol
 - New additions must be appended below this section to preserve the canonical ledger.
 - Never rewrite or reorder the canonical sections above; append only.
 - Use the same hypercondensed, sequenced, machine-first formatting.
