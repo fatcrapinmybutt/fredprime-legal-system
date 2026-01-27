@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/AppellateOutput.schema.json",
+  "title": "AppellateOutputSchema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["statement_of_facts", "argument", "relief_requested", "citations"],
+  "properties": {
+    "statement_of_facts": {"type": "array", "items": {"type": "string"}, "default": []},
+    "argument": {"type": "array", "items": {"type": "string"}, "default": []},
+    "relief_requested": {"type": "array", "items": {"type": "string"}, "default": []},
+    "citations": {"type": "array", "items": {"type": "string"}, "default": []},
+    "appendices": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

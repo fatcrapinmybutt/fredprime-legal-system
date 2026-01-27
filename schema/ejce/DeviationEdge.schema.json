@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/DeviationEdge.schema.json",
+  "title": "DeviationEdge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "deviation_id",
+    "judicial_action_id",
+    "mdp_node_id",
+    "deviation_code",
+    "severity",
+    "authority_violated",
+    "created_at"
+  ],
+  "properties": {
+    "deviation_id": {"type": "string"},
+    "evidence_atom_id": {"type": ["string", "null"]},
+    "judicial_action_id": {"type": "string"},
+    "mdp_node_id": {"type": "string"},
+    "deviation_code": {"type": "string", "enum": ["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10"]},
+    "severity": {"type": "string", "enum": ["Low", "Medium", "High", "Critical"]},
+    "authority_violated": {"type": "string"},
+    "authority_class": {"type": ["string", "null"]},
+    "explanation": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "severity_weight": {"type": "number"},
+        "authority_weight": {"type": "number"},
+        "mdp_importance": {"type": "number"}
+      }
+    }
+  }
+}

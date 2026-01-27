@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/JTCEligibilityGate.schema.json",
+  "title": "JTCEligibilityGate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eligible", "gate_trace"],
+  "properties": {
+    "eligible": {"type": "boolean"},
+    "absolute_training_breach": {"type": "boolean"},
+    "silence_vector_count": {"type": "integer", "minimum": 0},
+    "causal_chain_verified": {"type": "boolean"},
+    "alternative_lawful_explanation_attempted": {"type": "boolean"},
+    "alternative_lawful_explanation_found": {"type": "boolean"},
+    "gate_trace": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

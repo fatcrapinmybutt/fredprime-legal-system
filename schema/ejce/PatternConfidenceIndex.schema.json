@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/PatternConfidenceIndex.schema.json",
+  "title": "PatternConfidenceIndex",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["judge_id", "case_id", "confidence_score", "window"],
+  "properties": {
+    "judge_id": {"type": "string"},
+    "case_id": {"type": "string"},
+    "confidence_score": {"type": "number", "minimum": 0},
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"type": "string", "format": "date-time"},
+        "end": {"type": "string", "format": "date-time"}
+      }
+    },
+    "critical_deviation_count": {"type": "integer", "minimum": 0},
+    "repeat_deviation_types": {"type": "array", "items": {"type": "string"}, "default": []},
+    "motion_type_clusters": {"type": "array", "items": {"type": "string"}, "default": []},
+    "time_decay_model": {"type": "string", "enum": ["none", "linear", "exp"], "default": "exp"}
+  }
+}

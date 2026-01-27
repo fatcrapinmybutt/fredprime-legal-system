@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/DeviationGraph.schema.json",
+  "title": "DeviationGraph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["graph_id", "edges", "generated_at"],
+  "properties": {
+    "graph_id": {"type": "string"},
+    "edges": {"type": "array", "items": {"$ref": "DeviationEdge.schema.json"}},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "notes": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}

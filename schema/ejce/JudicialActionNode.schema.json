@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litigationos.local/schemas/ejce/JudicialActionNode.schema.json",
+  "title": "JudicialActionNode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action_id", "judge_id", "case_id", "action_type", "date"],
+  "properties": {
+    "action_id": {"type": "string"},
+    "judge_id": {"type": "string"},
+    "case_id": {"type": "string"},
+    "action_type": {
+      "type": "string",
+      "enum": ["order", "oral_ruling", "written_ruling", "hearing_management", "omission", "delay", "sanction", "contempt"]
+    },
+    "date": {"type": "string", "format": "date-time"},
+    "authority_cited": {"type": "array", "items": {"type": "string"}, "default": []},
+    "evidence_referenced": {"type": "array", "items": {"type": "string"}, "default": []},
+    "evidence_required": {"type": "array", "items": {"type": "string"}, "default": []},
+    "findings_made": {"type": "array", "items": {"type": "string"}, "default": []},
+    "findings_required": {"type": "array", "items": {"type": "string"}, "default": []},
+    "silence_vectors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "missing_findings",
+          "ignored_evidence",
+          "ignored_objection",
+          "standard_not_articulated",
+          "benchbook_deviation",
+          "reliance_without_admission"
+        ]
+      },
+      "default": []
+    }
+  }
+}
