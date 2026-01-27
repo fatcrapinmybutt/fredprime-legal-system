@@ -2,7 +2,7 @@
   {
     "module": "benchbook_loader",
     "path": "modules/benchbook_loader.py",
-    "hash": "659ea627d4c1f2b1b93118ce5f16d52e13fb23e79cbb44a6ade1b609c14ece18",
+    "hash": "4a0ef9cbe7ce50e509a03e4b3a249b25ff7d6fab1780cecbb93bc756a01f7935",
     "legal_function": "extract text from Michigan benchbook PDFs",
     "dependencies": [
       "PyPDF2"
@@ -11,7 +11,7 @@
   {
     "module": "golden_god_mode_bootstrap",
     "path": "golden_god_mode_bootstrap.py",
-    "hash": "5d75d906b3e8ec114e62956a67540d37f3ec2d91aa2313ca4ff7e362efd9e722",
+    "hash": "5edf1014a104d7d687cf97e8597e985642a3f46c16a3606e6a3fe00a19d6106d",
     "legal_function": "bootstrap local offline litigation workspace with FastAPI backend, UI, and tooling",
     "dependencies": [
       "fastapi",
@@ -31,7 +31,7 @@
   {
     "module": "lawforge_master_upgrade_v1",
     "path": "LAWFORGE_MASTER_UPGRADE_v1.py",
-    "hash": "1a15cd35b60ee2983c2859d7cf5183c5694767ebc9ade742fb6abe1cfce1a295",
+    "hash": "91427f981f4c8403493e7a293c103966d06997c0ad669631e64439b373062b81",
     "legal_function": "scan, OCR, index, embed, search, and provide RAG Q&A for litigation documents",
     "dependencies": [
       "chromadb",
@@ -58,7 +58,7 @@
   {
     "module": "golden_litigator_os",
     "path": "golden_litigator_os.py",
-    "hash": "9450d3bc5331057c80053ae4d8149c065b78a1c1107b916d812d2e42be130dac",
+    "hash": "093f8c3a76c91af141831e111a28bca24072f34791fc5eb42ecb3a972a6b6164",
     "legal_function": "self-evolving litigation intelligence with OCR, transcription, timeline, and narrative builder",
     "dependencies": [
       "python-docx",
@@ -74,7 +74,7 @@
   {
     "module": "codex_selftest",
     "path": "codex_selftest.py",
-    "hash": "891077444d190cf7d9a5cbbcaae0ed21a73467e8b57e541d39c1e55b92f6d7ca",
+    "hash": "e1955a5ad92ad6ecb51bdbc6b7ff2ce7dd4b3772b826d8a3de49f6b7b79c10eb",
     "legal_function": "verify branch, commit message, and manifest integrity",
     "dependencies": [
       "codex_guardian"

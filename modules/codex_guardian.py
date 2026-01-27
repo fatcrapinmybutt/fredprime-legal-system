@@ -60,10 +60,18 @@ def verify_manifest_hashes() -> None:
             raise ValueError(f"Hash mismatch for {path}")
 
 
-def run_guardian() -> None:
+def parse_env_flag(name: str, default: bool = True) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def run_guardian(strict: bool = True) -> None:
     branch = get_current_branch()
     msg = get_last_commit_message().splitlines()[0]
-    verify_branch_name(branch)
-    verify_commit_message(msg)
+    if strict:
+        verify_branch_name(branch)
+        verify_commit_message(msg)
     if Path(MANIFEST_FILE).exists():
         verify_manifest_hashes()
