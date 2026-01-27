@@ -1,0 +1,16 @@
+"""{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tranche Definition",
+  "type": "object",
+  "required": ["tranche_id","name","layer","inputs","outputs","command"],
+  "properties": {
+    "tranche_id": {"type":"string","pattern":"^T\d{3}(_[A-Z0-9_]+)?$"},
+    "name": {"type":"string"},
+    "layer": {"type":"string","enum":["L0","L1","L2","L3","L4","L5","L6","L7"]},
+    "description": {"type":"string"},
+    "inputs": {"type":"array","items":{"type":"string"}},
+    "outputs": {"type":"array","items":{"type":"string"}},
+    "command": {"type":"string"},
+    "proof_obligations": {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string"},"status":{"type":"string","enum":["OPEN","PARTIAL","SATISFIED"]}},"required":["id","kind"]}}
+  }
+}

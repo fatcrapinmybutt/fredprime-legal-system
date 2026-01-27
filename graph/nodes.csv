@@ -1,0 +1,5 @@
+"""id,node_type,name,props
+N1,File,example.pdf,"{\"path\":\"data/example.pdf\",\"md5\":\"d41d8cd98f00b204e9800998ecf8427e\"}"
+N2,Tranche,T100_EXTRACT_TEXT,"{\"tranche_id\":\"T100_EXTRACT_TEXT\"}"
+N3,Artifact,example_text.txt,"{\"path\":\"output/example_text.txt\",\"kind\":\"text\"}"
+"""

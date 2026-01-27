@@ -1,0 +1,17 @@
+"""{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tranche Run Record",
+  "type": "object",
+  "required": ["run_id","cycle_id","tranche_id","start_ts","end_ts","status","outputs"],
+  "properties": {
+    "run_id": {"type":"string"},
+    "cycle_id": {"type":"string"},
+    "tranche_id": {"type":"string"},
+    "start_ts": {"type":"string","format":"date-time"},
+    "end_ts": {"type":"string","format":"date-time"},
+    "status": {"type":"string","enum":["PENDING","RUNNING","SUCCESS","FAILED"]},
+    "logs_uri": {"type":"string"},
+    "outputs": {"type":"array","items":{"type":"object","properties":{"artifact_id":{"type":"string"},"path":{"type":"string"},"sha256":{"type":"string"}}}},
+    "proofs": {"type":"array","items":{"type":"object"}}
+  }
+}
