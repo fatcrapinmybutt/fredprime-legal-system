@@ -1,0 +1,279 @@
+{
+  "doctype": "HF_TRANSFORMERS_MODEL_DOC",
+  "version": "LLAMA_MODEL_DOC_EXTRACT.v1",
+  "doc_meta": {
+    "doc_url": "https://huggingface.co/docs/transformers/model_doc/llama",
+    "doc_series": "transformers",
+    "doc_version_hint_in_text": "v5.0.0 links embedded in page",
+    "retrieved_on": "2026-01-27",
+    "retrieval_method": "api_tool.hf_doc_fetch",
+    "retrieval_offsets": [
+      0,
+      7500
+    ]
+  },
+  "model_family": {
+    "name": "Llama",
+    "summary_claims_from_doc": [
+      "Family of LLMs ranging from 7B to 65B parameters",
+      "Efficient inference focus via more tokens rather than fewer tokens on larger model",
+      "Pre-normalization improves training stability",
+      "SwiGLU replaces ReLU",
+      "RoPE replaces absolute positional embeddings for longer sequences"
+    ],
+    "checkpoint_org_reference": {
+      "org_name": "Huggy Llama",
+      "org_url": "https://huggingface.co/huggyllama"
+    }
+  },
+  "examples": {
+    "pipeline_text_generation": {
+      "task": "text-generation",
+      "model": "huggyllama/llama-7b",
+      "dtype": "torch.float16",
+      "device": 0,
+      "prompt": "Plants create energy through a process known as"
+    },
+    "automodel_text_generation": {
+      "tokenizer_from_pretrained": "huggyllama/llama-7b",
+      "model_from_pretrained": "huggyllama/llama-7b",
+      "dtype": "torch.float16",
+      "device_map": "auto",
+      "attn_implementation": "sdpa",
+      "generate_kwargs": {
+        "cache_implementation": "static"
+      }
+    },
+    "quantization_torchao_int4_weight_only": {
+      "requires": [
+        "torchao"
+      ],
+      "quantization_config": {
+        "backend": "TorchAoConfig",
+        "mode": "int4_weight_only",
+        "group_size": 128
+      },
+      "model": "huggyllama/llama-30b",
+      "dtype": "torch.bfloat16",
+      "device_map": "auto",
+      "generate_kwargs": {
+        "cache_implementation": "static"
+      }
+    }
+  },
+  "classes": [
+    {
+      "class_name": "transformers.LlamaConfig",
+      "role": "Config",
+      "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/models/llama/configuration_llama.py#L25",
+      "parameters": [
+        {
+          "name": "vocab_size",
+          "type": "int",
+          "default": 32000
+        },
+        {
+          "name": "hidden_size",
+          "type": "int",
+          "default": 4096
+        },
+        {
+          "name": "intermediate_size",
+          "type": "int",
+          "default": 11008
+        },
+        {
+          "name": "num_hidden_layers",
+          "type": "int",
+          "default": 32
+        },
+        {
+          "name": "num_attention_heads",
+          "type": "int",
+          "default": 32
+        },
+        {
+          "name": "num_key_value_heads",
+          "type": "int",
+          "default": "defaults_to_num_attention_heads",
+          "notes_from_doc": [
+            "If equals num_attention_heads => MHA",
+            "If 1 => MQA",
+            "Else => GQA",
+            "GQA conversion note: meanpool original heads within group"
+          ]
+        },
+        {
+          "name": "hidden_act",
+          "type": "str|callable",
+          "default": "silu"
+        },
+        {
+          "name": "max_position_embeddings",
+          "type": "int",
+          "default": 2048,
+          "notes_from_doc": [
+            "Llama 1: 2048, Llama 2: 4096, CodeLlama: 16384"
+          ]
+        },
+        {
+          "name": "initializer_range",
+          "type": "float",
+          "default": 0.02
+        },
+        {
+          "name": "rms_norm_eps",
+          "type": "float",
+          "default": 1e-06
+        },
+        {
+          "name": "use_cache",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "name": "pad_token_id",
+          "type": "int|null",
+          "default": null
+        },
+        {
+          "name": "bos_token_id",
+          "type": "int",
+          "default": 1
+        },
+        {
+          "name": "eos_token_id",
+          "type": "int",
+          "default": 2
+        },
+        {
+          "name": "pretraining_tp",
+          "type": "int",
+          "default": 1
+        },
+        {
+          "name": "tie_word_embeddings",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "name": "rope_parameters",
+          "type": "RopeParameters|dict|null",
+          "default": null
+        },
+        {
+          "name": "attention_bias",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "name": "attention_dropout",
+          "type": "float",
+          "default": 0.0
+        },
+        {
+          "name": "mlp_bias",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "name": "head_dim",
+          "type": "int|null",
+          "default": null
+        }
+      ]
+    },
+    {
+      "class_name": "transformers.LlamaTokenizer",
+      "role": "Tokenizer",
+      "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/models/llama/tokenization_llama.py#L39",
+      "notes_from_doc": [
+        "Byte-level BPE based on SentencePiece",
+        "Uses ByteFallback and no normalization",
+        "If changing bos/eos: call tokenizer.update_post_processor() to keep post-processing correct"
+      ],
+      "methods_of_interest": [
+        {
+          "name": "get_special_tokens_mask",
+          "signature_frag": "(token_ids_0: list[int], token_ids_1: list[int]|None=None, already_has_special_tokens: bool=False) -> list[int]",
+          "behavior": "Returns 1 for special tokens, 0 for sequence tokens"
+        },
+        {
+          "name": "save_vocabulary",
+          "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/tokenization_utils_tokenizers.py#L408"
+        },
+        {
+          "name": "update_post_processor",
+          "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/tokenization_utils_tokenizers.py#L421",
+          "behavior": "Updates post processor with current bos/eos token values"
+        }
+      ],
+      "doc_rendering_note": "The doc section titled 'LlamaTokenizerFast' appears to map to the same class label in the fetched output. Treat headings as primary and reconcile via source links."
+    },
+    {
+      "class_name": "transformers.LlamaModel",
+      "role": "BaseModel",
+      "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/models/llama/modeling_llama.py#L360",
+      "forward_signature_keys": [
+        "input_ids",
+        "attention_mask",
+        "position_ids",
+        "past_key_values",
+        "inputs_embeds",
+        "cache_position",
+        "use_cache"
+      ],
+      "forward_notes_from_doc": [
+        "past_key_values must be a Cache instance",
+        "If past_key_values used, pass only unprocessed input_ids for incremental decoding",
+        "cache_position indexes depict token positions independent of padding and used to update cache correctly"
+      ]
+    },
+    {
+      "class_name": "transformers.LlamaForCausalLM",
+      "role": "CausalLM",
+      "source_url": "https://github.com/huggingface/transformers/blob/v5.0.0/src/transformers/models/llama/modeling_llama.py#L440",
+      "forward_signature_keys": [
+        "input_ids",
+        "attention_mask",
+        "position_ids",
+        "past_key_values",
+        "inputs_embeds",
+        "labels",
+        "use_cache",
+        "cache_position",
+        "logits_to_keep"
+      ],
+      "performance_hooks": [
+        {
+          "name": "logits_to_keep",
+          "doc_semantics": "If int, compute logits for last N tokens; 0 computes logits for all input_ids; last-token-only logits can save memory for long contexts"
+        }
+      ]
+    }
+  ],
+  "ingest_recommendations": {
+    "graph_nodes": [
+      "DocSource",
+      "ModelFamily",
+      "HFClass",
+      "HFMethod",
+      "HFParameter",
+      "HFExample",
+      "HFSourceLink"
+    ],
+    "graph_edges": [
+      "DocSource-DOCUMENTS->ModelFamily",
+      "ModelFamily-EXPOSES->HFClass",
+      "HFClass-HAS_METHOD->HFMethod",
+      "HFMethod-HAS_PARAM->HFParameter",
+      "HFClass-SOURCE_AT->HFSourceLink",
+      "HFExample-USES_CLASS->HFClass"
+    ],
+    "normalizations": [
+      "Treat doc headings as authoritative for section boundaries",
+      "Store GitHub source URLs as provenance anchors",
+      "Store forward_signature_keys as stable method schemas even if prose changes"
+    ]
+  }
+}
