@@ -83,7 +83,12 @@ BUCKETS_MAX_15 = [
 
 
 def utc_now_iso() -> str:
-    return dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return (
+        dt.datetime.now(dt.timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
 
 
 def is_windows() -> bool:
@@ -337,10 +342,10 @@ def iter_filesystem_artifacts(
                                 continue
                             st = p.stat()
                             mtime = (
-                                dt.datetime.utcfromtimestamp(st.st_mtime)
+                                dt.datetime.fromtimestamp(st.st_mtime, tz=dt.timezone.utc)
                                 .replace(microsecond=0)
                                 .isoformat()
-                                + "Z"
+                                .replace("+00:00", "Z")
                             )
                             yield ArtifactRef(
                                 container="filesystem",
@@ -375,8 +380,10 @@ def iter_zip_artifacts(zip_path: Path, allowed_exts: set) -> Iterator[ArtifactRe
                 if not is_graph_artifact_ext(ext, allowed_exts):
                     continue
                 try:
-                    mdt = dt.datetime(*info.date_time).replace(microsecond=0)
-                    mtime = mdt.isoformat() + "Z"
+                    mdt = dt.datetime(*info.date_time, tzinfo=dt.timezone.utc).replace(
+                        microsecond=0
+                    )
+                    mtime = mdt.isoformat().replace("+00:00", "Z")
                 except Exception:
                     mtime = None
                 yield ArtifactRef(
@@ -894,7 +901,7 @@ def validate_outputs(out_dir: Path, required_relpaths: List[str]) -> Tuple[bool,
 
 def run(args: argparse.Namespace) -> int:
     start = time.time()
-    run_id = dt.datetime.utcnow().strftime("%Y%m%d_%H%M%SZ")
+    run_id = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d_%H%M%SZ")
     out_root = Path(args.out_root).resolve()
     run_dir = out_root / f"RUN_{APP_ID}_{run_id}"
     safe_mkdir(run_dir)
@@ -925,7 +932,10 @@ def run(args: argparse.Namespace) -> int:
         for r in args.roots:
             roots.append(Path(r))
     else:
-        roots = [Path(r) for r in DEFAULT_WINDOWS_DRIVES]
+        if is_windows():
+            roots = [Path(r) for r in DEFAULT_WINDOWS_DRIVES]
+        else:
+            roots = [Path(".")]
 
     seed_zips: List[Path] = []
     for zp in args.seed_zips:
@@ -1173,7 +1183,7 @@ def build_argparser() -> argparse.ArgumentParser:
         "--roots",
         nargs="*",
         default=None,
-        help="Filesystem roots to scan. Default: C:,E:,F:,H:,J: on Windows.",
+        help="Filesystem roots to scan. Default: C:,E:,F:,H:,J: on Windows; current directory otherwise.",
     )
     ap.add_argument(
         "--seed-zips",
