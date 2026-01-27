@@ -83,7 +83,7 @@ BUCKETS_MAX_15 = [
 
 
 def utc_now_iso() -> str:
-    return dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat() + "Z"
 
 
 def is_windows() -> bool:
