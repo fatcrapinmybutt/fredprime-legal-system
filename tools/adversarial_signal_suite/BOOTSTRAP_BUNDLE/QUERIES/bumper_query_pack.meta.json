@@ -1,0 +1,14 @@
+{
+  "name": "BUMPER_QUERY_PACK",
+  "version": "v1",
+  "requires": [
+    "EvidenceAtom",
+    "SignalEvent",
+    "MisconductVector",
+    "EVIDENCE_HAS_EVENT",
+    "MAPS_TO"
+  ],
+  "notes": [
+    "Analysis-only queries."
+  ]
+}

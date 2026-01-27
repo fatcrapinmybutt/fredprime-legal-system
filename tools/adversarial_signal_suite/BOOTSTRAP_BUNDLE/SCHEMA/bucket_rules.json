@@ -1,0 +1,22 @@
+{
+  "version": "bucket_rules.v1",
+  "max_buckets": 15,
+  "buckets": [
+    {
+      "bucket": "B01_TEXT",
+      "ext": [".txt", ".md", ".log"]
+    },
+    {
+      "bucket": "B02_PDF",
+      "ext": [".pdf"]
+    },
+    {
+      "bucket": "B03_DOCX",
+      "ext": [".docx"]
+    },
+    {
+      "bucket": "B15_OTHER",
+      "ext": ["*"]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "version": "adversarial_config.v2_2",
+  "actors": {
+    "judge": ["Judge", "Magistrate"],
+    "opponent": ["respondent", "petitioner", "plaintiff", "defendant"],
+    "agency": ["FOC", "Friend of the Court", "CPS", "DHHS"]
+  },
+  "patterns": [
+    {
+      "id": "bias_asymmetric_ruling",
+      "category": "BIAS_OR_PARTIALITY",
+      "regex": "\\b(asymmetric|one[-\\s]?sided|favor(?:ed|itism)|double\\s+standard|outcome[-\\s]?driven)\\b",
+      "flags": ["I"],
+      "weight": 0.8,
+      "mv_ids": ["MV01"],
+      "notes": "Asymmetric rulings or outcome-driven language."
+    },
+    {
+      "id": "notice_defect",
+      "category": "NOTICE_DEFECT",
+      "regex": "\\b(no\\s+notice|lack\\s+of\\s+notice|insufficient\\s+notice|was\\s+not\\s+served|service\\s+was\\s+defective|not\\s+properly\\s+noticed)\\b",
+      "flags": ["I"],
+      "weight": 0.9,
+      "mv_ids": ["MV04"],
+      "notes": "Notice defects or service failures."
+    },
+    {
+      "id": "evidence_blocked",
+      "category": "EVIDENCE_BLOCKED",
+      "regex": "\\b(not\\s+allowed\\s+to\\s+present|refused\\s+to\\s+admit|excluded\\s+evidence|would\\s+not\\s+hear|prevented\\s+from\\s+introducing|proffer\\s+denied)\\b",
+      "flags": ["I"],
+      "weight": 0.95,
+      "mv_ids": ["MV05"],
+      "notes": "Evidence exclusion or record suppression."
+    },
+    {
+      "id": "mental_health_allegation",
+      "category": "MENTAL_HEALTH_ALLEGATION",
+      "regex": "\\b(delusional|psychosis|paranoid|bipolar|schizo|mental\\s+health\\s+eval|assessment\\s+required|diagnos(?:is|ed)|rule\\s+out\\s+delusional)\\b",
+      "flags": ["I"],
+      "weight": 0.95,
+      "mv_ids": ["MV07", "MV08"],
+      "notes": "Mental health allegations or labels."
+    },
+    {
+      "id": "negative_emotion_language",
+      "category": "NEGATIVE_EMOTION_LANGUAGE",
+      "regex": "\\b(crazy|insane|unstable|manipulative|liar|lying|dangerous|abusive|toxic|threat(?:en|ening))\\b",
+      "flags": ["I"],
+      "weight": 0.4,
+      "mv_ids": ["MV08"],
+      "notes": "Inflammatory language."
+    }
+  ],
+  "synonyms": {
+    "liar": ["dishonest", "untruthful", "deceptive"],
+    "abusive": ["violent", "harassing", "controlling"],
+    "dangerous": ["unsafe", "risk", "threat"],
+    "excluded": ["barred", "precluded", "stricken"],
+    "notice": ["served", "service", "mailing"],
+    "bias": ["partial", "prejudice", "unfair"]
+  }
+}

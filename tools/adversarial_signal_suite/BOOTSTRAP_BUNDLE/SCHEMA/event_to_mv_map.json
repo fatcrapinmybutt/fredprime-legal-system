@@ -1,0 +1,29 @@
+{
+  "version": "event_to_mv_map.v1",
+  "mv": {
+    "MV01": {"name": "Bias/Partiality"},
+    "MV02": {"name": "Weaponized_PPO"},
+    "MV03": {"name": "Retaliatory_Contempt"},
+    "MV04": {"name": "Due_Process/Notice_Defect"},
+    "MV05": {"name": "Evidentiary_Exclusion/Record_Suppression"},
+    "MV06": {"name": "Barrier/Paywall/Access_To_Court"},
+    "MV07": {"name": "Mental_Health_Label_Weaponization"},
+    "MV08": {"name": "Defamation/Character_Assassination"},
+    "MV09": {"name": "Parenting_Time_Interference/Alienation_Signal"}
+  },
+  "map": {
+    "BIAS_OR_PARTIALITY": [{"mv": "MV01", "w": 0.9}],
+    "CREDIBILITY_ATTACK": [{"mv": "MV08", "w": 0.6}, {"mv": "MV01", "w": 0.4}],
+    "SUBSTANCE_ALLEGATION": [{"mv": "MV08", "w": 0.8}],
+    "MENTAL_HEALTH_ALLEGATION": [{"mv": "MV07", "w": 0.9}, {"mv": "MV08", "w": 0.5}],
+    "UNFIT_PARENT_LANGUAGE": [{"mv": "MV09", "w": 0.6}, {"mv": "MV08", "w": 0.4}],
+    "EX_PARTE_OVERREACH": [{"mv": "MV04", "w": 0.8}, {"mv": "MV02", "w": 0.6}],
+    "NOTICE_DEFECT": [{"mv": "MV04", "w": 0.9}],
+    "EVIDENCE_BLOCKED": [{"mv": "MV05", "w": 0.9}, {"mv": "MV01", "w": 0.5}],
+    "HEARSAY_RELIANCE": [{"mv": "MV05", "w": 0.6}],
+    "CONTEMPT_RETALIATION": [{"mv": "MV03", "w": 0.8}, {"mv": "MV06", "w": 0.3}],
+    "FEE_BOND_BARRIER": [{"mv": "MV06", "w": 0.8}],
+    "PPO_WEAPONIZATION": [{"mv": "MV02", "w": 0.9}],
+    "NEGATIVE_EMOTION_LANGUAGE": [{"mv": "MV08", "w": 0.4}]
+  }
+}
