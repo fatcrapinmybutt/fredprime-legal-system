@@ -358,11 +358,13 @@ def process_candidates(
     state: Dict[str, object],
     state_path: Path,
     temp_root: Path,
+    existing_content_hash_idx: Optional[Dict[str, str]] = None,
 ) -> Tuple[int, Dict[str, List[Dict[str, str]]], int]:
     processed: Dict[str, Dict[str, object]] = state.setdefault("processed", {})  # type: ignore[assignment]
     duplicates: Dict[str, str] = state.setdefault("duplicates", {})  # type: ignore[assignment]
     secrets_report: Dict[str, List[Dict[str, str]]] = state.setdefault("secrets", {})  # type: ignore[assignment]
     hash_to_id: Dict[str, str] = state.setdefault("hash_to_id", {})  # type: ignore[assignment]
+    existing_content_hash_idx = existing_content_hash_idx or {}
     new_entries = 0
     skipped_existing = 0
     counter = len(processed)
@@ -380,7 +382,10 @@ def process_candidates(
         except Exception as exc:  # pylint: disable=broad-except
             logger.error("Failed to hash %s: %s", path, exc)
             return None
-        duplicate_of = hash_to_id.get(sha256)
+        duplicate_of = existing_content_hash_idx.get(sha256)
+        duplicate_from_existing = duplicate_of is not None
+        if duplicate_of is None:
+            duplicate_of = hash_to_id.get(sha256)
         bates_number: Optional[str] = None
         with lock:
             counter += 1
@@ -388,6 +393,8 @@ def process_candidates(
             if duplicate_of is None:
                 hash_to_id[sha256] = identifier
             else:
+                if sha256 not in hash_to_id:
+                    hash_to_id[sha256] = duplicate_of
                 duplicates[key] = duplicate_of
             if args.bates_prefix:
                 bates_number = f"{args.bates_prefix}-{bates_counter:07d}"
@@ -409,13 +416,16 @@ def process_candidates(
         entry_dict = record.manifest_dict(identifier)
         with lock:
             processed[key] = entry_dict
-            new_entries += 1
             if duplicate_of is None:
+                new_entries += 1
                 total = state.setdefault("total_bytes", 0)  # type: ignore[assignment]
                 state["total_bytes"] = total + size  # type: ignore[index]
             else:
                 state.setdefault("duplicate_bytes", 0)
                 state["duplicate_bytes"] = state.get("duplicate_bytes", 0) + size  # type: ignore[index]
+                if duplicate_from_existing:
+                    state.setdefault("existing_content_duplicates", 0)
+                    state["existing_content_duplicates"] = state.get("existing_content_duplicates", 0) + 1  # type: ignore[index]
         if args.scan_secrets:
             findings = detect_secrets(path, logger)
             if findings:
@@ -687,6 +697,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     state = load_state(state_path) if args.resume else {"token": token, "started": isoformat(utc_now())}
     state["token"] = token
     state.setdefault("started", isoformat(utc_now()))
+    processed_state: Dict[str, Dict[str, object]] = state.get("processed", {})  # type: ignore[assignment]
+    existing_content_hash_idx = {}
+    for row in processed_state.values():
+        sha256 = row.get("sha256")
+        if not sha256:
+            continue
+        duplicate_of = row.get("duplicate_of")
+        record_id = duplicate_of or row.get("id")
+        if record_id:
+            existing_content_hash_idx[str(sha256)] = str(record_id)
+    hash_to_id = state.setdefault("hash_to_id", {})  # type: ignore[assignment]
+    for content_hash, entry_id in existing_content_hash_idx.items():
+        hash_to_id.setdefault(content_hash, entry_id)
 
     logger.info("Scan roots: %s", ", ".join(str(root) for root in args.roots))
     candidates = gather_candidates(args.roots, args.include_hidden, args.extensions, logger)
@@ -695,7 +718,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 0
 
     new_entries, secrets_report, skipped_existing = process_candidates(
-        candidates, args, logger, state, state_path, temp_root
+        candidates, args, logger, state, state_path, temp_root, existing_content_hash_idx
     )
 
     manifest_rows: List[Dict[str, object]] = list(state.get("processed", {}).values())  # type: ignore[arg-type]
