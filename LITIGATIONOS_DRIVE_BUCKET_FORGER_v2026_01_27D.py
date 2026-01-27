@@ -55,7 +55,7 @@ Design invariants (kept):
 - Non-destructive by default (plan-only).
 - Append-only logs (JSONL) for reproducibility.
 - Deterministic classification and graph IDs.
-- Hard exclusion: C:\ and OS system paths are never scanned by default.
+- Hard exclusion: C:\\ and OS system paths are never scanned by default.
 
 """
 
