@@ -22,10 +22,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -62,7 +62,7 @@ jobs:
           echo "run_tests=$run_tests" >> "$GITHUB_OUTPUT"
 
       - name: Cache Python Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -116,7 +116,7 @@ jobs:
         run: pytest
 
       - name: Upload Changed Files Log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: changed-files
           path: changed_files.txt
