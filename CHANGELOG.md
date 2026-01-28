@@ -92,6 +92,7 @@ When adding new entries:
 5. Reference related issues/PRs
 
 ### Example Entry
+
 ```markdown
 ## [1.0.1] - 2026-01-20
 

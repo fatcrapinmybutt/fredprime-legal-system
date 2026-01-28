@@ -60,9 +60,9 @@ fredprime-legal-system/
 2. **Add module docstring** (core.py):
    ```python
    """My Feature Module
-   
+    
    This module provides functionality for...
-   
+    
    Classes:
        MyFeature: Main feature class
        
@@ -150,6 +150,7 @@ tests/
 ### Writing Tests
 
 #### Unit Tests (Fast, Isolated)
+
 ```python
 import pytest
 from modules.core import process_document
@@ -167,6 +168,7 @@ def test_process_invalid_document():
 ```
 
 #### Integration Tests (Medium Speed)
+
 ```python
 @pytest.mark.integration
 def test_document_pipeline():
@@ -178,6 +180,7 @@ def test_document_pipeline():
 ```
 
 #### E2E Tests (Slower)
+
 ```python
 @pytest.mark.slow
 def test_end_to_end_litigation_workflow():
