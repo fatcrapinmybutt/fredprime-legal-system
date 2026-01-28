@@ -5,7 +5,7 @@ cat <<'EOF'
 
 ╔════════════════════════════════════════════════════════════════╗
 ║    CI/CD Infrastructure - FRED Prime Legal System             ║
-║         Open-Source Alternative to CircleCI                  ║
+║         Free and Open-Source CI/CD Solution                   ║
 ╚════════════════════════════════════════════════════════════════╝
 
 📦 WHAT'S INCLUDED
@@ -146,18 +146,21 @@ Automatic Security Checks:
   └─ Scheduled weekly full audits
 
 
-🎯 IMPROVEMENTS OVER CIRCLECI
+🎯 KEY FEATURES
 ═══════════════════════════════════════════════════════════════
 
-Feature                CircleCI    This Solution
-─────────────────────  ─────────   ─────────────────────
-Cost                   $$$         Free (GitHub) / Self-host
-Vendor Lock-in         High        Low (Open standards)
-Local Testing          Limited     Full (act, Docker)
-Self-hosting           No          Yes (Drone CI)
-Multi-OS               Extra cost  Included (GitHub Actions)
-Setup Complexity       Complex     1 command (setup-ci.sh)
-Security Scanning      Basic       Advanced (5+ tools)
+Feature                This Solution
+─────────────────────  ──────────────────────────────
+Cost                   Free (GitHub) / Self-host (Drone)
+Vendor Lock-in         Low (Open standards)
+Local Testing          Full (act, Docker)
+Self-hosting           Yes (Drone CI)
+Multi-OS               Included (GitHub Actions)
+Setup Complexity       1 command (setup-ci.sh)
+Security Scanning      Advanced (5+ tools)
+Multi-Python           3.10, 3.11, 3.12
+Parallel Testing       Yes
+Pre-commit Hooks       Built-in
 Parallel Testing       Limited     Full matrix
 Migration Path         Hard        Easy
 

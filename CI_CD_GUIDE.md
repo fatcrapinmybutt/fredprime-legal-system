@@ -313,11 +313,13 @@ DRONE_LOGS_DEBUG=true
 
 ## Migration Between CI/CD Systems
 
-### From CircleCI to GitHub Actions
+### From Other CI Systems to GitHub Actions
+
+If migrating from another CI system (Travis CI, CircleCI, Jenkins, etc.), you can:
 
 ```bash
-# Convert CircleCI config
-npx circleci-to-github-actions .circleci/config.yml
+# Use GitHub's importer tool for some systems
+# Or manually adapt workflow syntax - it's straightforward
 ```
 
 ### From GitHub Actions to Drone
