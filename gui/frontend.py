@@ -1,12 +1,14 @@
 import os
 import tkinter as tk
 from tkinter import ttk
+
 from tkinterweb import HtmlFrame
-from warboard.warboard_engine import deploy_supra_warboard
-from warboard.ppo_warboard import build_ppo_warboard
-from warboard.custody_interference_engine import build_custody_warboard
-from scheduling.scheduler import build_schedule
+
 from gui.modules.entity_suppression_feed import load_events
+from scheduling.scheduler import build_schedule
+from warboard.custody_interference_engine import build_custody_warboard
+from warboard.ppo_warboard import build_ppo_warboard
+from warboard.warboard_engine import deploy_supra_warboard
 
 
 def launch_dashboard():

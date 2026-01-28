@@ -8,7 +8,6 @@ import csv
 import hashlib
 import json
 import logging
-from logging.handlers import RotatingFileHandler
 import os
 import re
 import shutil
@@ -18,8 +17,9 @@ import threading
 import time
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 

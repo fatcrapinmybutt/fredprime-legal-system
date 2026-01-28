@@ -1,13 +1,13 @@
-import os
-import json
-import hashlib
-import time
-import logging
-import tkinter as tk
 import datetime
+import hashlib
 import importlib.util
+import json
+import logging
+import os
 import shutil
-from tkinter import messagebox, filedialog
+import time
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
 TARGET_DIRS = ["F:/", "D:/"]
 EXTENSIONS = [".py", ".json", ".txt", ".docx"]

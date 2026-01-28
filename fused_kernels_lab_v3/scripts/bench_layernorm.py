@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import argparse
 import time
-import torch
 
+import torch
 from kernels.fused_layernorm import fused_layernorm
 
 

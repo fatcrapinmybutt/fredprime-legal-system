@@ -1,4 +1,5 @@
 import os
+
 from docx import Document
 
 BASE_DIR = os.getenv("LEGAL_RESULTS_DIR", os.path.join("F:/", "LegalResults"))

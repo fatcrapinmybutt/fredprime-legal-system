@@ -3,8 +3,16 @@ from __future__ import annotations
 from typing import Optional, Tuple
 
 import torch
-
-from kernels._common import KernelRunResult, GeluApprox, has_cuda, triton_available, ensure_contiguous, check_2d, check_1d, dtype_supported
+from kernels._common import (
+    GeluApprox,
+    KernelRunResult,
+    check_1d,
+    check_2d,
+    dtype_supported,
+    ensure_contiguous,
+    has_cuda,
+    triton_available,
+)
 
 try:
     import triton

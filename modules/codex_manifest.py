@@ -1,7 +1,7 @@
-import json
 import hashlib
+import json
 from pathlib import Path
-from typing import Iterable, Dict, Any
+from typing import Any, Dict, Iterable
 
 
 def generate_manifest(modules: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any, Dict, List
 
 
 @dataclass(frozen=True)
@@ -108,12 +108,16 @@ def emit_neo4j(out_dir: Path) -> None:
     edges = data["edges"]
 
     # CSV for Neo4j
-    nodes_csv = "id:ID,label,kind,path\n" + "\n".join(
-        f"{n['id']},{json.dumps(n['label'])},{n['kind']},{json.dumps(n['path'])}" for n in nodes
-    ) + "\n"
-    edges_csv = "source:START_ID,target:END_ID,rel\n" + "\n".join(
-        f"{e['source']},{e['target']},{e['rel']}" for e in edges
-    ) + "\n"
+    nodes_csv = (
+        "id:ID,label,kind,path\n"
+        + "\n".join(f"{n['id']},{json.dumps(n['label'])},{n['kind']},{json.dumps(n['path'])}" for n in nodes)
+        + "\n"
+    )
+    edges_csv = (
+        "source:START_ID,target:END_ID,rel\n"
+        + "\n".join(f"{e['source']},{e['target']},{e['rel']}" for e in edges)
+        + "\n"
+    )
 
     (out_dir / "nodes.csv").write_text(nodes_csv, encoding="utf-8")
     (out_dir / "edges.csv").write_text(edges_csv, encoding="utf-8")

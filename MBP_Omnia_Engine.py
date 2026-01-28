@@ -1,13 +1,14 @@
 # MBP OMNIA INFINITI + X\u2122 SYSTEM — THE LITIGATION SINGULARITY ENGINE
 # Simplified background daemon that queues legal filings based on violation logs.
 
-import os
 import json
+import os
+import subprocess
 import threading
 import time
-import subprocess
 from datetime import datetime
 from pathlib import Path
+
 from EPOCH_UNPACKER_ENGINE_v1 import run_gui as unpacker_gui
 
 SCAN_INTERVAL_SECONDS = 1800  # 30 minutes

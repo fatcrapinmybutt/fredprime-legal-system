@@ -3,7 +3,7 @@
 # Purpose: Autonomously determines all necessary filings, forms, and legal artifacts based on real-time litigation posture
 
 import datetime
-from typing import List, Dict
+from typing import Dict, List
 
 # === SYSTEM PARADIGMS ENGAGED ===
 # ⚖️ MCR/MCL Benchbook Linkage Engine

@@ -1,10 +1,11 @@
-import os
-import shutil
 import argparse
 import logging
+import os
 import platform
+import shutil
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
 from tqdm import tqdm
 
 # Mapping of file extensions to categories
@@ -51,19 +52,19 @@ FORBIDDEN_DRIVE = "C"
 
 def get_drive_letter(path: Path) -> str | None:
     """Extract the drive letter from a path on Windows.
-    
+
     Returns the uppercase drive letter without colon, or None if not a Windows drive path.
     """
     if platform.system() != "Windows":
         return None
-    
+
     # Resolve to handle symbolic links and junctions
     try:
         resolved_path = path.resolve()
     except (OSError, RuntimeError):
         # If resolution fails, use the original path
         resolved_path = path
-    
+
     path_str = str(resolved_path)
     if len(path_str) >= 2 and path_str[1] == ":":
         return path_str[0].upper()
@@ -72,11 +73,11 @@ def get_drive_letter(path: Path) -> str | None:
 
 def validate_drive_path(path: Path, required_drives: list[str] = None) -> tuple[bool, str]:
     """Validate that a path meets drive requirements for the litigation system.
-    
+
     Args:
         path: The path to validate
         required_drives: List of required drive letters (defaults to REQUIRED_DRIVES)
-        
+
     Returns:
         tuple: (is_valid, error_message)
                is_valid is True if validation passes, False otherwise
@@ -84,38 +85,38 @@ def validate_drive_path(path: Path, required_drives: list[str] = None) -> tuple[
     """
     if required_drives is None:
         required_drives = REQUIRED_DRIVES
-    
+
     # Check if path exists
     if not path.exists():
         return False, f"Path does not exist: {path}"
-    
+
     # For non-Windows systems, skip drive validation
     if platform.system() != "Windows":
         return True, ""
-    
+
     # Get the drive letter (this also resolves symlinks/junctions)
     drive_letter = get_drive_letter(path)
-    
+
     if drive_letter is None:
         return False, f"Could not determine drive letter for path: {path}"
-    
+
     # Check if it's the forbidden C: drive
     if drive_letter == FORBIDDEN_DRIVE:
         return False, f"C: drive is forbidden for litigation data. Path resolves to: {path.resolve()}"
-    
+
     # Check if it's one of the required drives
     if drive_letter not in required_drives:
         return False, f"Drive {drive_letter}: is not one of the required drives: {', '.join(required_drives)}"
-    
+
     return True, ""
 
 
 def check_required_drives_exist(required_drives: list[str] = None) -> tuple[bool, list[str]]:
     """Check if all required drives are present on the system.
-    
+
     Args:
         required_drives: List of required drive letters (defaults to REQUIRED_DRIVES)
-        
+
     Returns:
         tuple: (all_present, missing_drives)
                all_present is True if all drives exist, False otherwise
@@ -123,17 +124,17 @@ def check_required_drives_exist(required_drives: list[str] = None) -> tuple[bool
     """
     if required_drives is None:
         required_drives = REQUIRED_DRIVES
-    
+
     # Skip check on non-Windows systems
     if platform.system() != "Windows":
         return True, []
-    
+
     missing = []
     for drive in required_drives:
         drive_path = Path(f"{drive}:/")
         if not drive_path.exists():
             missing.append(drive)
-    
+
     return len(missing) == 0, missing
 
 
@@ -218,19 +219,19 @@ def main():
         format="%(asctime)s %(levelname)s: %(message)s",
     )
     target_path = Path(args.path)
-    
+
     # Validate the path
     is_valid, error_msg = validate_drive_path(target_path)
     if not is_valid:
         print(f"Error: {error_msg}")
         return 1
-    
+
     # Check if required drives exist
     all_present, missing = check_required_drives_exist()
     if not all_present:
         print(f"Warning: Missing required drives: {', '.join(missing)}")
         # Note: We continue anyway as the target drive is valid
-    
+
     output_path = Path(args.output).resolve() if args.output else None
     organize_drive(target_path, output_path)
     print("Organization complete.")

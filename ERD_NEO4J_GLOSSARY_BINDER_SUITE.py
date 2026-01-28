@@ -43,20 +43,57 @@ APP_VER = "v2026-01-27.0"
 
 DEFAULT_WINDOWS_DRIVES = ["C:\\", "E:\\", "F:\\", "H:\\", "J:\\"]
 DEFAULT_EXTS = {
-    ".csv", ".tsv", ".json", ".jsonl", ".ndjson",
-    ".graphml", ".gexf", ".gml", ".rdf", ".ttl", ".nt", ".nq", ".owl",
-    ".dot", ".gv", ".cypher", ".cql", ".cy", ".txt",
-    ".html", ".htm", ".svg",
+    ".csv",
+    ".tsv",
+    ".json",
+    ".jsonl",
+    ".ndjson",
+    ".graphml",
+    ".gexf",
+    ".gml",
+    ".rdf",
+    ".ttl",
+    ".nt",
+    ".nq",
+    ".owl",
+    ".dot",
+    ".gv",
+    ".cypher",
+    ".cql",
+    ".cy",
+    ".txt",
+    ".html",
+    ".htm",
+    ".svg",
     ".zip",
-    ".png", ".jpg", ".jpeg", ".webp",
-    ".yaml", ".yml", ".xml",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".yaml",
+    ".yml",
+    ".xml",
 }
 
 DEFAULT_EXCLUDE_DIR_NAMES = {
-    "$recycle.bin", "system volume information", "windows", "program files",
-    "program files (x86)", "programdata", "appdata", "recovery",
-    ".git", ".svn", ".hg", "node_modules", "__pycache__", ".venv", "venv",
-    "data", "transactions", "logs",
+    "$recycle.bin",
+    "system volume information",
+    "windows",
+    "program files",
+    "program files (x86)",
+    "programdata",
+    "appdata",
+    "recovery",
+    ".git",
+    ".svn",
+    ".hg",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "data",
+    "transactions",
+    "logs",
 }
 
 DEFAULT_EXCLUDE_PATH_PATTERNS = [
@@ -105,6 +142,7 @@ def read_small_bytes(path: Path, n: int) -> bytes:
 
 def b32_16(b: bytes) -> str:
     import base64
+
     return base64.b32encode(b).decode("ascii").rstrip("=")
 
 
@@ -190,7 +228,7 @@ def is_graph_artifact_ext(ext: str, allowed_exts: set) -> bool:
 
 def sniff_csv_schema_bytes(data: bytes, max_rows: int = 200) -> Dict[str, object]:
     text = data.decode("utf-8", errors="replace")
-    lines = [ln for ln in text.splitlines() if ln.strip()][:max_rows + 1]
+    lines = [ln for ln in text.splitlines() if ln.strip()][: max_rows + 1]
     if not lines:
         return {"kind": "csv", "columns": [], "delimiter": None, "sample_rows": 0}
     sample = "\n".join(lines)
@@ -485,8 +523,10 @@ def deduplicate(
                 if len(g2) == 1:
                     canonical_of[g2[0].artifact_id] = g2[0].artifact_id
                     continue
+
                 def canon_key(x: ArtifactRecord) -> Tuple[str, str, str]:
                     return (x.ref.container, norm_case(x.ref.path), norm_case(x.ref.member or ""))
+
                 g2_sorted = sorted(g2, key=canon_key)
                 canon = g2_sorted[0]
                 canonical_of[canon.artifact_id] = canon.artifact_id
@@ -495,8 +535,10 @@ def deduplicate(
                     canonical_of[d] = canon.artifact_id
                 duplicates_by_canonical.setdefault(canon.artifact_id, []).extend(dups)
         else:
+
             def canon_key(x: ArtifactRecord) -> Tuple[str, str, str]:
                 return (x.ref.container, norm_case(x.ref.path), norm_case(x.ref.member or ""))
+
             group_sorted = sorted(group, key=canon_key)
             canon = group_sorted[0]
             canonical_of[canon.artifact_id] = canon.artifact_id
@@ -514,9 +556,24 @@ def deduplicate(
 
 
 NODES_HEADER = [
-    "stable_id", "labels", "torus_x", "torus_y", "name", "version", "source_pdf",
-    "plane_id", "table_id", "category", "desc", "field_name", "field_type",
-    "notes", "missing_reason", "path", "ext", "bytes",
+    "stable_id",
+    "labels",
+    "torus_x",
+    "torus_y",
+    "name",
+    "version",
+    "source_pdf",
+    "plane_id",
+    "table_id",
+    "category",
+    "desc",
+    "field_name",
+    "field_type",
+    "notes",
+    "missing_reason",
+    "path",
+    "ext",
+    "bytes",
 ]
 EDGES_HEADER = ["src", "dst", "type", "reason", "via_field", "to_field"]
 
@@ -622,8 +679,19 @@ def write_jsonl(path: Path, objs: Iterable[Dict[str, object]]) -> int:
 
 def write_index_csv(path: Path, records: List[ArtifactRecord]) -> None:
     header = [
-        "artifact_id", "canonical_id", "container", "path", "member", "ext", "bytes",
-        "mtime_utc", "bucket", "kind", "sha256", "schema_keys", "schema_cols",
+        "artifact_id",
+        "canonical_id",
+        "container",
+        "path",
+        "member",
+        "ext",
+        "bytes",
+        "mtime_utc",
+        "bucket",
+        "kind",
+        "sha256",
+        "schema_keys",
+        "schema_cols",
     ]
     rows: List[List[str]] = []
     for r in records:
@@ -632,21 +700,23 @@ def write_index_csv(path: Path, records: List[ArtifactRecord]) -> None:
         if r.kind == "csv":
             cols = r.schema.get("columns") or []
             schema_cols = "|".join([str(c) for c in cols][:200])
-        rows.append([
-            r.artifact_id,
-            r.canonical_id or r.artifact_id,
-            r.ref.container,
-            r.ref.path,
-            r.ref.member or "",
-            r.ref.ext,
-            str(r.ref.bytes),
-            r.ref.mtime_utc or "",
-            r.ref.bucket,
-            r.kind,
-            r.sha256 or "",
-            schema_keys,
-            schema_cols,
-        ])
+        rows.append(
+            [
+                r.artifact_id,
+                r.canonical_id or r.artifact_id,
+                r.ref.container,
+                r.ref.path,
+                r.ref.member or "",
+                r.ref.ext,
+                str(r.ref.bytes),
+                r.ref.mtime_utc or "",
+                r.ref.bucket,
+                r.kind,
+                r.sha256 or "",
+                schema_keys,
+                schema_cols,
+            ]
+        )
     write_csv(path, header, rows)
 
 
@@ -685,22 +755,28 @@ def build_neo4j_append_rows(
         else:
             desc = f"{r.kind}"
 
-        nodes.append([
-            r.stable_id,
-            labels,
-            "", "",
-            r.ref.basename,
-            APP_VER,
-            "", "", "",
-            r.ref.bucket,
-            desc,
-            "", "",
-            r.notes or "",
-            "",
-            (r.ref.path + (("::" + r.ref.member) if r.ref.member else "")),
-            r.ref.ext,
-            str(r.ref.bytes),
-        ])
+        nodes.append(
+            [
+                r.stable_id,
+                labels,
+                "",
+                "",
+                r.ref.basename,
+                APP_VER,
+                "",
+                "",
+                "",
+                r.ref.bucket,
+                desc,
+                "",
+                "",
+                r.notes or "",
+                "",
+                (r.ref.path + (("::" + r.ref.member) if r.ref.member else "")),
+                r.ref.ext,
+                str(r.ref.bytes),
+            ]
+        )
         edges.append([model_id, r.stable_id, "HAS_ARTIFACT", "scan_append", "", ""])
 
     for canon, dups in duplicates_by_canonical.items():
@@ -761,9 +837,7 @@ def write_markdown_binder(
             schema_note = f"html_title={r.schema.get('title') or ''}"
         else:
             schema_note = r.kind
-        lines.append(
-            f"- {r.artifact_id} | {r.ref.bucket} | {r.ref.ext} | {r.ref.bytes}B | {schema_note} | {loc}"
-        )
+        lines.append(f"- {r.artifact_id} | {r.ref.bucket} | {r.ref.ext} | {r.ref.bytes}B | {schema_note} | {loc}")
     lines.append("")
     lines.append("## Dedup (canonical -> duplicates count)")
     for c, dups in sorted(duplicates_by_canonical.items()):

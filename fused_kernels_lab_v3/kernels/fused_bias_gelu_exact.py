@@ -3,8 +3,15 @@ from __future__ import annotations
 from typing import Optional, Tuple
 
 import torch
-
-from kernels._common import KernelRunResult, has_cuda, triton_available, ensure_contiguous, check_2d, check_1d, dtype_supported
+from kernels._common import (
+    KernelRunResult,
+    check_1d,
+    check_2d,
+    dtype_supported,
+    ensure_contiguous,
+    has_cuda,
+    triton_available,
+)
 
 try:
     import triton
@@ -124,7 +131,9 @@ def fused_bias_gelu_exact(
         y = torch.nn.functional.gelu(x + bias, approximate="none")
         if residual is not None:
             y = y + residual
-        return KernelRunResult(y=y, used_triton=False, reason="triton erf not available; exact GELU fused path disabled")
+        return KernelRunResult(
+            y=y, used_triton=False, reason="triton erf not available; exact GELU fused path disabled"
+        )
 
     if not dtype_supported(x):
         y = torch.nn.functional.gelu(x + bias, approximate="none")
