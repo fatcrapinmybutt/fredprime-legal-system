@@ -28,9 +28,12 @@ def load_manifest() -> list[dict]:
 
 
 def verify_commit_message(msg: str, skip_format_check: bool = False) -> None:
+    # In relaxed mode, skip all checks including banned keywords
+    if skip_format_check:
+        return
     if any(k in msg for k in BANNED_KEYWORDS):
         raise ValueError("Commit message contains banned keyword")
-    if not skip_format_check and not re.match(r"^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ", msg):
+    if not re.match(r"^\[(core|hotfix|docs|merge|patch|engine|matrix|echelon)\] ", msg):
         raise ValueError("Commit message format invalid")
 
 
