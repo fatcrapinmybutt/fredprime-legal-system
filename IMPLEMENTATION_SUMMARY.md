@@ -2,7 +2,8 @@
 
 ## 🎯 What Was Done
 
-You asked to replace CircleCI with something open-source. I've implemented a **comprehensive, multi-platform CI/CD infrastructure** using:
+You asked to replace CircleCI with something open-source. I've implemented a **comprehensive, multi-platform CI/CD
+infrastructure** using:
 
 1. **GitHub Actions** (Primary - Free, Native)
 2. **Drone CI** (Optional - Open-Source, Self-Hosted)
