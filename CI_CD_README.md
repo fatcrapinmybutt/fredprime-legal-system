@@ -1,6 +1,7 @@
 # CI/CD Infrastructure - FRED Prime Legal System
 
-This project implements a **multi-layered, open-source CI/CD pipeline** combining GitHub Actions with optional Drone CI for maximum flexibility and no vendor lock-in.
+This project implements a **multi-layered, open-source CI/CD pipeline** combining GitHub Actions with
+optional Drone CI for maximum flexibility and no vendor lock-in.
 
 ## Quick Start
 
@@ -65,7 +66,7 @@ Runs in Docker containers (portable, reproducible):
 └── README.md                   This file
 ```
 
-## Key Improvements Over CircleCI
+## Key Features
 
 ### ✅ No Vendor Lock-in
 
@@ -91,7 +92,7 @@ Runs in Docker containers (portable, reproducible):
 
 - **GitHub Actions**: Free for public repos (2,000 min/month for private)
 - **Drone CI**: Free, open-source (self-hosted)
-- **No per-minute charges** like CircleCI
+- **No per-minute charges or vendor costs**
 
 ### ✅ Developer Experience
 
@@ -390,23 +391,18 @@ codecov -f coverage.xml
 
 ## Migration Guide
 
-### From CircleCI
+### From Other CI Systems
 
-CircleCI → GitHub Actions benefits:
+When migrating to this CI/CD infrastructure:
 
-- Native GitHub integration
-- No separate platform
+- Native GitHub integration with GitHub Actions
+- No separate platform needed
 - Free for public repos
-- Better log viewing
-
-```bash
-# Convert CircleCI config (NPX)
-npx circleci-to-github-actions .circleci/config.yml
-```
+- Better log viewing and debugging
 
 ### From Travis CI
 
-Similar benefits, plus:
+Benefits of GitHub Actions over Travis CI:
 
 - GitHub Actions is the de facto standard
 - Better documentation
@@ -426,11 +422,11 @@ Extend workflows for automatic deployment:
 
 ## Resources
 
-- **GitHub Actions**: https://docs.github.com/en/actions
-- **Drone CI**: https://docs.drone.io/
-- **act (local testing)**: https://github.com/nektos/act
-- **Pre-commit**: https://pre-commit.com/
-- **Pytest**: https://docs.pytest.org/
+- **GitHub Actions**: <https://docs.github.com/en/actions>
+- **Drone CI**: <https://docs.drone.io/>
+- **act (local testing)**: <https://github.com/nektos/act>
+- **Pre-commit**: <https://pre-commit.com/>
+- **Pytest**: <https://docs.pytest.org/>
 
 ## Contributing
 
