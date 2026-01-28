@@ -67,7 +67,7 @@ def run_guardian() -> None:
     # Check if we're in a CI or relaxed environment
     skip_strict_checks = os.environ.get("CODEX_SKIP_STRICT_CHECKS", "false").lower() in ["true", "1", "yes"]
     skip_hash_checks = os.environ.get("CODEX_SKIP_HASH_CHECKS", "false").lower() in ["true", "1", "yes"]
-    
+
     branch = get_current_branch()
     msg = get_last_commit_message().splitlines()[0]
     verify_branch_name(branch, skip_prefix_check=skip_strict_checks)
