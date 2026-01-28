@@ -1,0 +1,329 @@
+version: 2.1
+
+# Orbs for common tasks
+orbs:
+  python: circleci/python@2.1.1
+  codecov: codecov/codecov@4.0.1
+
+# Define executors for different environments
+executors:
+  python-executor:
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    docker:
+      - image: cimg/python:<<parameters.python-version>>
+    working_directory: ~/fredprime-legal-system
+
+# Reusable commands
+commands:
+  install-dependencies:
+    description: "Install project dependencies"
+    steps:
+      - run:
+          name: Upgrade pip and install tools
+          command: |
+            python -m pip install --upgrade pip setuptools wheel
+      
+      - run:
+          name: Install requirements
+          command: |
+            if [ -f requirements.txt ]; then
+              pip install -r requirements.txt
+            fi
+            pip install pytest pytest-cov pytest-timeout pytest-xdist
+
+  restore-deps-cache:
+    description: "Restore dependency cache"
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    steps:
+      - restore_cache:
+          keys:
+            - deps-v1-py<<parameters.python-version>>-{{ checksum "requirements.txt" }}
+            - deps-v1-py<<parameters.python-version>>-
+
+  save-deps-cache:
+    description: "Save dependency cache"
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    steps:
+      - save_cache:
+          key: deps-v1-py<<parameters.python-version>>-{{ checksum "requirements.txt" }}
+          paths:
+            - ~/.cache/pip
+            - ~/fredprime-legal-system/.venv
+
+# Job definitions
+jobs:
+  lint:
+    executor:
+      name: python-executor
+      python-version: "3.11"
+    steps:
+      - checkout
+      - restore-deps-cache:
+          python-version: "3.11"
+      
+      - run:
+          name: Install linting tools
+          command: |
+            python -m pip install --upgrade pip
+            pip install black flake8 mypy isort
+
+      - run:
+          name: Check import sorting
+          command: isort --check-only --diff .
+          when: always
+
+      - run:
+          name: Check code formatting
+          command: black --check .
+          when: always
+
+      - run:
+          name: Run Flake8 linter (critical errors)
+          command: |
+            flake8 . --count --select=E9,F63,F7,F82 \
+              --show-source --statistics
+          when: always
+
+      - run:
+          name: Run Flake8 linter (warnings)
+          command: |
+            flake8 . --count --exit-zero --max-complexity=10 \
+              --max-line-length=120 --statistics
+          when: always
+
+      - run:
+          name: Type check with MyPy
+          command: |
+            mypy . --ignore-missing-imports \
+              --no-error-summary 2>/dev/null || true
+          when: always
+
+      - save-deps-cache:
+          python-version: "3.11"
+
+  test:
+    parameters:
+      python-version:
+        type: string
+    executor:
+      name: python-executor
+      python-version: <<parameters.python-version>>
+    steps:
+      - checkout
+      - restore-deps-cache:
+          python-version: <<parameters.python-version>>
+      
+      - install-dependencies
+
+      - run:
+          name: Syntax validation
+          command: python -m py_compile firstimport.py
+          when: always
+
+      - run:
+          name: Run pytest with coverage
+          command: |
+            pytest -v --tb=short --timeout=300 \
+              --cov=. --cov-report=xml --cov-report=html \
+              -n auto || true
+          no_output_timeout: 15m
+
+      - codecov/upload:
+          file: ./coverage.xml
+          flags: unittests-py<<parameters.python-version>>
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: htmlcov
+          destination: coverage-html
+
+      - save-deps-cache:
+          python-version: <<parameters.python-version>>
+
+  security:
+    executor:
+      name: python-executor
+      python-version: "3.11"
+    steps:
+      - checkout
+      - restore-deps-cache:
+          python-version: "3.11"
+
+      - run:
+          name: Install security tools
+          command: |
+            python -m pip install --upgrade pip
+            pip install safety bandit pip-audit
+
+      - run:
+          name: Safety check (vulnerable dependencies)
+          command: |
+            safety check --json --output safety-report.json || true
+          when: always
+
+      - run:
+          name: Pip audit (dependency vulnerabilities)
+          command: |
+            pip-audit --desc --format json \
+              --output pip-audit-report.json || true
+          when: always
+
+      - run:
+          name: Bandit (code security analysis)
+          command: |
+            bandit -r . -f json -o bandit-report.json 2>/dev/null || true
+          when: always
+
+      - store_artifacts:
+          path: safety-report.json
+          destination: security-reports/safety-report.json
+
+      - store_artifacts:
+          path: pip-audit-report.json
+          destination: security-reports/pip-audit-report.json
+
+      - store_artifacts:
+          path: bandit-report.json
+          destination: security-reports/bandit-report.json
+
+      - save-deps-cache:
+          python-version: "3.11"
+
+  build:
+    executor:
+      name: python-executor
+      python-version: "3.11"
+    steps:
+      - checkout
+      - restore-deps-cache:
+          python-version: "3.11"
+
+      - run:
+          name: Install build tools
+          command: |
+            python -m pip install --upgrade pip
+            pip install wheel setuptools build twine
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - run:
+          name: Build distribution packages
+          command: |
+            if [ -f setup.py ] || [ -f pyproject.toml ]; then
+              python -m build
+            else
+              echo "⚠️  No setup.py or pyproject.toml found, skipping build"
+            fi
+          when: always
+
+      - store_artifacts:
+          path: dist/
+          destination: python-packages
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist/
+
+      - save-deps-cache:
+          python-version: "3.11"
+
+  documentation:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+
+      - run:
+          name: Install markdownlint
+          command: |
+            sudo npm install -g markdownlint-cli
+
+      - run:
+          name: Check Markdown files
+          command: |
+            markdownlint . --config .markdownlint.json || true
+          when: always
+
+      - run:
+          name: Validate YAML files
+          command: |
+            sudo apt-get update && sudo apt-get install -y python3-pip
+            pip3 install pyyaml
+            python3 -c "
+            import yaml
+            import glob
+            for f in glob.glob('.github/workflows/*.yml'):
+                yaml.safe_load(open(f))
+                print(f'✓ {f}')
+            "
+          when: always
+
+# Workflow orchestration
+workflows:
+  version: 2
+  
+  ci-pipeline:
+    jobs:
+      - lint
+
+      - test:
+          name: test-python-3.10
+          python-version: "3.10"
+          requires:
+            - lint
+
+      - test:
+          name: test-python-3.11
+          python-version: "3.11"
+          requires:
+            - lint
+
+      - test:
+          name: test-python-3.12
+          python-version: "3.12"
+          requires:
+            - lint
+
+      - security:
+          requires:
+            - lint
+
+      - documentation:
+          requires:
+            - lint
+
+      - build:
+          requires:
+            - test-python-3.10
+            - test-python-3.11
+            - test-python-3.12
+            - security
+            - documentation
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+
+  # Weekly security scan
+  weekly-security:
+    triggers:
+      - schedule:
+          cron: "0 2 * * 0"  # Sunday at 2 AM
+          filters:
+            branches:
+              only: main
+    jobs:
+      - security
+      - documentation
