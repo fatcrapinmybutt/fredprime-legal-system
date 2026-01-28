@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import argparse
 import time
-import torch
 
+import torch
 from kernels.fused_masked_softmax import fused_masked_softmax
 
 
@@ -45,7 +45,7 @@ def main() -> int:
     mask = None
     if args.mask_rate > 0:
         # True means keep, False means masked out
-        mask = (torch.rand((args.m, args.n), device=device) > args.mask_rate)
+        mask = torch.rand((args.m, args.n), device=device) > args.mask_rate
 
     def eager_ref():
         if mask is None:

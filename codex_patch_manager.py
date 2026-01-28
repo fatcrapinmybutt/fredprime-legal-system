@@ -1,4 +1,9 @@
-import os, importlib.util, json, shutil, logging, datetime
+import datetime
+import importlib.util
+import json
+import logging
+import os
+import shutil
 
 PATCH_DIR = "patches/"
 MANIFEST_FILE = "patch_manifest.json"

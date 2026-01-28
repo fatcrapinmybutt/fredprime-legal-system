@@ -18,8 +18,18 @@ Install extras as available:
   # Optional add-ons:
   pip install pillow-heif faster-whisper openai-whisper ocrmypdf
 """
-import os, re, time, json, hashlib, pathlib, mimetypes, shutil, tempfile, subprocess
-from typing import List, Dict, Optional, Tuple
+
+import hashlib
+import json
+import mimetypes
+import os
+import pathlib
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+from typing import Dict, List, Optional, Tuple
 
 DEFAULT_PATTERN = r".*\.(pdf|txt|rtf|docx?|xlsx?|pptx?|csv|png|jpg|jpeg|tiff|bmp|gif|heic|mp3|wav|m4a|ogg)$"
 IGNORE_DIRS = {

@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import Optional, Tuple
 
 import torch
-
-from kernels._common import KernelRunResult, has_cuda, triton_available, ensure_contiguous, dtype_supported
+from kernels._common import KernelRunResult, dtype_supported, ensure_contiguous, has_cuda, triton_available
 
 try:
     import triton
@@ -14,7 +13,9 @@ except Exception:
     tl = None
 
 
-def _check_inputs(a: torch.Tensor, b: torch.Tensor, bias: Optional[torch.Tensor], residual: Optional[torch.Tensor]) -> Tuple[bool, str]:
+def _check_inputs(
+    a: torch.Tensor, b: torch.Tensor, bias: Optional[torch.Tensor], residual: Optional[torch.Tensor]
+) -> Tuple[bool, str]:
     if a.dim() != 2 or b.dim() != 2:
         return False, "a and b must be 2D"
     if a.shape[1] != b.shape[0]:
@@ -161,11 +162,14 @@ def fused_gemm_bias_gelu(
             return (triton.cdiv(m, meta["BM"]), triton.cdiv(n, meta["BN"]))
 
         _gemm_bias_gelu_kernel[grid](
-            a, b,
+            a,
+            b,
             bias if bias is not None else a,  # placeholder pointer
             residual if residual is not None else a,  # placeholder pointer
             c,
-            M=m, N=n, K=k,
+            M=m,
+            N=n,
+            K=k,
             HAS_BIAS=(bias is not None),
             HAS_RESIDUAL=(residual is not None),
         )

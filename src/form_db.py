@@ -12,8 +12,7 @@ class FormDatabase:
 
     def _create_table(self) -> None:
         cur = self.conn.cursor()
-        cur.execute(
-            """
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS forms (
                 id TEXT PRIMARY KEY,
                 title TEXT,
@@ -24,8 +23,7 @@ class FormDatabase:
                 constitution TEXT,
                 federal TEXT
             )
-            """
-        )
+            """)
         self.conn.commit()
 
     def add_form(

@@ -11,11 +11,12 @@ Run locally:
     uvicorn src.health:app --reload
 """
 
+import logging
+import os
+from typing import Optional
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import os
-import logging
-from typing import Optional
 
 from .observability import instrument_fastapi, start_metrics_server
 

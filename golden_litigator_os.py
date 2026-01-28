@@ -584,13 +584,11 @@ def crawl_all() -> None:
 def export_ledger_jsonl() -> None:
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        """
+    cur.execute("""
         SELECT sha256, filename, filepath, ext, size_bytes, modified_ts, parties_json,
                claims_json, statutes_json, court_rules_json, timeline_refs_json, exhibit_label
         FROM evidence ORDER BY id ASC
-        """
-    )
+        """)
     rows = cur.fetchall()
     conn.close()
     for r in rows:
@@ -614,12 +612,10 @@ def export_ledger_jsonl() -> None:
 def build_master_narrative() -> None:
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        """
+    cur.execute("""
         SELECT filename, content_excerpt, parties_json, claims_json, timeline_refs_json
         FROM evidence ORDER BY id ASC LIMIT 1000
-        """
-    )
+        """)
     rows = cur.fetchall()
     conn.close()
     bundle = []

@@ -1,9 +1,9 @@
 import hashlib
 import os
-import requests
 import zipfile
 from pathlib import Path
 
+import requests
 
 URL = os.environ.get("FRED_STAGE2_URL", "https://example.com/FRED_STAGE2_FULL_DEPLOY.zip")
 EXPECTED_SHA256 = os.environ.get(

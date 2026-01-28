@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import argparse
 import time
-import torch
 
-from kernels.fused_bias_gelu_tanh import fused_bias_gelu_tanh
+import torch
 from kernels.fused_bias_gelu_exact import fused_bias_gelu_exact, triton_supports_erf
+from kernels.fused_bias_gelu_tanh import fused_bias_gelu_tanh
 
 
 def _parse_dtype(s: str) -> torch.dtype:

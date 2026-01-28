@@ -22,6 +22,7 @@ def main() -> int:
     try:
         import triton  # noqa: F401
         import triton.language as tl  # noqa: F401
+
         print("Triton: import OK")
         # probe erf
         fn = getattr(tl, "erf", None)

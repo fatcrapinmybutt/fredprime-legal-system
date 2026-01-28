@@ -1,5 +1,7 @@
 import os
+
 from docx import Document
+
 from .svg_builder import generate_svg_warboard
 from .svg_motion_binder import bind_motion_links
 

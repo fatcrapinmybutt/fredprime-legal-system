@@ -11,7 +11,6 @@ import tarfile
 from pathlib import Path
 from typing import Iterable, Sequence
 
-
 LOGGER = logging.getLogger("tarball_loader")
 
 
