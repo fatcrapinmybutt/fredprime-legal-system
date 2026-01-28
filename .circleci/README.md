@@ -31,10 +31,12 @@ The CircleCI pipeline provides:
 #### Main CI Pipeline (`ci-pipeline`)
 
 Runs on:
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop` branches
 
 Job flow:
+
 ```
 lint
 ├── test-python-3.10
@@ -73,6 +75,7 @@ If you need to upload coverage to Codecov:
 ### 3. Configure Orbs (Already Included)
 
 The configuration uses these orbs:
+
 - `circleci/python@2.1.1` - Python environment management
 - `codecov/codecov@4.0.1` - Coverage reporting
 
@@ -109,6 +112,7 @@ Note: Local execution has limitations (no workflows, no orbs, no caching).
 ### Dependency Caching
 
 The pipeline caches pip dependencies to speed up builds:
+
 ```yaml
 - restore_cache:
     keys:
@@ -118,6 +122,7 @@ The pipeline caches pip dependencies to speed up builds:
 ### Parallel Testing
 
 Tests run in parallel across multiple Python versions:
+
 - Python 3.10
 - Python 3.11
 - Python 3.12
@@ -125,6 +130,7 @@ Tests run in parallel across multiple Python versions:
 ### Code Coverage
 
 Coverage reports are:
+
 - Generated with pytest-cov
 - Uploaded to Codecov
 - Stored as artifacts (HTML reports)
@@ -132,6 +138,7 @@ Coverage reports are:
 ### Security Scanning
 
 Three security tools run automatically:
+
 - **Safety**: Checks for known vulnerabilities in dependencies
 - **Pip-audit**: Alternative dependency vulnerability scanner
 - **Bandit**: Static code analysis for security issues
@@ -139,6 +146,7 @@ Three security tools run automatically:
 ### Artifact Storage
 
 The pipeline stores:
+
 - Test results (JUnit XML)
 - Coverage reports (HTML)
 - Security scan reports (JSON)
@@ -163,6 +171,7 @@ The pipeline stores:
 #### Job Times Out
 
 Increase `no_output_timeout` in the job step:
+
 ```yaml
 - run:
     command: pytest
@@ -172,6 +181,7 @@ Increase `no_output_timeout` in the job step:
 #### Dependency Installation Fails
 
 Check that `requirements.txt` is valid:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -179,6 +189,7 @@ pip install -r requirements.txt
 #### Cache Not Working
 
 Clear CircleCI cache:
+
 1. Go to Project Settings
 2. Advanced Settings
 3. Click "Clear Cache"
@@ -186,6 +197,7 @@ Clear CircleCI cache:
 #### Tests Fail on CircleCI but Pass Locally
 
 Common causes:
+
 - Different Python versions
 - Missing environment variables
 - Timing issues (increase timeouts)
@@ -202,6 +214,7 @@ Common causes:
 ### From GitHub Actions
 
 The CircleCI config mirrors the GitHub Actions workflows:
+
 - `.github/workflows/ci-improved.yml` → `.circleci/config.yml`
 - Similar job structure and commands
 - Compatible with the same test suite
@@ -211,6 +224,7 @@ Both systems can run in parallel without conflicts.
 ### From Travis CI or Jenkins
 
 CircleCI uses Docker-based executors, which may require adjusting:
+
 - Container images (use `cimg/*` CircleCI images)
 - Environment setup
 - Caching strategies
@@ -235,10 +249,12 @@ CircleCI uses Docker-based executors, which may require adjusting:
 ## Support
 
 For issues specific to this configuration:
+
 - Open an issue in the repository
 - Reference the CircleCI build URL
 - Include relevant logs
 
 For general CircleCI issues:
+
 - Check [CircleCI Docs](https://circleci.com/docs/)
 - Visit [CircleCI Support](https://support.circleci.com/)
