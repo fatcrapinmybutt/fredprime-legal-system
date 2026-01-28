@@ -33,6 +33,8 @@ make test-coverage    # Run with coverage report
 
 make pre-commit       # Run pre-commit hooks manually
 make enforce-rulesets # Run custom rulesets
+
+python codex_selftest.py  # Run system self-test
 ```
 
 ### Building & Release
@@ -109,6 +111,25 @@ git push origin feature/your-feature
 ```
 
 ## Code Quality
+
+### System Self-Test
+
+The repository includes a self-test script (`codex_selftest.py`) that verifies system integrity:
+
+```bash
+python codex_selftest.py
+```
+
+**What it checks:**
+- Branch naming conventions (relaxed for non-codex branches)
+- Commit message format (relaxed for CI/development branches)
+- Manifest file integrity (optional)
+
+**Environment Variables:**
+- `CODEX_SKIP_STRICT_CHECKS=true` - Skip branch/commit format checks
+- `CODEX_SKIP_HASH_CHECKS=true` - Skip manifest hash verification
+
+The self-test automatically detects non-codex branches (e.g., `copilot/*`, `feature/*`) and enables relaxed mode for easier development.
 
 ### Automated Checks
 
