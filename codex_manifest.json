@@ -79,5 +79,12 @@
     "dependencies": [
       "codex_guardian"
     ]
+  },
+  {
+    "module": "agents_build_charter",
+    "path": "AGENTS.md",
+    "hash": "60316607ce21fb1ffa1b40dcae37c72896d0e3eefa7fb4c54130c58b6bb0fbe8",
+    "legal_function": "define LitigationOS build charter requirements for Windows x64 delivery",
+    "dependencies": []
   }
 ]

@@ -1,183 +1,91 @@
-# FRED_SUPREME_LITIGATION_OS
+# agents.md - LitigationOS Build Charter (Windows x64)
 
-│
-├── ai/
-│ ├── ai_nlp_trainer.py
-│ ├── adversarial_ai_challenge.py
-│ ├── live_model_update.py
-│ └── doctrine_validator.py
-│
-├── api/
-│ ├── mi_court_api.py
-│ ├── foia_gov_connector.py
-│ ├── pacer_interface.py
-│ ├── mifile_efiling.py
-│ └── direct_service_api.py
-│
-├── backup/
-│ ├── auto_repo_sync.py
-│ ├── usb_hot_swapper.py
-│ ├── build_image_backup.sh
-│ └── court_cloud_uploader.py
-│
-├── binder/
-│ ├── binder_generator.py
-│ ├── tab_sheet_maker.py
-│ └── exhibit_binder_template.docx
-│
-├── cli/
-│ ├── generate_manifest.py
-│ ├── organize_drive.py
-│ └── EPOCH_UNPACKER_ENGINE_v1.py
-│
-├── config/
-│ ├── system_enforcement.json
-│ ├── gui_state.json
-│ ├── compliance_flags.json
-│ └── user_settings.json
-│
-├── contradictions/
-│ ├── contradiction_scanner.py
-│ ├── timeline_conflict_analyzer.py
-│ └── perjury_detection.py
-│
-├── core/
-│ ├── build_system.py
-│ ├── codex_brain.py
-│ ├── codex_patch_manager.py
-│ ├── quantum_blockchain_ai_extension.py
-│ ├── litigation_integrity_enforcer.py
-│ ├── module_auto_detector.py
-│ └── system_update_manager.py
-│
-├── docs/
-│ ├── README.md
-│ ├── SYSTEM_OVERVIEW_SUPREME.md
-│ ├── MODULES_MATRIX.pdf
-│ └── development_protocols.md
-│
-├── entity_trace/
-│ ├── shell_entity_mapper.py
-│ ├── defendant_liability_chain.py
-│ └── corporate_structure_analyzer.py
-│
-├── events/
-│ ├── plugin_loader.py
-│ ├── module_hot_swap.py
-│ └── update_hooks.py
-│
-├── export/
-│ ├── universal_exporter.py
-│ ├── chain_of_custody_gen.py
-│ └── pdf_docx_export.py
-│
-├── foia/
-│ ├── foia_request_builder.py
-│ ├── discovery_template.docx
-│ └── FOIA_discovery_request.txt
-│
-├── forensic/
-│ ├── evidence_authenticator.py
-│ ├── blockchain_logger.py
-│ ├── timestamp_engine.py
-│ └── exhibit_chain_checker.py
-│
-├── gui/
-│ ├── main_gui.py
-│ ├── logs_tab.py
-│ ├── toggle_panel.py
-│ ├── code_keeper_lookup.py
-│ ├── visualizer.py
-│ └── module_drop_in.py
-│
-├── import_export/
-│ ├── universal_importer.py
-│ ├── cloud_drive_sync.py
-│ ├── mi_ecf_ingest.py
-│ └── data_format_converter.py
-│
-├── mifile/
-│ ├── mc_12.docx
-│ ├── foc_87.docx
-│ └── overlay_engine.py
-│
-├── mobile/
-│ ├── mobile_gui.py
-│ └── lite_mode_launcher.py
-│
-├── modules/
-│ ├── codex_manifest.py
-│ ├── affidavit_builder.py
-│ ├── motion_generator.py
-│ └── binder_exporter.py
-│
-├── motions/
-│ ├── custody_mod_motion.docx
-│ ├── ppo_defense_motion.docx
-│ └── benchbook_compliant_snippets.txt
-│
-├── notices/
-│ ├── service_notice.docx
-│ ├── form_notice.docx
-│ └── affidavit_of_service.docx
-│
-├── output/
-│ ├── litigation_launcher.exe
-│ ├── SUPREME_LITIGATION_OS_FULL_BUILD.zip
-│ ├── build_manifest.json
-│ ├── full_build_logs.txt
-│ ├── CODE_KEEPER_REGISTRY.json
-│ └── installer_scripts/
-│ ├── litigation.iss
-│ ├── litigation_launcher.wixproj
-│ └── setup.msi
-│
-├── profile/
-│ ├── user_profile.json
-│ ├── law_firm_settings.json
-│ └── court_instance_config.json
-│
-├── scanner/
-│ ├── ocr_intake.py
-│ ├── evidence_scanner.py
-│ └── zip_validator.py
-│
-├── scheduling/
-│ ├── court_date_calculator.py
-│ ├── procedural_clock.py
-│ └── hearing_window.py
-│
-├── sim/
-│ ├── mock_trial_sim.py
-│ ├── adversarial_sim_engine.py
-│ ├── pre_brief_generator.py
-│ └── argument_rehearsal.py
-│
-├── src/
-│ ├── **init**.py
-│ ├── litigation_cli.py
-│ └── drive_scan_engine.py
-│
-├── tests/
-│ ├── test_binder.py
-│ ├── test_patch_manager.py
-│ ├── test_gui.py
-│ ├── test_affidavit_builder.py
-│ └── test_plugin_loader.py
-│
-├── timeline/
-│ ├── timeline_builder.py
-│ ├── fact_orderer.py
-│ └── harm_mapper.py
-│
-├── warboard/
-│ ├── case_map_visualizer.py
-│ ├── contradiction_log.py
-│ └── litigation_warboard.py
-│
-└── (Root scripts)
-├── build_system.py
-├── codex_brain.py
-├── codex_patch_manager.py
-├── MBP_Omnia_Engine.py
-└── SUPREME_AUTO_EXPAND.py
+## 1) Mission
+Build a Windows x64 Litigation Operating System with a polished GUI, a Bloom-style interactive Neo4j graph (open-source implementation), and an offline-first LLM/AI toolchain that produces judicial-grade, Michigan-locked outputs under Proof-Carrying Workflow gates.
+
+## 2) Non-negotiables (hard gates)
+### Legal/truth gates
+- Michigan-first authority lock: MCR/MCL/MRE, MJI benchbooks, SCAO MC/FOC forms and instructions, controlling orders.
+- Truth-Lock: no invented facts or authority. Any proposition without a pinned pointer is DISPUTED; missing items become PINPOINT_MISSING with an acquisition plan.
+- Forms-first VehicleMap: choose the mandated form/vehicle before drafting; map relief->vehicle/form->rule/standard->proof obligations (prereqs, deadlines, service, fees/bonds, controlling orders)->exhibits->risks->fallback.
+- Proof-Carrying Workflow (PCW): every filing-capable output is blocked until all mandatory Proof Obligations are SATISFIED; final irreversible actions pass PCG FAIL-CLOSED.
+
+### Engineering gates
+- No skeletons/stubs/MVP. Deliver runnable, fully populated implementations only.
+- Offline-first and open-source: no third-party APIs unless self-hosted by us. Prefer local services and reproducible builds.
+- Deterministic paths; exclude C drive by default (auto-detect eligible drives).
+- Never ask the operator to patch/merge; deliver complete files.
+
+### Packaging gates
+- Bundle root is fixed: LITIGATIONOS__MASTERv1.0.
+- VERSION is monotonic (v0001+). CURRENT is runnable. VERSIONS are immutable.
+- Provide a FULL release zip when >2 files change or any multi-module feature ships.
+- Size cap: FULL zip for the conversation <=700MB. Exclude weights/media/binaries by default; use PATCHES when projected >650MB; emit size budget when growth >50MB.
+
+## 3) System architecture (reference implementation)
+### Desktop app
+- GUI: Electron + React + TypeScript.
+- IPC: desktop app launches and supervises local services; no remote dependencies.
+- Settings: theme packs, color palettes, layout presets, keyboard-driven workflows, per-case profiles, safety toggles (Truth-Lock strictness, PCW thresholds), and audit visibility.
+
+### Local services
+- Core service: Python 3.11+ (FastAPI or stdio-based IPC) hosting the workflow engines (Harvest, Graph, Proof, Packaging).
+- Neo4j: local Neo4j Community managed by the app (Docker optional). Provide migrations, constraints, and seed data.
+- Extraction: Apache Tika (local server or embedded) for PDFs/DOCX/HTML/text.
+- Storage/mirroring: rclone for Google Drive and local drive synchronization (operator-controlled).
+- LLM: Ollama for local inference (GGUF model format for local inference); optional Hugging Face local models (no hosted calls). Weights are external assets and must not be bundled inside FULL zips.
+
+### UI surface areas (must exist)
+1) Intake/Harvest dashboard: queue, progress, errors, deterministic output roots.
+2) Graph Explorer (Bloom-style): search, filters, perspectives, styling, hover cards, click-through to authority text/exhibit pointers.
+3) Proof Console: Proof Obligations by vehicle, status (OPEN/PARTIAL/SATISFIED), and evidence/authority links.
+4) Form/Vehicle Library: SCAO forms mapped to governing rules and prerequisites.
+5) Output Studio: judicial-grade exports (forms filled, filings assembled) only when gates PASS.
+6) Audit/Preservation: logs, manifests, version history, contradiction map, deadlines.
+
+## 4) Graph model (minimum viable canon)
+### Nuclei (3-5 perspectives)
+- Nucleus A: Courts and jurisdictions (Muskegon small claims -> 14th Circuit -> COA -> MSC -> JTC; federal overlay nodes allowed but gated).
+- Nucleus B: Authority and forms (SCAO/FOC/MC forms <-> MCR/MCL/MRE propositions; benchbook references).
+- Nucleus C: Case/evidence (sources of record, exhibits, timeline events, service/notice, orders).
+- Optional D: Vehicles/Remedies (VehicleMap, standards, burdens, deadlines).
+- Optional E: Operations (runs, bundles, manifests, QA outcomes).
+
+### Required node types (labels)
+Court, Jurisdiction, Judge, Form, Vehicle, Authority, AuthorityChunk, Proposition, ProofObligation, Deadline, Case, Order, Filing, Event, Source, Exhibit, QuotePin, Contradiction, Run, Bundle.
+
+### Required edge types
+GOVERNS(Form/Vehicle->Authority/Proposition), REQUIRES(Vehicle->ProofObligation), SATISFIED_BY(ProofObligation->QuotePin/Exhibit/AuthorityChunk), ISSUED_BY(Order->Court/Judge), FILED_IN(Filing->Court), SUPPORTS(Exhibit/QuotePin->Proposition), CONFLICTS_WITH(QuotePin<->QuotePin), TRIGGERS(Event->Vehicle/Deadline), DERIVES_FROM(Artifact->Source).
+
+### Pinpoint object (must be standardized)
+EvidencePinpoint = {source_path: string, page_or_timecode: int|string, bates_or_hash_optional: string|null, captured_at: datetime, note: string}.
+LawPinpoint = {authority_id: string, section/subsection: string, effective_date: date, chunk_pointer: string}.
+
+## 5) Agent responsibilities and rules of engagement
+### Roles
+- Architect: enforces gates, repo layout, contracts, and end-to-end cohesion.
+- UI Agent: implements GUI, theming, settings, graph explorer, and operator workflows.
+- Graph Agent: Neo4j schema, migrations, constraints, seed packs, traversal APIs.
+- Harvest Agent: rclone integration, Tika extraction, deterministic intake, dedupe, manifests.
+- LLM Agent: Ollama/HF local adapters, prompt templates, retrieval hooks, hallucination containment.
+- Proof/Forms Agent: VehicleMap library, ProofObligation templates, SCAO form overlays, gating logic.
+- QA/Release Agent: tests, reproducibility, size policy, installer/zip releases.
+
+### What agents MUST output per change
+- Working code, runnable locally.
+- Updated manifest + changelog entries.
+- Smoke test proof (log excerpt or test output).
+- If feature spans multiple modules: FULL zip release via TOOLS/bundle_builder.py.
+
+## 6) Build, test, release (minimum)
+- `audit`: lint + static checks + unit tests + integration smoke test (start services, connect Neo4j, run one harvest, render graph, verify PCW blocks unsafe exports).
+- `continue--package`: produce Windows x64 installer or portable zip; include versioned release notes; do not bundle model weights.
+
+## 7) Licensing and supply-chain hygiene
+- Only use reputable open-source dependencies. Record licenses in a dependency ledger.
+- No blog-scraped code without provenance. Prefer GitHub upstream repos and Hugging Face model cards.
+- No telemetry by default. All network features are opt-in and operator-controlled.
+
+## 8) Definition of done for each milestone
+Milestone PASS requires:
+- GUI boots, services start, Neo4j connects, harvest runs, graph renders, proofs display, export is blocked until obligations are satisfied, and release zip builds under size policy.

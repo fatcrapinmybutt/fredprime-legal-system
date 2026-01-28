@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Makefile with common development tasks
 - Complete development setup documentation
 - Contributing guidelines
+- LitigationOS build charter in AGENTS.md for Windows x64
 - Type hints and documentation improvements
 - Advanced configuration system with Pydantic v2
 - Observability and monitoring with Prometheus and OpenTelemetry
