@@ -5,7 +5,7 @@ cat <<'EOF'
 
 ╔════════════════════════════════════════════════════════════════╗
 ║    CI/CD Infrastructure - FRED Prime Legal System             ║
-║         Open-Source Alternative to CircleCI                  ║
+║         Multiple CI/CD Platform Support                       ║
 ╚════════════════════════════════════════════════════════════════╝
 
 📦 WHAT'S INCLUDED
@@ -15,21 +15,26 @@ cat <<'EOF'
    └─ Multi-OS testing, security scanning, fast feedback
    └─ Free for public repos, native GitHub integration
 
-2. Drone CI (Optional, Self-Hosted)
+2. CircleCI (Alternative)
+   └─ Docker-native, powerful caching
+   └─ Parallel testing, orb ecosystem
+   └─ Free tier available
+
+3. Drone CI (Optional, Self-Hosted)
    └─ Open-source, no vendor lock-in
    └─ Docker-based, portable deployment
    └─ Local Docker Compose setup included
 
-3. Pre-commit Hooks
+4. Pre-commit Hooks
    └─ Automatic code quality checks before commit
    └─ 10+ integrated tools (Black, Flake8, MyPy, etc.)
 
-4. Security Scanning
+5. Security Scanning
    └─ Dependency vulnerabilities (Safety, pip-audit)
    └─ Code analysis (Bandit, CodeQL)
    └─ Scheduled weekly audits
 
-5. Setup Automation
+6. Setup Automation
    └─ One-command environment setup
    └─ Interactive configuration
 
@@ -44,7 +49,12 @@ Option 2: GitHub Actions Only (Zero Setup)
   $ git push origin your-branch
   # View results in: GitHub → Actions tab
 
-Option 3: Drone CI (Local)
+Option 3: CircleCI
+  # Setup at: https://circleci.com/
+  # Config: .circleci/config.yml (already included)
+  # Documentation: .circleci/README.md
+
+Option 4: Drone CI (Local)
   $ docker-compose -f docker-compose.drone.yml up -d
   # Access at: http://localhost:8080
 
