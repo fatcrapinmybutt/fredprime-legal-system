@@ -161,8 +161,6 @@ Security Scanning      Advanced (5+ tools)
 Multi-Python           3.10, 3.11, 3.12
 Parallel Testing       Yes
 Pre-commit Hooks       Built-in
-Parallel Testing       Limited     Full matrix
-Migration Path         Hard        Easy
 
 
 📚 DOCUMENTATION
