@@ -2,9 +2,7 @@
 
 import os
 import subprocess
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 
 def test_selftest_main_on_codex_branch():
