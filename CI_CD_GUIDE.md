@@ -72,6 +72,7 @@ open http://localhost:8080
 Configuration:
 
 - Set `DRONE_RPC_SECRET` in `.env`:
+
   ```bash
   DRONE_RPC_SECRET=$(openssl rand -hex 16)
   ```

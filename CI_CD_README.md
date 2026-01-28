@@ -1,6 +1,7 @@
 # CI/CD Infrastructure - FRED Prime Legal System
 
-This project implements a **multi-layered, open-source CI/CD pipeline** combining GitHub Actions with optional Drone CI for maximum flexibility and no vendor lock-in.
+This project implements a **multi-layered, open-source CI/CD pipeline** combining GitHub Actions with
+optional Drone CI for maximum flexibility and no vendor lock-in.
 
 ## Quick Start
 
@@ -421,11 +422,11 @@ Extend workflows for automatic deployment:
 
 ## Resources
 
-- **GitHub Actions**: https://docs.github.com/en/actions
-- **Drone CI**: https://docs.drone.io/
-- **act (local testing)**: https://github.com/nektos/act
-- **Pre-commit**: https://pre-commit.com/
-- **Pytest**: https://docs.pytest.org/
+- **GitHub Actions**: <https://docs.github.com/en/actions>
+- **Drone CI**: <https://docs.drone.io/>
+- **act (local testing)**: <https://github.com/nektos/act>
+- **Pre-commit**: <https://pre-commit.com/>
+- **Pytest**: <https://docs.pytest.org/>
 
 ## Contributing
 

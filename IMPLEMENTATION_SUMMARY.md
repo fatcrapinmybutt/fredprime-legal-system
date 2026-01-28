@@ -265,4 +265,4 @@ You now have:
 **Documentation**: Complete
 **Setup Time**: 1 command or 0 setup
 
-**Ready to use! 🚀**
+## Ready to use! 🚀
