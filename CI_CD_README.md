@@ -1,6 +1,6 @@
 # CI/CD Infrastructure - FRED Prime Legal System
 
-This project implements a **multi-layered, open-source CI/CD pipeline** combining GitHub Actions with optional Drone CI for maximum flexibility and no vendor lock-in.
+This project implements a **multi-platform CI/CD pipeline** with support for GitHub Actions, CircleCI, and Drone CI for maximum flexibility and choice.
 
 ## Quick Start
 
@@ -14,6 +14,21 @@ git push origin your-branch
 
 # View results in GitHub: Actions tab
 # Workflows run automatically on push and pull request
+```
+
+### CircleCI (Alternative)
+
+For Docker-native CI with powerful caching:
+
+```bash
+# 1. Visit: https://circleci.com/
+# 2. Sign in with GitHub
+# 3. Add project: fredprime-legal-system
+# 4. Select "Use Existing Config"
+# 5. Start building
+
+# Config is already included: .circleci/config.yml
+# Documentation: .circleci/README.md
 ```
 
 ### Drone CI (Optional, Self-Hosted)
@@ -55,6 +70,10 @@ Runs in Docker containers (portable, reproducible):
 │   ├── build.yml               ⚡ Improved: Codex Build
 │   └── ci.yml                  Supreme MBP CI
 │
+├── .circleci/
+│   ├── config.yml              ✨ New: CircleCI configuration
+│   └── README.md               ✨ New: CircleCI documentation
+│
 ├── .drone.yml                  ✨ New: Drone CI configuration
 ├── docker-compose.drone.yml    ✨ New: Docker setup for Drone
 ├── .pre-commit-config.yaml     ✨ New: Git hooks for quality
@@ -65,13 +84,14 @@ Runs in Docker containers (portable, reproducible):
 └── README.md                   This file
 ```
 
-## Key Improvements Over CircleCI
+## Key Features
 
-### ✅ No Vendor Lock-in
+### ✅ Multiple CI/CD Options
 
-- **GitHub Actions**: Native to GitHub, runs on GitHub's servers
-- **Drone CI**: Open-source, runs on your own servers or self-hosted
-- **Both**: Standard YAML configurations, easy to migrate
+- **GitHub Actions**: Native to GitHub, zero setup required
+- **CircleCI**: Docker-native with powerful caching and orbs
+- **Drone CI**: Open-source, self-hosted option for no vendor lock-in
+- **All three**: Can run in parallel, equivalent functionality
 
 ### ✅ Enhanced Testing
 

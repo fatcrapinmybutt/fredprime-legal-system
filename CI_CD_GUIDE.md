@@ -2,7 +2,9 @@
 
 This repository uses multiple CI/CD solutions for comprehensive testing and deployment.
 
-## GitHub Actions (Primary)
+## Available CI/CD Platforms
+
+### GitHub Actions (Primary)
 
 GitHub Actions is the primary CI/CD platform, providing:
 
@@ -47,6 +49,53 @@ Create `env.json`:
   "PYTHON_VERSION": "3.11"
 }
 ```
+
+## CircleCI (Alternative)
+
+CircleCI is available as an alternative CI/CD platform:
+
+- **Docker-native** (all jobs run in containers)
+- **Powerful caching** (dependency and build caching)
+- **Parallel testing** (multi-version Python matrix)
+- **Orb ecosystem** (reusable configuration packages)
+- **Local testing** (CircleCI CLI for local validation)
+
+### Configuration
+
+File: `.circleci/config.yml`
+
+The CircleCI pipeline mirrors GitHub Actions functionality:
+- Lint and format checks (black, flake8, mypy, isort)
+- Multi-version testing (Python 3.10, 3.11, 3.12)
+- Security scanning (safety, bandit, pip-audit)
+- Build and packaging
+- Documentation validation
+- Weekly scheduled security scans
+
+### Setup CircleCI
+
+1. Go to [CircleCI](https://circleci.com/) and sign in with GitHub
+2. Navigate to Projects and find `fredprime-legal-system`
+3. Click "Set Up Project" → "Use Existing Config"
+4. Click "Start Building"
+
+### Running CircleCI Locally
+
+```bash
+# Install CircleCI CLI
+brew install circleci  # macOS
+# or
+sudo snap install circleci  # Linux
+
+# Validate configuration
+circleci config validate .circleci/config.yml
+
+# Run a specific job locally
+circleci local execute --job lint
+```
+
+For more details, see [.circleci/README.md](.circleci/README.md)
+
 
 ## Drone CI (Optional, Open-Source)
 
@@ -320,6 +369,21 @@ DRONE_LOGS_DEBUG=true
 npx circleci-to-github-actions .circleci/config.yml
 ```
 
+### From GitHub Actions to CircleCI
+
+This repository now includes both configurations:
+- GitHub Actions: `.github/workflows/*.yml`
+- CircleCI: `.circleci/config.yml`
+
+Both systems can run in parallel. The CircleCI configuration has been created to mirror the GitHub Actions workflows, providing feature parity.
+
+Key mappings:
+- GitHub Actions jobs → CircleCI jobs
+- GitHub Actions matrix → CircleCI parameters
+- GitHub Actions artifacts → CircleCI artifacts/workspaces
+- GitHub Actions cache → CircleCI cache
+
+
 ### From GitHub Actions to Drone
 
 ```bash
@@ -332,6 +396,8 @@ npx circleci-to-github-actions .circleci/config.yml
 ## Additional Resources
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [CircleCI Documentation](https://circleci.com/docs/)
+- [CircleCI CLI](https://circleci.com/docs/local-cli/)
 - [Drone CI Documentation](https://docs.drone.io/)
 - [Gitea Documentation](https://docs.gitea.io/)
 - [Pre-commit Framework](https://pre-commit.com/)
