@@ -57,7 +57,6 @@ commands:
           key: deps-v1-py<<parameters.python-version>>-{{ checksum "requirements.txt" }}
           paths:
             - ~/.cache/pip
-            - ~/fredprime-legal-system/.venv
 
 # Job definitions
 jobs:
@@ -133,8 +132,9 @@ jobs:
           name: Run pytest with coverage
           command: |
             pytest -v --tb=short --timeout=300 \
-              --cov=. --cov-report=xml --cov-report=html \
-              -n auto || true
+              --cov=src --cov=modules --cov=cli --cov=scripts \
+              --cov-report=xml --cov-report=html \
+              -n auto
           no_output_timeout: 15m
 
       - codecov/upload:
@@ -169,20 +169,20 @@ jobs:
       - run:
           name: Safety check (vulnerable dependencies)
           command: |
-            safety check --json --output safety-report.json || true
+            safety check --json --output safety-report.json || echo "Safety check found issues"
           when: always
 
       - run:
           name: Pip audit (dependency vulnerabilities)
           command: |
             pip-audit --desc --format json \
-              --output pip-audit-report.json || true
+              --output pip-audit-report.json || echo "Pip audit found issues"
           when: always
 
       - run:
           name: Bandit (code security analysis)
           command: |
-            bandit -r . -f json -o bandit-report.json 2>/dev/null || true
+            bandit -r . -f json -o bandit-report.json 2>/dev/null || echo "Bandit found issues"
           when: always
 
       - store_artifacts:
@@ -275,33 +275,75 @@ workflows:
   
   ci-pipeline:
     jobs:
-      - lint
+      - lint:
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - test:
           name: test-python-3.10
           python-version: "3.10"
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - test:
           name: test-python-3.11
           python-version: "3.11"
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - test:
           name: test-python-3.12
           python-version: "3.12"
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - security:
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - documentation:
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+                - /feature\/.*/
+                - /copilot\/.*/
 
       - build:
           requires:

@@ -233,7 +233,7 @@ CircleCI uses Docker-based executors, which may require adjusting:
 
 1. **Keep jobs focused**: Each job should have a single responsibility
 2. **Use caching**: Cache dependencies to speed up builds
-3. **Fail fast**: Use `fail-fast: false` in test matrix for all results
+3. **Run all tests**: Configure jobs to complete even if errors occur to see all failures
 4. **Store artifacts**: Save test results and logs for debugging
 5. **Monitor performance**: Check job execution times regularly
 6. **Update orbs**: Keep orb versions current for security fixes
